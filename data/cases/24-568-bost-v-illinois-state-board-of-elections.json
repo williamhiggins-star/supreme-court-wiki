@@ -1,0 +1,176 @@
+{
+  "slug": "24-568-bost-v-illinois-state-board-of-elections",
+  "caseNumber": "24-568",
+  "title": "Bost v. Illinois State Board of Elections",
+  "termYear": "2025",
+  "argumentDate": "2025-10-08",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-568_f29g.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Illinois enacted a law in 2005 allowing mail-in ballots postmarked by Election Day to be counted if received within 14 days after the election. Congressman Michael Bost, a long-serving Republican representative who has won approximately ten elections in his Illinois district, filed a pre-election lawsuit challenging this ballot receipt deadline as violating federal law that sets a single Election Day for congressional races.\n\nBost filed a declaration stating that counting these late-arriving ballots could cause him to lose his election or reduce his margin of victory, and that his campaign incurs additional costs monitoring the extended counting period. The district court dismissed the case for lack of standing, and the Seventh Circuit affirmed, finding that Bost had not shown a sufficient injury. Bost appealed to the Supreme Court, arguing that candidates inherently have standing to challenge the rules governing their elections.\n\nThe case created a circuit split, with the Eighth Circuit taking a more permissive view of candidate standing compared to the Seventh Circuit's stricter approach. A similar challenge to Mississippi's ballot receipt deadline was allowed to proceed in the Fifth Circuit, where a political party was found to have standing based on stronger allegations.",
+  "legalQuestion": "Whether a candidate for federal office has Article III standing to challenge a state law that allows the counting of mail-in ballots received up to two weeks after Election Day.",
+  "significance": "This case could fundamentally reshape how courts evaluate whether candidates can challenge election rules before an election takes place. If the Court adopts a broad rule granting candidates automatic or near-automatic standing, it would make it far easier to bring pre-election challenges to voting procedures nationwide, potentially affecting rules on mail-in voting, ballot counting deadlines, and other election administration practices in every state.\n\nThe case also raises profound practical concerns about the alternative: if standing is denied pre-election, these disputes would be funneled into post-election litigation in the closest races, forcing federal courts to decide which ballots count after votes have already been cast and potentially determining election winners. Multiple justices expressed discomfort with courts acting as political prognosticators, assessing a candidate's chances of winning to determine standing, and with the prospect that such judicial predictions could themselves influence elections.",
+  "parties": [
+    {
+      "party": "Michael J. Bost et al.",
+      "role": "petitioner",
+      "coreArgument": "Candidates are not bystanders in their own elections and have standing to challenge ballot-counting rules because unlawful ballots being counted in their election is an injury in fact. At a minimum, the extended counting period forces additional campaign expenditures, constituting a classic pocketbook injury sufficient for standing.",
+      "supportingPoints": [
+        "Candidates are objects of the entire electoral regulatory regime, analogous to regulated entities in other contexts who have standing to challenge rules governing their activities",
+        "The extended ballot receipt deadline forces additional campaign spending on poll watching and monitoring for two extra weeks, which is a concrete pocketbook injury",
+        "Historical precedent from McPherson v. Blacker and Crawford v. Indiana shows courts have long assumed candidates and parties can challenge election rules without elaborate standing analysis",
+        "Denying pre-election standing funnels disputes into post-election litigation in the closest races, creating nightmare scenarios where courts must pick political winners"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Asked whether Clement could accept a rule requiring candidates to show a substantial risk that the new rule puts them at an electoral disadvantage relative to the old rule, rather than automatic standing.",
+          "context": "This was an attempt to find middle ground between blanket candidate standing and requiring proof of likely election loss.",
+          "significance": "Clement agreed he could satisfy this standard, suggesting a potential compromise position the Court might adopt."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "Asked how post-election litigation would play out if standing is denied pre-election, including what the remedy would be if ballot deadlines are found unlawful after votes are counted.",
+          "context": "This highlighted the practical consequences of the respondents' position on timing of election challenges.",
+          "significance": "Clement described this as a 'nightmare scenario' where courts would have to throw out votes from voters who relied on the rules, reinforcing the case for pre-election standing."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Challenged whether 'unlawful ballots in my election' is a particularized injury or a generalized grievance that any voter could also assert.",
+          "context": "This tested whether candidates truly have a unique injury distinguishable from voters' general interest in lawful elections.",
+          "significance": "Revealed the tension between Clement's broadest theory and the Court's generalized grievance doctrine, pushing him toward the narrower pocketbook and competitive harm theories."
+        }
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "amicus",
+      "coreArgument": "Candidates have standing to challenge ballot-counting laws so long as there is a risk that the ballots at issue could affect the election's outcome, because candidates are direct objects of these laws and should not be required to meet a strict probability threshold to show harm.",
+      "supportingPoints": [
+        "Ballot-counting rules directly target candidates' concrete interest in winning office, making the 'what's it to you' question self-answering",
+        "Like pre-enforcement standing cases, when a plaintiff is a direct object of regulation, even a small probability of harm constitutes a substantial risk",
+        "Candidates are forced to gamble that allegedly unlawful ballot rules will not affect the outcome of their election, analogous to being forced to play Russian roulette",
+        "Denying pre-election standing would ensure only major parties can protect their interests and would create chaos in post-election litigation"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Chief Justice Roberts",
+          "question": "Pressed whether the government's theory turns on assessing actual risk, noting that a candidate who wins 10 elections by 85 percent may have no credible threat of losing.",
+          "context": "This tested whether the government's 'direct object' theory truly eliminates the need for probability assessments.",
+          "significance": "Revealed that the government's position, despite rhetoric about direct objects, still relies on the premise that there is some non-imaginary risk of electoral harm."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Asked why the gamble theory doesn't require establishing that the candidate actually has a risk of winning or losing as a result of the challenged rule.",
+          "context": "This exposed a potential circularity in the government's argument that claims harm from a gamble while refusing to assess the gamble's actual stakes.",
+          "significance": "Showed skepticism about the government's attempt to bypass any probability assessment through the 'direct object' classification."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Challenged the government to identify the specific electoral disadvantage in this case, noting that the ballot receipt rule treats all voters equally.",
+          "context": "This probed whether a facially neutral rule that doesn't burden one side more than another can constitute a particularized injury.",
+          "significance": "The government struggled to articulate a concrete electoral disadvantage, falling back on the theoretical 'gamble' framework rather than identifying specific harm."
+        }
+      ]
+    },
+    {
+      "party": "Illinois State Board of Elections et al.",
+      "role": "respondent",
+      "coreArgument": "Candidates must meet the same standing requirements as every other plaintiff, showing a substantial risk of legally cognizable harm. Bost's declaration used only speculative language like 'if' and 'may' without any factual support, and a diminished margin of victory alone is not a legally cognizable injury.",
+      "supportingPoints": [
+        "Bost repeatedly told the Seventh Circuit he is not at risk of losing an election, fatally undermining his competitive injury theory",
+        "A blanket candidate standing rule would create chaos because anyone can declare as a candidate and challenge any election rule based on mere policy disagreement",
+        "The pocketbook injury theory fails because expenditures must be incurred to avoid a substantial risk of harm that is itself legally cognizable, which Bost has not established",
+        "Standing is not hard to establish for candidates who actually face harm — as shown by the Watson case in the Fifth Circuit where better allegations were found sufficient"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Suggested this case may be 'in search of a problem' since parties like the RNC and DNC routinely challenge election rules without standing issues, and asked why the same easy assertions can't be made here.",
+          "context": "This questioned whether the case presents a genuine standing problem or merely reflects inadequate pleading.",
+          "significance": "Notz eventually conceded that standing is not hard to establish and that Bost could have satisfied a reasonable standard but simply failed to do so in his declaration."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "Noted that Notz was 'walking away from a lot of your brief' by conceding that the real problem was Bost's insufficient allegations rather than the legal standard itself.",
+          "context": "This highlighted the gap between the respondent's broad legal arguments in briefing and the narrower position emerging at oral argument.",
+          "significance": "Suggested the Court might rule on narrow grounds about the adequacy of Bost's specific allegations rather than announcing a broad standing rule."
+        },
+        {
+          "justice": "Chief Justice Roberts",
+          "question": "Warned that the respondent's position is 'a potential disaster' because it would force courts to determine standing based on how close an election might be, injecting courts into the most fraught election disputes.",
+          "context": "The Chief Justice was directly challenging the respondent's framework as impractical and dangerous.",
+          "significance": "Revealed strong skepticism from the Chief Justice toward requiring probability-of-loss assessments for candidate standing."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "mcpherson-v-blacker",
+      "caseName": "McPherson v. Blacker",
+      "reasonCited": "Cited as historical support for the proposition that candidates and electors have obvious standing to challenge changes in election rules, noting the Court addressed justiciability but did not question standing.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "crawford-v-marion-county-election-board",
+      "caseName": "Crawford v. Marion County Election Board",
+      "citation": "553 U.S. 181",
+      "reasonCited": "Cited for Justice Stevens's Footnote 7, which disposed of the Indiana Democratic Party's standing in two sentences as obvious, demonstrating that party and candidate standing to challenge election rules was historically treated as self-evident.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "meese-v-keene",
+      "caseName": "Meese v. Keene",
+      "citation": "481 U.S. 465",
+      "reasonCited": "Cited by multiple parties as identifying two types of candidate injuries: risk of election loss and damage to the candidate's reputation in the community. Both petitioners and respondents relied on this case for their competing standing frameworks.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "clapper-v-amnesty-international-usa",
+      "caseName": "Clapper v. Amnesty International USA",
+      "citation": "568 U.S. 398",
+      "reasonCited": "Central to the debate over whether pocketbook injuries from taking precautions against speculative future harm are sufficient for standing. Petitioners distinguished it; respondents relied on it to argue that expenditures to avoid non-cognizable harm are insufficient.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "transunion-llc-v-ramirez",
+      "caseName": "TransUnion LLC v. Ramirez",
+      "citation": "594 U.S. 413",
+      "reasonCited": "Cited in discussing whether standing requires a showing of history and tradition supporting the type of injury alleged, and whether pocketbook injuries provide an easier path under this framework.",
+      "citedBy": "court"
+    },
+    {
+      "caseSlug": "fec-v-davis",
+      "caseName": "FEC v. Davis",
+      "citation": "554 U.S. 724",
+      "reasonCited": "Cited as an example where the Court found candidate standing without requiring proof that the challenged funding rules would change the election outcome or margin of victory.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "illinois-state-board-of-elections-v-socialist-workers-party",
+      "caseName": "Illinois State Board of Elections v. Socialist Workers Party",
+      "reasonCited": "Cited to show that minor party candidates with no chance of winning an election have been granted standing to challenge ballot access rules, undermining the argument that probability of electoral success is required.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "summers-v-earth-island-institute",
+      "caseName": "Summers v. Earth Island Institute",
+      "citation": "555 U.S. 488",
+      "reasonCited": "Cited by respondents for the proposition that standing is not an exercise in what is merely conceivable and requires a showing of substantial risk of harm.",
+      "citedBy": "respondent"
+    }
+  ],
+  "legalTermsUsed": [
+    "standing",
+    "injury-in-fact",
+    "generalized-grievance",
+    "substantial-risk-of-harm",
+    "object-of-the-regulation",
+    "pocketbook-injury",
+    "competitive-injury-electoral-context",
+    "pre-enforcement-challenge",
+    "self-inflicted-injury",
+    "motion-to-dismiss"
+  ],
+  "processedAt": "2026-02-23T21:33:08.915Z"
+}
