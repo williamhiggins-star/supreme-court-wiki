@@ -47,10 +47,10 @@ jobs:
           git config user.email "bot@supreme-court-wiki.noreply"
           git add data/
           if git diff --cached --quiet; then
-            echo "No new case data — nothing to commit."
+            echo "No new case data - nothing to commit."
           else
             CHANGED=$(git diff --cached --name-only | wc -l | tr -d ' ')
-            git commit -m "chore: automated case update — ${CHANGED} file(s) changed [skip ci]
+            git commit -m "chore: automated case update - ${CHANGED} file(s) changed [skip ci]
 
 Triggered by daily cron at $(date -u '+%Y-%m-%d %H:%M UTC')"
             git push
