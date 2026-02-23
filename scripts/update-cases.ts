@@ -163,7 +163,7 @@ interface UpcomingCase {
 }
 
 async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
-  const url = `${SCOTUS_BASE}/oral_arguments/oral_arguments.html`;
+  const url = `${SCOTUS_BASE}/oral_arguments/argument_calendars.aspx`;
   console.log(`\nFetching argument calendar: ${url}`);
 
   let html: string;
@@ -378,7 +378,7 @@ async function main() {
 
   ensureDataDirs();
   const client = new Anthropic();
-  const termYear = process.env.TERM_YEAR ?? currentTermYear();
+  const termYear = process.env.TERM_YEAR || currentTermYear();
   console.log(`\n=== Supreme Court daily update — term ${termYear} ===`);
   console.log(`Started at: ${new Date().toISOString()}`);
 
