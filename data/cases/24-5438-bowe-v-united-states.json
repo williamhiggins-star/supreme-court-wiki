@@ -1,0 +1,178 @@
+{
+  "slug": "24-5438-bowe-v-united-states",
+  "caseNumber": "24-5438",
+  "title": "Bowe v. United States",
+  "termYear": "2025",
+  "argumentDate": "2025-10-14",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-5438_6537.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Michael Bowe, a federal prisoner, sought to file a second or successive motion to vacate his sentence under 28 U.S.C. § 2255, which is the primary vehicle for federal prisoners to challenge their convictions after direct appeal. Before a federal prisoner can file such a motion, they must obtain authorization from a three-judge panel of the court of appeals. The Eleventh Circuit dismissed Bowe's request for authorization, applying Section 2244(b)(1) — a provision that bars relitigating claims already raised in a prior habeas petition. On its face, (b)(1) refers to 'habeas corpus application[s] under section 2254,' which is the statute governing state prisoners.\n\nThe case presents two intertwined questions. First, does the Supreme Court even have jurisdiction to hear this case, given that Section 2244(b)(3)(E) bars certiorari review of decisions granting or denying authorization to file successive petitions? Second, on the merits, does Section 2244(b)(1)'s 'do-over bar' apply to federal prisoners at all, given that it expressly references only Section 2254 (the state prisoner statute)? Six circuits apply (b)(1) to federal prisoners, while three do not, creating a deep and entrenched split.\n\nNotably, the federal government agrees with the petitioner that (b)(1) should not apply to federal prisoners, but disagrees on jurisdiction. The Court appointed amicus counsel Kasdin Mitchell to defend the lower court's judgment that (b)(1) does apply to federal prisoners.",
+  "legalQuestion": "Whether Section 2244(b)(1)'s bar on relitigating previously raised claims in habeas proceedings applies to federal prisoners filing motions under Section 2255, and whether the Supreme Court has jurisdiction to review this question.",
+  "significance": "This case could resolve a longstanding 6-to-3 circuit split on whether federal prisoners face a stricter gatekeeping requirement than Congress intended when trying to bring successive collateral attacks on their convictions. If (b)(1) applies, federal prisoners are categorically barred from raising any claim they previously presented — a bar that exists in addition to the separate requirements in Section 2255(h). If it does not apply, federal prisoners need only satisfy 2255(h)'s requirements of showing newly discovered evidence or a new rule of constitutional law.\n\nThe jurisdictional question is equally significant. It tests the limits of Congress's power under the Exceptions Clause to strip the Supreme Court of certiorari jurisdiction over an entire category of cases, potentially leaving deep circuit splits permanently unresolved. The case also raises questions about whether the Court can effectively resolve legal questions through dicta when it lacks jurisdiction to issue a binding ruling on the merits.",
+  "parties": [
+    {
+      "party": "Michael Bowe",
+      "role": "petitioner",
+      "coreArgument": "Section 2244(b)(1) applies by its plain text only to state prisoners filing habeas applications under Section 2254, not to federal prisoners filing motions under Section 2255. Federal prisoners have their own separate gatekeeping requirements in 2255(h), and the Supreme Court has jurisdiction to resolve this question because the certiorari bar in (b)(3)(E) was not properly incorporated into the federal prisoner context.",
+      "supportingPoints": [
+        "The text of (b)(1) expressly limits itself to 'habeas corpus application under section 2254,' and everyone agrees that (b)(2) — which uses the same limiting language — does not apply to federal prisoners.",
+        "Congress treated state and federal prisoners differently throughout AEDPA due to federalism concerns and differing finality interests, so differential treatment in (b)(1) is consistent with the statutory scheme.",
+        "The court of appeals dismissed the case rather than granting or denying authorization on the merits, which means (b)(3)(E)'s finality bar — which speaks of grants or denials — was not triggered.",
+        "Under Castro, even if there was a denial of authorization, the subject of the cert petition is the antecedent question of whether (b)(1) applies at all, not the individualized authorization determination."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Isn't it true that the cross-reference barring jurisdiction does not unambiguously incorporate the cert bar, because the statute speaks of certification 'by a panel of the appropriate court of appeals,' and this Court is not a panel of a court of appeals?",
+          "context": "This exchange explored petitioner's broadest jurisdictional argument that (b)(3)(E) was never incorporated into 2255(h) at all.",
+          "significance": "Justice Sotomayor signaled strong interest in petitioner's jurisdictional argument, noting that the Court requires clarity before jurisdiction can be stripped."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Isn't your narrow jurisdictional argument essentially that (E)'s finality requirement is triggered only when the panel actually applies the substantive criteria and makes a merits determination, not when it dismisses for some other reason?",
+          "context": "Justice Jackson sought to clarify the simplest path to jurisdiction without reaching the broader question of whether (E) applies to federal prisoners at all.",
+          "significance": "This revealed a potential narrow path to jurisdiction that could command broader support on the Court."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Why doesn't the mention of Section 2254 in (b)(1) and (b)(2) actually make those provisions more applicable to federal prisoners, since 2254 signals post-conviction relief — the same category as 2255 — while (b)(3) and (b)(4) cover all habeas including pre-conviction?",
+          "context": "Justice Gorsuch tested whether the textual distinction petitioner relies on actually cuts the other way.",
+          "significance": "This revealed a potential weakness in petitioner's merits argument: that the 2254 reference might signal relevance to post-conviction proceedings rather than exclusion of federal prisoners."
+        }
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government agrees with petitioner that Section 2244(b)(1) does not apply to federal prisoners, but argues the Supreme Court lacks jurisdiction because 2255(h) incorporates the entire certification process in 2244(b)(3), including (b)(3)(E)'s bar on certiorari review. The government suggests the Court could effectively resolve the (b)(1) issue in the course of its jurisdictional analysis.",
+      "supportingPoints": [
+        "The certification 'process' described in 2244(b)(3) naturally includes (E), which tells courts when the process ends — allowing certiorari would blow apart the 30-day time limit Congress imposed on the panel's screening decision.",
+        "The distinct language in (b)(3) and (b)(4) — using 'second or successive application' and 'authorization' without referencing Section 2254 — maps directly onto 2255, while (b)(1) and (b)(2) with their express 2254 language do not.",
+        "At the founding, there was no right to appeal habeas denials, so barring certiorari in this context raises no serious Exceptions Clause problem.",
+        "Other avenues exist for the Court to resolve splits, including certified questions from courts of appeals, merits review when authorization is granted, sua sponte rehearing, and the All Writs Act."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Castro — which deals with this very provision — says you need a 'clear indication' before interpreting the statute to limit the Court's jurisdiction. How do you get around that?",
+          "context": "Justice Kagan pressed the government on whether Castro's clear statement requirement forecloses its jurisdictional argument.",
+          "significance": "The government struggled to explain away Castro's clear statement language, suggesting it was 'isolated' and not followed — a position that appeared to draw skepticism."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Does it make any sense that there has been no review of the merits of this case at all by the court of appeals, and you're claiming we have no jurisdiction?",
+          "context": "Justice Sotomayor highlighted the tension between the government's concession that the lower court was wrong on (b)(1) and its insistence that there is no jurisdiction to correct the error.",
+          "significance": "This revealed the fundamental awkwardness of the government's position: agreeing the lower court erred but arguing the Supreme Court is powerless to fix it."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "What would we do if lower courts didn't follow our dicta on the (b)(1) question? And what if the question isn't certified to us?",
+          "context": "Justice Kavanaugh questioned the practicality of the government's proposal to resolve the split through non-binding statements in a jurisdictional dismissal.",
+          "significance": "It exposed the fragility of the government's proposed workaround and the risk that lower courts could simply ignore non-binding guidance."
+        }
+      ]
+    },
+    {
+      "party": "Kasdin M. Mitchell (Court-appointed amicus curiae)",
+      "role": "amicus",
+      "coreArgument": "Section 2244(b)(1)'s do-over bar applies to federal prisoners through a chain of cross-references: 2255(h) incorporates 2244(b)(3)(C), which directs courts to apply 'the requirements of this subsection' — subsection (b) — which includes (b)(1). Congress enacted AEDPA in the wake of the Oklahoma City bombing specifically to advance finality, and there is no reason to think it eliminated the do-over bar for federal prisoners like McVeigh.",
+      "supportingPoints": [
+        "When (b)(3)(C) says to evaluate the 'requirements of this subsection,' 'subsection' means subsection (b) — as the Court held in Cyan — which includes (b)(1).",
+        "The word 'application' in 2244 on its face refers to state habeas petitions; it applies to federal 'motions' only through the cross-reference in 2255(h), so the 2254 language in (b)(1) is no barrier.",
+        "The prior standalone successive bar in 2255 had been marginalized by the Court in Sanders, so Congress routed federal prisoners through the same provisions as state prisoners.",
+        "In the three months after the Court's Welch decision, the Eleventh Circuit alone received 1,800 applications for Johnson-based review, showing the do-over bar serves a real practical need."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Isn't it odd that Congress would try to reach (b)(1) in the federal context through two cross-references rather than simply writing it directly into 2255(h)?",
+          "context": "Justice Jackson questioned whether the double-cross-reference chain was too convoluted to reflect deliberate congressional intent.",
+          "significance": "This highlighted the central weakness in amicus's argument: that the path to applying (b)(1) to federal prisoners requires navigating multiple statutory cross-references."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Isn't it inconsistent to read all of (b)(3) as a unified piece for jurisdiction but then split up subsection (b) on the merits?",
+          "context": "Justice Gorsuch noted a potential tension between insisting (b)(3)(A)-(E) must be read together for jurisdiction while arguing (b)(1) and (b)(2) should be read differently from (b)(3) and (b)(4) on the merits.",
+          "significance": "This revealed skepticism about the coherence of treating (b)(1) differently from (b)(3) when both are part of the same subsection."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Wouldn't collateral estoppel apply to successive positions in federal court, getting you to the same place through a different route?",
+          "context": "Justice Sotomayor suggested there might be alternative doctrines that prevent relitigation without needing (b)(1).",
+          "significance": "Amicus effectively rebutted this by explaining that res judicata has traditionally not applied in habeas proceedings, which is precisely why Congress codified (b)(1)."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "castro-v-united-states",
+      "caseName": "Castro v. United States",
+      "citation": "",
+      "reasonCited": "Cited extensively for the proposition that the Supreme Court has jurisdiction to review antecedent questions about whether gatekeeping requirements apply, even if (b)(3)(E) bars review of the denial of authorization itself. Also cited for the clear statement rule regarding limits on the Court's jurisdiction.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "stewart-v-martinez-villareal-referred-to-as-stuart",
+      "caseName": "Stewart v. Martinez-Villareal (referred to as 'Stuart')",
+      "citation": "",
+      "reasonCited": "Cited for the principle that when a court of appeals dismisses without ruling on the merits of an authorization request, the disposition is not a 'grant' or 'denial' that triggers (b)(3)(E)'s finality bar.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "cyan-inc-v-beaver-county-employees-retirement-fund",
+      "caseName": "Cyan, Inc. v. Beaver County Employees Retirement Fund",
+      "citation": "",
+      "reasonCited": "Cited by amicus for the principle that when Congress says 'subsection,' it means 'subsection' — supporting the argument that (b)(3)(C)'s reference to 'this subsection' encompasses all of subsection (b), including (b)(1).",
+      "citedBy": "amicus"
+    },
+    {
+      "caseSlug": "jones-v-hendrix",
+      "caseName": "Jones v. Hendrix",
+      "citation": "",
+      "reasonCited": "Cited for the concern that if original habeas petitions are unavailable to federal prisoners after this decision, and certiorari is also barred, there may be no way for the Supreme Court to resolve circuit splits on AEDPA issues affecting federal prisoners.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "sanders-v-united-states",
+      "caseName": "Sanders v. United States",
+      "citation": "",
+      "reasonCited": "Cited by amicus to show that the prior standalone successive bar in Section 2255 had been marginalized by the Court, which gave Congress reason to route federal prisoners through Section 2244's more robust provisions when enacting AEDPA.",
+      "citedBy": "amicus"
+    },
+    {
+      "caseSlug": "felker-v-turpin",
+      "caseName": "Felker v. Turpin",
+      "citation": "",
+      "reasonCited": "Cited by petitioner for the principle that there should be no implied repeals of habeas jurisdiction, supporting the argument that (b)(3)(E) should not be read to strip Supreme Court certiorari jurisdiction without a clear statement.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "utah-v-evans",
+      "caseName": "Utah v. Evans",
+      "citation": "",
+      "reasonCited": "Cited by both sides in the dispute over the clear statement rule: the government argued it supports a narrower reading of Castro's language, while petitioner relied on it for the principle against reading an unexpressed intent to bar previously exercised jurisdiction.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "gonzalez-v-crosby",
+      "caseName": "Gonzalez v. Crosby",
+      "citation": "",
+      "reasonCited": "Cited by the government for the proposition that a dismissal is effectively a denial of an application, countering petitioner's argument that the court of appeals' dismissal did not trigger (b)(3)(E).",
+      "citedBy": "respondent"
+    }
+  ],
+  "legalTermsUsed": [
+    "second-or-successive-application",
+    "section-2255-motion",
+    "section-2254-application",
+    "certification-authorization",
+    "clear-statement-rule",
+    "exceptions-clause",
+    "aedpa-antiterrorism-and-effective-death-penalty-act",
+    "cross-reference-statutory",
+    "do-over-bar-relitigation-bar",
+    "russello-presumption"
+  ],
+  "processedAt": "2026-02-24T13:55:07.143Z"
+}

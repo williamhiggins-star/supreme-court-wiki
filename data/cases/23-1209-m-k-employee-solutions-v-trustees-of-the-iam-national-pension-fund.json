@@ -1,0 +1,170 @@
+{
+  "slug": "23-1209-m-k-employee-solutions-v-trustees-of-the-iam-national-pension-fund",
+  "caseNumber": "23-1209",
+  "title": "M & K Employee Solutions v. Trustees of the IAM National Pension Fund",
+  "termYear": "2025",
+  "argumentDate": "2026-01-20",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/23-1209_b97d.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "When an employer leaves a multiemployer pension plan, it owes 'withdrawal liability'—its share of the plan's unfunded pension obligations. Under federal law (Section 1391 of ERISA), this liability is calculated based on the plan's 'unfunded vested benefits' (UVBs) 'as of the end of the plan year' before the employer withdraws. Calculating UVBs requires an actuary to make assumptions about the future—most critically, a 'discount rate' predicting what the plan's investments will earn over the next 20 to 40 years. Changing that rate can dramatically change the liability amount.\n\nIn this case, the IAM National Pension Fund's actuary changed the discount rate from 7.5% to 6.5% in January 2018—three weeks after the December 31, 2017 measurement date. This change roughly tripled the withdrawal liability for the four petitioner employers, from approximately $3.3 million to about $10 million. The petitioners argue this post-measurement-date change violates the statute's timing rule. The D.C. Circuit ruled against the petitioners, holding that assumptions can be selected after the measurement date so long as they are based on information available as of that date.\n\nThe case creates a circuit split with the Second Circuit's earlier decision in Metz v. IAM National Pension Fund, which held that actuarial assumptions must be locked in before the measurement date. The petitioners want the Court to adopt the Metz rule nationwide, while the respondent fund and the federal government argue Metz was wrongly decided and disrupted decades of standard actuarial practice.",
+  "legalQuestion": "Whether a multiemployer pension plan actuary may select actuarial assumptions for calculating withdrawal liability after the statutory measurement date (the end of the prior plan year), or whether all such assumptions must be fixed by that date.",
+  "significance": "This case will determine a fundamental rule about how withdrawal liability is calculated for the thousands of employers participating in multiemployer pension plans. The outcome affects billions of dollars in potential obligations because the timing of when actuarial assumptions can be selected directly controls how much withdrawing employers must pay. If the Court sides with the petitioners, plans would need to finalize their assumptions before year-end, providing employers with greater predictability about potential liability but potentially requiring the use of older, 'stale' assumptions.\n\nIf the Court sides with the respondent, actuaries would retain the flexibility to select assumptions after the measurement date—consistent with what both sides describe as longstanding practice—but employers could face significant surprise increases in liability after they decide to withdraw. The case also raises broader questions about the meaning of 'as of' in federal statutes and the balance between actuarial flexibility and employer protection in pension law.",
+  "parties": [
+    {
+      "party": "M & K Employee Solutions, LLC, et al.",
+      "role": "petitioner",
+      "coreArgument": "Section 1391's requirement that unfunded vested benefits be calculated 'as of the end of the plan year' creates a timing rule that freezes all inputs—including actuarial assumptions—on the measurement date. Allowing assumptions to be changed after that date creates unpredictable and potentially manipulable withdrawal liability, undermining Congress's design of a clear, consistent system.",
+      "supportingPoints": [
+        "The 'as of' language in Section 1391 requires all inputs into the UVB calculation, including actuarial assumptions, to be fixed by December 31 of the prior year",
+        "Allowing post-measurement-date assumption changes creates opportunities for manipulation, including hiring new actuaries who may dramatically change the discount rate after employers withdraw",
+        "A bright-line timing rule promotes predictability and avoids fact-intensive litigation over what the actuary was thinking and when",
+        "All ERISA arbitrators who have addressed this issue have ruled that changing assumptions after the valuation date is inappropriate"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Why are actuarial assumptions treated as 'inputs' that must be frozen, when they are professional judgments about the future rather than hard data? Isn't the 'as of' requirement only about the underlying data the actuary examines?",
+          "context": "This question goes to the heart of whether actuarial assumptions are the same kind of 'input' as objective facts like asset values and number of retirees.",
+          "significance": "It revealed the central vulnerability in petitioners' argument: the difficulty of treating subjective professional judgments the same as objective data points for timing purposes."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "How do you address the statutory terms 'reasonable' and 'best estimate,' which don't seem to imply a rigid timing cutoff for assumptions?",
+          "context": "These statutory requirements in Section 1393 suggest flexibility rather than a fixed deadline.",
+          "significance": "It highlighted that the statutory text governing assumptions focuses on quality and accuracy rather than timing, which undercuts petitioners' bright-line rule."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Congress knew how to fix assumptions to a particular date—Section 1399(c)(1)(A)(ii) requires using assumptions from 'the most recent actuarial valuation'—so why should we read such a requirement into Section 1391 where Congress didn't include similar language?",
+          "context": "This invokes the interpretive principle that when Congress includes specific language in one provision but omits it from another, the omission is intentional.",
+          "significance": "It exposed that Congress used explicit timing language for assumptions elsewhere in the statute but chose not to do so in the provision at issue."
+        }
+      ]
+    },
+    {
+      "party": "Trustees of the IAM National Pension Fund",
+      "role": "respondent",
+      "coreArgument": "The phrase 'as of' in Section 1391 creates a reference point for retrospective calculation, not a deadline by which work must be completed. Selecting assumptions after the measurement date is consistent with the statutory text, longstanding actuarial practice, and how 'as of' is used throughout the law.",
+      "supportingPoints": [
+        "For 40+ years, actuaries have routinely selected withdrawal liability assumptions after the measurement date, and no one questioned this practice until the Second Circuit's Metz decision",
+        "The statute has built-in protections: employers can challenge assumptions as unreasonable or not the actuary's best estimate in arbitration, and actuaries are neutral professionals with no incentive to harm withdrawing employers",
+        "The statutory scheme includes natural timing limits—plans must assess liability as soon as practicable and have incentives to collect quickly",
+        "The Metz decision was driven by bad facts (a newly hired actuary cutting the discount rate nearly in half after withdrawal) and should have been resolved through the existing reasonableness challenge rather than inventing a timing rule"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Alito",
+          "question": "Won't your rule lead to disparate treatment of different employers depending on when they withdraw, since assumptions could change mid-year?",
+          "context": "This concern goes to whether employers withdrawing at different times could face different liability amounts for the same plan year.",
+          "significance": "The respondent acknowledged the theoretical possibility but argued it doesn't happen in practice because calculations are done once per year during the annual valuation."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Under your rule, nothing stops the actuary from changing assumptions post-withdrawal—so what protects against gamesmanship?",
+          "context": "This pressed on whether the statute provides adequate safeguards if there is no timing restriction on assumption selection.",
+          "significance": "It forced the respondent to rely entirely on the arbitration challenge mechanism and the assumed neutrality of actuaries as the only protections against manipulation."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "The petitioner suggests that challenges to assumptions aren't often made and present a very high bar—isn't this protection effectively toothless?",
+          "context": "This tested whether the arbitration mechanism the respondent relies on as a safeguard actually works in practice.",
+          "significance": "The respondent cited specific cases (Sofco, Energy West) where courts struck down assumptions, pushing back on the claim that the standard is unenforceable."
+        }
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "amicus",
+      "coreArgument": "The Metz decision was the first court to prohibit post-measurement-date assumption selection, disrupting decades of practice. ERISA's text—particularly the 'as of' language and Section 1393's silence on timing—makes clear that assumptions may be selected after the measurement date, and petitioners' rule would force use of stale assumptions inconsistent with the best estimate requirement.",
+      "supportingPoints": [
+        "Section 1393 explicitly governs actuarial assumptions without imposing any timing requirement, while Section 1394 addresses retroactivity without mentioning assumptions—Congress addressed each concern separately",
+        "Petitioners' position would require using assumptions keyed to the previous plan year's measurement date, making them potentially two years old and inconsistent with the 'best estimate' standard",
+        "The practice of relying on post-valuation-date information is standard across accounting, appraisal, and other financial fields",
+        "Section 1021(l), which entitles employers to withdrawal liability estimates based on the assumption they withdrew in the previous year, shows Congress anticipated assumptions would not be prematurely fixed"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "You can understand how an employer might not appreciate if discount rates change after withdrawal, jamming them with millions more in liability—since the decision to withdraw might be based in part on the expected liability amount?",
+          "context": "This acknowledged the real-world impact on employers who make business decisions based on expected withdrawal costs.",
+          "significance": "It revealed Justice Kavanaugh's sympathy for the employers' practical predicament even while seemingly accepting the textual argument against a strict timing rule."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "What is the status of the PBGC's proposed rule on withdrawal liability assumptions?",
+          "context": "The Pension Benefit Guaranty Corporation had a pending proposed rule that could affect the permissible range of discount rates.",
+          "significance": "The government's inability to provide a clear timeline, combined with the petitioner's rebuttal that the PBGC rule would eliminate reasonableness challenges, highlighted the regulatory uncertainty surrounding the issue."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "Have serious practical problems actually emerged since Metz, or is it simply that actuaries don't want to change their established practices?",
+          "context": "This tested whether the disruption from Metz is real or theoretical.",
+          "significance": "The government acknowledged it may be too early to tell but argued that Metz necessarily deprives actuaries of the ability to account for year-end information."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "metz-v-iam-national-pension-fund",
+      "caseName": "Metz v. IAM National Pension Fund",
+      "reasonCited": "The Second Circuit decision that created the timing rule at the center of this case, holding that actuarial assumptions must be selected before the measurement date. The respondent and government argue it should be abrogated.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "concrete-pipe-products-v-construction-laborers-pension-trust",
+      "caseName": "Concrete Pipe & Products v. Construction Laborers Pension Trust",
+      "reasonCited": "Cited for the proposition that Congress views actuaries as unbiased professionals subject to professional standards, relevant to whether post-measurement-date assumption changes pose manipulation risks.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "bay-area-laundry",
+      "caseName": "Bay Area Laundry",
+      "reasonCited": "Cited by the respondent for the point that plans have strong incentives to assess withdrawal liability quickly so they can begin collecting payments, providing a natural timing limit.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "milwaukee-brewery-huber-case",
+      "caseName": "Milwaukee Brewery (Huber case)",
+      "reasonCited": "Cited by petitioners to show that under the 'as soon as practicable' standard, two-and-a-half years can pass between withdrawal and assessment, demonstrating the inadequacy of respondent's proposed timing guardrail.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "sofco",
+      "caseName": "Sofco",
+      "reasonCited": "Cited by the respondent as an example of a court striking down actuarial assumptions as unreasonable, demonstrating that the existing challenge mechanism has teeth.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "energy-west",
+      "caseName": "Energy West",
+      "reasonCited": "Cited alongside Sofco as another example where courts ordered recalculation of withdrawal liability because assumptions failed the statutory reasonableness standard.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "combs",
+      "caseName": "Combs",
+      "reasonCited": "Cited by the respondent to show that as early as the early 1980s, actuaries selected assumptions after the measurement date without objection, supporting the claim of longstanding practice.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "embassy-industries",
+      "caseName": "Embassy Industries",
+      "reasonCited": "An arbitration decision cited by petitioners showing that arbitrators have found changing assumptions after the valuation date to be inappropriate.",
+      "citedBy": "petitioner"
+    }
+  ],
+  "legalTermsUsed": [
+    "withdrawal-liability",
+    "unfunded-vested-benefits-uvbs",
+    "actuarial-assumptions",
+    "measurement-date-valuation-date",
+    "discount-rate",
+    "multiemployer-pension-plan",
+    "mppaa-multiemployer-pension-plan-amendments-act",
+    "present-value",
+    "best-estimate-requirement",
+    "erisa-employee-retirement-income-security-act"
+  ],
+  "processedAt": "2026-02-24T14:09:56.343Z"
+}
