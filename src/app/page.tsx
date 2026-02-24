@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getAllCases, getAllPrecedents } from "@/lib/data";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
-function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
     month: "short",
@@ -11,7 +11,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decided" {
+export function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decided" {
   if (c.docketStatus === "decided") return "decided";
   if (c.docketStatus === "upcoming") return "upcoming";
   if (c.outcome) return "decided";
@@ -23,9 +23,39 @@ function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decided" {
   return "argued";
 }
 
-type DecidedItem =
+export type DecidedItem =
   | { type: "case"; slug: string; title: string; sub: string; href: string }
   | { type: "precedent"; slug: string; name: string; year: number; href: string };
+
+export function buildDecidedList(
+  decidedCases: CaseSummary[],
+  precedents: PrecedentCase[]
+): DecidedItem[] {
+  const items: DecidedItem[] = [
+    ...decidedCases.map((c) => ({
+      type: "case" as const,
+      slug: c.slug,
+      title: c.title,
+      sub: `${c.termYear} Term · ${c.caseNumber}`,
+      href: `/cases/${c.slug}`,
+    })),
+    ...precedents.map((p) => ({
+      type: "precedent" as const,
+      slug: p.slug,
+      name: p.name,
+      year: p.year,
+      href: `/precedents/${p.slug}`,
+    })),
+  ];
+  items.sort((a, b) => {
+    const yearA = a.type === "case" ? parseInt(a.sub.split(" ")[0]) : a.year;
+    const yearB = b.type === "case" ? parseInt(b.sub.split(" ")[0]) : b.year;
+    return yearB - yearA;
+  });
+  return items;
+}
+
+const PAGE_SIZE = 10;
 
 export default function HomePage() {
   const cases = getAllCases();
@@ -42,33 +72,11 @@ export default function HomePage() {
     else decidedCases.push(c);
   }
 
-  const decided: DecidedItem[] = [
-    ...decidedCases.map((c) => ({
-      type: "case" as const,
-      slug: c.slug,
-      title: c.title,
-      sub: `${c.termYear} Term · ${c.caseNumber}`,
-      href: `/cases/${c.slug}`,
-    })),
-    ...precedents.map((p) => ({
-      type: "precedent" as const,
-      slug: p.slug,
-      name: p.name,
-      year: p.year,
-      href: `/precedents/${p.slug}`,
-    })),
-  ];
+  // Upcoming: soonest first (ascending)
+  upcoming.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
+  // Argued: most recent first — getAllCases() already returns descending, no change needed
 
-  // Sort decided: cases first (most recent argument date), then precedents (most recent year)
-  decided.sort((a, b) => {
-    const yearA = a.type === "case"
-      ? parseInt(a.sub.split(" ")[0])
-      : a.year;
-    const yearB = b.type === "case"
-      ? parseInt(b.sub.split(" ")[0])
-      : b.year;
-    return yearB - yearA;
-  });
+  const decided = buildDecidedList(decidedCases, precedents);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -96,25 +104,35 @@ export default function HomePage() {
             {upcoming.length === 0 ? (
               <p className="text-gray-400 text-sm italic">No cases</p>
             ) : (
-              <div className="flex flex-col gap-3">
-                {upcoming.map((c) => (
+              <>
+                <div className="flex flex-col gap-3">
+                  {upcoming.slice(0, PAGE_SIZE).map((c) => (
+                    <Link
+                      key={c.slug}
+                      href={`/cases/${c.slug}`}
+                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                    >
+                      <p className="text-xs text-gray-400 mb-1">
+                        {c.termYear} Term · {c.caseNumber}
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 leading-snug">
+                        {c.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDate(c.argumentDate)}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+                {upcoming.length > PAGE_SIZE && (
                   <Link
-                    key={c.slug}
-                    href={`/cases/${c.slug}`}
-                    className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                    href="/docket/upcoming"
+                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                   >
-                    <p className="text-xs text-gray-400 mb-1">
-                      {c.termYear} Term · {c.caseNumber}
-                    </p>
-                    <p className="text-sm font-semibold text-gray-900 leading-snug">
-                      {c.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formatDate(c.argumentDate)}
-                    </p>
+                    View all {upcoming.length} cases →
                   </Link>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </div>
 
@@ -126,25 +144,35 @@ export default function HomePage() {
             {argued.length === 0 ? (
               <p className="text-gray-400 text-sm italic">No cases</p>
             ) : (
-              <div className="flex flex-col gap-3">
-                {argued.map((c) => (
+              <>
+                <div className="flex flex-col gap-3">
+                  {argued.slice(0, PAGE_SIZE).map((c) => (
+                    <Link
+                      key={c.slug}
+                      href={`/cases/${c.slug}`}
+                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                    >
+                      <p className="text-xs text-gray-400 mb-1">
+                        {c.termYear} Term · {c.caseNumber}
+                      </p>
+                      <p className="text-sm font-semibold text-gray-900 leading-snug">
+                        {c.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Argued {formatDate(c.argumentDate)}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+                {argued.length > PAGE_SIZE && (
                   <Link
-                    key={c.slug}
-                    href={`/cases/${c.slug}`}
-                    className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                    href="/docket/argued"
+                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                   >
-                    <p className="text-xs text-gray-400 mb-1">
-                      {c.termYear} Term · {c.caseNumber}
-                    </p>
-                    <p className="text-sm font-semibold text-gray-900 leading-snug">
-                      {c.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Argued {formatDate(c.argumentDate)}
-                    </p>
+                    View all {argued.length} cases →
                   </Link>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </div>
 
@@ -156,33 +184,43 @@ export default function HomePage() {
             {decided.length === 0 ? (
               <p className="text-gray-400 text-sm italic">No cases</p>
             ) : (
-              <div className="flex flex-col gap-2">
-                {decided.map((item) =>
-                  item.type === "case" ? (
-                    <Link
-                      key={item.slug}
-                      href={item.href}
-                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                    >
-                      <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
-                      <p className="text-sm font-semibold text-gray-900 leading-snug">
-                        {item.title}
-                      </p>
-                    </Link>
-                  ) : (
-                    <Link
-                      key={item.slug}
-                      href={item.href}
-                      className="block bg-white border border-gray-200 rounded px-4 py-3 hover:border-gray-400 hover:shadow-sm transition-all"
-                    >
-                      <p className="text-xs text-gray-400 mb-0.5">{item.year}</p>
-                      <p className="text-sm text-gray-800 leading-snug">
-                        {item.name}
-                      </p>
-                    </Link>
-                  )
+              <>
+                <div className="flex flex-col gap-2">
+                  {decided.slice(0, PAGE_SIZE).map((item) =>
+                    item.type === "case" ? (
+                      <Link
+                        key={item.slug}
+                        href={item.href}
+                        className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                      >
+                        <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
+                        <p className="text-sm font-semibold text-gray-900 leading-snug">
+                          {item.title}
+                        </p>
+                      </Link>
+                    ) : (
+                      <Link
+                        key={item.slug}
+                        href={item.href}
+                        className="block bg-white border border-gray-200 rounded px-4 py-3 hover:border-gray-400 hover:shadow-sm transition-all"
+                      >
+                        <p className="text-xs text-gray-400 mb-0.5">{item.year}</p>
+                        <p className="text-sm text-gray-800 leading-snug">
+                          {item.name}
+                        </p>
+                      </Link>
+                    )
+                  )}
+                </div>
+                {decided.length > PAGE_SIZE && (
+                  <Link
+                    href="/docket/decided"
+                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                  >
+                    View all {decided.length} cases →
+                  </Link>
                 )}
-              </div>
+              </>
             )}
           </div>
 
