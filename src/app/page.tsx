@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getAllCases, getAllPrecedents } from "@/lib/data";
+import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
+import { CourtCalendar } from "@/components/CourtCalendar";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
 export function formatDate(dateStr: string): string {
@@ -60,6 +62,11 @@ const PAGE_SIZE = 10;
 export default function HomePage() {
   const cases = getAllCases();
   const precedents = getAllPrecedents();
+  const calendarJson = getCalendarJson();
+  const calendarEvents = buildCalendarEvents(cases, calendarJson);
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
   const upcoming: CaseSummary[] = [];
   const argued: CaseSummary[] = [];
@@ -225,6 +232,16 @@ export default function HomePage() {
           </div>
 
         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 pb-12">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Oral argument sessions and conference dates for the October Term 2025.
+          Argument dates link to case pages. Conference dates are when the Justices
+          meet privately to discuss pending petitions and argued cases.
+        </p>
+        <CourtCalendar events={calendarEvents} today={today} />
       </section>
     </main>
   );

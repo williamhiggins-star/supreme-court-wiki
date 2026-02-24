@@ -26,6 +26,7 @@ import {
   existingSlugForCaseNumber,
   toSlug,
   CASES_DIR,
+  DATA_DIR,
 } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
 
@@ -494,6 +495,60 @@ function updateDecidedCases(
 }
 
 // ---------------------------------------------------------------------------
+// Step 5 — Update conference calendar from case distribution schedule PDF
+// ---------------------------------------------------------------------------
+
+const MONTH_MAP: Record<string, number> = {
+  JANUARY: 1, FEBRUARY: 2, MARCH: 3, APRIL: 4, MAY: 5, JUNE: 6,
+  JULY: 7, AUGUST: 8, SEPTEMBER: 9, OCTOBER: 10, NOVEMBER: 11, DECEMBER: 12,
+};
+
+async function updateCalendar(termYear: string): Promise<void> {
+  const url = `${SCOTUS_BASE}/casedistribution/casedistributionschedule${termYear}.pdf`;
+  console.log(`\nUpdating conference calendar from: ${url}`);
+
+  try {
+    const pdfBuffer = await downloadPdf(url);
+    const text = await extractText(pdfBuffer);
+
+    const dateRe =
+      /\b(JANUARY|FEBRUARY|MARCH|APRIL|MAY|JUNE|JULY|AUGUST|SEPTEMBER|OCTOBER|NOVEMBER|DECEMBER)\s+(\d{1,2}),\s+(\d{4})\b/gi;
+    const conferences = new Set<string>();
+
+    for (const line of text.split(/\r?\n/)) {
+      const matches = [...line.matchAll(dateRe)];
+      if (matches.length < 2) continue;
+      // Last date on line = conference date
+      const last = matches[matches.length - 1];
+      const m = MONTH_MAP[last[1].toUpperCase()];
+      const d = parseInt(last[2]);
+      const y = parseInt(last[3]);
+      if (!m) continue;
+      conferences.add(
+        `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+      );
+    }
+
+    if (conferences.size === 0) {
+      console.warn("  No conference dates parsed — skipping calendar update");
+      return;
+    }
+
+    const calendarPath = path.join(DATA_DIR, "calendar.json");
+    const calendarData = {
+      term: termYear,
+      generated: new Date().toISOString().split("T")[0],
+      conferences: [...conferences].sort(),
+    };
+    fs.writeFileSync(calendarPath, JSON.stringify(calendarData, null, 2));
+    console.log(`  ✓ calendar.json updated: ${conferences.size} conference dates`);
+  } catch (err) {
+    console.warn(`  Could not update calendar: ${err}`);
+    // Non-fatal — existing calendar.json continues to work
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -528,6 +583,9 @@ async function main() {
   // Step 4: Slip opinions
   const opinions = await fetchSlipOpinions(termYear);
   const decisionsUpdated = updateDecidedCases(opinions, existingSlugs);
+
+  // Step 5: Conference calendar
+  await updateCalendar(termYear);
 
   console.log("\n=== Summary ===");
   console.log(`  New transcripts processed : ${newTranscripts}`);
