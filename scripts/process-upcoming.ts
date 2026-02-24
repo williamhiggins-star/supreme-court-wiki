@@ -157,17 +157,36 @@ async function main() {
   const client = new Anthropic();
   console.log("Calling Anthropic API...");
 
-  const response = await client.messages.create({
-    model: process.env.MODEL ?? "claude-sonnet-4-6",
+  const model = process.env.MODEL ?? "claude-sonnet-4-6";
+  const messageParams = {
+    model,
     max_tokens: 6000,
     system: SYSTEM_PROMPT,
     messages: [
       {
-        role: "user",
+        role: "user" as const,
         content: buildPrompt(caseNumber, caseName, argumentDate, termYear, docketText),
       },
     ],
-  });
+  };
+
+  let response;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      response = await client.messages.create(messageParams);
+      break;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (attempt < 5 && msg.toLowerCase().includes("overload")) {
+        const wait = attempt * 30;
+        console.log(`API overloaded — waiting ${wait}s (attempt ${attempt}/5)...`);
+        await new Promise((r) => setTimeout(r, wait * 1000));
+      } else {
+        throw err;
+      }
+    }
+  }
+  if (!response) throw new Error("No response after retries");
 
   console.log(
     `Done. Input: ${response.usage.input_tokens}, Output: ${response.usage.output_tokens}`
