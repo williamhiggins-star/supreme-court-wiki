@@ -1,0 +1,164 @@
+{
+  "slug": "24-872-hamm-v-smith",
+  "caseNumber": "24-872",
+  "title": "Hamm v. Smith",
+  "termYear": "2025",
+  "argumentDate": "2025-12-10",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-872_b07d.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Joseph Clifton Smith was sentenced to death in Alabama for the murder of Durk Van Dam nearly 30 years ago. Smith claimed he should not be executed because he is intellectually disabled—a category of people the Supreme Court ruled in 2002 (Atkins v. Virginia) cannot constitutionally be put to death. Over the years, Smith was administered multiple IQ tests, producing scores of 72, 74, 74, 75, and 78—all above the traditional threshold of 70 used to identify intellectual disability.\n\nThe federal district court and the Eleventh Circuit Court of Appeals ruled in Smith's favor, finding that his lowest IQ score of 72, when adjusted for the test's standard error of measurement, could fall below 70—satisfying the first prong of the intellectual disability test. The courts then considered broader evidence of his adaptive functioning (how he navigates everyday life) and concluded he was intellectually disabled. Alabama appealed, arguing the lower courts misapplied the Supreme Court's prior rulings by focusing on a single low score rather than weighing all scores together.\n\nAt the Supreme Court, Alabama (petitioner) argued that courts must consider the cumulative effect of all IQ scores, that every reliable method of doing so shows Smith's IQ is above 70, and that Smith failed to meet his burden of proving intellectual disability by a preponderance of the evidence. Smith (respondent) argued the lower courts correctly followed precedent by considering the standard error of measurement and looking holistically at all evidence, including adaptive functioning.",
+  "legalQuestion": "Whether the Eighth Amendment permits states to require that a death-row prisoner prove intellectual disability by establishing that his true IQ is likely 70 or below based on the cumulative weight of multiple IQ scores, rather than allowing a single low score to satisfy the first prong of an intellectual disability claim.",
+  "significance": "This case determines how courts must handle multiple IQ scores when deciding whether a death-row prisoner is intellectually disabled under Atkins v. Virginia. The outcome will affect every future capital case where a defendant's IQ scores cluster near—but mostly above—the 70-point threshold, potentially making it easier or harder for prisoners to escape execution by claiming intellectual disability.\n\nThe case also clarifies the balance of power between states and federal courts in defining intellectual disability for Eighth Amendment purposes. It will resolve whether states may adopt specific methodologies (like using a median or composite score) that effectively foreclose intellectual disability claims when all scores are above 70, or whether federal constitutional law compels courts to always consider adaptive functioning evidence once any single score falls within the standard error of measurement of 70.",
+  "parties": [
+    {
+      "party": "John Q. Hamm, Commissioner, Alabama Department of Corrections",
+      "role": "petitioner",
+      "coreArgument": "The lower courts erred by focusing on Smith's single lowest IQ score and treating a mere possibility of intellectual disability as sufficient; Alabama law requires Smith to prove by a preponderance of the evidence that his true IQ is likely 70 or below. When all five IQ scores above 70 are considered together using any recognized method—median, composite, overlap, average, or highest score—Smith cannot meet that burden. States have constitutional discretion to require this cumulative analysis.",
+      "supportingPoints": [
+        "Every recognized method for aggregating multiple IQ scores—median, composite, overlap error range, average, and highest score—shows Smith's IQ is above 70.",
+        "An IQ score measures intellectual capacity, so the highest score best represents true ability, since tests can underestimate intelligence due to fatigue, distraction, or intentional malingering to avoid the death penalty.",
+        "Adaptive functioning evidence is too subjective, amorphous, and inconsistent to outweigh objective IQ data; courts lack the capacity to properly weigh such evidence against IQ scores.",
+        "The district court applied a 'possibility' standard rather than the 'preponderance of the evidence' standard required by Alabama law, and never stated that Smith's IQ was likely below 70."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Sotomayor challenged Overing to point to a single Alabama state court case that has ever required a defendant to prove intellectual disability using the statistical aggregation method he was advocating, and questioned whether his argument had even been raised in the lower courts.",
+          "context": "This went to whether Alabama's law actually supported petitioner's proposed rule or whether petitioner was asking the Court to create a new standard not grounded in existing state practice.",
+          "significance": "It revealed that the specific methodological framework Alabama was urging may not have been established in Alabama law or litigated below, undermining the petitioner's claim that the lower courts deviated from an existing rule."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Jackson pressed Overing on whether the 'cumulative effects' argument or the five specific reliable methods he described were actually presented to the district court or court of appeals, noting that the Court had recently summarily reversed a habeas grant where arguments were not raised below.",
+          "context": "This raised a party-presentation and waiver concern—courts generally should not be reversed for failing to apply a legal standard no one asked them to apply.",
+          "significance": "It exposed a potential procedural barrier to reversal and suggested that even if petitioner's proposed rule is correct, the Court may lack a clean vehicle to establish it in this case."
+        },
+        {
+          "justice": "Chief Justice Roberts",
+          "question": "Roberts asked whether Alabama would concede intellectual disability if the scores were 69, 68, 69, 69, and 75—and whether the state would still require a specific methodology even then.",
+          "context": "The Chief Justice was probing the consistency of Alabama's 'highest score wins' approach and whether it was principled or merely result-oriented.",
+          "significance": "It highlighted the apparent asymmetry in petitioner's argument: favoring the highest score when scores are above 70 but potentially requiring averaging when they are below, which the Chief Justice suggested appeared results-driven."
+        }
+      ]
+    },
+    {
+      "party": "United States (amicus curiae supporting Petitioner)",
+      "role": "amicus",
+      "coreArgument": "The courts below committed two discrete legal errors: they applied a 'possibility' standard instead of Alabama's 'likelihood' (preponderance) standard, and they allowed IQ evidence to drop out of the analysis entirely once a theoretical possibility of a sub-70 score was identified, without ever circling back to weigh the collective weight of all IQ scores against secondary evidence. States retain significant discretion under Atkins to define intellectual disability, and the Constitution does not require courts to open the door to adaptive functioning evidence whenever a single score's error range touches 70.",
+      "supportingPoints": [
+        "Even if a court considers secondary evidence like adaptive functioning, it must still return to the question of whether that evidence is strong enough to drag the collective weight of multiple IQ scores below Alabama's legal threshold.",
+        "The one-low-score rule—under which prong 1 is substantively satisfied merely by having one score whose error range touches 70—is wrong, and all parties now agree it is wrong.",
+        "State court decisions interpreting Hall and Moore do not count as a 'national consensus' for Eighth Amendment purposes because they reflect judicial interpretations of federal precedent, not independent moral judgments by the people through their legislatures.",
+        "If the collective error range of multiple IQ scores cannot realistically reach 70, a state may constitutionally decline to inject adaptive functioning analysis into the inquiry at all."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Kagan proposed a rule: Hall and Moore require that once any score dips to 70 or below (adjusted for SEM), the defendant must be given the opportunity to present adaptive functioning evidence, but the court can then still weigh that evidence against the many scores above 70 and find it unpersuasive.",
+          "context": "Kagan was trying to identify the minimum constitutional floor from Hall and Moore while preserving state discretion to find IQ scores ultimately dispositive.",
+          "significance": "Graver largely agreed with this framework but added that in extreme cases (e.g., ten scores of 85 and one of 72), the collective error range may not realistically reach 70, possibly excusing courts from opening the adaptive functioning door at all."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "Alito asked whether the decisions of state and lower federal courts interpreting Hall and Moore should count as evidence of a 'national consensus' for Eighth Amendment evolving-standards-of-decency analysis.",
+          "context": "National consensus among states is a key metric the Court uses to define the scope of Eighth Amendment protections.",
+          "significance": "Graver's answer—that misinterpretations of federal precedent do not reflect the moral endorsement of the people and thus should not count—was significant because it limited how Alabama's opponents could use lower court rulings to support a broader rule."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Gorsuch asked Graver to clearly identify the specific errors the district court and Eleventh Circuit made.",
+          "context": "Multiple justices had been frustrated by the difficulty of pinpointing the precise legal error, as opposed to a disagreement about factual conclusions.",
+          "significance": "Graver's two-error answer—wrong standard (possibility vs. likelihood) and analytical failure to weigh collective IQ evidence against secondary evidence—gave the Court a more concrete framework for potential reversal."
+        }
+      ]
+    },
+    {
+      "party": "Joseph Clifton Smith",
+      "role": "respondent",
+      "coreArgument": "The district court correctly followed this Court's precedents in Hall and Moore by considering Smith's IQ scores holistically, accounting for the standard error of measurement that brought multiple scores within the range of intellectual disability, and then evaluating a full record of adaptive functioning evidence. The lower courts did not apply a one-low-score rule but rather a holistic analysis consistent with both Supreme Court precedent and mainstream clinical practice.",
+      "supportingPoints": [
+        "Hall and Moore require courts to account for the standard error of measurement, which placed three of Smith's five scores within the clinically established range for intellectual disability, and then to consider additional evidence including adaptive functioning.",
+        "The American Association on Intellectual and Developmental Disabilities (AAIDD)—the leading professional organization in this field—states there is no single mandatory empirical method for evaluating intellectual disability; clinical judgment considering multiple factors is required.",
+        "Alabama's own expert, Dr. King, used the same holistic methodology the district court applied, evaluating IQ scores alongside adaptive functioning evidence rather than relying solely on numerical aggregation.",
+        "The district court's factual findings, crediting respondent's experts over the state's expert, are entitled to deference and do not reflect a legal error but rather a weighing of competing expert testimony."
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Jackson noted that Alabama's own expert used the same holistic methodology the district court applied—looking at IQ scores and then adaptive functioning—so Alabama could not credibly argue that this methodology was legally erroneous.",
+          "context": "If Alabama's own expert followed the same approach Alabama now calls legally flawed, it undercuts the argument that the district court made a legal error rather than a factual determination the state simply disagrees with.",
+          "significance": "This was one of the sharpest challenges to petitioner's position and helped frame respondent's argument that the dispute is about factual findings, not legal error."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Sotomayor pointed out that Hall involved nine IQ scores between 71 and 80, and the Court still remanded for consideration of adaptive functioning—suggesting the existing framework already accounts for multiple above-70 scores without requiring the new aggregation methodology Alabama sought.",
+          "context": "If Hall itself arose from a multiple-score case with scores all above 70 and still required adaptive functioning analysis, Alabama's proposed rule may conflict with existing precedent.",
+          "significance": "This reinforced respondent's position that Hall and Moore already provide the governing framework and that no new rule is needed or appropriate."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "Kagan asked whether Hall and Moore establish that when any score's SEM reaches 70, the defendant must at least be given the opportunity to present adaptive functioning evidence, even if that evidence can ultimately be outweighed by multiple above-70 scores.",
+          "context": "This framing—opportunity to present evidence, not automatic victory—was potentially favorable to respondent because it preserved the pathway through which Smith prevailed.",
+          "significance": "Kagan's framing suggested a middle-ground rule that would affirm the district court's process even if the ultimate outcome might be revisited on remand."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "atkins-v-virginia",
+      "caseName": "Atkins v. Virginia",
+      "citation": "536 U.S. 304",
+      "reasonCited": "This is the foundational case establishing that executing intellectually disabled persons violates the Eighth Amendment's prohibition on cruel and unusual punishment; the entire dispute centers on how states may implement Atkins's mandate.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "hall-v-florida",
+      "caseName": "Hall v. Florida",
+      "citation": "572 U.S. 701",
+      "reasonCited": "Hall is at the center of this case because it prohibited states from using a rigid IQ cutoff that ignores the standard error of measurement, and both sides dispute what Hall requires when there are multiple IQ scores.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "moore-v-texas",
+      "caseName": "Moore v. Texas",
+      "citation": "581 U.S. 1",
+      "reasonCited": "Moore reinforced Hall's requirements and held that state courts may not use outdated clinical standards or stereotype-based reasoning to discount intellectual disability claims; it is cited as confirming that courts must consider adaptive functioning evidence once the SEM threshold is met.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "ex-parte-smith",
+      "caseName": "Ex Parte Smith",
+      "citation": "",
+      "reasonCited": "Petitioner cited this Alabama Supreme Court case as evidence that Alabama's pre-Hall case law treated an IQ score of 72 as seriously undermining an Atkins claim, supporting the argument that Alabama law makes IQ the primary and potentially dispositive criterion.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "clark-v-sweeney",
+      "caseName": "Clark v. Sweeney",
+      "citation": "",
+      "reasonCited": "Justice Jackson invoked this very recent case—in which the Court summarily reversed a habeas grant based on an argument not raised below—to question whether the Court could reverse here on arguments Alabama never presented to the lower courts.",
+      "citedBy": "court"
+    },
+    {
+      "caseSlug": "byrd-v-state",
+      "caseName": "Byrd v. State",
+      "citation": "",
+      "reasonCited": "Petitioner cited this Alabama case as authority for the proposition that Alabama law requires a defendant to prove by a preponderance of the evidence that his IQ is 70 or below.",
+      "citedBy": "petitioner"
+    }
+  ],
+  "legalTermsUsed": [
+    "intellectual-disability-atkins-claim",
+    "standard-error-of-measurement-sem",
+    "adaptive-functioning",
+    "preponderance-of-the-evidence",
+    "eighth-amendment",
+    "federal-habeas-corpus",
+    "evolving-standards-of-decency",
+    "composite-score",
+    "one-low-score-rule",
+    "prong-1-prong-2-intellectual-disability"
+  ],
+  "processedAt": "2026-02-24T07:43:40.409Z"
+}
