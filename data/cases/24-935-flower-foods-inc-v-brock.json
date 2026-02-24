@@ -1,0 +1,93 @@
+{
+  "slug": "24-935-flower-foods-inc-v-brock",
+  "caseNumber": "24-935",
+  "title": "Flower Foods, Inc. v. Brock",
+  "termYear": "2025",
+  "argumentDate": "2026-03-25",
+  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/24-935.html",
+  "docketStatus": "upcoming",
+  "backgroundAndFacts": "Angelo Brock worked as a distributor for Flower Foods, Inc., a large commercial bakery. Like many such distributors, Brock was classified as an independent contractor rather than an employee. He operated under a distributor agreement that required him to resolve any disputes through binding arbitration rather than in court. Brock purchased a route from Flower Foods and was responsible for delivering bread and other baked goods to retail grocery stores and similar locations within a defined territory in Colorado.\n\nBrock filed a lawsuit against Flower Foods in federal court, arguing he had been misclassified as an independent contractor and was actually an employee entitled to various wage protections. Flower Foods moved to compel arbitration under the Federal Arbitration Act (FAA), which generally requires courts to enforce arbitration agreements. Brock opposed, arguing that he fell within a statutory exemption in Section 1 of the FAA that excludes 'contracts of employment of seamen, railroad employees, or any other class of workers engaged in foreign or interstate commerce' from the FAA's coverage.\n\nThe federal district court initially sided with Flower Foods, but the Tenth Circuit Court of Appeals reversed, ruling that Brock's work distributing goods that had crossed state lines made him part of the 'last leg' of an interstate journey, qualifying him as a transportation worker exempt from the FAA. The Tenth Circuit concluded that Brock need not personally cross state lines—it was enough that the goods he delivered had traveled in interstate commerce. Flower Foods petitioned the Supreme Court, which agreed to hear the case.",
+  "legalQuestion": "Whether workers who distribute baked goods to retail stores qualify as 'transportation workers engaged in foreign or interstate commerce' under Section 1 of the Federal Arbitration Act, thereby exempting them from mandatory arbitration agreements.",
+  "significance": "This case has major implications for the gig economy and the millions of workers classified as independent contractors who deliver goods, food, or packages for large companies. If the Supreme Court rules broadly in favor of Brock, many last-mile delivery workers—including those who deliver for Amazon, grocery chains, or food distributors—could escape mandatory arbitration clauses and instead bring their claims in court, often as class actions. This would make it significantly easier for workers to challenge misclassification and wage theft.\n\nConversely, a ruling for Flower Foods could preserve mandatory arbitration for most independent contractor distributors, keeping their disputes out of court and in private arbitration proceedings. Companies that rely on independent contractor distribution networks have a strong financial interest in the outcome, as the ability to enforce arbitration agreements limits their exposure to large class-action lawsuits. The case also requires the Court to clarify the scope of the FAA's transportation worker exemption, a question that has divided lower courts for years and affects a rapidly growing sector of the American economy.",
+  "parties": [
+    {
+      "party": "Flower Foods, Inc., et al.",
+      "role": "petitioner",
+      "coreArgument": "Brock does not qualify for the FAA's Section 1 exemption because he is a local distributor whose work is confined to a defined geographic territory and does not personally engage in interstate transportation. The exemption should be limited to workers in industries traditionally understood as transportation—like railroads and shipping—not local delivery workers whose goods merely originated out of state.",
+      "supportingPoints": [
+        "The Section 1 exemption applies only to workers in the 'transportation industry' whose job is to move goods across state lines, not local distributors operating fixed routes within a single state.",
+        "Brock never personally crossed state lines; he picked up baked goods from a local warehouse and delivered them to nearby retail stores, making his work purely local in character.",
+        "The Tenth Circuit's 'last leg' theory stretches the exemption far beyond its original meaning, which was intended to cover workers like seamen and railroad workers who physically move goods between states.",
+        "Extending the exemption to all workers who happen to deliver goods that once traveled in interstate commerce would swallow the FAA's general rule favoring arbitration."
+      ],
+      "keyExchanges": []
+    },
+    {
+      "party": "Angelo Brock",
+      "role": "respondent",
+      "coreArgument": "Brock is engaged in interstate commerce because he plays an integral role in the final delivery of goods that traveled across state lines, making him a transportation worker exempt from the FAA's mandatory arbitration requirement. The text and history of Section 1 support a reading that covers workers who, like Brock, are part of a continuous interstate commercial chain.",
+      "supportingPoints": [
+        "The Supreme Court's decision in Circuit City Stores v. Adams established that the Section 1 exemption covers any 'class of workers engaged in foreign or interstate commerce,' not just those in specific named industries.",
+        "Brock's work is the final link in an unbroken chain of interstate commerce—goods manufactured out of state pass through a distribution network that ends with Brock's deliveries to retail stores.",
+        "Limiting the exemption only to workers who physically cross state lines ignores modern commercial realities, where goods routinely travel through multiple workers' hands before reaching consumers.",
+        "Denying the exemption would allow companies to use mandatory arbitration to shield themselves from accountability for labor law violations, undermining the rights of workers who cannot afford individual arbitration."
+      ],
+      "keyExchanges": []
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "circuit-city-stores-inc-v-adams",
+      "caseName": "Circuit City Stores, Inc. v. Adams",
+      "citation": "532 U.S. 105",
+      "reasonCited": "This is the foundational precedent defining the scope of the FAA Section 1 exemption; the Court held the exemption applies to transportation workers broadly but limited its reach, and both parties rely on its reasoning to support their interpretations.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "southwest-airlines-co-v-saxon",
+      "caseName": "Southwest Airlines Co. v. Saxon",
+      "citation": "596 U.S. 450",
+      "reasonCited": "The Court's most recent interpretation of the Section 1 exemption, holding that ramp supervisors who load and unload cargo on planes that travel interstate are transportation workers exempt from the FAA, providing a framework both sides use to argue about Brock's status.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "new-prime-inc-v-oliveira",
+      "caseName": "New Prime Inc. v. Oliveira",
+      "citation": "586 U.S. 105",
+      "reasonCited": "Established that the Section 1 exemption applies to independent contractors as well as employees, directly relevant because Brock was classified as an independent contractor by Flower Foods.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "shanks-v-delmarva-chicken-assn",
+      "caseName": "Shanks v. Delmarva Chicken Ass'n",
+      "citation": "",
+      "reasonCited": "A lower court decision cited for the circuit split on whether local delivery workers who transport goods that originated in interstate commerce qualify for the Section 1 exemption, illustrating the conflicting approaches across the federal courts.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "moses-h-cone-memorial-hospital-v-mercury-construction-corp",
+      "caseName": "Moses H. Cone Memorial Hospital v. Mercury Construction Corp.",
+      "citation": "460 U.S. 1",
+      "reasonCited": "Established the strong federal policy favoring arbitration under the FAA, which petitioner relies on to argue that exemptions to the FAA should be construed narrowly.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "epic-systems-corp-v-lewis",
+      "caseName": "Epic Systems Corp. v. Lewis",
+      "citation": "584 U.S. 497",
+      "reasonCited": "Reaffirmed that the FAA requires enforcement of arbitration agreements as written, including class action waivers, underscoring the stakes of whether the Section 1 exemption applies to workers like Brock.",
+      "citedBy": "petitioner"
+    }
+  ],
+  "legalTermsUsed": [
+    "federal-arbitration-act-faa",
+    "section-1-exemption",
+    "interstate-commerce",
+    "independent-contractor",
+    "mandatory-arbitration",
+    "class-action",
+    "last-mile-delivery",
+    "certiorari-cert"
+  ],
+  "processedAt": "2026-02-24T08:42:52.544Z"
+}

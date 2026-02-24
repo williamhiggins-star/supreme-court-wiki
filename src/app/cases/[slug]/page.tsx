@@ -45,15 +45,25 @@ export default async function CasePage({
             </p>
           </div>
           <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
-            <span>Argued {formatDate(c.argumentDate)}</span>
-            <a
-              href={c.transcriptUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              Official Transcript ↗
-            </a>
+            {c.docketStatus === "upcoming" ? (
+              <span className="text-blue-600 font-medium">
+                Oral argument scheduled for {formatDate(c.argumentDate)} at 10:00 a.m. ET
+              </span>
+            ) : (
+              <>
+                <span>Argued {formatDate(c.argumentDate)}</span>
+                {c.transcriptUrl && (
+                  <a
+                    href={c.transcriptUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Official Transcript ↗
+                  </a>
+                )}
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -71,6 +81,12 @@ export default async function CasePage({
 
         {/* Parties */}
         <Section title="The Arguments">
+          {c.docketStatus === "upcoming" && (
+            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 text-sm text-blue-800">
+              Oral argument is scheduled for {formatDate(c.argumentDate)} at 10:00 a.m. ET.
+              The positions below reflect each party&rsquo;s written briefs. This section will be updated following argument.
+            </div>
+          )}
           <div className="space-y-8">
             {c.parties.map((party) => (
               <div
