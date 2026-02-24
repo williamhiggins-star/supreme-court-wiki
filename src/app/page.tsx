@@ -80,7 +80,7 @@ export default function HomePage() {
           <p className="mt-5 text-base text-gray-600 leading-relaxed">
             This site tracks upcoming and recent oral arguments before the United States Supreme Court.
             Case information is compiled directly from official Supreme Court records, including transcripts, docket filings, and published opinions.
-            Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis — they should not be treated as legal advice or authoritative legal commentary.
+            Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.
             Click any case to read a plain-English breakdown of the facts, the legal question, and each side&rsquo;s argument.
           </p>
         </div>
