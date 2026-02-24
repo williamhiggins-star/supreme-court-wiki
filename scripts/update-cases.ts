@@ -107,6 +107,17 @@ async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]>
 // Step 2 — Process new transcripts
 // ---------------------------------------------------------------------------
 
+function isUpcomingCase(slug: string): boolean {
+  try {
+    const data = JSON.parse(
+      fs.readFileSync(path.join(CASES_DIR, `${slug}.json`), "utf-8")
+    ) as CaseSummary;
+    return data.docketStatus === "upcoming";
+  } catch {
+    return false;
+  }
+}
+
 async function processNewTranscripts(
   client: Anthropic,
   transcripts: TranscriptEntry[],
@@ -117,9 +128,12 @@ async function processNewTranscripts(
 
   for (const { caseNumber, transcriptUrl } of transcripts) {
     const existing = existingSlugForCaseNumber(caseNumber, existingSlugs);
-    if (existing) {
+    if (existing && !isUpcomingCase(existing)) {
       console.log(`  Skipping ${caseNumber} (already processed as ${existing})`);
       continue;
+    }
+    if (existing) {
+      console.log(`\nTranscript now available for upcoming case: ${caseNumber} — upgrading to argued`);
     }
 
     console.log(`\nProcessing new transcript: ${caseNumber}`);
@@ -138,6 +152,18 @@ async function processNewTranscripts(
 
       const result = buildResult(raw, caseNumber, termYear, transcriptUrl, "petition");
       saveResult(result, console.log);
+
+      // If this case was previously "upcoming", remove the old stub file
+      // (slug may differ if the title was slightly different in the docket page)
+      const oldSlug = existingSlugForCaseNumber(caseNumber, existingSlugs);
+      if (oldSlug && oldSlug !== result.case.slug) {
+        const oldFile = path.join(CASES_DIR, `${oldSlug}.json`);
+        if (fs.existsSync(oldFile)) {
+          fs.unlinkSync(oldFile);
+          console.log(`  Removed old upcoming stub: ${oldSlug}.json`);
+        }
+        existingSlugs.delete(oldSlug);
+      }
 
       // Add to known slugs so we don't process it again in this run
       existingSlugs.add(result.case.slug);
@@ -244,39 +270,140 @@ async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
   return deduped;
 }
 
-function addUpcomingCases(
+const SCOTUS_DOCKET_BASE =
+  "https://www.supremecourt.gov/docket/docketfiles/html/public";
+
+async function fetchDocketPage(caseNumber: string): Promise<string> {
+  const url = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) throw new Error(`Docket fetch failed: HTTP ${res.status}`);
+  const html = await res.text();
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/\s{2,}/g, " ")
+    .trim()
+    .slice(0, 20_000);
+}
+
+const UPCOMING_SYSTEM = `You are a legal expert who makes US Supreme Court cases accessible to non-lawyers.
+You have been given docket information about a case accepted for oral argument but not yet argued.
+Generate a structured case summary based on the available information from petitions and briefs.
+You always respond with valid JSON matching the exact schema provided. Do not include any text outside the JSON object.`;
+
+function buildUpcomingPrompt(
+  caseNumber: string,
+  argumentDate: string,
+  termYear: string,
+  docketText: string
+): string {
+  return `Analyze this upcoming Supreme Court case and return a JSON object with EXACTLY this structure.
+Leave keyExchanges as an empty array for all parties.
+
+{
+  "title": "Short case name, e.g. 'Smith v. Jones'",
+  "argumentDate": "${argumentDate}",
+  "legalQuestion": "One sentence: the core legal question before the Court",
+  "backgroundAndFacts": "2-3 paragraphs in plain English for a non-lawyer",
+  "significance": "1-2 paragraphs: why this case matters",
+  "parties": [
+    {
+      "party": "Party name",
+      "role": "petitioner | respondent | amicus",
+      "coreArgument": "2-3 sentences summarizing their written position",
+      "supportingPoints": ["Up to 4 key points from their briefs"],
+      "keyExchanges": []
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseName": "Full case name",
+      "citation": "e.g. '410 U.S. 113'",
+      "year": 1973,
+      "reasonCited": "1-2 sentences: why it is relevant",
+      "citedBy": "petitioner | respondent | court | multiple",
+      "summary": "1-2 sentences: what this earlier case decided"
+    }
+  ],
+  "legalTerms": [
+    {
+      "term": "The legal term",
+      "definition": "Plain-English definition (2-3 sentences)",
+      "examples": ["One example from this case"],
+      "relatedTerms": ["1-2 related terms"]
+    }
+  ]
+}
+
+Rules:
+- keyExchanges MUST be [] for every party
+- Include at most 2 parties (petitioner and respondent)
+- Include at most 6 citedPrecedents
+- Include at most 8 legalTerms
+- Return only the JSON object, no other text
+
+Case number: ${caseNumber}
+Scheduled argument: ${argumentDate} at 10:00 a.m. ET
+Term year: ${termYear}
+
+DOCKET INFORMATION:
+${docketText}`;
+}
+
+async function processUpcomingCases(
+  client: Anthropic,
   upcoming: UpcomingCase[],
   existingSlugs: Set<string>
-): number {
+): Promise<number> {
   let added = 0;
 
-  for (const { caseNumber, title, argumentDate, termYear } of upcoming) {
+  for (const { caseNumber, argumentDate, termYear } of upcoming) {
     const existing = existingSlugForCaseNumber(caseNumber, existingSlugs);
     if (existing) continue; // already in data
 
-    const slug = toSlug(`${caseNumber}-${title}`);
-    const caseData: CaseSummary = {
-      slug,
-      caseNumber,
-      title,
-      termYear,
-      argumentDate,
-      transcriptUrl: "",
-      docketStatus: "upcoming",
-      backgroundAndFacts: "",
-      legalQuestion: "",
-      significance: "",
-      parties: [],
-      citedPrecedents: [],
-      legalTermsUsed: [],
-      processedAt: new Date().toISOString(),
-    };
+    console.log(`\nProcessing new upcoming case: ${caseNumber} (${argumentDate})`);
 
-    const filePath = path.join(CASES_DIR, `${slug}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
-    existingSlugs.add(slug);
-    console.log(`  + upcoming: ${title} (${argumentDate})`);
-    added++;
+    try {
+      const docketText = await fetchDocketPage(caseNumber);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response: any = await withRetry(() =>
+        client.messages.create({
+          model: process.env.MODEL ?? "claude-sonnet-4-6",
+          max_tokens: 6000,
+          system: UPCOMING_SYSTEM,
+          messages: [
+            {
+              role: "user",
+              content: buildUpcomingPrompt(caseNumber, argumentDate, termYear, docketText),
+            },
+          ],
+        })
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const textBlock = response.content.find((b: any) => b.type === "text");
+      if (!textBlock) throw new Error("No text in response");
+
+      const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("No JSON in response");
+
+      const raw = JSON.parse(jsonMatch[0]);
+      const docketUrl = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
+      const result = buildResult(raw, caseNumber, termYear, docketUrl, "upcoming");
+      saveResult(result, console.log);
+
+      existingSlugs.add(result.case.slug);
+      added++;
+    } catch (err) {
+      console.error(`  Error processing upcoming case ${caseNumber}: ${err}`);
+    }
   }
 
   return added;
@@ -396,7 +523,7 @@ async function main() {
 
   // Step 3: Upcoming arguments
   const upcoming = await fetchUpcomingArguments();
-  const newUpcoming = addUpcomingCases(upcoming, existingSlugs);
+  const newUpcoming = await processUpcomingCases(client, upcoming, existingSlugs);
 
   // Step 4: Slip opinions
   const opinions = await fetchSlipOpinions(termYear);
