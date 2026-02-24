@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "The Supreme Court",
+  title: "Supreme Court Oral Arguments Tracker",
   description:
-    "Plain-English summaries of US Supreme Court oral arguments, with explanations of legal terms and precedent cases.",
+    "Track upcoming and recent US Supreme Court oral arguments. Official case information compiled from the Supreme Court, with AI-assisted summaries to guide research and analysis.",
 };
 
 export default function RootLayout({
