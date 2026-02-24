@@ -1,0 +1,147 @@
+{
+  "slug": "24-1056-rico-v-united-states",
+  "caseNumber": "24-1056",
+  "title": "Rico v. United States",
+  "termYear": "2025",
+  "argumentDate": "2025-11-03",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-1056_o7kq.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Isabel Rico was sentenced to a term of supervised release following imprisonment for a federal offense. She absconded from supervision — meaning she fled and could not be located by her probation officer — for approximately 37 months. During that time, she committed a state drug offense for which she was convicted and sentenced to state prison. A federal warrant was issued during her original supervised release term based on her absconding.\n\nThe critical question is what happens to crimes committed after her original supervised release term would have expired if the clock had kept running. Under the government's view, the supervised release clock stopped when she absconded, so her conditions extended beyond the original term, and crimes committed during the extended period count as violations of supervised release. This resulted in a higher sentencing guidelines range at her revocation hearing. Under Rico's view, the clock kept running, so crimes committed after the original term expired are not supervised release violations — though they can still be prosecuted independently and considered at sentencing.\n\nBoth sides agree Rico should face consequences for absconding and that a revocation hearing can take place because a warrant issued during the original term under Section 3583(i). The narrow dispute is whether the later crimes elevate her guidelines range as supervised release violations or are merely factors a judge may consider in exercising sentencing discretion.",
+  "legalQuestion": "Whether the term of supervised release is tolled (paused) when a supervisee absconds from supervision, thereby extending the period during which the person can be found to have violated the conditions of supervised release.",
+  "significance": "This case addresses a circuit split on whether federal courts can apply a judicially-created 'fugitive tolling' doctrine to supervised release — effectively extending the period of court-ordered conditions beyond the time specified in the judgment when a person absconds. The outcome affects how federal courts calculate sentencing guidelines at revocation hearings for thousands of individuals who abscond from supervised release each year.\n\nThe case also raises fundamental questions about the limits of judicial power to create common-law doctrines that extend punishment without explicit statutory authorization. If the Court rejects fugitive tolling, it reinforces that Congress must explicitly authorize extensions of criminal supervision periods. If the Court adopts it, courts would need to resolve subsidiary questions about what constitutes 'abscondment' and when tolling begins — areas where circuits already disagree.",
+  "parties": [
+    {
+      "party": "Isabel Rico",
+      "role": "petitioner",
+      "coreArgument": "There is no statutory basis for fugitive tolling in the Sentencing Reform Act. Congress deliberately chose revocation — not tolling — as the mechanism to address absconding from supervised release, and it is contradictory to say Rico was simultaneously not serving her sentence yet still violating its conditions.",
+      "supportingPoints": [
+        "Congress repealed the parole fugitive-tolling statute (Section 4210(c)) when it enacted the SRA but created no equivalent for supervised release, while retaining carceral tolling for prisoners",
+        "Section 3583(i) assumes the supervised release term will expire and provides jurisdiction for revocation hearings only when a warrant issues during the original term — inconsistent with the government's position that the term never ends",
+        "The 1983 parole regulation establishing fugitive tolling was based on a 1976 statute and was prospective only, rebutting the claim of a longstanding common-law tradition",
+        "Abscondment is undefined in the statute, and courts have inconsistently defined it — unlikely Congress intended this nebulous concept to govern when supervised release ends"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Asked the government where in the statute its fugitive-tolling solution comes from, noting that the statute provides a detailed remedy for people like Rico through revocation and new sentencing.",
+          "context": "This challenged the government to point to specific statutory text supporting its position.",
+          "significance": "Highlighted the absence of any explicit statutory authorization for fugitive tolling in supervised release, which is the central weakness of the government's case."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Questioned whether supervised release really operates on a 'credit' system, noting that when release is revoked, the court doesn't calculate remaining time based on time already served.",
+          "context": "This challenged the government's framing that the supervisee gets unearned 'credit' for time spent absconding.",
+          "significance": "Undermined the government's core rationale by showing supervised release is needs-based, not a credit system, making the tolling framework a poor fit."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Noted that the government's concern about supervisees running out the clock is really about resource constraints, and Congress has already amended Section 3583(i) once and could do so again.",
+          "context": "This addressed whether the Court should create a common-law doctrine to solve a problem Congress could fix legislatively.",
+          "significance": "Suggested the Court should not invent a whole new doctrine with unresolved subsidiary questions when Congress is capable of addressing the issue directly."
+        }
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "A supervisee cannot be discharging her term of supervised release while absconding from supervision, because supervised release inherently requires actual supervision. Traditional fugitive-tolling principles, consistent with the statutory text and pre-SRA case law, mean the clock stops when a person deliberately evades supervision.",
+      "supportingPoints": [
+        "Sections 3601 and 3603 require that a supervisee be supervised by a probation officer, and supervision is impossible when the person's whereabouts are unknown",
+        "For the first 10 years of the SRA, Congress provided no warrant-extension mechanism (3583(i) wasn't enacted until 1994), suggesting Congress assumed traditional fugitive tolling would apply",
+        "Without tolling, supervisees could defeat the supervision component of their judgment entirely by absconding and waiting out the term",
+        "Abscondment tolling requires deliberate evasion of supervision (a mens rea element), distinguishing it from situations like a comatose supervisee or lazy probation officer"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Argued this is not really 'tolling' but an 'extension' rule, because the government wants the conditions to continue applying during the abscondment period — true tolling would mean neither the clock runs nor the obligations apply.",
+          "context": "This exposed an internal tension in the government's position.",
+          "significance": "Revealed that the government wants something more than traditional tolling — it wants the clock to stop but the conditions to keep binding, which is conceptually inconsistent."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Asked how the government's position doesn't amount to extending punishment beyond the statutory five-year maximum for supervised release through judicial common law.",
+          "context": "This raised constitutional and statutory concerns about the outer limits of supervised release terms.",
+          "significance": "Suggested the government's approach may effectively impose punishment beyond what Congress authorized, a serious constitutional concern."
+        },
+        {
+          "justice": "Chief Justice Roberts",
+          "question": "Asked whether finding that a supervisee violated conditions during a period when the term wasn't running is like saying an escaped prisoner violated the prison dress code — a kind of double counting.",
+          "context": "This highlighted the logical tension in the government's position.",
+          "significance": "Showed skepticism about holding someone accountable for violating the conditions of a sentence the government simultaneously says they weren't serving."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "esteras-v-united-states",
+      "caseName": "Esteras v. United States",
+      "citation": "",
+      "reasonCited": "Cited by the government to argue that courts at revocation hearings should consider all forward-looking interests that criminal sentences serve, including deterrence and incapacitation, supporting the relevance of post-abscondment conduct.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "anderson-v-corall",
+      "caseName": "Anderson v. Corall",
+      "citation": "",
+      "reasonCited": "Referenced by the government as part of the pre-SRA case law recognizing that interruptions of supervision caused by the supervisee could toll the running of the supervision term.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "zerbst-v-kidwell",
+      "caseName": "Zerbst v. Kidwell",
+      "citation": "",
+      "reasonCited": "Cited alongside Anderson v. Corall as part of the pre-SRA precedent supporting the principle that supervision terms are tolled when the supervisee's own conduct makes supervision impossible.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "cornell-johnson-referenced-as-cornell-johnson",
+      "caseName": "Cornell Johnson (referenced as 'Cornell Johnson')",
+      "citation": "",
+      "reasonCited": "Cited by the government to support the argument that this Court has recognized supervised release as a system of post-confinement monitoring and assistance that requires actual supervision.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "janvier-second-circuit",
+      "caseName": "Janvier (Second Circuit)",
+      "citation": "",
+      "reasonCited": "Cited to show that courts have understood Section 3583(i) as addressing only a narrow subset of late-breaking violations near the end of the supervised release term, not as a general fugitive-tolling provision.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "united-states-v-swick-fifth-circuit",
+      "caseName": "United States v. Swick (Fifth Circuit)",
+      "citation": "",
+      "reasonCited": "Cited as a real-world example where the 3583(i) warrant mechanism failed because a supervisee completed a state prison term and the federal government was not notified, so no warrant issued during the supervised release term.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "ignacio-juarez-ninth-circuit",
+      "caseName": "Ignacio Juarez (Ninth Circuit)",
+      "citation": "",
+      "reasonCited": "Cited by the government to argue that the Ninth Circuit has clarified that abscondment requires a pattern of conduct that prevents supervision, not merely missing a single appointment.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "crane-ninth-circuit",
+      "caseName": "Crane (Ninth Circuit)",
+      "citation": "",
+      "reasonCited": "Cited by the government as another real-world example where the 3583(i) mechanism was insufficient, because a supervisee left a residential treatment program and the departure was not timely reported to the probation officer.",
+      "citedBy": "respondent"
+    }
+  ],
+  "legalTermsUsed": [
+    "supervised-release",
+    "fugitive-tolling",
+    "abscondment",
+    "revocation",
+    "sentencing-reform-act-of-1984",
+    "section-3583i",
+    "sentencing-guidelines",
+    "carceral-tolling",
+    "parole",
+    "departure"
+  ],
+  "processedAt": "2026-02-23T21:47:50.358Z"
+}

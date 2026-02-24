@@ -1,0 +1,176 @@
+{
+  "slug": "24-171-cox-communications-v-sony-music-entertainment",
+  "caseNumber": "24-171",
+  "title": "Cox Communications v. Sony Music Entertainment",
+  "termYear": "2025",
+  "argumentDate": "2025-12-01",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-171_ap6c.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Cox Communications, a major ISP serving millions of homes and businesses, received approximately 5.7 million notices from copyright holders identifying subscribers engaged in copyright infringement through peer-to-peer file sharing. Cox created an anti-infringement program that sent hundreds of warnings daily and suspended accounts roughly 67,000 times during the relevant period, which it claims stopped infringement by 98% of accused infringers. However, about 1% of its subscriber base continued to infringe, and Cox did not terminate many repeat offenders.\n\nSony Music and other major record labels sued Cox for contributory copyright infringement, arguing that Cox knowingly continued providing Internet service to habitual infringers. Internal Cox emails showed employees expressing contempt for the DMCA, including one stating 'F the DMCA.' A jury found Cox liable and awarded a billion-dollar verdict. The Fourth Circuit affirmed, holding that Cox's knowledge that subscribers were substantially certain to continue infringing was sufficient for contributory liability.\n\nCox appealed, arguing that knowledge alone cannot support contributory liability and that continuing to provide generic Internet service is not an affirmative culpable act. The case raises fundamental questions about when providers of basic communications infrastructure can be held secondarily liable for their users' copyright infringement.",
+  "legalQuestion": "What standard of culpability must be met for an Internet Service Provider to be held liable for contributory copyright infringement when it continues providing service to subscribers known to be infringing?",
+  "significance": "This case could fundamentally reshape the relationship between copyright holders and Internet Service Providers. If Cox wins, ISPs would have little legal incentive to police copyright infringement on their networks, potentially rendering the DMCA's safe harbor provisions meaningless since there would be no underlying liability to seek shelter from. If Sony wins, ISPs could face massive liability for failing to terminate repeat infringers, raising concerns about cutting off Internet access for entire universities, hotels, or regional networks based on the actions of a few users.\n\nThe decision will also clarify the standard for secondary liability across multiple areas of law, as the Court must reconcile its recent decisions in Twitter v. Taamneh and Smith & Wesson with longstanding copyright doctrines from Sony and Grokster. The ruling will define whether 'purpose' or mere 'knowledge with substantial certainty' is required for contributory infringement, affecting not just copyright but potentially all forms of aiding-and-abetting liability in civil cases.",
+  "parties": [
+    {
+      "party": "Cox Communications, Inc.",
+      "role": "petitioner",
+      "coreArgument": "Providing generic Internet service to the general public on the same terms cannot give rise to contributory copyright liability, even with knowledge that some subscribers are infringing. Contributory liability requires affirmative culpable conduct demonstrating a purpose to foster infringement, not mere non-feasance in failing to terminate users.",
+      "supportingPoints": [
+        "Twitter v. Taamneh explicitly held there is no duty for communication-providing services to terminate customers after discovering illegal use",
+        "Cox's anti-infringement program sent hundreds of daily warnings, suspended accounts 67,000 times, and stopped 98% of accused infringers—far exceeding any 'simple measures' test",
+        "Most top repeat-infringer accounts were regional ISPs, universities, and hotels serving thousands—termination would cut off entire communities from the Internet",
+        "The DMCA safe harbor was enacted when liability rules were unknown and Congress directed that failure to satisfy it 'shall not adversely bear on liability'"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "If a customer tells Cox they're addicted to infringing, have been sued before, and Cox is their only Internet option, would selling to them still create no liability?",
+          "context": "This hypothetical tested the outer limits of Cox's position that knowledge alone is never sufficient.",
+          "significance": "Rosenkranz confirmed no liability even in this extreme scenario, revealing the breadth of Petitioners' position."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "If you win, what would the DMCA safe harbor provision mean? It would seem to do nothing.",
+          "context": "This challenged whether eliminating ISP liability would render Congress's safe harbor scheme pointless.",
+          "significance": "Rosenkranz conceded the safe harbor would effectively be doing nothing under his proposed rule, a significant admission."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "The jury instructions here didn't contain purpose, just knowledge—so shouldn't we reverse on that narrow basis?",
+          "context": "Gorsuch explored the narrowest possible grounds for reversal without broad rulemaking.",
+          "significance": "Rosenkranz agreed with this syllogism, revealing a potential narrow path the Court could take."
+        }
+      ]
+    },
+    {
+      "party": "United States (Solicitor General)",
+      "role": "amicus",
+      "coreArgument": "Secondary liability in copyright law requires acting with the purpose of facilitating infringement. Because Cox provided the same generic Internet service to infringers and non-infringers alike, there is no basis for inferring such a purpose, and the case should be reversed.",
+      "supportingPoints": [
+        "Both copyright law (Grokster) and general aiding-and-abetting law (Twitter, Smith & Wesson) require that a secondary actor participate in wrongdoing as something he 'wishes to bring about'",
+        "Patent law codifies only two bases for secondary liability—inducement and selling specially suited devices—neither of which encompasses selling generic multi-use services",
+        "The distinction between targeted assistance and provision of general-purpose technology is critical: selling to the mass public doesn't support inferring purpose",
+        "Terminating all Internet access based on infringement is extremely overbroad given the centrality of the Internet and First Amendment concerns"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Barrett",
+          "question": "Under your theory, would Twitter not be liable for facilitating child trafficking if it knew a particular account was being used for that purpose?",
+          "context": "Barrett tested whether the government's strict purpose standard would produce troubling results in extreme cases.",
+          "significance": "Stewart confirmed no secondary liability even in that scenario, though noted direct liability theories could apply when infringing content actually appears on a platform."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "At common law there were many ways to infer purpose—are you asking us to limit it to the two patent law categories for ISPs?",
+          "context": "Gorsuch probed whether the government was asking for an unusually narrow rule specific to ISPs.",
+          "significance": "Stewart confirmed that for ISPs providing generic services to mass audiences, liability should be limited essentially to the patent law categories."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Aren't you worried that a holding this broad would be a disincentive for ISPs to provide any aid to copyright holders?",
+          "context": "Sotomayor challenged the practical consequences of eliminating ISP liability.",
+          "significance": "Stewart acknowledged 'not much economic incentive would be left' but questioned whether that was a bad thing, given the overbreadth of terminating Internet access."
+        }
+      ]
+    },
+    {
+      "party": "Sony Music Entertainment",
+      "role": "respondent",
+      "coreArgument": "A classic form of material contribution is providing the means of infringement to a specific known infringer with knowledge that infringement is substantially certain to follow. Cox knowingly continued providing service to habitual infringers in perpetuity, which satisfies the intent standard under common law when combined with its demonstrated contempt for the DMCA.",
+      "supportingPoints": [
+        "The Restatement (Second) of Torts Section 8A recognizes two ways to show intent: purpose/design, or acting with knowledge that results are substantially certain—both satisfy intentional tort requirements",
+        "Inwood Laboratories established that providing the means of infringement to a specific known infringer creates secondary liability in trademark law, which copyright law should follow",
+        "Adopting Cox's rule would render the DMCA safe harbor a dead letter and eliminate incentives for ISPs and copyright holders to cooperate",
+        "95% of the relevant accounts were residential customers, undermining Cox's argument that termination would primarily affect large multi-user institutions"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Twitter said five times that liability requires seeking by your action to make it occur. You fail on the non-feasance/misfeasance distinction, the equal treatment distinction, and the purpose requirement.",
+          "context": "Kagan directly challenged whether Clement's 'substantial certainty' standard could survive Twitter's repeated emphasis on purpose.",
+          "significance": "This revealed that even if the Court rejects Cox's extreme position, it may still apply a purpose standard that would be difficult for Sony to meet."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "The Fourth Circuit applied its test 'in gross' rather than requiring specific knowledge of individual infringing users—that's not what your standard requires either, is it?",
+          "context": "Gorsuch pressed on whether even Clement's own standard was actually applied below.",
+          "significance": "Clement struggled to defend the Fourth Circuit's approach, suggesting even under his preferred standard a remand might be necessary."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "How does your position work for a university account shared by 70,000 users? What is the ISP supposed to do?",
+          "context": "Alito explored the practical unworkability of requiring ISPs to police large multi-user accounts.",
+          "significance": "Clement's answers about hotels throttling speeds and having conversations with universities appeared to weaken his position on administrability."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "twitter-inc-v-taamneh",
+      "caseName": "Twitter, Inc. v. Taamneh",
+      "citation": "598 U.S. 471",
+      "reasonCited": "Central to both sides' arguments. Petitioners and the government cited it for the principle that communication-providing services have no duty to terminate customers and that passive non-feasance cannot create secondary liability.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "metro-goldwyn-mayer-studios-inc-v-grokster-ltd",
+      "caseName": "Metro-Goldwyn-Mayer Studios Inc. v. Grokster, Ltd.",
+      "citation": "545 U.S. 913",
+      "reasonCited": "Cited for its holding that liability cannot be predicated on 'mere failure to take affirmative steps to prevent infringement' and for establishing inducement as a basis for contributory copyright liability.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "sony-corp-of-america-v-universal-city-studios-inc",
+      "caseName": "Sony Corp. of America v. Universal City Studios, Inc.",
+      "citation": "464 U.S. 417",
+      "reasonCited": "Cited for borrowing the staple article of commerce doctrine from patent law and for recognizing that selling a device capable of substantial non-infringing uses does not create contributory liability.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "smith-wesson-brands-inc-v-estados-unidos-mexicanos",
+      "caseName": "Smith & Wesson Brands, Inc. v. Estados Unidos Mexicanos",
+      "reasonCited": "Cited extensively for applying Twitter's aiding-and-abetting framework to product sellers, distinguishing between equivocal sales to the general public and targeted assistance to known wrongdoers.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "halberstam-v-sestak",
+      "caseName": "Halberstam v. Sestak",
+      "reasonCited": "Cited by Respondents as the common law standard for aiding-and-abetting liability, which uses knowledge rather than purpose as the intent element, with multiple factors for substantial assistance.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "inwood-laboratories-inc-v-ives-laboratories-inc",
+      "caseName": "Inwood Laboratories, Inc. v. Ives Laboratories, Inc.",
+      "citation": "456 U.S. 844",
+      "reasonCited": "Cited by Respondents as establishing in trademark law that providing the means of infringement to a specific known infringer creates secondary liability, which they argue should apply to copyright.",
+      "citedBy": "respondent"
+    },
+    {
+      "caseSlug": "henry-v-ab-dick-co",
+      "caseName": "Henry v. A.B. Dick Co.",
+      "citation": "224 U.S. 1",
+      "reasonCited": "Cited by Respondents for the proposition that selling a product with knowledge it would be used to infringe a patent supports contributory liability; the government countered that the facts showed specially suited goods and inducement.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "central-bank-of-denver-na-v-first-interstate-bank-of-denver-na",
+      "caseName": "Central Bank of Denver, N.A. v. First Interstate Bank of Denver, N.A.",
+      "citation": "511 U.S. 164",
+      "reasonCited": "Cited by Petitioners and Justice Gorsuch as an example of the Court refusing to infer secondary liability from a statute that does not explicitly provide for it, counseling caution in expanding implied causes of action.",
+      "citedBy": "petitioner"
+    }
+  ],
+  "legalTermsUsed": [
+    "contributory-copyright-infringement",
+    "safe-harbor-dmca-section-512",
+    "material-contribution",
+    "inducement",
+    "non-feasance-vs-misfeasance",
+    "staple-article-of-commerce-doctrine",
+    "jmol-judgment-as-a-matter-of-law",
+    "willful-blindness",
+    "secondary-liability",
+    "vicarious-liability"
+  ],
+  "processedAt": "2026-02-23T22:05:43.184Z"
+}

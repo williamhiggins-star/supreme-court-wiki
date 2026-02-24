@@ -1,0 +1,178 @@
+{
+  "slug": "24-993-olivier-v-city-of-brandon",
+  "caseNumber": "24-993",
+  "title": "Olivier v. City of Brandon",
+  "termYear": "2025",
+  "argumentDate": "2025-12-03",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2025/24-993_1a7d.pdf",
+  "docketStatus": "petition",
+  "backgroundAndFacts": "Gabriel Olivier is a Christian who preaches in a public park in Brandon, Mississippi. He was arrested and convicted of violating a city ordinance that criminalized his religious speech. After his conviction, which included a suspended 10-day sentence conditioned on not violating the ordinance again for a year, Olivier filed a Section 1983 lawsuit in federal court seeking an injunction and a declaration that the ordinance could not be constitutionally applied to him going forward. He did not seek to overturn his prior conviction or obtain damages for it.\n\nThe Fifth Circuit held that Olivier's claim was barred under Heck v. Humphrey, which generally requires that a plaintiff's conviction be invalidated before bringing a Section 1983 suit that would necessarily imply the invalidity of that conviction. The Fifth Circuit is the only circuit to apply Heck to bar purely prospective pre-enforcement challenges like Olivier's. A fellow protestor who was never convicted under the same ordinance was allowed to bring essentially the same challenge.\n\nThe case presents two questions: (1) whether Heck bars prospective relief claims that don't seek to undo a prior conviction, and (2) whether Heck applies at all when the plaintiff was never in custody (Olivier received only a suspended sentence and probation, not incarceration).",
+  "legalQuestion": "Whether the Heck v. Humphrey favorable termination rule bars a Section 1983 claim seeking purely prospective relief (injunction and declaration) against future prosecution under a law the plaintiff was previously convicted of violating.",
+  "significance": "This case could significantly affect the ability of previously convicted individuals to challenge the constitutionality of laws under which they were convicted. If the Fifth Circuit's approach stands, anyone convicted under an unconstitutional law would be permanently barred from seeking federal court protection against future prosecution unless they first successfully invalidated their conviction — even though a person who was never convicted could bring the exact same challenge. The case sits at the intersection of civil rights enforcement under Section 1983, habeas corpus law, and federalism.\n\nThe decision will clarify the scope of the Heck bar and whether it extends beyond its original purpose of preventing end-runs around habeas corpus. It could affect thousands of individuals who face ongoing threats of prosecution under laws they believe are unconstitutional but who have prior convictions that make federal courts inaccessible under the Fifth Circuit's rule.",
+  "parties": [
+    {
+      "party": "Gabriel Olivier",
+      "role": "petitioner",
+      "coreArgument": "Heck v. Humphrey does not bar a Section 1983 claim for purely prospective relief because such a claim does not seek to undo a prior conviction, shorten a sentence, or obtain damages for past confinement. The claim is a heartland Section 1983 pre-enforcement challenge that falls outside the two categories of claims this Court has ever held Heck-barred.",
+      "supportingPoints": [
+        "Wooley v. Maynard established that prior conviction does not bar a pre-enforcement Section 1983 challenge to the same law, and nothing in Heck overruled Wooley",
+        "No element of Olivier's prospective relief claim requires proving the invalidity of his prior conviction — the claim is entirely forward-looking",
+        "The Fifth Circuit is the only circuit to apply Heck this way, creating an anomaly where a fellow protestor can bring the same challenge but Olivier cannot",
+        "If Heck doesn't apply under QP1, alternatively under QP2, Heck shouldn't apply because Olivier was never in custody, so there's no habeas remedy to protect"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Doesn't the Heck language — 'necessarily imply the invalidity of a conviction' — mean that if you win and get the statute declared unconstitutional, you've demonstrated the invalidity of your conviction?",
+          "context": "This question goes to the heart of whether Heck's broad language can be reconciled with allowing prospective relief.",
+          "significance": "It revealed that even potentially sympathetic justices saw tension between the literal Heck language and Olivier's position, pushing counsel to rely on how the Court has actually applied Heck rather than its literal text."
+        },
+        {
+          "justice": "Justice Thomas",
+          "question": "Would a third-party victory in a 1983 action impugn Petitioner's conviction any differently than if Petitioner brought the same action himself?",
+          "context": "This question highlights the logical problem with barring Olivier but not a fellow protestor from bringing the same challenge.",
+          "significance": "It suggested Justice Thomas saw the absurdity of treating identically-situated plaintiffs differently based solely on a prior conviction."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "If Olivier was on probation conditioned on not violating the law, wouldn't an injunction barring enforcement of that law necessarily preclude enforcement of his probation conditions?",
+          "context": "This tested whether prospective relief could have backward-looking effects on existing probation terms.",
+          "significance": "It revealed a potential weakness in Petitioner's argument — that purely prospective relief may have practical backward-looking consequences."
+        }
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "amicus",
+      "coreArgument": "The Court should resolve this as a straightforward application of Wooley, limited to prospective suits by individuals out of custody. Heck's limits apply to retrospective challenges and to individuals in custody, but not to forward-looking claims by people who are no longer confined.",
+      "supportingPoints": [
+        "Heck limits retrospective challenges to convictions and damages claims analogous to malicious prosecution, but not purely prospective pre-enforcement challenges",
+        "For individuals in custody, additional limits exist to avoid conflict with the federal habeas statute, but those concerns are absent when the plaintiff is out of custody",
+        "The Court should reserve the question of whether in-custody individuals can bring similar prospective challenges, as that implicates harder questions",
+        "A federal court judgment declaring a law unconstitutional doesn't directly nullify a state conviction — any effect on the conviction would depend on state remedies"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Under your rule, a prisoner who was disciplined for exercising religious rights couldn't bring a prospective challenge to the unconstitutional regulation — how does that make sense?",
+          "context": "This challenged the SG's custody distinction by showing it could deny prisoners access to prospective constitutional relief.",
+          "significance": "It exposed that the government's in-custody/out-of-custody line could lead to harsh results that are hard to reconcile with Edwards v. Balisok."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "Could you give me in a couple of sentences what the rule should be?",
+          "context": "Justice Alito was testing whether the government's position was simple enough to be workable.",
+          "significance": "The government's multi-pronged answer (prospective/retrospective, in/out of custody, type of relief) prompted Justice Alito to note the complexity."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "What if the petitioner avowedly brought the suit as a step toward expunging his record — would that pose a problem?",
+          "context": "This tested whether the plaintiff's subjective intent matters or only the nature of the relief sought.",
+          "significance": "The SG clarified that courts should focus on the nature of the relief requested, not the plaintiff's ultimate aims, as long as the relief is truly prospective."
+        }
+      ]
+    },
+    {
+      "party": "City of Brandon, Mississippi",
+      "role": "respondent",
+      "coreArgument": "Heck's favorable termination rule bars Olivier's claim because a facial declaration that the ordinance is unconstitutional would necessarily imply the invalidity of his prior conviction. Olivier had numerous other avenues to challenge the ordinance and chose not to use them.",
+      "supportingPoints": [
+        "A facial declaration of unconstitutionality is the most impugning possible relief to a prior conviction — more so than monetary damages, which Heck already bars",
+        "Heck is personal: it bars the specific plaintiff with an extant conviction, not third parties, and this is a feature of the rule, not a bug",
+        "Olivier could bring a properly lodged as-applied challenge rather than a facial challenge, or seek expungement under Mississippi law",
+        "Wooley was a pre-Heck abstention case with a different analytical framework; Heck added an elemental analysis that Wooley did not address"
+      ],
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "The fellow protestor could bring exactly the same pre-enforcement challenge — isn't it strange that Olivier can't just because of his conviction?",
+          "context": "This highlighted the seemingly arbitrary distinction between Olivier and his compatriot.",
+          "significance": "The respondent argued this was a 'feature' of Heck's personal nature, but struggled to explain why it served any legitimate purpose beyond punishing the previously convicted plaintiff."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "Didn't we say the opposite of what you're arguing in Wooley? Wooley is this case and we reached the opposite result.",
+          "context": "This directly challenged the respondent's attempt to distinguish Wooley from the present case.",
+          "significance": "It forced respondent to argue that Heck effectively changed the analytical framework, essentially sub silentio limiting Wooley — a difficult position."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "Doesn't it seem a stretch of Heck's rationale to forever bar someone from engaging in protected First Amendment activity because they were convicted of a minor offense and received a slap on the wrist?",
+          "context": "Even Justice Alito, who had pressed the petitioner on Heck's broad language, seemed troubled by the practical consequences.",
+          "significance": "It suggested that the respondent's position might be too extreme even for justices sympathetic to Heck's broad application."
+        }
+      ]
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "heck-v-humphrey",
+      "caseName": "Heck v. Humphrey",
+      "citation": "512 U.S. 477",
+      "reasonCited": "The central precedent at issue — established the 'favorable termination' rule requiring courts to dismiss Section 1983 claims that would 'necessarily imply the invalidity' of a plaintiff's conviction unless the conviction has been invalidated.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "wooley-v-maynard",
+      "caseName": "Wooley v. Maynard",
+      "citation": "430 U.S. 705",
+      "reasonCited": "Key precedent allowing a pre-enforcement Section 1983 challenge to the same law under which the plaintiff was previously convicted. Petitioner and the SG argued this case controls; respondent argued it was superseded by Heck.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "edwards-v-balisok",
+      "caseName": "Edwards v. Balisok",
+      "citation": "520 U.S. 641",
+      "reasonCited": "Cited for its holding that backward-looking damages claims were Heck-barred but the case remanded to allow prospective injunctive relief challenging prison disciplinary procedures to go forward.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "wilkinson-v-dotson",
+      "caseName": "Wilkinson v. Dotson",
+      "citation": "544 U.S. 74",
+      "reasonCited": "Cited for the principle that prospective relief is generally not barred by Heck and that no form of relief is per se allowed or forbidden under Heck — the nature of the relief determines whether it falls within the core of habeas.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "skinner-v-switzer",
+      "caseName": "Skinner v. Switzer",
+      "citation": "562 U.S. 521",
+      "reasonCited": "Cited for conducting separate jurisdictional and Heck analyses, and for the principle that it is 'hardly inevitable' that success in a 1983 suit would lead to relief from a conviction.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "wallace-v-kato",
+      "caseName": "Wallace v. Kato",
+      "citation": "549 U.S. 384",
+      "reasonCited": "Cited for Justice Scalia's suggestion that a Heck-barred action could be stayed until future developments resolved the bar, undermining the argument that Heck should be assessed only at the time of filing.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "muhammad-v-close",
+      "caseName": "Muhammad v. Close",
+      "citation": "540 U.S. 749",
+      "reasonCited": "Cited by both sides — petitioner argued it left open whether Heck applies to those never in custody; respondent cited its language about Heck directing plaintiffs to state court remedies.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "mcdonough-v-smith",
+      "caseName": "McDonough v. Smith",
+      "citation": "588 U.S. 109",
+      "reasonCited": "Cited by respondent for the principle that Heck's domain extends even to persons not yet convicted, showing the bar is broader than just habeas access.",
+      "citedBy": "respondent"
+    }
+  ],
+  "legalTermsUsed": [
+    "heck-bar",
+    "section-1983",
+    "prospective-relief",
+    "favorable-termination",
+    "pre-enforcement-challenge",
+    "habeas-corpus",
+    "facial-challenge",
+    "as-applied-challenge",
+    "younger-abstention",
+    "necessarily-implies-the-invalidity"
+  ],
+  "processedAt": "2026-02-23T22:11:14.265Z"
+}
