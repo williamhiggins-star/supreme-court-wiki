@@ -108,7 +108,7 @@ export default function HomePage() {
               <li key={href}>
                 <a
                   href={href}
-                  className="block px-8 py-4 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors border-b-2 border-transparent hover:border-gray-900"
+                  className="block px-8 py-4 text-lg font-semibold text-gray-900 hover:bg-gray-50 transition-colors border-b-2 border-transparent hover:border-gray-900"
                 >
                   {label}
                 </a>
