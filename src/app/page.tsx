@@ -94,7 +94,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 py-10 px-6">
-        <h1 className="max-w-2xl mx-auto text-4xl font-bold text-gray-900 tracking-tight text-center">
+        <h1 className="max-w-2xl mx-auto text-5xl font-bold italic text-gray-900 tracking-tight text-center">
           Supreme Court Oral Arguments Tracker
         </h1>
         <p className="max-w-4xl mx-auto mt-5 text-base text-gray-600 leading-relaxed text-justify">
