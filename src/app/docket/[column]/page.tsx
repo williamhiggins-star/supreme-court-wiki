@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllCases, getAllPrecedents } from "@/lib/data";
+import { getAllCases } from "@/lib/data";
 import {
   formatDate,
   getDocketStatus,
@@ -36,7 +36,6 @@ export default async function DocketColumnPage({
   const col = column as Column;
 
   const cases = getAllCases();
-  const precedents = getAllPrecedents();
 
   const upcoming: CaseSummary[] = [];
   const argued: CaseSummary[] = [];
@@ -52,7 +51,7 @@ export default async function DocketColumnPage({
   upcoming.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
   // argued is already descending from getAllCases()
 
-  const decided = buildDecidedList(decidedCases, precedents);
+  const decided = buildDecidedList(decidedCases);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -161,29 +160,22 @@ function DecidedList({ items }: { items: DecidedItem[] }) {
 
   return (
     <div className="flex flex-col gap-2">
-      {items.map((item) =>
-        item.type === "case" ? (
-          <Link
-            key={item.slug}
-            href={item.href}
-            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-          >
-            <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
-            <p className="text-sm font-semibold text-gray-900 leading-snug">
-              {item.title}
-            </p>
-          </Link>
-        ) : (
-          <Link
-            key={item.slug}
-            href={item.href}
-            className="block bg-white border border-gray-200 rounded px-4 py-3 hover:border-gray-400 hover:shadow-sm transition-all"
-          >
-            <p className="text-xs text-gray-400 mb-0.5">{item.year}</p>
-            <p className="text-sm text-gray-800 leading-snug">{item.name}</p>
-          </Link>
-        )
-      )}
+      {items.map((item) => (
+        <Link
+          key={item.slug}
+          href={item.href}
+          className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+        >
+          <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
+          <p className="text-sm font-semibold text-gray-900 leading-snug">
+            {item.title}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
+            {item.voteSplit ? ` · ${item.voteSplit}` : ""}
+          </p>
+        </Link>
+      ))}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllCases, getAllPrecedents } from "@/lib/data";
+import { getAllCases } from "@/lib/data";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getCircuitMapData } from "@/lib/circuits-server";
 import { groupCasesByCircuit, circuitKeyToNumber } from "@/lib/circuits";
@@ -12,7 +12,7 @@ import { SplitCard } from "@/components/CircuitSplitsSection";
 import { JusticesSection } from "@/components/JusticesSection";
 import { LawyersSection } from "@/components/LawyersSection";
 import { NavBar } from "@/components/NavBar";
-import type { CaseSummary, PrecedentCase } from "@/types";
+import type { CaseSummary } from "@/types";
 
 export function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
@@ -35,41 +35,35 @@ export function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decide
   return "argued";
 }
 
-export type DecidedItem =
-  | { type: "case"; slug: string; title: string; sub: string; href: string; decisionDate?: string; voteSplit?: string }
-  | { type: "precedent"; slug: string; name: string; year: number; href: string };
+export type DecidedItem = {
+  type: "case";
+  slug: string;
+  title: string;
+  sub: string;
+  href: string;
+  decisionDate?: string;
+  voteSplit?: string;
+};
 
-export function buildDecidedList(
-  decidedCases: CaseSummary[],
-  precedents: PrecedentCase[]
-): DecidedItem[] {
-  const items: DecidedItem[] = [
-    ...decidedCases.map((c) => {
-      const dissents = c.dissentAuthors?.length ?? 0;
-      const voteSplit = c.majorityAuthor
-        ? dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`
-        : undefined;
-      return {
-        type: "case" as const,
-        slug: c.slug,
-        title: c.title,
-        sub: `${c.termYear} Term · ${c.caseNumber}`,
-        href: `/cases/${c.slug}`,
-        decisionDate: c.decisionDate,
-        voteSplit,
-      };
-    }),
-    ...precedents.map((p) => ({
-      type: "precedent" as const,
-      slug: p.slug,
-      name: p.name,
-      year: p.year,
-      href: `/precedents/${p.slug}`,
-    })),
-  ];
+export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
+  const items: DecidedItem[] = decidedCases.map((c) => {
+    const dissents = c.dissentAuthors?.length ?? 0;
+    const voteSplit = c.majorityAuthor
+      ? dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`
+      : undefined;
+    return {
+      type: "case" as const,
+      slug: c.slug,
+      title: c.title,
+      sub: `${c.termYear} Term · ${c.caseNumber}`,
+      href: `/cases/${c.slug}`,
+      decisionDate: c.decisionDate,
+      voteSplit,
+    };
+  });
   items.sort((a, b) => {
-    const dateA = a.type === "case" && a.decisionDate ? a.decisionDate : String(a.type === "case" ? parseInt(a.sub.split(" ")[0]) : a.year);
-    const dateB = b.type === "case" && b.decisionDate ? b.decisionDate : String(b.type === "case" ? parseInt(b.sub.split(" ")[0]) : b.year);
+    const dateA = a.decisionDate ?? a.sub.split(" ")[0];
+    const dateB = b.decisionDate ?? b.sub.split(" ")[0];
     return dateB.localeCompare(dateA);
   });
   return items;
@@ -79,7 +73,6 @@ const PAGE_SIZE = 3;
 
 export default function HomePage() {
   const cases = getAllCases();
-  const precedents = getAllPrecedents();
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
   const circuitMapData = getCircuitMapData();
@@ -128,7 +121,7 @@ export default function HomePage() {
   upcoming.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
   // Argued: most recent first — getAllCases() already returns descending, no change needed
 
-  const decided = buildDecidedList(decidedCases, precedents);
+  const decided = buildDecidedList(decidedCases);
 
   return (
     <main className="min-h-screen bg-ft-paper">
@@ -233,35 +226,22 @@ export default function HomePage() {
             ) : (
               <>
                 <div className="flex flex-col gap-3">
-                  {decided.slice(0, PAGE_SIZE).map((item) =>
-                    item.type === "case" ? (
-                      <Link
-                        key={item.slug}
-                        href={item.href}
-                        className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                      >
-                        <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
-                        <p className="text-sm font-semibold text-gray-900 leading-snug">
-                          {item.title}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
-                          {item.voteSplit ? ` · ${item.voteSplit}` : ""}
-                        </p>
-                      </Link>
-                    ) : (
-                      <Link
-                        key={item.slug}
-                        href={item.href}
-                        className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                      >
-                        <p className="text-xs text-gray-400 mb-0.5">{item.year}</p>
-                        <p className="text-sm text-gray-800 leading-snug">
-                          {item.name}
-                        </p>
-                      </Link>
-                    )
-                  )}
+                  {decided.slice(0, PAGE_SIZE).map((item) => (
+                    <Link
+                      key={item.slug}
+                      href={item.href}
+                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                    >
+                      <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
+                      <p className="text-sm font-semibold text-gray-900 leading-snug">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
+                        {item.voteSplit ? ` · ${item.voteSplit}` : ""}
+                      </p>
+                    </Link>
+                  ))}
                 </div>
                 {decided.length > PAGE_SIZE && (
                   <Link
