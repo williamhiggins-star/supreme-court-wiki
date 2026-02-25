@@ -6,6 +6,11 @@ export interface LawyerCase {
   slug: string;
   caseNumber: string;
   title: string;
+  side?: "petitioner" | "respondent";
+  outcome?: "won" | "lost" | "pending";
+  majorityAuthor?: string;
+  concurrenceAuthors?: string[];
+  dissentAuthors?: string[];
 }
 
 export interface LawyerStat {
@@ -14,6 +19,8 @@ export interface LawyerStat {
   totalWords: number;
   estimatedMinutes: number;
   casesArgued: number;
+  wins: number;
+  losses: number;
   cases: LawyerCase[];
 }
 

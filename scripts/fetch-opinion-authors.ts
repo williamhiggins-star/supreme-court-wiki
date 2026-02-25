@@ -113,6 +113,33 @@ function nameFragmentToKey(raw: string): string | null {
   return null;
 }
 
+/**
+ * Detect whether the petitioner won by looking for "judgment...reversed/vacated"
+ * (petitioner wins) or "judgment...affirmed" (respondent wins) in the syllabus.
+ */
+function detectPetitionerWon(rawText: string): boolean | null {
+  const text = rawText
+    .slice(0, 10000)
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\s{2,}/g, " ");
+
+  const reversedRe = /\bjudgment\b[^.]{0,300}?\b(reversed|vacated)\b/i;
+  const affirmedRe  = /\bjudgment\b[^.]{0,300}?\baffirmed\b/i;
+
+  const rm = reversedRe.exec(text);
+  const am = affirmedRe.exec(text);
+
+  if (rm && (!am || rm.index < am.index)) return true;
+  if (am) return false;
+
+  // Fallback: standalone verdict words
+  if (/\bReversed\b/.test(text)) return true;
+  if (/\bVacated\b/.test(text))  return true;
+  if (/\bAffirmed\b/.test(text)) return false;
+
+  return null;
+}
+
 function parseOpinionAuthors(rawText: string): OpinionAuthors {
   // SCOTUS slip-opinion PDFs use the syllabus format:
   //   "THOMAS, J., delivered the opinion of the Court, in which ROBERTS, C. J., ..."
@@ -194,11 +221,12 @@ async function main() {
       continue;
     }
 
-    // Skip only if we already have a resolved author (not undefined/null)
+    // Skip only if we already have author info AND petitionerWon resolved
     if (
       caseData.docketStatus === "decided" &&
       caseData.majorityAuthor &&
-      caseData.majorityAuthor !== "unknown"
+      caseData.majorityAuthor !== "unknown" &&
+      "petitionerWon" in caseData
     ) {
       console.log(`  ✓ ${caseNumber}: already processed (${caseData.majorityAuthor})`);
       skipped++;
@@ -212,6 +240,7 @@ async function main() {
       const buf = await downloadPdf(pdfUrl);
       const text = await extractText(buf);
       const authors = parseOpinionAuthors(text);
+      const petitionerWon = detectPetitionerWon(text);
 
       caseData.docketStatus = "decided";
       caseData.outcome = caseData.outcome ?? `Opinion filed. See: ${pdfUrl}`;
@@ -222,12 +251,14 @@ async function main() {
       caseData.dissentAuthors = authors.dissentAuthors.length
         ? authors.dissentAuthors
         : undefined;
+      caseData.petitionerWon = petitionerWon;
 
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
       console.log(
         `  ✓ majority=${authors.majorityAuthor ?? "unknown"} ` +
         `concurrences=[${authors.concurrenceAuthors.join(",")}] ` +
-        `dissents=[${authors.dissentAuthors.join(",")}]`
+        `dissents=[${authors.dissentAuthors.join(",")}] ` +
+        `petitionerWon=${petitionerWon}`
       );
       updated++;
     } catch (err) {
