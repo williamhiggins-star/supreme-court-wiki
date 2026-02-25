@@ -71,7 +71,7 @@ export default async function CasePage({
 
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-10">
         {/* Decision — only for decided cases with author data */}
-        {c.docketStatus === "decided" && c.majorityAuthor && (
+        {c.docketStatus === "decided" && (c.majorityAuthor || c.majorityOpinionSummary) && (
           <Section title="The Decision">
             <DecisionSection c={c} />
           </Section>
