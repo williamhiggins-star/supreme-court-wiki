@@ -293,7 +293,7 @@ export default function HomePage() {
         return (
           <section id="circuit-splits" className="max-w-7xl mx-auto px-6 pb-12">
             <h2 className="text-2xl font-bold text-gray-800 mb-1">
-              Current Circuit Splits Before SCOTUS
+              Current Circuit Splits
             </h2>
             <p className="text-sm text-gray-500 mb-6">
               These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
