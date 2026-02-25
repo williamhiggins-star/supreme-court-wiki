@@ -58,7 +58,17 @@ interface Turn {
   words: number;
 }
 
-function parseTranscript(text: string): Turn[] {
+function parseTranscript(rawText: string): Turn[] {
+  // Strip everything from the "(Whereupon, ... submitted/concluded)" marker
+  // onward.  Every SCOTUS transcript PDF ends with a multi-page word-
+  // concordance index; without this trim it inflates the last justice's
+  // (usually Roberts') word count by ~8,000–10,000 words per case.
+  const whereupRe = /\(Whereupon[^)]{0,120}(?:submitted|concluded)[^)]{0,80}\)/i;
+  const whereupMatch = whereupRe.exec(rawText);
+  const text = whereupMatch
+    ? rawText.slice(0, whereupMatch.index + whereupMatch[0].length)
+    : rawText;
+
   // Detect ALL speaker turns (justices AND counsel) so that each justice's
   // word count stops when the next speaker — anyone — begins.
   //
