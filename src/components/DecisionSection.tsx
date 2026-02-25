@@ -20,6 +20,15 @@ const JUSTICE_LABELS: Record<string, string> = {
 };
 
 
+function formatDecisionDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -121,6 +130,13 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
           );
         })}
       </div>
+
+      {/* ── Decision date ── */}
+      {c.decisionDate && (
+        <p className="text-sm text-gray-400 text-center mb-6">
+          Decided {formatDecisionDate(c.decisionDate)}
+        </p>
+      )}
 
       {/* ── Opinion summaries ── */}
       {c.majorityOpinionSummary && (
