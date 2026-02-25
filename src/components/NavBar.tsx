@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { label: "Circuit Map", href: "#circuit-map" },
   { label: "Court Calendar", href: "#court-calendar" },
   { label: "Circuit Splits", href: "/appeals" },
+  { label: "Appellate Impacts", href: "/appellate-impacts" },
 ];
 
 function SearchIcon() {

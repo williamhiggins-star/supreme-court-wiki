@@ -58,6 +58,12 @@ jobs:
           COURTLISTENER_API_KEY: ${{ secrets.COURTLISTENER_API_KEY }}
         run: npx tsx scripts/fetch-circuit-splits.ts
 
+      - name: Fetch appellate impacts from CourtListener
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COURTLISTENER_API_KEY: ${{ secrets.COURTLISTENER_API_KEY }}
+        run: npx tsx scripts/fetch-appellate-impacts.ts
+
       - name: Commit new case data
         run: |
           git config user.name "Supreme Court Wiki Bot"

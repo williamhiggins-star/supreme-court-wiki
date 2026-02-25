@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllCases, getAllPrecedents } from "@/lib/data";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
+import { getAppellateImpactsData } from "@/lib/appellate-impacts";
 import { getJusticesData } from "@/lib/justices";
 import { getLawyersData } from "@/lib/lawyers";
 
@@ -41,6 +42,16 @@ export async function GET() {
       title: s.legalQuestion,
       subtitle: s.area,
       href: "/appeals",
+    });
+  }
+
+  // Appellate impacts
+  for (const imp of getAppellateImpactsData()?.impacts ?? []) {
+    items.push({
+      type: "split",
+      title: imp.caseName,
+      subtitle: `${imp.area} · ${imp.court}`,
+      href: "/appellate-impacts",
     });
   }
 
