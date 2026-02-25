@@ -4,9 +4,11 @@ import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getCircuitMapData } from "@/lib/circuits-server";
 import { groupCasesByCircuit } from "@/lib/circuits";
 import { getJusticesData } from "@/lib/justices";
+import { getLawyersData } from "@/lib/lawyers";
 import { CourtCalendar } from "@/components/CourtCalendar";
 import { CircuitMap } from "@/components/CircuitMap";
 import { JusticesSection } from "@/components/JusticesSection";
+import { LawyersSection } from "@/components/LawyersSection";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
 export function formatDate(dateStr: string): string {
@@ -71,6 +73,7 @@ export default function HomePage() {
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
   const circuitMapData = getCircuitMapData();
   const justicesData = getJusticesData();
+  const lawyersData = getLawyersData();
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -106,6 +109,7 @@ export default function HomePage() {
               { label: "About", href: "#about" },
               { label: "The Docket", href: "#docket" },
               { label: "Justices", href: "#justices" },
+              { label: "Counsel", href: "#counsel" },
               { label: "Circuit Map", href: "#circuit-map" },
               { label: "Court Calendar", href: "#court-calendar" },
             ].map(({ label, href }) => (
@@ -265,6 +269,17 @@ export default function HomePage() {
             {justicesData.term} term oral arguments, ranked by time on record.
           </p>
           <JusticesSection justices={justicesData.justices} />
+        </section>
+      )}
+
+      {lawyersData && (
+        <section id="counsel" className="max-w-7xl mx-auto px-6 pb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Counsel</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            Top {Math.min(30, lawyersData.lawyers.length)} attorneys by speaking time across all{" "}
+            {lawyersData.term} term oral arguments.
+          </p>
+          <LawyersSection lawyers={lawyersData.lawyers} />
         </section>
       )}
 

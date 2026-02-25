@@ -44,6 +44,9 @@ jobs:
       - name: Recompute justice speaking stats
         run: npx tsx scripts/compute-justice-stats.ts
 
+      - name: Recompute counsel speaking stats
+        run: npx tsx scripts/compute-lawyer-stats.ts
+
       - name: Commit new case data
         run: |
           git config user.name "Supreme Court Wiki Bot"
