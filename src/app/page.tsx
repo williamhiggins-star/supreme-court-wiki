@@ -278,6 +278,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      {(() => {
+        // Priority: scotus_pending first, then open (newest first). Never show resolved.
+        const statusOrder: Record<string, number> = { scotus_pending: 0, open: 1 };
+        const featured = [...(splitsData?.splits ?? [])]
+          .filter((s) => s.status !== "scotus_resolved")
+          .sort((a, b) => {
+            const od = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
+            if (od !== 0) return od;
+            return b.lastUpdated.localeCompare(a.lastUpdated);
+          })
+          .slice(0, 2);
+        if (featured.length === 0) return null;
+        return (
+          <section id="circuit-splits" className="max-w-7xl mx-auto px-6 pb-12">
+            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+              Current Circuit Splits Before SCOTUS
+            </h2>
+            <p className="text-sm text-gray-500 mb-6">
+              These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {featured.map((s) => (
+                <SplitCard key={s.id} split={s} />
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-gray-400">
+              Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
+              <a href="/appeals" className="text-blue-600 hover:underline">
+                See all circuit splits &rarr;
+              </a>
+            </p>
+          </section>
+        );
+      })()}
+
+      <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
+          Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
+        </p>
+        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} />
+      </section>
+
       {justicesData && (
         <section id="justices" className="max-w-7xl mx-auto px-6 pb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Justices</h2>
@@ -299,50 +343,6 @@ export default function HomePage() {
           <LawyersSection lawyers={lawyersData.lawyers} />
         </section>
       )}
-
-      <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
-          Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
-        </p>
-        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} />
-
-        {(() => {
-          // Priority: scotus_pending first, then open (newest first). Never show resolved.
-          const statusOrder: Record<string, number> = { scotus_pending: 0, open: 1 };
-          const featured = [...(splitsData?.splits ?? [])]
-            .filter((s) => s.status !== "scotus_resolved")
-            .sort((a, b) => {
-              const od = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
-              if (od !== 0) return od;
-              return b.lastUpdated.localeCompare(a.lastUpdated);
-            })
-            .slice(0, 2);
-          if (featured.length === 0) return null;
-          return (
-            <div className="mt-10">
-              <h3 className="text-xl font-bold text-gray-800 mb-1">
-                Current Circuit Splits Before SCOTUS
-              </h3>
-              <p className="text-sm text-gray-500 mb-6">
-                These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {featured.map((s) => (
-                  <SplitCard key={s.id} split={s} />
-                ))}
-              </div>
-              <p className="mt-4 text-xs text-gray-400">
-                Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
-                <a href="/appeals" className="text-blue-600 hover:underline">
-                  See all circuit splits &rarr;
-                </a>
-              </p>
-            </div>
-          );
-        })()}
-      </section>
 
       <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
