@@ -19,14 +19,6 @@ const JUSTICE_LABELS: Record<string, string> = {
   jackson: "Jackson",
 };
 
-function formatDecisionDate(dateStr: string): string {
-  const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -129,26 +121,6 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
           );
         })}
       </div>
-
-      {/* ── Decision outcome badge ── */}
-      {c.petitionerWon !== null && c.petitionerWon !== undefined && (
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-          <span
-            className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-              c.petitionerWon
-                ? "bg-emerald-100 text-emerald-800"
-                : "bg-rose-100 text-rose-800"
-            }`}
-          >
-            {c.petitionerWon ? "Petitioner prevailed" : "Respondent prevailed"}
-          </span>
-          {c.decisionDate && (
-            <span className="text-sm text-gray-400">
-              {formatDecisionDate(c.decisionDate)}
-            </span>
-          )}
-        </div>
-      )}
 
       {/* ── Opinion summaries ── */}
       {c.majorityOpinionSummary && (
