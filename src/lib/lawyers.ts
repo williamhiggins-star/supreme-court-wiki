@@ -2,12 +2,19 @@ import "server-only";
 import * as fs from "fs";
 import * as path from "path";
 
+export interface LawyerCase {
+  slug: string;
+  caseNumber: string;
+  title: string;
+}
+
 export interface LawyerStat {
   label: string;
   name: string;
   totalWords: number;
   estimatedMinutes: number;
   casesArgued: number;
+  cases: LawyerCase[];
 }
 
 export interface LawyersData {

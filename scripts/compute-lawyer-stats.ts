@@ -115,12 +115,19 @@ function parseCounselTurns(rawText: string): Turn[] {
 
 // ── Data structures ───────────────────────────────────────────────────────────
 
+export interface LawyerCase {
+  slug: string;
+  caseNumber: string;
+  title: string;
+}
+
 export interface LawyerStat {
   label: string;
   name: string;
   totalWords: number;
   estimatedMinutes: number;
   casesArgued: number;
+  cases: LawyerCase[];
 }
 
 export interface LawyersData {
@@ -133,6 +140,9 @@ export interface LawyersData {
 
 async function main() {
   const caseFiles = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"));
+
+  // Map from filename → case metadata so we can embed it later
+  const caseMetaByFile: Record<string, { slug: string; caseNumber: string; title: string }> = {};
 
   const stats: Record<string, { totalWords: number; cases: Set<string> }> = {};
 
@@ -148,6 +158,12 @@ async function main() {
     if (caseData.termYear !== "2025") { skipped++; continue; }
     const url: string = caseData.transcriptUrl ?? "";
     if (!url.endsWith(".pdf")) { skipped++; continue; }
+
+    caseMetaByFile[file] = {
+      slug: caseData.slug,
+      caseNumber: caseData.caseNumber,
+      title: caseData.title,
+    };
 
     console.log(`Processing ${caseData.caseNumber} — ${caseData.title}`);
 
@@ -175,6 +191,10 @@ async function main() {
       totalWords,
       estimatedMinutes: Math.round((totalWords / WPM) * 10) / 10,
       casesArgued: cases.size,
+      cases: [...cases]
+        .map((file) => caseMetaByFile[file])
+        .filter(Boolean)
+        .sort((a, b) => a.caseNumber.localeCompare(b.caseNumber)),
     }))
     .filter((l) => l.totalWords >= 100) // drop noise with < 1 min total
     .sort((a, b) => b.estimatedMinutes - a.estimatedMinutes);
