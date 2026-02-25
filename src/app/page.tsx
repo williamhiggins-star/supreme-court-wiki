@@ -68,9 +68,9 @@ export function buildDecidedList(
     })),
   ];
   items.sort((a, b) => {
-    const yearA = a.type === "case" ? parseInt(a.sub.split(" ")[0]) : a.year;
-    const yearB = b.type === "case" ? parseInt(b.sub.split(" ")[0]) : b.year;
-    return yearB - yearA;
+    const dateA = a.type === "case" && a.decisionDate ? a.decisionDate : String(a.type === "case" ? parseInt(a.sub.split(" ")[0]) : a.year);
+    const dateB = b.type === "case" && b.decisionDate ? b.decisionDate : String(b.type === "case" ? parseInt(b.sub.split(" ")[0]) : b.year);
+    return dateB.localeCompare(dateA);
   });
   return items;
 }
