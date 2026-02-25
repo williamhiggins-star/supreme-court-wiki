@@ -3,8 +3,10 @@ import { getAllCases, getAllPrecedents } from "@/lib/data";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getCircuitMapData } from "@/lib/circuits-server";
 import { groupCasesByCircuit } from "@/lib/circuits";
+import { getJusticesData } from "@/lib/justices";
 import { CourtCalendar } from "@/components/CourtCalendar";
 import { CircuitMap } from "@/components/CircuitMap";
+import { JusticesSection } from "@/components/JusticesSection";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
 export function formatDate(dateStr: string): string {
@@ -68,6 +70,7 @@ export default function HomePage() {
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
   const circuitMapData = getCircuitMapData();
+  const justicesData = getJusticesData();
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -102,6 +105,7 @@ export default function HomePage() {
             {[
               { label: "About", href: "#about" },
               { label: "The Docket", href: "#docket" },
+              { label: "Justices", href: "#justices" },
               { label: "Circuit Map", href: "#circuit-map" },
               { label: "Court Calendar", href: "#court-calendar" },
             ].map(({ label, href }) => (
@@ -252,6 +256,17 @@ export default function HomePage() {
 
         </div>
       </section>
+
+      {justicesData && (
+        <section id="justices" className="max-w-7xl mx-auto px-6 pb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Justices</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            Speaking turns and estimated speaking time per justice across all{" "}
+            {justicesData.term} term oral arguments, ranked by time on record.
+          </p>
+          <JusticesSection justices={justicesData.justices} />
+        </section>
+      )}
 
       <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
