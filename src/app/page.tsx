@@ -92,12 +92,12 @@ export default function HomePage() {
   const decided = buildDecidedList(decidedCases, precedents);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 pt-10 px-6">
+    <main className="min-h-screen bg-ft-paper">
+      <header className="bg-ft-pink pt-10 px-6">
         <h1 className="max-w-2xl mx-auto text-5xl font-bold italic text-gray-900 tracking-tight text-center">
           Supreme Court Oral Arguments Tracker
         </h1>
-        <nav className="mt-8 border-t border-gray-200">
+        <nav className="mt-8 border-t border-[#f0b896]">
           <ul className="flex justify-center gap-0">
             {[
               { label: "About", href: "#about" },
@@ -108,7 +108,7 @@ export default function HomePage() {
               <li key={href}>
                 <a
                   href={href}
-                  className="block px-8 py-4 text-lg font-semibold text-gray-900 hover:bg-gray-50 transition-colors border-b-2 border-transparent hover:border-gray-900"
+                  className="block px-8 py-4 text-lg font-semibold text-gray-900 hover:bg-[#f5c4a0] transition-colors border-b-2 border-transparent hover:border-gray-900"
                 >
                   {label}
                 </a>
@@ -272,7 +272,7 @@ export default function HomePage() {
         <CourtCalendar events={calendarEvents} today={today} />
       </section>
 
-      <section id="about" className="bg-white border-t border-gray-200 px-6 py-16">
+      <section id="about" className="bg-ft-paper border-t border-[#e8d0b8] px-6 py-16">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">About</h2>
           <p className="text-base text-gray-600 leading-relaxed">
