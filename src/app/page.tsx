@@ -297,18 +297,27 @@ export default function HomePage() {
         <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} />
 
         {(() => {
-          const scotusSplits = splitsData?.splits.filter((s) => s.status === "scotus_pending") ?? [];
-          if (scotusSplits.length === 0) return null;
+          // Priority: scotus_pending first, then open (newest first). Never show resolved.
+          const statusOrder: Record<string, number> = { scotus_pending: 0, open: 1 };
+          const featured = [...(splitsData?.splits ?? [])]
+            .filter((s) => s.status !== "scotus_resolved")
+            .sort((a, b) => {
+              const od = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
+              if (od !== 0) return od;
+              return b.lastUpdated.localeCompare(a.lastUpdated);
+            })
+            .slice(0, 2);
+          if (featured.length === 0) return null;
           return (
             <div className="mt-10">
               <h3 className="text-xl font-bold text-gray-800 mb-1">
                 Current Circuit Splits Before SCOTUS
               </h3>
               <p className="text-sm text-gray-500 mb-6">
-                These active circuit splits are currently before the Supreme Court — cert has been granted and a decision is pending.
+                These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
               </p>
-              <div className="grid grid-cols-1 gap-5">
-                {scotusSplits.map((s) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {featured.map((s) => (
                   <SplitCard key={s.id} split={s} />
                 ))}
               </div>
