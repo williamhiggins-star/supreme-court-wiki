@@ -124,8 +124,8 @@ export default function HomePage() {
 
           {/* Upcoming Oral Arguments */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 border-b border-gray-300 pb-2 mb-4">
-              Upcoming Oral Arguments
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
+              Upcoming
             </h3>
             {upcoming.length === 0 ? (
               <p className="text-gray-400 text-sm italic">No cases</p>
@@ -164,7 +164,7 @@ export default function HomePage() {
 
           {/* Argued */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 border-b border-gray-300 pb-2 mb-4">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
               Argued
             </h3>
             {argued.length === 0 ? (
@@ -204,7 +204,7 @@ export default function HomePage() {
 
           {/* Decided */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 border-b border-gray-300 pb-2 mb-4">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
               Decided
             </h3>
             {decided.length === 0 ? (
