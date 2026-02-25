@@ -9,6 +9,7 @@ import { CourtCalendar } from "@/components/CourtCalendar";
 import { CircuitMap } from "@/components/CircuitMap";
 import { JusticesSection } from "@/components/JusticesSection";
 import { LawyersSection } from "@/components/LawyersSection";
+import { NavBar } from "@/components/NavBar";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
 export function formatDate(dateStr: string): string {
@@ -100,30 +101,10 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-ft-paper">
       <header className="bg-ft-pink pt-10 px-6">
-        <h1 className="mx-auto text-4xl font-bold text-gray-900 tracking-tight text-center whitespace-nowrap">
+        <h1 className="mx-auto text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight text-center">
           <span style={{ fontFamily: "Graphika81, Georgia, serif" }}>Supreme Court Tracker</span>
         </h1>
-        <nav className="mt-8 border-t border-[#f0b896]">
-          <ul className="flex justify-center gap-0">
-            {[
-              { label: "About", href: "#about" },
-              { label: "The Docket", href: "#docket" },
-              { label: "Justices", href: "#justices" },
-              { label: "Counsel", href: "#counsel" },
-              { label: "Circuit Map", href: "#circuit-map" },
-              { label: "Court Calendar", href: "#court-calendar" },
-            ].map(({ label, href }) => (
-              <li key={href}>
-                <a
-                  href={href}
-                  className="block px-8 py-4 text-lg font-semibold text-gray-900 hover:bg-[#f5c4a0] transition-colors border-b-2 border-transparent hover:border-gray-900"
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <NavBar />
       </header>
 
       <section id="docket" className="max-w-7xl mx-auto px-6 py-10">
