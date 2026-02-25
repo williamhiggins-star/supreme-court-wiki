@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type {
-  CircuitMapData,
-  CircuitCase,
-  StateFeature,
-} from "@/lib/circuits";
+import type { CircuitMapData, CircuitCase, StateFeature } from "@/lib/circuits";
 import {
   CIRCUIT_NAMES,
   CIRCUIT_COLORS,
@@ -21,33 +17,16 @@ interface Props {
 
 export function CircuitMap({ mapData, casesByCircuit }: Props) {
   const [hoveredCircuit, setHoveredCircuit] = useState<number | null>(null);
-  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [selectedCircuit, setSelectedCircuit] = useState<number | null>(null);
 
   const centroids = getCircuitCentroids(mapData.states);
 
-  function handleStateEnter(
-    circuit: number,
-    e: React.MouseEvent<SVGPathElement>
-  ) {
-    setHoveredCircuit(circuit);
-    const rect = (e.currentTarget.ownerSVGElement as SVGSVGElement)
-      .getBoundingClientRect();
-    setTooltipPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+  function handleCircuitClick(circuit: number) {
+    setSelectedCircuit((prev) => (prev === circuit ? null : circuit));
   }
 
-  function handleStateMove(e: React.MouseEvent<SVGPathElement>) {
-    const rect = (e.currentTarget.ownerSVGElement as SVGSVGElement)
-      .getBoundingClientRect();
-    setTooltipPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  }
-
-  const hoveredCases = hoveredCircuit ? (casesByCircuit[hoveredCircuit] ?? []) : [];
+  const panelCircuit = selectedCircuit;
+  const panelCases = panelCircuit ? (casesByCircuit[panelCircuit] ?? []) : [];
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -57,40 +36,37 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
           viewBox={mapData.viewBox}
           className="w-full h-auto"
           style={{ display: "block" }}
+          onClick={() => setSelectedCircuit(null)}
         >
           {/* State fills */}
           {mapData.states.map((state: StateFeature) => (
             <path
               key={state.id}
               d={state.pathD}
-              fill={
-                hoveredCircuit === state.circuit
-                  ? CIRCUIT_DARK[state.circuit]
-                    ? CIRCUIT_COLORS[state.circuit]
-                    : "#e5e7eb"
-                  : CIRCUIT_COLORS[state.circuit] ?? "#e5e7eb"
-              }
+              fill={CIRCUIT_COLORS[state.circuit] ?? "#e5e7eb"}
               stroke="white"
               strokeWidth="0.75"
               strokeLinejoin="round"
               style={{
-                opacity: hoveredCircuit
-                  ? hoveredCircuit === state.circuit
-                    ? 1
-                    : 0.5
-                  : 1,
-                transition: "opacity 0.15s, fill 0.15s",
+                opacity:
+                  hoveredCircuit && hoveredCircuit !== state.circuit
+                    ? 0.45
+                    : selectedCircuit && selectedCircuit !== state.circuit
+                    ? 0.55
+                    : 1,
+                transition: "opacity 0.15s",
                 cursor: "pointer",
               }}
-              onMouseEnter={(e) => handleStateEnter(state.circuit, e)}
-              onMouseMove={handleStateMove}
+              onMouseEnter={() => setHoveredCircuit(state.circuit)}
               onMouseLeave={() => setHoveredCircuit(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCircuitClick(state.circuit);
+              }}
             />
           ))}
 
-          {/* State borders (thin white lines already rendered via fill strokes) */}
-
-          {/* Circuit borders (thick dark lines between circuits) */}
+          {/* Circuit borders */}
           <path
             d={mapData.circuitBorderPath}
             fill="none"
@@ -110,7 +86,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
             pointerEvents="none"
           />
 
-          {/* Case count badges per circuit */}
+          {/* Case count badges */}
           {Object.entries(casesByCircuit).map(([circuitStr, cases]) => {
             const circuit = Number(circuitStr);
             const center = centroids[circuit];
@@ -120,24 +96,19 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
             const argued = cases.filter((c) => c.status === "argued").length;
             const total = cases.length;
             const r = total >= 10 ? 14 : 11;
+            const isSelected = selectedCircuit === circuit;
 
             return (
               <g
                 key={circuit}
                 style={{ cursor: "pointer" }}
-                onMouseEnter={(e) => {
-                  setHoveredCircuit(circuit);
-                  const rect = (
-                    e.currentTarget.ownerSVGElement as SVGSVGElement
-                  ).getBoundingClientRect();
-                  setTooltipPos({
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top,
-                  });
-                }}
+                onMouseEnter={() => setHoveredCircuit(circuit)}
                 onMouseLeave={() => setHoveredCircuit(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCircuitClick(circuit);
+                }}
               >
-                {/* Split badge: orange top (upcoming) + blue bottom (argued) */}
                 {upcoming > 0 && argued > 0 ? (
                   <>
                     <path
@@ -162,8 +133,8 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
                   cy={cy}
                   r={r}
                   fill="none"
-                  stroke="white"
-                  strokeWidth="1.5"
+                  stroke={isSelected ? "#1e293b" : "white"}
+                  strokeWidth={isSelected ? "2.5" : "1.5"}
                 />
                 <text
                   x={cx}
@@ -182,36 +153,38 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
           })}
         </svg>
 
-        {/* Tooltip */}
-        {hoveredCircuit && (
+        {/* Pinned panel — appears when a circuit is selected */}
+        {panelCircuit && (
           <div
-            className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 min-w-48 max-w-72 pointer-events-none"
-            style={{
-              left: tooltipPos.x + 12,
-              top: tooltipPos.y - 12,
-              transform:
-                tooltipPos.x > 700 ? "translateX(-110%)" : undefined,
-            }}
+            className="absolute top-2 right-2 z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-64"
+            onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-xs font-bold text-gray-700 mb-1">
-              {CIRCUIT_NAMES[hoveredCircuit]}
-            </p>
-            {hoveredCases.length === 0 ? (
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-800">
+                {CIRCUIT_NAMES[panelCircuit]}
+              </p>
+              <button
+                onClick={() => setSelectedCircuit(null)}
+                className="text-gray-400 hover:text-gray-700 text-sm leading-none ml-2"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            {panelCases.length === 0 ? (
               <p className="text-xs text-gray-400 italic">No pending cases</p>
             ) : (
-              <ul className="space-y-1">
-                {hoveredCases.map((c) => (
-                  <li key={c.slug} className="text-xs leading-tight">
+              <ul className="space-y-1.5">
+                {panelCases.map((c) => (
+                  <li key={c.slug} className="flex items-start gap-1.5 text-xs leading-snug">
                     <span
-                      className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${
-                        c.status === "upcoming"
-                          ? "bg-amber-400"
-                          : "bg-blue-400"
+                      className={`inline-block w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${
+                        c.status === "upcoming" ? "bg-amber-400" : "bg-blue-400"
                       }`}
                     />
                     <Link
                       href={`/cases/${c.slug}`}
-                      className="text-blue-700 hover:underline pointer-events-auto"
+                      className="text-blue-700 hover:underline"
                     >
                       {c.caseNumber} – {c.title}
                     </Link>
@@ -236,13 +209,8 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
             <span className="inline-block w-3 h-3 rounded-full bg-blue-500" />
             Argued, awaiting decision
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-sm border border-gray-400 bg-gray-100" />
-            <span className="inline-block w-2 h-2 rounded-sm border border-gray-400 bg-blue-100 ml-1" />
-            State / circuit region colors
-          </div>
           <p className="text-gray-400 text-[10px] pt-1">
-            Hover a state or badge to see cases. Bold lines show circuit
+            Click a state or badge to see cases. Bold lines show circuit
             boundaries.
           </p>
         </div>
@@ -259,10 +227,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
               .map((circuit) => {
                 const cases = casesByCircuit[circuit] ?? [];
                 return (
-                  <div
-                    key={circuit}
-                    className="px-3 py-2 flex items-start gap-2"
-                  >
+                  <div key={circuit} className="px-3 py-2 flex items-start gap-2">
                     <span
                       className="inline-block w-2.5 h-2.5 rounded-sm shrink-0 mt-0.5"
                       style={{ background: CIRCUIT_DARK[circuit] }}
