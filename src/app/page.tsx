@@ -277,7 +277,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Counsel</h2>
           <p className="text-sm text-gray-500 mb-6">
             Top {Math.min(30, lawyersData.lawyers.length)} attorneys by speaking time across all{" "}
-            {lawyersData.term} term oral arguments.
+            {lawyersData.term} term oral arguments. Click a name to see the cases they argued.
           </p>
           <LawyersSection lawyers={lawyersData.lawyers} />
         </section>
