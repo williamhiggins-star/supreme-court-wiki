@@ -88,6 +88,9 @@ export interface CaseSummary {
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
+  majorityOpinionSummary?: string;
+  concurringSummaries?: { author: string; summary: string }[];
+  dissentSummaries?: { author: string; summary: string }[];
 
   // Metadata
   processedAt: string;

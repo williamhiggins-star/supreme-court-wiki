@@ -11,6 +11,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import Anthropic from "@anthropic-ai/sdk";
 import { downloadPdf, extractText, CASES_DIR } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
 
@@ -201,6 +202,85 @@ function parseOpinionAuthors(rawText: string): OpinionAuthors {
   return { majorityAuthor, concurrenceAuthors, dissentAuthors };
 }
 
+// ── Opinion summaries via Claude ──────────────────────────────────────────────
+
+interface OpinionSummaries {
+  majorityOpinionSummary: string;
+  concurringSummaries: { author: string; summary: string }[];
+  dissentSummaries: { author: string; summary: string }[];
+}
+
+async function generateOpinionSummaries(
+  client: Anthropic,
+  opinionText: string,
+  authors: OpinionAuthors,
+  caseTitle: string
+): Promise<OpinionSummaries> {
+  const MAX_CHARS = 120_000;
+  const trimmed = opinionText.length > MAX_CHARS
+    ? opinionText.slice(0, MAX_CHARS) + "\n\n[TEXT TRIMMED]"
+    : opinionText;
+
+  const concurrenceList = authors.concurrenceAuthors.join(", ") || "none";
+  const dissentList = authors.dissentAuthors.join(", ") || "none";
+  const majorityLabel = authors.majorityAuthor === "per_curiam"
+    ? "per curiam (unsigned)"
+    : authors.majorityAuthor ?? "unknown";
+
+  const prompt = `You are summarizing a US Supreme Court opinion for a general audience. Write clearly for non-lawyers.
+
+Case: ${caseTitle}
+Majority author: ${majorityLabel}
+Concurrence authors: ${concurrenceList}
+Dissent authors: ${dissentList}
+
+Return a JSON object with EXACTLY this structure (no other text):
+{
+  "majorityOpinionSummary": "2–3 paragraphs summarising the majority opinion: what the Court held, the key reasoning, and the practical effect. Plain English.",
+  "concurringSummaries": [
+    { "author": "justice_key_lowercase", "summary": "1–2 paragraphs summarising this justice's concurrence." }
+  ],
+  "dissentSummaries": [
+    { "author": "justice_key_lowercase", "summary": "1–2 paragraphs summarising this justice's dissent." }
+  ]
+}
+
+Rules:
+- Use the exact lowercase justice key (roberts, thomas, alito, sotomayor, kagan, gorsuch, kavanaugh, barrett, jackson, per_curiam) for author fields.
+- Only include entries for justices listed above. If concurrenceList or dissentList is "none", return an empty array.
+- Separate paragraphs with a blank line (\\n\\n).
+- Return only the JSON object.
+
+OPINION TEXT:
+${trimmed}`;
+
+  const response = await client.messages.create({
+    model: process.env.MODEL ?? "claude-opus-4-6",
+    max_tokens: 4096,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const raw = response.content
+    .filter((b) => b.type === "text")
+    .map((b) => (b as { type: "text"; text: string }).text)
+    .join("");
+
+  // Extract the first balanced JSON object using bracket counting
+  const start = raw.indexOf("{");
+  if (start === -1) throw new Error("No JSON found in Claude response");
+  let depth = 0;
+  let end = -1;
+  for (let i = start; i < raw.length; i++) {
+    if (raw[i] === "{") depth++;
+    else if (raw[i] === "}") {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end === -1) throw new Error("Unbalanced JSON in Claude response");
+  return JSON.parse(raw.slice(start, end + 1)) as OpinionSummaries;
+}
+
 // ── Case file helpers ─────────────────────────────────────────────────────────
 
 function findCaseFile(caseNumber: string): string | null {
@@ -213,6 +293,7 @@ function findCaseFile(caseNumber: string): string | null {
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const shortYear = currentShortTermYear();
   const opinions = await fetchSlipOpinions(shortYear);
 
@@ -235,13 +316,14 @@ async function main() {
       continue;
     }
 
-    // Skip only if we already have author info, petitionerWon, AND decisionDate
+    // Skip only if fully processed: authors, petitionerWon, decisionDate, AND opinion summaries
     if (
       caseData.docketStatus === "decided" &&
       caseData.majorityAuthor &&
       caseData.majorityAuthor !== "unknown" &&
       "petitionerWon" in caseData &&
-      caseData.decisionDate
+      caseData.decisionDate &&
+      caseData.majorityOpinionSummary
     ) {
       console.log(`  ✓ ${caseNumber}: already processed (${caseData.majorityAuthor})`);
       skipped++;
@@ -269,12 +351,28 @@ async function main() {
         : undefined;
       caseData.petitionerWon = petitionerWon;
 
+      // Generate opinion summaries via Claude
+      const effectiveAuthors: OpinionAuthors = {
+        majorityAuthor: caseData.majorityAuthor ?? null,
+        concurrenceAuthors: caseData.concurrenceAuthors ?? [],
+        dissentAuthors: caseData.dissentAuthors ?? [],
+      };
+      console.log(`  Generating opinion summaries...`);
+      const summaries = await generateOpinionSummaries(client, text, effectiveAuthors, caseData.title);
+      caseData.majorityOpinionSummary = summaries.majorityOpinionSummary;
+      caseData.concurringSummaries = summaries.concurringSummaries.length
+        ? summaries.concurringSummaries
+        : undefined;
+      caseData.dissentSummaries = summaries.dissentSummaries.length
+        ? summaries.dissentSummaries
+        : undefined;
+
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
       console.log(
         `  ✓ majority=${authors.majorityAuthor ?? "unknown"} ` +
         `concurrences=[${authors.concurrenceAuthors.join(",")}] ` +
         `dissents=[${authors.dissentAuthors.join(",")}] ` +
-        `petitionerWon=${petitionerWon}`
+        `petitionerWon=${petitionerWon} summaries=✓`
       );
       updated++;
     } catch (err) {

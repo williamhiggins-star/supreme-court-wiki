@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCaseBySlug, getAllCases, getAllTerms } from "@/lib/data";
+import { DecisionSection } from "@/components/DecisionSection";
 
 export async function generateStaticParams() {
   return getAllCases().map((c) => ({ slug: c.slug }));
@@ -69,6 +70,13 @@ export default async function CasePage({
       </header>
 
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-10">
+        {/* Decision — only for decided cases with author data */}
+        {c.docketStatus === "decided" && c.majorityAuthor && (
+          <Section title="The Decision">
+            <DecisionSection c={c} />
+          </Section>
+        )}
+
         {/* Background */}
         <Section title="Background & Facts">
           <Prose text={c.backgroundAndFacts} />
