@@ -58,6 +58,22 @@
   font-display: swap;
 }
 
+/* Qommodore — used only for the site title */
+@font-face {
+  font-family: "Qommodore";
+  src: url("/fonts/QommodoreWeb-Bold-Trial.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Qommodore";
+  src: url("/fonts/QommodoreWeb-BoldItalic-Trial.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

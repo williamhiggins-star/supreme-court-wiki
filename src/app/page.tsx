@@ -101,7 +101,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-ft-paper">
       <header className="bg-ft-pink pt-10 px-6">
         <h1 className="max-w-2xl mx-auto text-5xl font-bold italic text-gray-900 tracking-tight text-center">
-          Supreme Court Oral Arguments Tracker
+          <span style={{ fontFamily: "Qommodore, Georgia, serif" }}>Supreme Court Oral Arguments Tracker</span>
         </h1>
         <nav className="mt-8 border-t border-[#f0b896]">
           <ul className="flex justify-center gap-0">
