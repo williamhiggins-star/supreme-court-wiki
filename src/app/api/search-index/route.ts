@@ -24,12 +24,12 @@ export async function GET() {
     });
   }
 
-  // Precedents
+  // Precedents — these are decided SCOTUS cases cited in current cases
   for (const p of getAllPrecedents()) {
     items.push({
-      type: "precedent",
+      type: "case",
       title: p.name,
-      subtitle: `${p.year} · ${p.citation}`,
+      subtitle: `Decided · ${p.year} · ${p.citation}`,
       href: `/precedents/${p.slug}`,
     });
   }
