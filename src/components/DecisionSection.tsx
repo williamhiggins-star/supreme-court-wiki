@@ -38,6 +38,49 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
   const dissentAuthors = c.dissentAuthors ?? [];
   const isPerCuriam = majorityAuthor === "per_curiam";
 
+  const dissentSet = new Set(dissentAuthors);
+  const concurrenceSet = new Set(concurrenceAuthors);
+
+  // ── Build ordered groups ──────────────────────────────────────────────────
+  // Winning side:
+  //   1. Majority opinion author (first, unless per curiam)
+  //   2. Concurring opinion authors, by seniority
+  //   3. All remaining majority justices, by seniority
+  const winningSide: string[] = [];
+  if (majorityAuthor && !isPerCuriam && !dissentSet.has(majorityAuthor)) {
+    winningSide.push(majorityAuthor);
+  }
+  // JUSTICE_ORDER is already in seniority order, so filtering preserves seniority
+  JUSTICE_ORDER.forEach((k) => {
+    if (concurrenceSet.has(k) && k !== majorityAuthor && !dissentSet.has(k))
+      winningSide.push(k);
+  });
+  JUSTICE_ORDER.forEach((k) => {
+    if (!dissentSet.has(k) && k !== majorityAuthor && !concurrenceSet.has(k))
+      winningSide.push(k);
+  });
+
+  // Losing side: dissenting opinion authors, by seniority
+  const losingSide = JUSTICE_ORDER.filter((k) => dissentSet.has(k));
+
+  type JusticeEntry = { key: string; ringColor: string; roleLabel: string | null; roleHref: string | null };
+
+  function buildEntry(key: string): JusticeEntry {
+    const isDissenter = dissentSet.has(key);
+    const isMajorityAuthor = !isPerCuriam && majorityAuthor === key;
+    const isConcurring = concurrenceSet.has(key);
+    const ringColor = isDissenter ? "ring-rose-500" : "ring-emerald-500";
+    let roleLabel: string | null = null;
+    let roleHref: string | null = null;
+    if (isMajorityAuthor) { roleLabel = "Majority opinion"; roleHref = "#majority-opinion"; }
+    else if (isConcurring) { roleLabel = "Concurring opinion"; roleHref = "#concurring-opinions"; }
+    else if (isDissenter) { roleLabel = "Dissenting opinion"; roleHref = "#dissenting-opinions"; }
+    return { key, ringColor, roleLabel, roleHref };
+  }
+
+  const winningEntries = winningSide.map(buildEntry);
+  const losingEntries = losingSide.map(buildEntry);
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
 
@@ -47,27 +90,17 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
           Per Curiam
         </p>
       )}
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        {JUSTICE_ORDER.map((key) => {
-          const isDissenter = dissentAuthors.includes(key);
-          const isMajorityAuthor = !isPerCuriam && majorityAuthor === key;
-          const isConcurring = concurrenceAuthors.includes(key);
-
-          const ringColor = isDissenter ? "ring-rose-500" : "ring-emerald-500";
-
-          let roleLabel: string | null = null;
-          let roleHref: string | null = null;
-          if (isMajorityAuthor) {
-            roleLabel = "Majority opinion";
-            roleHref = "#majority-opinion";
-          } else if (isConcurring) {
-            roleLabel = "Concurring opinion";
-            roleHref = "#concurring-opinions";
-          } else if (isDissenter) {
-            roleLabel = "Dissenting opinion";
-            roleHref = "#dissenting-opinions";
+      <div className="flex flex-wrap justify-center items-start gap-4 mb-6">
+        {[...winningEntries, ...(losingEntries.length > 0 ? [null] : []), ...losingEntries].map((entry, i) => {
+          // null is the divider
+          if (entry === null) {
+            return (
+              <div key="divider" className="self-stretch flex items-center">
+                <div className="w-px h-16 bg-gray-200 mx-1" />
+              </div>
+            );
           }
-
+          const { key, ringColor, roleLabel, roleHref } = entry;
           return (
             <div key={key} className="flex flex-col items-center gap-1 w-[68px]">
               <div className={`w-14 h-14 rounded-full overflow-hidden ring-[3px] ${ringColor}`}>
