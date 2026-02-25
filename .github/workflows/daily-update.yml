@@ -41,6 +41,9 @@ jobs:
           TERM_YEAR: ${{ github.event.inputs.term_year }}
         run: npx tsx scripts/update-cases.ts
 
+      - name: Recompute justice speaking stats
+        run: npx tsx scripts/compute-justice-stats.ts
+
       - name: Commit new case data
         run: |
           git config user.name "Supreme Court Wiki Bot"
