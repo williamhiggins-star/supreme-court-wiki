@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPrecedentBySlug, getAllPrecedents, getAllCases } from "@/lib/data";
+import { PrecedentDecisionSection } from "@/components/PrecedentDecisionSection";
 
 export async function generateStaticParams() {
   return getAllPrecedents().map((p) => ({ slug: p.slug }));
@@ -39,18 +40,6 @@ export default async function PrecedentPage({
                   <span>{p.year}</span>
                 </>
               )}
-              {p.voteCount && (
-                <>
-                  <span>·</span>
-                  <span>{p.voteCount} decision</span>
-                </>
-              )}
-              {p.majorityAuthor && (
-                <>
-                  <span>·</span>
-                  <span>Opinion by {p.majorityAuthor}</span>
-                </>
-              )}
             </div>
           </div>
           {p.legalQuestion && (
@@ -64,6 +53,11 @@ export default async function PrecedentPage({
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-10">
         {isEnriched ? (
           <>
+            {/* Decision — vote split, majority opinion, concurrences, dissents */}
+            <Section title="The Decision">
+              <PrecedentDecisionSection p={p} />
+            </Section>
+
             {/* Background */}
             <Section title="Background & Facts">
               <Prose text={p.backgroundAndFacts!} />
@@ -99,53 +93,6 @@ export default async function PrecedentPage({
                 ))}
               </div>
             </Section>
-
-            {/* Ruling */}
-            <Section title="The Court's Ruling">
-              <Prose text={p.holding!} />
-            </Section>
-
-            {/* Dissents */}
-            {p.dissentingOpinions && p.dissentingOpinions.length > 0 && (
-              <Section title="Dissenting Opinions">
-                <div className="space-y-6">
-                  {p.dissentingOpinions.map((d) => (
-                    <div
-                      key={d.author}
-                      className="bg-white rounded-lg border border-gray-200 p-6"
-                    >
-                      <div className="mb-3">
-                        <span className="font-semibold text-gray-900">
-                          Justice {d.author}
-                        </span>
-                        {d.joinedBy.length > 0 && (
-                          <span className="text-sm text-gray-500 ml-2">
-                            joined by {d.joinedBy.join(", ")}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-700 leading-relaxed mb-4">
-                        {d.coreArgument}
-                      </p>
-                      {d.keyPoints.length > 0 && (
-                        <ul className="space-y-1.5 text-sm text-gray-600 list-disc list-inside">
-                          {d.keyPoints.map((pt, i) => (
-                            <li key={i}>{pt}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </Section>
-            )}
-
-            {/* Concurrences */}
-            {p.concurringNote && (
-              <Section title="Concurring Opinions">
-                <p className="text-gray-700 leading-relaxed">{p.concurringNote}</p>
-              </Section>
-            )}
           </>
         ) : (
           <>
