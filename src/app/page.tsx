@@ -93,21 +93,32 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 py-10 px-6">
+      <header className="bg-white border-b border-gray-200 pt-10 px-6">
         <h1 className="max-w-2xl mx-auto text-5xl font-bold italic text-gray-900 tracking-tight text-center">
           Supreme Court Oral Arguments Tracker
         </h1>
-        <p className="max-w-4xl mx-auto mt-5 text-base text-gray-600 leading-relaxed text-justify">
-          This site tracks upcoming and recent oral arguments before the United States Supreme Court.
-          Case information is compiled directly from official Supreme Court records, including transcripts, docket filings, and published opinions.
-          Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.
-          Click any case to read a plain-English breakdown of the facts, the legal question, and each side&rsquo;s argument.
-          The site is updated automatically each day at 5pm ET.
-          For comments or suggestions, contact <a href="mailto:william.higgins@sciencespo.fr" className="text-blue-600 hover:underline">william.higgins@sciencespo.fr</a>.
-        </p>
+        <nav className="mt-8 border-t border-gray-200">
+          <ul className="flex justify-center gap-0">
+            {[
+              { label: "About", href: "#about" },
+              { label: "The Docket", href: "#docket" },
+              { label: "Circuit Map", href: "#circuit-map" },
+              { label: "Court Calendar", href: "#court-calendar" },
+            ].map(({ label, href }) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  className="block px-8 py-4 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors border-b-2 border-transparent hover:border-gray-900"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </header>
 
-      <section className="max-w-7xl mx-auto px-6 py-10">
+      <section id="docket" className="max-w-7xl mx-auto px-6 py-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
 
@@ -242,7 +253,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-12">
+      <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
         <p className="text-sm text-gray-500 mb-6">
           Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
@@ -251,7 +262,7 @@ export default function HomePage() {
         <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} />
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-12">
+      <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
         <p className="text-sm text-gray-500 mb-6">
           Oral argument sessions and conference dates for the October Term 2025.
@@ -259,6 +270,20 @@ export default function HomePage() {
           meet privately to discuss pending petitions and argued cases.
         </p>
         <CourtCalendar events={calendarEvents} today={today} />
+      </section>
+
+      <section id="about" className="bg-white border-t border-gray-200 px-6 py-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">About</h2>
+          <p className="text-base text-gray-600 leading-relaxed">
+            This site tracks upcoming and recent oral arguments before the United States Supreme Court.
+            Case information is compiled directly from official Supreme Court records, including transcripts, docket filings, and published opinions.
+            Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.
+            Click any case to read a plain-English breakdown of the facts, the legal question, and each side&rsquo;s argument.
+            The site is updated automatically each day at 5pm ET.
+            For comments or suggestions, contact <a href="mailto:william.higgins@sciencespo.fr" className="text-blue-600 hover:underline">william.higgins@sciencespo.fr</a>.
+          </p>
+        </div>
       </section>
     </main>
   );
