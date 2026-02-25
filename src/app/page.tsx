@@ -322,6 +322,16 @@ export default function HomePage() {
         <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} />
       </section>
 
+      <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Oral argument sessions and conference dates for the October Term 2025.
+          Argument dates link to case pages. Conference dates are when the Justices
+          meet privately to discuss pending petitions and argued cases.
+        </p>
+        <CourtCalendar events={calendarEvents} today={today} />
+      </section>
+
       {justicesData && (
         <section id="justices" className="max-w-7xl mx-auto px-6 pb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Justices</h2>
@@ -343,16 +353,6 @@ export default function HomePage() {
           <LawyersSection lawyers={lawyersData.lawyers} />
         </section>
       )}
-
-      <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Oral argument sessions and conference dates for the October Term 2025.
-          Argument dates link to case pages. Conference dates are when the Justices
-          meet privately to discuss pending petitions and argued cases.
-        </p>
-        <CourtCalendar events={calendarEvents} today={today} />
-      </section>
 
       <section id="about" className="bg-ft-paper border-t border-[#e8d0b8] px-6 py-16">
         <div className="max-w-3xl mx-auto">
