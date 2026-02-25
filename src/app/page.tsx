@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getAllCases, getAllPrecedents } from "@/lib/data";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getCircuitMapData } from "@/lib/circuits-server";
-import { groupCasesByCircuit } from "@/lib/circuits";
+import { groupCasesByCircuit, circuitKeyToNumber } from "@/lib/circuits";
+import { getCircuitSplitsData } from "@/lib/circuit-splits";
 import { getJusticesData } from "@/lib/justices";
 import { getLawyersData } from "@/lib/lawyers";
 import { CourtCalendar } from "@/components/CourtCalendar";
@@ -75,6 +76,28 @@ export default function HomePage() {
   const circuitMapData = getCircuitMapData();
   const justicesData = getJusticesData();
   const lawyersData = getLawyersData();
+  const splitsData = getCircuitSplitsData();
+
+  // Pre-compute per-circuit split summaries for the map component
+  const splitsByCircuit: Record<number, import("@/lib/circuits").CircuitSplitSummary[]> = {};
+  for (const split of splitsData?.splits ?? []) {
+    for (const pos of split.positions) {
+      for (const c of pos.circuits) {
+        const num = circuitKeyToNumber(c.key);
+        if (!num) continue;
+        if (!splitsByCircuit[num]) splitsByCircuit[num] = [];
+        splitsByCircuit[num].push({
+          splitId: split.id,
+          legalQuestion: split.legalQuestion,
+          area: split.area,
+          positionLabel: pos.label,
+          status: split.status,
+          relatedScotusSlug: split.relatedScotusSlug ?? null,
+        });
+      }
+    }
+  }
+  const totalSplits = splitsData?.splits.length ?? 0;
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -270,7 +293,7 @@ export default function HomePage() {
           Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
           Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
         </p>
-        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} />
+        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} totalSplits={totalSplits} />
       </section>
 
       <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">

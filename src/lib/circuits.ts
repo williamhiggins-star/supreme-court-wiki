@@ -113,6 +113,25 @@ const CIRCUIT_PATTERNS: [RegExp, number][] = [
   [/\bfederal\s+circuit\b/i, 13],
 ];
 
+/** Lightweight split summary passed into CircuitMap (no server-only types). */
+export interface CircuitSplitSummary {
+  splitId: string;
+  legalQuestion: string;
+  area: string;
+  /** This specific circuit's position label, e.g. "Yes" or "Does Not Apply" */
+  positionLabel: string;
+  status: "open" | "scotus_pending" | "scotus_resolved";
+  relatedScotusSlug?: string | null;
+}
+
+/** Convert a CourtListener circuit key ("ca5", "cadc") to our numeric ID. */
+export function circuitKeyToNumber(key: string): number | null {
+  if (key === "cadc")  return 12;
+  if (key === "cafc")  return 13;
+  const m = key.match(/^ca(\d+)$/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
 export function extractCircuit(text: string): number | null {
   for (const [re, circuit] of CIRCUIT_PATTERNS) {
     if (re.test(text)) return circuit;

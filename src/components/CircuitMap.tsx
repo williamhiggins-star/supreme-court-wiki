@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
-import type { CircuitMapData, CircuitCase, StateFeature } from "@/lib/circuits";
+import type { CircuitMapData, CircuitCase, StateFeature, CircuitSplitSummary } from "@/lib/circuits";
 import {
   CIRCUIT_NAMES,
   CIRCUIT_COLORS,
@@ -13,9 +13,11 @@ import {
 interface Props {
   mapData: CircuitMapData;
   casesByCircuit: Record<number, CircuitCase[]>;
+  splitsByCircuit: Record<number, CircuitSplitSummary[]>;
+  totalSplits: number;
 }
 
-export function CircuitMap({ mapData, casesByCircuit }: Props) {
+export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit, totalSplits }: Props) {
   const [hoveredCircuit, setHoveredCircuit] = useState<number | null>(null);
   const [selectedCircuit, setSelectedCircuit] = useState<number | null>(null);
   const [panelPos, setPanelPos] = useState({ x: 0, y: 0 });
@@ -38,10 +40,11 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
 
   const panelCircuit = selectedCircuit;
   const panelCases = panelCircuit ? (casesByCircuit[panelCircuit] ?? []) : [];
+  const panelSplits = panelCircuit ? (splitsByCircuit[panelCircuit] ?? []) : [];
 
   // Panel dimensions (approximate) used to keep it on-screen
-  const PANEL_W = 260;
-  const PANEL_H = 220;
+  const PANEL_W = 288;
+  const PANEL_H = 320;
 
   function panelStyle(): React.CSSProperties {
     if (!containerRef.current) return { left: panelPos.x + 12, top: panelPos.y + 12 };
@@ -178,7 +181,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
         {/* Pinned panel — appears when a circuit is selected */}
         {panelCircuit && (
           <div
-            className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-64"
+            className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-72 max-h-80 overflow-y-auto"
             style={panelStyle()}
             onClick={(e) => e.stopPropagation()}
           >
@@ -191,13 +194,15 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
                 className="text-gray-400 hover:text-gray-700 text-sm leading-none ml-2"
                 aria-label="Close"
               >
-                ✕
+                &#x2715;
               </button>
             </div>
+
+            {/* SCOTUS Cases */}
             {panelCases.length === 0 ? (
               <p className="text-xs text-gray-400 italic">No pending cases</p>
             ) : (
-              <ul className="space-y-1.5">
+              <ul className="space-y-1.5 mb-2">
                 {panelCases.map((c) => (
                   <li key={c.slug} className="flex items-start gap-1.5 text-xs leading-snug">
                     <span
@@ -209,11 +214,51 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
                       href={`/cases/${c.slug}`}
                       className="text-blue-700 hover:underline"
                     >
-                      {c.caseNumber} – {c.title}
+                      {c.caseNumber} &ndash; {c.title}
                     </Link>
                   </li>
                 ))}
               </ul>
+            )}
+
+            {/* Circuit Splits */}
+            {panelSplits.length > 0 && (
+              <>
+                {panelCases.length > 0 && <hr className="border-gray-100 my-2" />}
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Active Circuit Splits
+                </p>
+                <ul className="space-y-2.5">
+                  {panelSplits.map((s) => (
+                    <li key={s.splitId} className="text-xs leading-snug">
+                      <div className="flex items-center gap-1 mb-0.5 flex-wrap">
+                        <span className="inline-block bg-slate-100 text-slate-600 text-[9px] font-medium px-1.5 py-0.5 rounded">
+                          {s.area}
+                        </span>
+                        {s.status === "scotus_pending" && (
+                          <span className="inline-block bg-amber-100 text-amber-700 text-[9px] font-medium px-1.5 py-0.5 rounded">
+                            SCOTUS
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-700">
+                        {s.legalQuestion.length > 80
+                          ? s.legalQuestion.slice(0, 80) + "\u2026"
+                          : s.legalQuestion}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        This circuit: {s.positionLabel}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/appeals"
+                  className="block mt-2 text-[10px] text-blue-600 hover:underline text-right"
+                >
+                  View all circuit splits &rarr;
+                </Link>
+              </>
             )}
           </div>
         )}
@@ -238,6 +283,20 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
           </p>
         </div>
 
+        {/* Circuit splits summary card */}
+        {totalSplits > 0 && (
+          <div className="bg-white border border-gray-200 rounded p-3 text-xs text-gray-600">
+            <p className="font-semibold text-gray-700 mb-1">Circuit Splits</p>
+            <p className="text-gray-500 mb-2">
+              {totalSplits} active conflict{totalSplits !== 1 ? "s" : ""} between circuits tracked.
+              Click a circuit to see which splits involve it.
+            </p>
+            <Link href="/appeals" className="text-blue-600 hover:underline font-medium">
+              View full analysis &rarr;
+            </Link>
+          </div>
+        )}
+
         {/* Per-circuit list */}
         <div className="bg-white border border-gray-200 rounded overflow-hidden">
           <p className="text-xs font-semibold text-gray-700 px-3 py-2 border-b border-gray-100">
@@ -260,7 +319,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
                         {CIRCUIT_NAMES[circuit]}
                       </p>
                       {cases.length === 0 ? (
-                        <p className="text-[10px] text-gray-400">—</p>
+                        <p className="text-[10px] text-gray-400">&mdash;</p>
                       ) : (
                         <p className="text-[10px] text-gray-500">
                           {cases.length} case{cases.length !== 1 ? "s" : ""}
