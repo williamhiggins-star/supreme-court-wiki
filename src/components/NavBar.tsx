@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { label: "Counsel", href: "#counsel" },
   { label: "Circuit Map", href: "#circuit-map" },
   { label: "Court Calendar", href: "#court-calendar" },
+  { label: "Circuit Splits", href: "/appeals" },
 ];
 
 export function NavBar() {

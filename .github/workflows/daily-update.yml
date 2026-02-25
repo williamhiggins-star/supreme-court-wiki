@@ -42,6 +42,8 @@ jobs:
         run: npx tsx scripts/update-cases.ts
 
       - name: Fetch opinion authors from slip opinions
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: npx tsx scripts/fetch-opinion-authors.ts
 
       - name: Recompute justice speaking stats
@@ -49,6 +51,12 @@ jobs:
 
       - name: Recompute counsel speaking stats
         run: npx tsx scripts/compute-lawyer-stats.ts
+
+      - name: Fetch circuit splits from CourtListener
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COURTLISTENER_API_KEY: ${{ secrets.COURTLISTENER_API_KEY }}
+        run: npx tsx scripts/fetch-circuit-splits.ts
 
       - name: Commit new case data
         run: |
