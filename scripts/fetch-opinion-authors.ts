@@ -284,8 +284,10 @@ ${trimmed}`;
 // ── Case file helpers ─────────────────────────────────────────────────────────
 
 function findCaseFile(caseNumber: string): string | null {
+  // Strip trailing "new" suffix — revised opinions appear on SCOTUS as e.g. "24-568new"
+  const clean = caseNumber.replace(/new$/i, "").trim();
   const files = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"));
-  const prefix = caseNumber.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  const prefix = clean.toLowerCase().replace(/[^a-z0-9]/g, "-");
   const match = files.find((f) => f.startsWith(prefix));
   return match ? path.join(CASES_DIR, match) : null;
 }
