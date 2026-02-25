@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { getAllCases, getAllPrecedents } from "@/lib/data";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
+import { getCircuitMapData } from "@/lib/circuits-server";
+import { groupCasesByCircuit } from "@/lib/circuits";
 import { CourtCalendar } from "@/components/CourtCalendar";
+import { CircuitMap } from "@/components/CircuitMap";
 import type { CaseSummary, PrecedentCase } from "@/types";
 
 export function formatDate(dateStr: string): string {
@@ -64,9 +67,12 @@ export default function HomePage() {
   const precedents = getAllPrecedents();
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
+  const circuitMapData = getCircuitMapData();
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  const casesByCircuit = groupCasesByCircuit(cases, today);
 
   const upcoming: CaseSummary[] = [];
   const argued: CaseSummary[] = [];
@@ -234,6 +240,15 @@ export default function HomePage() {
           </div>
 
         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 pb-12">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
+          Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
+        </p>
+        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} />
       </section>
 
       <section className="max-w-7xl mx-auto px-6 pb-12">
