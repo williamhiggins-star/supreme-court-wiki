@@ -8,6 +8,7 @@ import { getJusticesData } from "@/lib/justices";
 import { getLawyersData } from "@/lib/lawyers";
 import { CourtCalendar } from "@/components/CourtCalendar";
 import { CircuitMap } from "@/components/CircuitMap";
+import { SplitCard } from "@/components/CircuitSplitsSection";
 import { JusticesSection } from "@/components/JusticesSection";
 import { LawyersSection } from "@/components/LawyersSection";
 import { NavBar } from "@/components/NavBar";
@@ -293,7 +294,33 @@ export default function HomePage() {
           Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
           Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
         </p>
-        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} totalSplits={totalSplits} />
+        <CircuitMap mapData={circuitMapData} casesByCircuit={casesByCircuit} splitsByCircuit={splitsByCircuit} />
+
+        {(() => {
+          const scotusSplits = splitsData?.splits.filter((s) => s.status === "scotus_pending") ?? [];
+          if (scotusSplits.length === 0) return null;
+          return (
+            <div className="mt-10">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">
+                Current Circuit Splits Before SCOTUS
+              </h3>
+              <p className="text-sm text-gray-500 mb-6">
+                These active circuit splits are currently before the Supreme Court — cert has been granted and a decision is pending.
+              </p>
+              <div className="grid grid-cols-1 gap-5">
+                {scotusSplits.map((s) => (
+                  <SplitCard key={s.id} split={s} />
+                ))}
+              </div>
+              <p className="mt-4 text-xs text-gray-400">
+                Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
+                <a href="/appeals" className="text-blue-600 hover:underline">
+                  See all circuit splits &rarr;
+                </a>
+              </p>
+            </div>
+          );
+        })()}
       </section>
 
       <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">

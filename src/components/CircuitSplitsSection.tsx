@@ -105,7 +105,7 @@ function PositionColumn({ pos, index }: { pos: CircuitPosition; index: number })
   );
 }
 
-function SplitCard({ split }: { split: CircuitSplit }) {
+export function SplitCard({ split }: { split: CircuitSplit }) {
   const totalCircuits = split.positions.reduce((n, p) => n + p.circuits.length, 0);
 
   return (

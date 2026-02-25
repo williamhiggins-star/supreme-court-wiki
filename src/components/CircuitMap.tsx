@@ -14,10 +14,9 @@ interface Props {
   mapData: CircuitMapData;
   casesByCircuit: Record<number, CircuitCase[]>;
   splitsByCircuit: Record<number, CircuitSplitSummary[]>;
-  totalSplits: number;
 }
 
-export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit, totalSplits }: Props) {
+export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit }: Props) {
   const [hoveredCircuit, setHoveredCircuit] = useState<number | null>(null);
   const [selectedCircuit, setSelectedCircuit] = useState<number | null>(null);
   const [panelPos, setPanelPos] = useState({ x: 0, y: 0 });
@@ -42,7 +41,6 @@ export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit, totalSpli
   const panelCases = panelCircuit ? (casesByCircuit[panelCircuit] ?? []) : [];
   const panelSplits = panelCircuit ? (splitsByCircuit[panelCircuit] ?? []) : [];
 
-  // Panel dimensions (approximate) used to keep it on-screen
   const PANEL_W = 288;
   const PANEL_H = 320;
 
@@ -59,250 +57,179 @@ export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit, totalSpli
     return { left, top };
   }
 
-  // Deduplicated preview splits (up to 3) drawn from splitsByCircuit
-  const previewSplits: CircuitSplitSummary[] = [];
-  if (totalSplits > 0) {
-    const seen = new Set<string>();
-    for (const splits of Object.values(splitsByCircuit)) {
-      for (const s of splits) {
-        if (!seen.has(s.splitId)) {
-          seen.add(s.splitId);
-          previewSplits.push(s);
-          if (previewSplits.length >= 3) break;
-        }
-      }
-      if (previewSplits.length >= 3) break;
-    }
-  }
-
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-      {/* Left column: map + below-map boxes */}
-      <div className="flex-1 min-w-0 flex flex-col gap-4">
-
-        {/* Map SVG with popup */}
-        <div ref={containerRef} className="relative w-full">
-          <svg
-            viewBox={mapData.viewBox}
-            className="w-full h-auto"
-            style={{ display: "block" }}
-            onClick={() => setSelectedCircuit(null)}
-          >
-            {/* State fills */}
-            {mapData.states.map((state: StateFeature) => (
-              <path
-                key={state.id}
-                d={state.pathD}
-                fill={CIRCUIT_COLORS[state.circuit] ?? "#e5e7eb"}
-                stroke="white"
-                strokeWidth="0.75"
-                strokeLinejoin="round"
-                style={{
-                  opacity:
-                    hoveredCircuit && hoveredCircuit !== state.circuit
-                      ? 0.45
-                      : selectedCircuit && selectedCircuit !== state.circuit
-                      ? 0.55
-                      : 1,
-                  transition: "opacity 0.15s",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={() => setHoveredCircuit(state.circuit)}
-                onMouseLeave={() => setHoveredCircuit(null)}
-                onClick={(e) => handleCircuitClick(state.circuit, e)}
-              />
-            ))}
-
-            {/* Circuit borders */}
+      {/* Map */}
+      <div ref={containerRef} className="relative w-full lg:flex-1">
+        <svg
+          viewBox={mapData.viewBox}
+          className="w-full h-auto"
+          style={{ display: "block" }}
+          onClick={() => setSelectedCircuit(null)}
+        >
+          {/* State fills */}
+          {mapData.states.map((state: StateFeature) => (
             <path
-              d={mapData.circuitBorderPath}
-              fill="none"
-              stroke="#1e293b"
-              strokeWidth="2.0"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              pointerEvents="none"
-            />
-
-            {/* Outer/coastal border */}
-            <path
-              d={mapData.outerBorderPath}
-              fill="none"
-              stroke="#94a3b8"
+              key={state.id}
+              d={state.pathD}
+              fill={CIRCUIT_COLORS[state.circuit] ?? "#e5e7eb"}
+              stroke="white"
               strokeWidth="0.75"
-              pointerEvents="none"
+              strokeLinejoin="round"
+              style={{
+                opacity:
+                  hoveredCircuit && hoveredCircuit !== state.circuit
+                    ? 0.45
+                    : selectedCircuit && selectedCircuit !== state.circuit
+                    ? 0.55
+                    : 1,
+                transition: "opacity 0.15s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={() => setHoveredCircuit(state.circuit)}
+              onMouseLeave={() => setHoveredCircuit(null)}
+              onClick={(e) => handleCircuitClick(state.circuit, e)}
             />
+          ))}
 
-            {/* Case count badges */}
-            {Object.entries(casesByCircuit).map(([circuitStr, cases]) => {
-              const circuit = Number(circuitStr);
-              const center = centroids[circuit];
-              if (!center) return null;
-              const [cx, cy] = center;
-              const upcoming = cases.filter((c) => c.status === "upcoming").length;
-              const argued = cases.filter((c) => c.status === "argued").length;
-              const total = cases.length;
-              const r = total >= 10 ? 14 : 11;
-              const isSelected = selectedCircuit === circuit;
+          {/* Circuit borders */}
+          <path
+            d={mapData.circuitBorderPath}
+            fill="none"
+            stroke="#1e293b"
+            strokeWidth="2.0"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            pointerEvents="none"
+          />
 
-              return (
-                <g
-                  key={circuit}
-                  style={{ cursor: "pointer" }}
-                  onMouseEnter={() => setHoveredCircuit(circuit)}
-                  onMouseLeave={() => setHoveredCircuit(null)}
-                  onClick={(e) => handleCircuitClick(circuit, e)}
-                >
-                  {upcoming > 0 && argued > 0 ? (
-                    <>
-                      <path
-                        d={`M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} Z`}
-                        fill="#f59e0b"
-                      />
-                      <path
-                        d={`M ${cx} ${cy + r} A ${r} ${r} 0 0 1 ${cx} ${cy - r} Z`}
-                        fill="#3b82f6"
-                      />
-                    </>
-                  ) : (
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={r}
-                      fill={upcoming > 0 ? "#f59e0b" : "#3b82f6"}
+          {/* Outer/coastal border */}
+          <path
+            d={mapData.outerBorderPath}
+            fill="none"
+            stroke="#94a3b8"
+            strokeWidth="0.75"
+            pointerEvents="none"
+          />
+
+          {/* Case count badges */}
+          {Object.entries(casesByCircuit).map(([circuitStr, cases]) => {
+            const circuit = Number(circuitStr);
+            const center = centroids[circuit];
+            if (!center) return null;
+            const [cx, cy] = center;
+            const upcoming = cases.filter((c) => c.status === "upcoming").length;
+            const argued = cases.filter((c) => c.status === "argued").length;
+            const total = cases.length;
+            const r = total >= 10 ? 14 : 11;
+            const isSelected = selectedCircuit === circuit;
+
+            return (
+              <g
+                key={circuit}
+                style={{ cursor: "pointer" }}
+                onMouseEnter={() => setHoveredCircuit(circuit)}
+                onMouseLeave={() => setHoveredCircuit(null)}
+                onClick={(e) => handleCircuitClick(circuit, e)}
+              >
+                {upcoming > 0 && argued > 0 ? (
+                  <>
+                    <path
+                      d={`M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} Z`}
+                      fill="#f59e0b"
                     />
-                  )}
+                    <path
+                      d={`M ${cx} ${cy + r} A ${r} ${r} 0 0 1 ${cx} ${cy - r} Z`}
+                      fill="#3b82f6"
+                    />
+                  </>
+                ) : (
                   <circle
                     cx={cx}
                     cy={cy}
                     r={r}
-                    fill="none"
-                    stroke={isSelected ? "#1e293b" : "white"}
-                    strokeWidth={isSelected ? "2.5" : "1.5"}
+                    fill={upcoming > 0 ? "#f59e0b" : "#3b82f6"}
                   />
-                  <text
-                    x={cx}
-                    y={cy}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fontSize={total >= 10 ? "9" : "10"}
-                    fontWeight="700"
-                    fill="white"
-                    pointerEvents="none"
-                  >
-                    {total}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Pinned popup panel */}
-          {panelCircuit && (
-            <div
-              className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-72 max-h-80 overflow-y-auto"
-              style={panelStyle()}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-gray-800">
-                  {CIRCUIT_NAMES[panelCircuit]}
-                </p>
-                <button
-                  onClick={() => setSelectedCircuit(null)}
-                  className="text-gray-400 hover:text-gray-700 text-sm leading-none ml-2"
-                  aria-label="Close"
+                )}
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  fill="none"
+                  stroke={isSelected ? "#1e293b" : "white"}
+                  strokeWidth={isSelected ? "2.5" : "1.5"}
+                />
+                <text
+                  x={cx}
+                  y={cy}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={total >= 10 ? "9" : "10"}
+                  fontWeight="700"
+                  fill="white"
+                  pointerEvents="none"
                 >
-                  &#x2715;
-                </button>
-              </div>
+                  {total}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
 
-              {/* SCOTUS Cases */}
-              {panelCases.length === 0 ? (
-                <p className="text-xs text-gray-400 italic">No pending cases</p>
-              ) : (
-                <ul className="space-y-1.5 mb-2">
-                  {panelCases.map((c) => (
-                    <li key={c.slug} className="flex items-start gap-1.5 text-xs leading-snug">
-                      <span
-                        className={`inline-block w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${
-                          c.status === "upcoming" ? "bg-amber-400" : "bg-blue-400"
-                        }`}
-                      />
-                      <Link
-                        href={`/cases/${c.slug}`}
-                        className="text-blue-700 hover:underline"
-                      >
-                        {c.caseNumber} &ndash; {c.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {/* Circuit Splits */}
-              {panelSplits.length > 0 && (
-                <>
-                  {panelCases.length > 0 && <hr className="border-gray-100 my-2" />}
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
-                    Active Circuit Splits
-                  </p>
-                  <ul className="space-y-2.5">
-                    {panelSplits.map((s) => (
-                      <li key={s.splitId} className="text-xs leading-snug">
-                        <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                          <span className="inline-block bg-slate-100 text-slate-600 text-[9px] font-medium px-1.5 py-0.5 rounded">
-                            {s.area}
-                          </span>
-                          {s.status === "scotus_pending" && (
-                            <span className="inline-block bg-amber-100 text-amber-700 text-[9px] font-medium px-1.5 py-0.5 rounded">
-                              SCOTUS
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-gray-700">
-                          {s.legalQuestion.length > 80
-                            ? s.legalQuestion.slice(0, 80) + "\u2026"
-                            : s.legalQuestion}
-                        </p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">
-                          This circuit: {s.positionLabel}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href="/appeals"
-                    className="block mt-2 text-[10px] text-blue-600 hover:underline text-right"
-                  >
-                    View all circuit splits &rarr;
-                  </Link>
-                </>
-              )}
+        {/* Pinned popup panel */}
+        {panelCircuit && (
+          <div
+            className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-72 max-h-80 overflow-y-auto"
+            style={panelStyle()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-bold text-gray-800">
+                {CIRCUIT_NAMES[panelCircuit]}
+              </p>
+              <button
+                onClick={() => setSelectedCircuit(null)}
+                className="text-gray-400 hover:text-gray-700 text-sm leading-none ml-2"
+                aria-label="Close"
+              >
+                &#x2715;
+              </button>
             </div>
-          )}
-        </div>
 
-        {/* Below-map row: summary box + preview box */}
-        {totalSplits > 0 && (
-          <>
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-              {/* Summary box */}
-              <div className="flex-1 bg-white border border-gray-200 rounded p-3 text-xs text-gray-600">
-                <p className="font-semibold text-gray-700 mb-1.5">Circuit Splits</p>
-                <p className="text-gray-500 leading-relaxed">
-                  {totalSplits} active conflict{totalSplits !== 1 ? "s" : ""} between circuits tracked.
-                  Click any circuit on the map to see which splits involve it.
+            {/* SCOTUS Cases */}
+            {panelCases.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">No pending cases</p>
+            ) : (
+              <ul className="space-y-1.5 mb-2">
+                {panelCases.map((c) => (
+                  <li key={c.slug} className="flex items-start gap-1.5 text-xs leading-snug">
+                    <span
+                      className={`inline-block w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${
+                        c.status === "upcoming" ? "bg-amber-400" : "bg-blue-400"
+                      }`}
+                    />
+                    <Link
+                      href={`/cases/${c.slug}`}
+                      className="text-blue-700 hover:underline"
+                    >
+                      {c.caseNumber} &ndash; {c.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Circuit Splits in popup */}
+            {panelSplits.length > 0 && (
+              <>
+                {panelCases.length > 0 && <hr className="border-gray-100 my-2" />}
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Active Circuit Splits
                 </p>
-              </div>
-
-              {/* Preview box */}
-              <div className="flex-1 bg-white border border-gray-200 rounded p-3 text-xs text-gray-600">
-                <p className="font-semibold text-gray-700 mb-2">Recent Splits</p>
                 <ul className="space-y-2.5">
-                  {previewSplits.map((s) => (
-                    <li key={s.splitId} className="leading-snug">
+                  {panelSplits.map((s) => (
+                    <li key={s.splitId} className="text-xs leading-snug">
                       <div className="flex items-center gap-1 mb-0.5 flex-wrap">
                         <span className="inline-block bg-slate-100 text-slate-600 text-[9px] font-medium px-1.5 py-0.5 rounded">
                           {s.area}
@@ -314,23 +241,25 @@ export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit, totalSpli
                         )}
                       </div>
                       <p className="text-gray-700">
-                        {s.legalQuestion.length > 90
-                          ? s.legalQuestion.slice(0, 90) + "\u2026"
+                        {s.legalQuestion.length > 80
+                          ? s.legalQuestion.slice(0, 80) + "\u2026"
                           : s.legalQuestion}
+                      </p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        This circuit: {s.positionLabel}
                       </p>
                     </li>
                   ))}
                 </ul>
-              </div>
-            </div>
-
-            <Link
-              href="/appeals"
-              className="text-sm text-blue-600 hover:underline font-medium"
-            >
-              See all circuit splits &rarr;
-            </Link>
-          </>
+                <Link
+                  href="/appeals"
+                  className="block mt-2 text-[10px] text-blue-600 hover:underline text-right"
+                >
+                  View all circuit splits &rarr;
+                </Link>
+              </>
+            )}
+          </div>
         )}
       </div>
 
