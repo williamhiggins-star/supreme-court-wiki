@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import type { CircuitMapData, CircuitCase, StateFeature } from "@/lib/circuits";
 import {
@@ -18,20 +18,48 @@ interface Props {
 export function CircuitMap({ mapData, casesByCircuit }: Props) {
   const [hoveredCircuit, setHoveredCircuit] = useState<number | null>(null);
   const [selectedCircuit, setSelectedCircuit] = useState<number | null>(null);
+  const [panelPos, setPanelPos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const centroids = getCircuitCentroids(mapData.states);
 
-  function handleCircuitClick(circuit: number) {
-    setSelectedCircuit((prev) => (prev === circuit ? null : circuit));
+  function handleCircuitClick(circuit: number, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (selectedCircuit === circuit) {
+      setSelectedCircuit(null);
+      return;
+    }
+    const rect = containerRef.current!.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setPanelPos({ x, y });
+    setSelectedCircuit(circuit);
   }
 
   const panelCircuit = selectedCircuit;
   const panelCases = panelCircuit ? (casesByCircuit[panelCircuit] ?? []) : [];
 
+  // Panel dimensions (approximate) used to keep it on-screen
+  const PANEL_W = 260;
+  const PANEL_H = 220;
+
+  function panelStyle(): React.CSSProperties {
+    if (!containerRef.current) return { left: panelPos.x + 12, top: panelPos.y + 12 };
+    const cw = containerRef.current.offsetWidth;
+    const ch = containerRef.current.offsetHeight;
+    let left = panelPos.x + 14;
+    let top = panelPos.y + 14;
+    if (left + PANEL_W > cw) left = panelPos.x - PANEL_W - 14;
+    if (top + PANEL_H > ch) top = panelPos.y - PANEL_H - 14;
+    left = Math.max(4, left);
+    top = Math.max(4, top);
+    return { left, top };
+  }
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start">
       {/* Map */}
-      <div className="relative w-full lg:flex-1">
+      <div ref={containerRef} className="relative w-full lg:flex-1">
         <svg
           viewBox={mapData.viewBox}
           className="w-full h-auto"
@@ -59,10 +87,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
               }}
               onMouseEnter={() => setHoveredCircuit(state.circuit)}
               onMouseLeave={() => setHoveredCircuit(null)}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCircuitClick(state.circuit);
-              }}
+              onClick={(e) => handleCircuitClick(state.circuit, e)}
             />
           ))}
 
@@ -104,10 +129,7 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
                 style={{ cursor: "pointer" }}
                 onMouseEnter={() => setHoveredCircuit(circuit)}
                 onMouseLeave={() => setHoveredCircuit(null)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCircuitClick(circuit);
-                }}
+                onClick={(e) => handleCircuitClick(circuit, e)}
               >
                 {upcoming > 0 && argued > 0 ? (
                   <>
@@ -156,7 +178,8 @@ export function CircuitMap({ mapData, casesByCircuit }: Props) {
         {/* Pinned panel — appears when a circuit is selected */}
         {panelCircuit && (
           <div
-            className="absolute top-2 right-2 z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-64"
+            className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg p-3 w-64"
+            style={panelStyle()}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-2">
