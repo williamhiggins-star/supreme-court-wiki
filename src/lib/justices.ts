@@ -10,6 +10,9 @@ export interface JusticeStat {
   totalWords: number;
   estimatedMinutes: number;
   casesParticipated: number;
+  majorityOpinions: number;
+  concurrences: number;
+  dissents: number;
 }
 
 export interface JusticesData {

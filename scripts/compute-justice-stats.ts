@@ -113,10 +113,13 @@ interface JusticeStat {
   key: string;
   displayName: string;
   photo: string;
-  questions: number;      // number of speaking turns
+  questions: number;        // number of speaking turns
   totalWords: number;
   estimatedMinutes: number; // totalWords / 130 wpm
   casesParticipated: number;
+  majorityOpinions: number;
+  concurrences: number;
+  dissents: number;
 }
 
 export interface JusticesData {
@@ -129,9 +132,12 @@ async function main() {
   const caseFiles = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"));
 
   // Accumulate per-justice stats
-  const stats: Record<string, { questions: number; totalWords: number; cases: Set<string> }> = {};
+  const stats: Record<string, {
+    questions: number; totalWords: number; cases: Set<string>;
+    majorityOpinions: number; concurrences: number; dissents: number;
+  }> = {};
   for (const j of JUSTICES) {
-    stats[j.key] = { questions: 0, totalWords: 0, cases: new Set() };
+    stats[j.key] = { questions: 0, totalWords: 0, cases: new Set(), majorityOpinions: 0, concurrences: 0, dissents: 0 };
   }
 
   let processed = 0;
@@ -164,6 +170,19 @@ async function main() {
     }
   }
 
+  // Tally opinion authorship from decided 2025-term case files
+  for (const file of caseFiles) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const caseData: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, file), "utf-8"));
+    if (caseData.termYear !== "2025") continue;
+    if (caseData.docketStatus !== "decided") continue;
+
+    const { majorityAuthor, concurrenceAuthors = [], dissentAuthors = [] } = caseData;
+    if (majorityAuthor && stats[majorityAuthor]) stats[majorityAuthor].majorityOpinions++;
+    for (const k of concurrenceAuthors) if (stats[k]) stats[k].concurrences++;
+    for (const k of dissentAuthors)    if (stats[k]) stats[k].dissents++;
+  }
+
   // Build output
   const WPM = 130; // average speaking rate
   const justices: JusticeStat[] = JUSTICES.map((j) => ({
@@ -174,6 +193,9 @@ async function main() {
     totalWords: stats[j.key].totalWords,
     estimatedMinutes: Math.round((stats[j.key].totalWords / WPM) * 10) / 10,
     casesParticipated: stats[j.key].cases.size,
+    majorityOpinions: stats[j.key].majorityOpinions,
+    concurrences: stats[j.key].concurrences,
+    dissents: stats[j.key].dissents,
   })).sort((a, b) => b.estimatedMinutes - a.estimatedMinutes);
 
   const output: JusticesData = {

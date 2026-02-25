@@ -83,6 +83,9 @@ export interface CaseSummary {
   citedPrecedents: CitedPrecedent[];
   legalTermsUsed: string[]; // slugs into LegalTerm
   outcome?: string;
+  majorityAuthor?: string;       // justice key e.g. "kagan", or "per_curiam"
+  concurrenceAuthors?: string[]; // justice keys
+  dissentAuthors?: string[];     // justice keys
 
   // Metadata
   processedAt: string;

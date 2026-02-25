@@ -6,11 +6,12 @@ interface Props {
 }
 
 export function JusticesSection({ justices }: Props) {
-  // Scale bars to the maximum value across all justices
   const maxMinutes = Math.max(...justices.map((j) => j.estimatedMinutes));
   const maxQuestions = Math.max(...justices.map((j) => j.questions));
+  const maxOpinions = Math.max(
+    ...justices.map((j) => j.majorityOpinions + j.concurrences + j.dissents)
+  );
 
-  // Split into two columns: left gets ceil(n/2), right gets floor(n/2)
   const mid = Math.ceil(justices.length / 2);
   const leftCol = justices.slice(0, mid);
   const rightCol = justices.slice(mid);
@@ -25,6 +26,7 @@ export function JusticesSection({ justices }: Props) {
               justice={j}
               maxMinutes={maxMinutes}
               maxQuestions={maxQuestions}
+              maxOpinions={maxOpinions}
             />
           ))}
         </div>
@@ -37,13 +39,22 @@ function JusticeRow({
   justice: j,
   maxMinutes,
   maxQuestions,
+  maxOpinions,
 }: {
   justice: JusticeStat;
   maxMinutes: number;
   maxQuestions: number;
+  maxOpinions: number;
 }) {
   const minutePct = (j.estimatedMinutes / maxMinutes) * 100;
   const questionPct = (j.questions / maxQuestions) * 100;
+
+  const totalOpinions = j.majorityOpinions + j.concurrences + j.dissents;
+  const opinionBarPct = maxOpinions > 0 ? (totalOpinions / maxOpinions) * 100 : 0;
+  // Segment widths within the opinion bar (as % of the filled portion)
+  const majPct  = totalOpinions > 0 ? (j.majorityOpinions / totalOpinions) * 100 : 0;
+  const concPct = totalOpinions > 0 ? (j.concurrences     / totalOpinions) * 100 : 0;
+  const disPct  = totalOpinions > 0 ? (j.dissents         / totalOpinions) * 100 : 0;
 
   return (
     <div className="flex items-start gap-3 py-4">
@@ -69,10 +80,7 @@ function JusticeRow({
         <div className="mb-1.5">
           <div className="flex items-center gap-2">
             <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div
-                className="h-3 rounded-full bg-blue-500"
-                style={{ width: `${minutePct}%` }}
-              />
+              <div className="h-3 rounded-full bg-blue-500" style={{ width: `${minutePct}%` }} />
             </div>
             <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {j.estimatedMinutes.toLocaleString()} min
@@ -81,20 +89,59 @@ function JusticeRow({
           <p className="text-[10px] text-gray-400 mt-0.5">Speaking time</p>
         </div>
 
-        {/* Questions bar */}
-        <div>
+        {/* Speaking turns bar */}
+        <div className="mb-1.5">
           <div className="flex items-center gap-2">
             <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div
-                className="h-3 rounded-full bg-amber-400"
-                style={{ width: `${questionPct}%` }}
-              />
+              <div className="h-3 rounded-full bg-amber-400" style={{ width: `${questionPct}%` }} />
             </div>
             <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {j.questions.toLocaleString()} turns
             </span>
           </div>
           <p className="text-[10px] text-gray-400 mt-0.5">Speaking turns</p>
+        </div>
+
+        {/* Opinions stacked bar */}
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+              {totalOpinions > 0 ? (
+                <div
+                  className="h-3 flex overflow-hidden rounded-full"
+                  style={{ width: `${opinionBarPct}%` }}
+                >
+                  {j.majorityOpinions > 0 && (
+                    <div className="h-full bg-indigo-500" style={{ width: `${majPct}%` }} />
+                  )}
+                  {j.concurrences > 0 && (
+                    <div className="h-full bg-emerald-400" style={{ width: `${concPct}%` }} />
+                  )}
+                  {j.dissents > 0 && (
+                    <div className="h-full bg-rose-400" style={{ width: `${disPct}%` }} />
+                  )}
+                </div>
+              ) : null}
+            </div>
+            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+              {totalOpinions} opinion{totalOpinions !== 1 ? "s" : ""}
+            </span>
+          </div>
+          {/* Segment legend */}
+          <div className="flex items-center gap-3 mt-0.5">
+            <span className="flex items-center gap-1 text-[10px] text-gray-400">
+              <span className="inline-block w-2 h-2 rounded-sm bg-indigo-500" />
+              {j.majorityOpinions} majority
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-gray-400">
+              <span className="inline-block w-2 h-2 rounded-sm bg-emerald-400" />
+              {j.concurrences} concurring
+            </span>
+            <span className="flex items-center gap-1 text-[10px] text-gray-400">
+              <span className="inline-block w-2 h-2 rounded-sm bg-rose-400" />
+              {j.dissents} dissenting
+            </span>
+          </div>
         </div>
       </div>
     </div>

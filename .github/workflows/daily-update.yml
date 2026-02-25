@@ -41,6 +41,9 @@ jobs:
           TERM_YEAR: ${{ github.event.inputs.term_year }}
         run: npx tsx scripts/update-cases.ts
 
+      - name: Fetch opinion authors from slip opinions
+        run: npx tsx scripts/fetch-opinion-authors.ts
+
       - name: Recompute justice speaking stats
         run: npx tsx scripts/compute-justice-stats.ts
 
