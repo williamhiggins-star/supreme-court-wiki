@@ -343,12 +343,11 @@ async function main() {
       if (decisionDate) caseData.decisionDate = decisionDate;
       caseData.outcome = caseData.outcome ?? `Opinion filed. See: ${pdfUrl}`;
       if (authors.majorityAuthor) caseData.majorityAuthor = authors.majorityAuthor;
-      caseData.concurrenceAuthors = authors.concurrenceAuthors.length
-        ? authors.concurrenceAuthors
-        : undefined;
-      caseData.dissentAuthors = authors.dissentAuthors.length
-        ? authors.dissentAuthors
-        : undefined;
+      // Dissent takes priority — remove any justice from concurrences if they also dissented
+      const dissentSet = new Set(authors.dissentAuthors);
+      const filteredConcurrences = authors.concurrenceAuthors.filter((k) => !dissentSet.has(k));
+      caseData.concurrenceAuthors = filteredConcurrences.length ? filteredConcurrences : undefined;
+      caseData.dissentAuthors = authors.dissentAuthors.length ? authors.dissentAuthors : undefined;
       caseData.petitionerWon = petitionerWon;
 
       // Generate opinion summaries via Claude
