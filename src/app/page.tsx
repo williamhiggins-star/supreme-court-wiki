@@ -342,6 +342,7 @@ export default function HomePage() {
             Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.
             Click any case to read a plain-English breakdown of the facts, the legal question, and each side&rsquo;s argument.
             The site is updated automatically each day at 5pm ET.
+            Built by William Higgins.
             For comments or suggestions, contact <a href="mailto:william.higgins@sciencespo.fr" className="text-blue-600 hover:underline">william.higgins@sciencespo.fr</a>.
           </p>
         </div>
