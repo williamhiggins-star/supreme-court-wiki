@@ -36,7 +36,7 @@ export function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decide
 }
 
 export type DecidedItem =
-  | { type: "case"; slug: string; title: string; sub: string; href: string }
+  | { type: "case"; slug: string; title: string; sub: string; href: string; decisionDate?: string; voteSplit?: string }
   | { type: "precedent"; slug: string; name: string; year: number; href: string };
 
 export function buildDecidedList(
@@ -44,13 +44,21 @@ export function buildDecidedList(
   precedents: PrecedentCase[]
 ): DecidedItem[] {
   const items: DecidedItem[] = [
-    ...decidedCases.map((c) => ({
-      type: "case" as const,
-      slug: c.slug,
-      title: c.title,
-      sub: `${c.termYear} Term · ${c.caseNumber}`,
-      href: `/cases/${c.slug}`,
-    })),
+    ...decidedCases.map((c) => {
+      const dissents = c.dissentAuthors?.length ?? 0;
+      const voteSplit = c.majorityAuthor
+        ? dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`
+        : undefined;
+      return {
+        type: "case" as const,
+        slug: c.slug,
+        title: c.title,
+        sub: `${c.termYear} Term · ${c.caseNumber}`,
+        href: `/cases/${c.slug}`,
+        decisionDate: c.decisionDate,
+        voteSplit,
+      };
+    }),
     ...precedents.map((p) => ({
       type: "precedent" as const,
       slug: p.slug,
@@ -224,7 +232,7 @@ export default function HomePage() {
               <p className="text-gray-400 text-sm italic">No cases</p>
             ) : (
               <>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   {decided.slice(0, PAGE_SIZE).map((item) =>
                     item.type === "case" ? (
                       <Link
@@ -236,12 +244,16 @@ export default function HomePage() {
                         <p className="text-sm font-semibold text-gray-900 leading-snug">
                           {item.title}
                         </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
+                          {item.voteSplit ? ` · ${item.voteSplit}` : ""}
+                        </p>
                       </Link>
                     ) : (
                       <Link
                         key={item.slug}
                         href={item.href}
-                        className="block bg-white border border-gray-200 rounded px-4 py-3 hover:border-gray-400 hover:shadow-sm transition-all"
+                        className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
                       >
                         <p className="text-xs text-gray-400 mb-0.5">{item.year}</p>
                         <p className="text-sm text-gray-800 leading-snug">

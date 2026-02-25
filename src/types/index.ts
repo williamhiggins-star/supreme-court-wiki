@@ -87,6 +87,7 @@ export interface CaseSummary {
   majorityAuthor?: string;        // justice key e.g. "kagan", or "per_curiam"
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
+  decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
 
   // Metadata
   processedAt: string;

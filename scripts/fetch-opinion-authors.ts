@@ -39,6 +39,7 @@ function currentShortTermYear(): string {
 interface SlipOpinion {
   caseNumber: string;
   pdfUrl: string;
+  decisionDate?: string; // YYYY-MM-DD
 }
 
 async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
@@ -46,29 +47,42 @@ async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
   console.log(`Fetching slip opinions: ${url}`);
   const html = await fetchHtml(url);
 
-  // href='/opinions/25pdf/24-351_7648.pdf'
-  const re = /href='(\/opinions\/\d+pdf\/([^'_/]+)[^']*\.pdf)'/gi;
+  // Process row-by-row so we can associate dates with PDF links
   const seen = new Set<string>();
   const results: SlipOpinion[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(html)) !== null) {
-    const caseNumber = m[2];
-    if (seen.has(caseNumber)) continue;
-    // Skip diffs — we only want the primary opinion
-    if (m[1].includes("diff") || m[1].includes("new_")) {
-      // "new_" revisions replace originals; track the latest below
-    }
-    seen.add(caseNumber);
-    results.push({ caseNumber, pdfUrl: `${SCOTUS_BASE}${m[1]}` });
-  }
 
-  // Second pass: pick up "revised" versions (filename contains "new_")
-  // Replace any earlier entry with the revised version
-  const re2 = /href='(\/opinions\/\d+pdf\/([^'_/]+)new_[^']*\.pdf)'/gi;
-  while ((m = re2.exec(html)) !== null) {
-    const caseNumber = m[2];
-    const idx = results.findIndex((r) => r.caseNumber === caseNumber);
-    if (idx >= 0) results[idx].pdfUrl = `${SCOTUS_BASE}${m[1]}`;
+  // Split on <tr — each chunk is one table row's content
+  for (const row of html.split(/<tr[\s>]/i)) {
+    const pdfMatch = /href='(\/opinions\/\d+pdf\/([^'_/]+)([^']*\.pdf))'/i.exec(row);
+    if (!pdfMatch) continue;
+
+    const pdfPath = pdfMatch[1];
+    const caseNumber = pdfMatch[2];
+    const isRevision = pdfPath.includes("new_");
+
+    // Extract date — SCOTUS uses M/D/YY or MM/DD/YY in the first <td>
+    let decisionDate: string | undefined;
+    const dateMatch = /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/.exec(row);
+    if (dateMatch) {
+      const mm = dateMatch[1].padStart(2, "0");
+      const dd = dateMatch[2].padStart(2, "0");
+      const yr = dateMatch[3].length === 2 ? `20${dateMatch[3]}` : dateMatch[3];
+      decisionDate = `${yr}-${mm}-${dd}`;
+    }
+
+    if (seen.has(caseNumber)) {
+      // Replace with revised version
+      if (isRevision) {
+        const existing = results.find((r) => r.caseNumber === caseNumber);
+        if (existing) {
+          existing.pdfUrl = `${SCOTUS_BASE}${pdfPath}`;
+          if (decisionDate) existing.decisionDate = decisionDate;
+        }
+      }
+    } else {
+      seen.add(caseNumber);
+      results.push({ caseNumber, pdfUrl: `${SCOTUS_BASE}${pdfPath}`, decisionDate });
+    }
   }
 
   console.log(`  Found ${results.length} slip opinions`);
@@ -205,7 +219,7 @@ async function main() {
   let updated = 0;
   let skipped = 0;
 
-  for (const { caseNumber, pdfUrl } of opinions) {
+  for (const { caseNumber, pdfUrl, decisionDate } of opinions) {
     const filePath = findCaseFile(caseNumber);
     if (!filePath) {
       console.log(`  – ${caseNumber}: not in DB, skipping`);
@@ -221,12 +235,13 @@ async function main() {
       continue;
     }
 
-    // Skip only if we already have author info AND petitionerWon resolved
+    // Skip only if we already have author info, petitionerWon, AND decisionDate
     if (
       caseData.docketStatus === "decided" &&
       caseData.majorityAuthor &&
       caseData.majorityAuthor !== "unknown" &&
-      "petitionerWon" in caseData
+      "petitionerWon" in caseData &&
+      caseData.decisionDate
     ) {
       console.log(`  ✓ ${caseNumber}: already processed (${caseData.majorityAuthor})`);
       skipped++;
@@ -243,6 +258,7 @@ async function main() {
       const petitionerWon = detectPetitionerWon(text);
 
       caseData.docketStatus = "decided";
+      if (decisionDate) caseData.decisionDate = decisionDate;
       caseData.outcome = caseData.outcome ?? `Opinion filed. See: ${pdfUrl}`;
       if (authors.majorityAuthor) caseData.majorityAuthor = authors.majorityAuthor;
       caseData.concurrenceAuthors = authors.concurrenceAuthors.length
