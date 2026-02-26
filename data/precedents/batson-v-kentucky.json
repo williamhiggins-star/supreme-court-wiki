@@ -5,5 +5,58 @@
   "year": 1986,
   "summary": "The Court held that the Equal Protection Clause forbids prosecutors from excluding jurors based on race via peremptory challenges and established a three-step process for raising and testing claims of race-based jury strikes.",
   "significance": "Foundational precedent establishing that prosecutors cannot use peremptory strikes to remove jurors based on race; central to Pitchford's claim of race-based jury exclusion.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Equal Protection Clause of the Fourteenth Amendment prohibit a prosecutor from using peremptory challenges to remove potential jurors solely on the basis of their race?",
+  "backgroundAndFacts": "In 1981, James Kirkland Batson, a Black man, was indicted in Louisville, Kentucky on charges of second-degree burglary and receipt of stolen goods. When his case went to trial, the judge conducted voir dire — the process of questioning and selecting jurors. The jury pool that day included six Black individuals. The prosecutor used his peremptory challenges — which traditionally allow lawyers to remove potential jurors without giving any reason — to strike all four Black persons who remained in the pool after challenges for cause. This left Batson facing an all-white jury.\n\nBatson's defense attorney immediately objected. He moved to discharge the jury before the trial began, arguing that the prosecutor's removal of every Black juror violated both the Sixth Amendment's guarantee of a jury drawn from a fair cross-section of the community and the Fourteenth Amendment's Equal Protection Clause, which prohibits government action based on racial discrimination. The trial judge denied the motion without requiring the prosecutor to explain his strikes, and the trial proceeded. The all-white jury convicted Batson on both counts.\n\nBatson appealed his conviction to the Supreme Court of Kentucky. That court affirmed the conviction, relying on the U.S. Supreme Court's 1965 decision in Swain v. Alabama. Under Swain, a defendant claiming racial discrimination in jury selection had to prove not just that Black jurors were removed in his own trial, but that the prosecutor had engaged in a systematic pattern of excluding Black jurors across many cases over time. This was an extraordinarily difficult standard to meet, and almost no defendant had ever succeeded in doing so.\n\nBatson then petitioned the U.S. Supreme Court for review. The Court agreed to hear the case because the issue of race-based peremptory challenges had become one of the most pressing unresolved questions in criminal justice. Courts across the country were struggling with the Swain standard, and several lower courts and legal scholars had criticized it as virtually impossible for defendants to satisfy. The case gave the Supreme Court an opportunity to reconsider whether the Constitution truly permitted prosecutors to use peremptory challenges as a tool for racial exclusion.",
+  "parties": [
+    {
+      "party": "James Kirkland Batson",
+      "role": "petitioner",
+      "coreArgument": "Batson argued that the prosecutor's use of peremptory challenges to remove all Black jurors from his trial jury violated his right to equal protection under the Fourteenth Amendment. He contended that a defendant should be able to challenge race-based strikes in his own case without needing to prove a pattern of discrimination spanning many other cases.",
+      "supportingPoints": [
+        "The prosecutor struck every single Black person from the jury pool, leaving an all-white jury to decide a Black defendant's fate, which was strong circumstantial evidence of racial motivation.",
+        "The Swain v. Alabama standard requiring proof of systematic discrimination across multiple cases was nearly impossible to meet and effectively gave prosecutors a license to discriminate in individual cases.",
+        "The Equal Protection Clause should protect an individual defendant's rights in his own trial, not merely guard against long-running patterns of abuse that happen to be documented."
+      ]
+    },
+    {
+      "party": "Kentucky",
+      "role": "respondent",
+      "coreArgument": "Kentucky argued that the existing standard from Swain v. Alabama should be preserved, and that peremptory challenges are by their very nature exercised without any obligation to state a reason, making it improper to require prosecutors to justify individual strikes.",
+      "supportingPoints": [
+        "Peremptory challenges have a centuries-long history in common law and are understood to be discretionary strikes that do not require explanation.",
+        "The Swain standard was established precedent and provided a workable rule that balanced the competing interests of preventing discrimination and preserving the peremptory challenge system.",
+        "Requiring prosecutors to justify individual peremptory strikes would fundamentally undermine the nature of the peremptory challenge and transform it into a challenge for cause."
+      ]
+    }
+  ],
+  "holding": "In a 7–2 decision authored by Justice Lewis F. Powell Jr., the Supreme Court ruled in favor of Batson and held that the Equal Protection Clause of the Fourteenth Amendment forbids a prosecutor from using peremptory challenges to exclude members of the defendant's race from the jury on the assumption that jurors of that race would be unable to impartially consider the state's case. The Court explicitly overruled the portion of Swain v. Alabama that had required defendants to prove a pattern of discrimination across multiple cases, finding that standard placed a 'crippling burden' on defendants and tolerated far too much discrimination.\n\nThe majority reasoned that the right to a trial by jury would be meaningless if the government could exclude citizens from jury service on account of their race. Justice Powell emphasized that racial discrimination in jury selection harms not only the defendant but also the excluded jurors and the integrity of the judicial system as a whole. The prosecutor is a representative of the government, and the government may not discriminate on the basis of race in any of its actions, including the selection of jurors.\n\nTo implement this holding, the Court established a now-famous three-step process. First, the defendant must make a prima facie showing that the prosecutor has exercised peremptory challenges on the basis of race. The defendant can do this by showing that he is a member of a cognizable racial group, that the prosecutor used peremptory strikes to remove members of that group, and that the facts and circumstances of the case raise an inference of discrimination. Second, once a prima facie case is established, the burden shifts to the prosecution to come forward with a race-neutral explanation for the challenged strikes. This explanation does not need to be persuasive or even plausible at this stage — it simply cannot be based on race or the assumption that jurors of a particular race cannot be impartial. Third, the trial court must then evaluate all the evidence and determine whether the defendant has proven that the strikes were motivated by purposeful racial discrimination.\n\nThe Court was careful to note that this framework does not eliminate the peremptory challenge. Prosecutors remain free to strike jurors for any legitimate reason — hunches, demeanor, life experiences, or other factors — as long as the reason is not racial. The decision was a landmark moment in constitutional law, fundamentally changing how jury selection is conducted in courtrooms across America.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Lewis F. Powell Jr.",
+  "dissentingOpinions": [
+    {
+      "author": "Warren E. Burger",
+      "joinedBy": [
+        "William H. Rehnquist"
+      ],
+      "coreArgument": "Chief Justice Burger argued that the majority's decision would effectively destroy the peremptory challenge as it had been understood for centuries. He believed the Court was converting the peremptory challenge into a challenge for cause by requiring prosecutors to justify their strikes, undermining a valuable tool for both the prosecution and the defense.",
+      "keyPoints": [
+        "The peremptory challenge has a long historical pedigree and has always been exercised without the need for explanation; requiring justification fundamentally changes its nature.",
+        "The new three-step framework would lead to extensive litigation over jury selection, burdening trial courts and delaying proceedings without providing a clear or workable standard.",
+        "The majority's approach provides no limiting principle — once race-neutral reasons are required, courts will inevitably be drawn into policing all manner of subjective judgments lawyers make during jury selection."
+      ]
+    },
+    {
+      "author": "William H. Rehnquist",
+      "joinedBy": [
+        "Warren E. Burger"
+      ],
+      "coreArgument": "Justice Rehnquist argued that there is no constitutional requirement that the racial composition of a petit jury mirror the racial makeup of the community, and that the use of peremptory challenges — even if race-conscious — does not deny a defendant equal protection as long as there is no deliberate and systematic exclusion.",
+      "keyPoints": [
+        "The Equal Protection Clause guarantees equal treatment under the law but does not guarantee a jury of any particular composition; it only requires that no citizen be excluded from the venire on account of race.",
+        "The existing Swain standard properly balanced the interests at stake and there was no justification for overruling settled precedent."
+      ]
+    }
+  ],
+  "concurringNote": "Justice Thurgood Marshall wrote a notable concurrence arguing that the majority's framework did not go far enough — he contended that the only way to truly end racial discrimination in jury selection was to eliminate peremptory challenges altogether, since prosecutors could easily fabricate race-neutral explanations to mask discriminatory intent. Justice Byron White concurred separately, emphasizing the importance of the ruling but expressing some reservations about its practical application. Justice John Paul Stevens, joined by Justice William J. Brennan Jr., also concurred, and Justice Sandra Day O'Connor wrote separately to stress that the ruling should apply only to prosecutors as agents of the state and should not extend to defense attorneys."
 }

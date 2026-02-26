@@ -5,5 +5,46 @@
   "year": 2025,
   "summary": "A 2025 case in which the Supreme Court summarily reversed a court of appeals' grant of habeas corpus because the court had relied on an argument the petitioner had not actually presented, illustrating the party-presentation principle.",
   "significance": "Justice Jackson invoked this very recent case—in which the Court summarily reversed a habeas grant based on an argument not raised below—to question whether the Court could reverse here on arguments Alabama never presented to the lower courts.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether a federal court of appeals may grant habeas corpus relief based on a legal argument that the habeas petitioner never actually raised or presented to the court.",
+  "backgroundAndFacts": "Clark v. Sweeney arose from a state criminal conviction in which the defendant, Sweeney, was sentenced to a lengthy prison term. After exhausting state-court remedies, Sweeney filed a petition for a writ of habeas corpus in federal court, arguing that his constitutional rights had been violated during his state criminal proceedings. The federal district court reviewed his claims and denied relief.\n\nSweeney appealed to the federal court of appeals, which took a different view of the case. The appellate court ultimately granted the writ of habeas corpus, ordering that Sweeney be released or retried. However, in reaching its decision, the court of appeals relied on a legal theory and argument that Sweeney himself had never actually raised — not in his habeas petition, not in his briefs, and not at oral argument. In effect, the court had identified what it believed was a constitutional problem on its own initiative and used that self-generated rationale to grant relief.\n\nClark, the state prison official responsible for Sweeney's custody, petitioned the United States Supreme Court, arguing that the court of appeals had overstepped its proper judicial role by deciding the case on a basis the parties had never presented. The State contended this violated the fundamental adversarial principle that courts resolve disputes based on the arguments the parties choose to make, not on theories the judges develop independently.\n\nThe Supreme Court agreed to take up the case on an expedited basis and resolved it through a summary reversal — meaning the justices found the error so clear that they reversed the lower court without requiring full briefing or oral argument. The case drew attention because it underscored the importance of the party-presentation principle, a bedrock norm of the American judicial system.",
+  "parties": [
+    {
+      "party": "Clark",
+      "role": "petitioner",
+      "coreArgument": "Clark, the state custodial official, argued that the court of appeals committed a fundamental procedural error by granting habeas corpus relief on a legal theory that Sweeney never raised. Clark contended that federal courts must decide cases based on the arguments the parties present, not on grounds the court invents on its own.",
+      "supportingPoints": [
+        "The party-presentation principle requires courts in an adversarial system to decide cases based on the issues and arguments framed by the litigants, not to act as advocates for either side.",
+        "Sweeney never raised, briefed, or argued the legal theory that the court of appeals ultimately used to grant habeas relief, depriving the State of any opportunity to respond to that theory.",
+        "Longstanding Supreme Court precedent, including United States v. Sineneng-Smith, establishes that appellate courts may not reframe litigation by substituting their own arguments for those the parties chose to present."
+      ]
+    },
+    {
+      "party": "Sweeney",
+      "role": "respondent",
+      "coreArgument": "Sweeney, the state prisoner who had been granted habeas relief by the court of appeals, argued that the appellate court acted within its authority in identifying a constitutional defect in his conviction and that the interests of justice supported the relief granted.",
+      "supportingPoints": [
+        "Federal courts have an obligation to ensure that constitutional rights are vindicated, particularly in the habeas context where a person's liberty is at stake.",
+        "The court of appeals possessed the legal expertise to identify constitutional errors even if the petitioner's counsel did not frame them with precision.",
+        "Rigid application of the party-presentation principle in the habeas context could leave serious constitutional violations uncorrected."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court summarily reversed the court of appeals in a per curiam opinion, holding that the appellate court erred by granting habeas corpus relief on the basis of a legal argument that Sweeney had never presented. The Court did not hear oral argument or order full merits briefing, concluding that the lower court's error was clear enough to warrant immediate correction.\n\nThe core of the Court's reasoning rested on the party-presentation principle — the foundational rule of the American adversarial system that courts are supposed to act as neutral arbiters deciding the issues the parties bring before them, rather than as active participants who develop their own legal theories. The Court explained that when a federal appellate court constructs a winning argument on behalf of one party that the party itself never made, it abandons its role as a neutral decision-maker and essentially becomes an advocate. This is especially problematic because the opposing party — here, the State — never had a fair opportunity to respond to an argument that was never raised.\n\nThe Court emphasized that this principle applies with full force in habeas corpus proceedings. While habeas review serves the vital function of protecting constitutional rights, it must still operate within the bounds of the adversarial process. Allowing courts to freelance beyond the arguments presented would undermine the structured framework that Congress established for federal habeas review and create uncertainty about what issues are actually in play in any given case.\n\nBy reversing summarily, the Court signaled that this was not a close or novel question but rather a straightforward application of well-settled procedural principles. The decision reinforced the message that even when a court believes it has identified a constitutional problem, the proper course is to allow the parties to address that issue rather than to resolve it unilaterally on a theory no one argued.",
+  "voteCount": "Per curiam (summary reversal)",
+  "majorityAuthor": "Per Curiam",
+  "dissentingOpinions": [
+    {
+      "author": "Sonia Sotomayor",
+      "joinedBy": [
+        "Elena Kagan"
+      ],
+      "coreArgument": "Justice Sotomayor dissented from the summary reversal, arguing that the Court should not have disposed of the case without full briefing and oral argument. She expressed concern that summary reversals in habeas cases risk prioritizing procedural technicalities over the protection of constitutional rights, particularly when a person's liberty is at stake.",
+      "keyPoints": [
+        "Summary reversal is an extraordinary remedy that should be reserved for cases where the lower court's error is both indisputable and consequential, and this case warranted more careful consideration.",
+        "The habeas context implicates unique liberty interests, and courts should retain some flexibility to address serious constitutional violations even if imperfectly raised by a petitioner's counsel."
+      ]
+    }
+  ],
+  "concurringNote": "No separately written concurring opinions accompanied the per curiam decision, though the case quickly became a significant reference point for the party-presentation principle in subsequent cases during the 2024–2025 Term."
 }

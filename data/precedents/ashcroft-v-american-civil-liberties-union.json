@@ -5,5 +5,57 @@
   "year": 2004,
   "summary": "The Court affirmed a preliminary injunction against the Child Online Protection Act, finding the government had not shown content filtering was not a viable less restrictive alternative to age verification, and directed the district court to develop a fuller factual record.",
   "significance": "The central precedent in the case: the Court applied strict scrutiny to COPA, a federal online child-protection age-verification law nearly identical to Texas's, and upheld a preliminary injunction because content filtering remained a viable less restrictive alternative at that time.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the Child Online Protection Act (COPA), which criminalized the commercial posting of material 'harmful to minors' on the World Wide Web without age-verification measures, violated the First Amendment, and specifically whether content-filtering software was a less restrictive alternative that made a preliminary injunction against COPA appropriate.",
+  "backgroundAndFacts": "In 1998, Congress passed the Child Online Protection Act (COPA) in an effort to protect children from sexually explicit material on the internet. COPA was the successor to the Communications Decency Act (CDA), a broader law the Supreme Court had struck down in 1997. Learning from that defeat, Congress narrowed COPA's scope: instead of targeting all online speech, COPA applied only to commercial websites that posted content 'harmful to minors' — defined using a test similar to the legal standard for obscenity but applied to material unsuitable for children. Website operators who violated the law faced criminal penalties of up to six months in prison and $50,000 in fines, unless they used age-verification tools such as credit card checks to screen out minors.\n\nThe American Civil Liberties Union, along with a coalition of online publishers, booksellers, artists, and website operators, immediately challenged COPA in federal court. They argued the law chilled free speech because the threat of criminal prosecution would deter website operators from posting constitutionally protected content that adults had every right to see. The federal district court in Philadelphia agreed and issued a preliminary injunction blocking the government from enforcing COPA before it ever took effect.\n\nThe case then embarked on a long journey through the courts. The Third Circuit Court of Appeals initially upheld the injunction, ruling that COPA's reliance on 'community standards' to define harmful material was unconstitutional on its face. The Supreme Court took the case the first time in 2002, reversed the Third Circuit's specific reasoning about community standards, and sent the case back for further review. On remand, the Third Circuit once again upheld the preliminary injunction, this time on broader First Amendment grounds, concluding that COPA was not narrowly tailored and that less restrictive alternatives existed.\n\nThe government appealed again, and the Supreme Court agreed to hear the case a second time to resolve whether the preliminary injunction was properly issued. The central question was whether user-installed content-filtering software — which parents could choose to put on their home computers — was a viable, less restrictive alternative to the criminal penalties imposed by COPA. By the time the Court heard arguments in 2004, COPA had never been enforced; it had been blocked by the courts for its entire existence.",
+  "parties": [
+    {
+      "party": "John Ashcroft, Attorney General",
+      "role": "petitioner",
+      "coreArgument": "The government argued that COPA was a carefully crafted, constitutional law that served the compelling interest of protecting children from harmful online material. It contended that content-filtering software was not an adequate substitute because filters were imperfect, underinclusive, and depended entirely on parents choosing to install and maintain them.",
+      "supportingPoints": [
+        "COPA was narrowly drafted to apply only to commercial websites and used a well-established legal framework (similar to obscenity standards) to define what was 'harmful to minors,' making it far more targeted than the struck-down Communications Decency Act.",
+        "Content-filtering software was an unreliable alternative because filters both overblock innocent content and underblock harmful material, and many parents simply do not install or properly configure such software.",
+        "Congress, not the courts, should decide the best way to protect children online, and COPA represented a reasonable legislative judgment that age-verification requirements were necessary because voluntary measures had failed."
+      ]
+    },
+    {
+      "party": "American Civil Liberties Union",
+      "role": "respondent",
+      "coreArgument": "The ACLU argued that COPA was an unconstitutional content-based restriction on speech that failed strict scrutiny because less restrictive alternatives — particularly user-controlled content filters — could achieve the government's goal of protecting children without threatening lawful adult speech with criminal penalties.",
+      "supportingPoints": [
+        "COPA's criminal penalties would chill enormous amounts of constitutionally protected speech because website operators would self-censor rather than risk prosecution, especially given the vagueness of the 'harmful to minors' standard.",
+        "Content-filtering software was a more effective and less speech-restrictive alternative because filters could block harmful content from all websites worldwide — including foreign sites beyond COPA's reach — while leaving adults free to access lawful material.",
+        "Age-verification systems like credit card checks were themselves burdensome, would deter adults from accessing protected speech due to privacy concerns, and would still fail to block minors who obtained credit card numbers."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Anthony Kennedy, the Supreme Court affirmed the preliminary injunction blocking enforcement of COPA. The Court held that the government had not met its burden of showing that the proposed alternatives to COPA — particularly content-filtering software — were less effective than the statute's criminal age-verification requirements. Because COPA was a content-based restriction on speech, it was subject to strict scrutiny, meaning the government had to prove the law was narrowly tailored to serve a compelling interest and was the least restrictive means available.\n\nJustice Kennedy's majority opinion acknowledged that protecting children from harmful material online was a compelling governmental interest. However, the opinion reasoned that content-filtering software appeared to be at least as effective as COPA at achieving that goal, and possibly more so. Filters could screen out harmful material from all websites around the world, whereas COPA could only reach domestic commercial operators. Additionally, filters did not carry the threat of criminal prosecution, which inevitably chills speech — website operators might self-censor even legal content rather than face the risk of jail time and fines.\n\nThe Court also emphasized that placing the power to block material in the hands of parents, rather than prosecutors, was more consistent with First Amendment values. Filters allowed parents to tailor protections to their own families, while COPA imposed a one-size-fits-all criminal standard. The majority was careful to note it was not declaring COPA permanently unconstitutional; rather, it held that the district court had been correct to block the law temporarily while the factual record was more fully developed at trial. The Court remanded the case so the lower court could conduct a full trial on whether COPA satisfied strict scrutiny.\n\nThe practical effect of the decision was that COPA remained unenforceable, as it had been since 1998. The Court recognized that technology had continued to evolve during the years of litigation, and it wanted the lower courts to examine the current state of filtering technology, the actual effectiveness of age-verification tools, and any other relevant developments before making a final determination.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Anthony Kennedy",
+  "dissentingOpinions": [
+    {
+      "author": "Antonin Scalia",
+      "joinedBy": [],
+      "coreArgument": "Justice Scalia argued that COPA restricted only commercial speech that was obscene as to minors, and that there is no First Amendment right to engage in such speech. He contended that because the restricted speech fell outside constitutional protection with respect to children, the preliminary injunction was improper and strict scrutiny should not have been applied so rigorously.",
+      "keyPoints": [
+        "Commercial distributors of material harmful to minors have no constitutional entitlement to profit from providing that material to children, and restricting such activity does not warrant the same searching judicial review applied to restrictions on fully protected speech.",
+        "The Court's approach effectively required the government to prove a negative — that no less restrictive alternative existed — before it could enforce a law targeting speech that was, by definition, harmful to children."
+      ]
+    },
+    {
+      "author": "Stephen Breyer",
+      "joinedBy": [
+        "William Rehnquist",
+        "Sandra Day O'Connor"
+      ],
+      "coreArgument": "Justice Breyer argued that COPA was narrowly tailored and imposed only a modest burden on protected adult speech — essentially requiring age verification comparable to what already occurs in the physical world — while content-filtering software was not a genuine substitute because it depended on voluntary parental action and was demonstrably imperfect.",
+      "keyPoints": [
+        "COPA's requirement that commercial websites verify age before displaying material harmful to minors was analogous to long-accepted restrictions in the physical world, such as laws preventing the sale of adult magazines to children, and imposed only a minor inconvenience on adults.",
+        "Content filters were not a true 'alternative' to COPA because they served a fundamentally different function — they empowered willing parents to block content at home but did nothing to stop unwilling or negligent parents' children from accessing harmful material, whereas COPA addressed the problem at its source.",
+        "The majority's reasoning threatened to make it virtually impossible for Congress to regulate harmful online content because there would always be some hypothetical less restrictive alternative that a court could point to, even if that alternative was less effective in practice."
+      ]
+    }
+  ],
+  "concurringNote": "Justice Stevens, joined by Justice Ginsburg, wrote a concurrence arguing that COPA was substantially overbroad on its face because it would suppress enormous amounts of speech that adults had a constitutional right to access, and that the 'harmful to minors' standard was unworkable in the context of the global internet where community standards vary enormously."
 }

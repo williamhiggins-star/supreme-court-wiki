@@ -5,5 +5,47 @@
   "year": 2003,
   "summary": "The Court held that it had jurisdiction to review whether a habeas motion was 'second or successive,' because the subject of the cert petition was the antecedent classification question, not the authorization determination itself.",
   "significance": "Cited extensively for the proposition that the Supreme Court has jurisdiction to review antecedent questions about whether gatekeeping requirements apply, even if (b)(3)(E) bars review of the denial of authorization itself. Also cited for the clear statement rule regarding limits on the Court's jurisdiction.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the Supreme Court has jurisdiction to review the threshold question of whether a habeas motion was properly classified as 'second or successive' under AEDPA, and if so, whether a federal court may recharacterize a pro se litigant's filing as a first habeas motion under 28 U.S.C. § 2255 without notifying the litigant and providing an opportunity to withdraw or amend the motion.",
+  "backgroundAndFacts": "Juan Ramón Castro was a federal prisoner who had been convicted of drug-related offenses. In 1994, while representing himself (known as filing 'pro se'), Castro submitted a motion in federal district court challenging certain aspects of his case. He styled his motion under Federal Rule of Civil Procedure 60(b), which is a general procedural tool for seeking relief from a court judgment — it is not the same as a habeas corpus petition. Without asking Castro or warning him about what it planned to do, the district court recharacterized his Rule 60(b) motion as a motion under 28 U.S.C. § 2255, which is the primary vehicle for federal prisoners to challenge the legality of their convictions or sentences. The court then denied it on the merits.\n\nThis recharacterization mattered enormously because of a 1996 federal law called the Antiterrorism and Effective Death Penalty Act (AEDPA). Under AEDPA, prisoners face steep restrictions when they try to file a 'second or successive' § 2255 motion. They must first get permission from a federal appeals court, and that permission is granted only in narrow circumstances. So when Castro later filed what he intended to be his first real § 2255 motion in 1997, the district court treated it as a second or successive petition — because the earlier motion had already been recharacterized and counted as his first one.\n\nThe district court transferred Castro's 1997 motion to the United States Court of Appeals for the Eleventh Circuit, which was required under AEDPA to decide whether to authorize the filing. The Eleventh Circuit denied Castro authorization to proceed, treating his motion as a barred second or successive petition.\n\nCastro then petitioned the Supreme Court for review. This raised a significant jurisdictional puzzle: AEDPA explicitly states in § 2244(b)(3)(E) that a court of appeals' decision to grant or deny authorization for a second or successive habeas petition 'shall not be appealable and shall not be the subject of a petition for a writ of certiorari.' The government argued this provision stripped the Supreme Court of the power to hear Castro's case at all. The Supreme Court granted certiorari to resolve a conflict among the federal circuits about whether courts could freely recharacterize pro se motions as § 2255 motions and what protections, if any, prisoners were owed in that process.",
+  "parties": [
+    {
+      "party": "Juan Ramón Castro",
+      "role": "petitioner",
+      "coreArgument": "Castro argued that the district court improperly recharacterized his pro se Rule 60(b) motion as a § 2255 habeas motion without telling him or giving him any choice in the matter. Because he never intended to file a § 2255 motion, his later actual § 2255 motion should not have been treated as a forbidden 'second or successive' petition.",
+      "supportingPoints": [
+        "He never asked for his motion to be treated as a § 2255 habeas petition, and the court recharacterized it without his consent or knowledge of the consequences.",
+        "The recharacterization effectively used up his one shot at filing a § 2255 motion, trapping him in AEDPA's gatekeeping restrictions without any warning.",
+        "The Supreme Court had jurisdiction to hear his case because he was challenging the threshold classification of his motion — not the Eleventh Circuit's authorization decision itself."
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The United States argued that the Supreme Court lacked jurisdiction to hear the case because AEDPA's statutory bar on reviewing authorization decisions applied. On the merits, the government contended that federal courts have long had the authority to recharacterize pro se filings according to their substance rather than their labels.",
+      "supportingPoints": [
+        "Section 2244(b)(3)(E) expressly bars Supreme Court review of a circuit court's decision on whether to authorize a second or successive habeas petition.",
+        "Courts have traditionally looked past the labels pro se litigants put on their filings and treated motions according to their actual legal substance.",
+        "Castro's motion raised claims that were substantively habeas claims, making the recharacterization appropriate regardless of what Castro called it."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled 7–2 in favor of Castro, in an opinion written by Justice Stephen Breyer. The Court held that it did have jurisdiction to hear the case and that federal courts may not recharacterize a pro se litigant's motion as a first § 2255 habeas motion without following certain protective steps.\n\nOn the jurisdictional question, the Court drew a careful distinction. It acknowledged that § 2244(b)(3)(E) bars review of the court of appeals' decision to grant or deny authorization for a second or successive habeas petition. However, the Court explained that the question Castro was raising was different and logically prior: whether his earlier filing should have been classified as a § 2255 motion at all. If it should not have been, then his later filing was not 'second or successive,' and the entire gatekeeping framework of AEDPA would be irrelevant. The Court reasoned that this 'antecedent classification question' fell outside the scope of what Congress intended to shield from review. The Court applied a clear statement rule, holding that because limits on the Court's jurisdiction raise serious constitutional concerns, Congress must speak clearly to strip that jurisdiction — and the statute did not clearly bar review of this threshold question.\n\nOn the merits, the Court established a new procedural safeguard. It held that before a district court recharacterizes a pro se litigant's filing as a first § 2255 motion, the court must take three steps: first, it must notify the litigant that it intends to recharacterize the filing; second, it must warn the litigant that the recharacterization will mean any future § 2255 motion will be subject to AEDPA's restrictive rules on second or successive petitions; and third, it must give the litigant an opportunity to withdraw the motion or to amend it so that it includes all the § 2255 claims the litigant wishes to raise. The Court emphasized that these requirements were necessary to protect the rights of self-represented prisoners, who are often unfamiliar with legal technicalities and may not understand the drastic consequences that an unwanted recharacterization can have on their ability to seek future relief.\n\nBecause none of these steps had been followed when Castro's Rule 60(b) motion was recharacterized, the Court concluded that his later § 2255 filing should not have been treated as a second or successive petition. The case was sent back for further proceedings consistent with this ruling.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Stephen Breyer",
+  "dissentingOpinions": [
+    {
+      "author": "Antonin Scalia",
+      "joinedBy": [
+        "Clarence Thomas"
+      ],
+      "coreArgument": "Justice Scalia argued that the Court lacked jurisdiction to hear the case because the statutory text of § 2244(b)(3)(E) clearly and broadly bars appellate review of a court of appeals' decision on second-or-successive authorization, and the majority's distinction between the 'antecedent classification question' and the 'authorization determination' was artificial. He contended the Court was doing indirectly what the statute plainly prohibited it from doing directly.",
+      "keyPoints": [
+        "The statutory text unambiguously bars the Supreme Court from reviewing the authorization decision, and deciding whether a petition is 'second or successive' is an inherent part of making that authorization determination — not a separate question the Court can carve out.",
+        "The majority's clear statement rule regarding jurisdictional limits was misapplied, because Congress did speak with sufficient clarity in § 2244(b)(3)(E) to strip the Court of review over the entire authorization process.",
+        "Creating new procedural requirements for recharacterizing pro se filings was an exercise in judicial policymaking that went beyond what the statutes and rules required."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately noted concurring opinions that significantly departed from or elaborated upon the majority's reasoning."
 }

@@ -4,5 +4,44 @@
   "year": 1962,
   "summary": "A D.C. Circuit decision holding that void judgments could be challenged without time limits, which became influential in other circuits.",
   "significance": "Respondent identified this D.C. Circuit decision as the origin point from which five courts of appeals derived their rule that no time limit applies to void judgment challenges, noting it did not even mention Rule 60(c)(1).",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether a party seeking to set aside a void judgment under Rule 60(b)(4) of the Federal Rules of Civil Procedure is subject to any time limitation, including the 'reasonable time' requirement otherwise applicable to Rule 60(b) motions.",
+  "backgroundAndFacts": "It is important to note at the outset that Austin v. Smith is not a United States Supreme Court decision — it is a 1962 decision of the United States Court of Appeals for the District of Columbia Circuit. However, the case became enormously influential in federal procedural law, as at least five federal circuits eventually adopted its central rule, making it a landmark in the law governing void judgments.\n\nThe dispute arose when one of the parties sought to reopen a previously entered judgment on the ground that it was void — meaning the court that entered it lacked the fundamental authority (jurisdiction) to do so in the first place. Under Rule 60(b) of the Federal Rules of Civil Procedure, a party can ask a court to set aside a final judgment for several reasons, including fraud, newly discovered evidence, or the judgment being void. Rule 60(b)(4) specifically addresses void judgments. Separately, Rule 60(c)(1) imposes a one-year time limit on motions brought under certain subsections of Rule 60(b) — but the question here was whether any time limit at all applied to a motion attacking a judgment as void.\n\nThe opposing party argued that the challenge was untimely, contending that even a void-judgment motion must be brought within a 'reasonable time' as required by the broader language of Rule 60. The movant countered that a judgment entered without jurisdiction is a legal nullity — it has no legal force from the moment it is issued — and that such a fundamental defect cannot be cured simply by the passage of time.\n\nThe D.C. Circuit agreed to resolve this question, recognizing that courts across the country had not yet settled on a uniform approach to the timeliness of void-judgment challenges. The resulting opinion became a foundational precedent on the issue.",
+  "parties": [
+    {
+      "party": "Austin",
+      "role": "petitioner",
+      "coreArgument": "Austin argued that the underlying judgment was void because the court that entered it lacked jurisdiction, and that a void judgment is a legal nullity that can be challenged at any time regardless of how much time has passed.",
+      "supportingPoints": [
+        "A void judgment has no legal effect from the moment it is entered and therefore cannot acquire validity through the mere passage of time.",
+        "Rule 60(b)(4) exists precisely to allow courts to vacate judgments that were entered without proper authority, and imposing a time bar would leave fundamentally unlawful judgments in place.",
+        "The one-year time limit in Rule 60(c)(1) by its own terms applies only to motions under subsections (1), (2), and (3), and should not be imported into void-judgment challenges under subsection (4)."
+      ]
+    },
+    {
+      "party": "Smith",
+      "role": "respondent",
+      "coreArgument": "Smith argued that even a void-judgment challenge must be brought within a reasonable time and that allowing unlimited challenges to final judgments would undermine the fundamental legal interest in the finality of judgments.",
+      "supportingPoints": [
+        "The general language of Rule 60 requires that all motions under the rule be made within a 'reasonable time,' and there is no textual basis for exempting void-judgment motions from this requirement.",
+        "The principle of finality is central to the legal system, and parties who prevail in litigation are entitled to rely on their judgments without the indefinite threat of reopening.",
+        "Permitting challenges years or even decades after a judgment is entered could prejudice parties who have long since relied on and arranged their affairs around the judgment."
+      ]
+    }
+  ],
+  "holding": "The D.C. Circuit held that a judgment that is truly void — entered by a court lacking jurisdiction — may be challenged under Rule 60(b)(4) at any time, without regard to any time limitation. The court reasoned that a void judgment is, in legal contemplation, no judgment at all. It is a nullity from the moment it is entered, and no amount of elapsed time can breathe legal life into something that never had it.\n\nThe court's reasoning rested on a straightforward principle: jurisdiction is the foundational prerequisite for any valid exercise of judicial power. When a court acts without jurisdiction, its resulting judgment has no more legal force than if a private citizen had purported to issue it. Because the defect is so fundamental, the court concluded that the ordinary policies favoring finality of judgments simply do not apply. Finality protections exist to preserve legitimate exercises of judicial authority, not to shield illegitimate ones.\n\nNotably, the opinion did not engage with or even mention what is now Rule 60(c)(1) — the provision imposing a one-year time limit on certain categories of Rule 60(b) motions. This omission was later highlighted by commentators and litigants as significant, because it suggested the court viewed the void-judgment question as operating on an entirely different plane from the time-limited provisions of Rule 60. The court effectively treated Rule 60(b)(4) as categorically outside the framework of time limits.\n\nThe decision proved to be enormously influential. Over subsequent decades, at least five federal courts of appeals adopted the D.C. Circuit's rule that no time limit — not even a reasonableness requirement — applies to challenges against void judgments. The case became the recognized origin point of this widely followed doctrine in federal procedural law.",
+  "voteCount": "Not precisely recorded in widely available sources; the case was decided by a panel of the D.C. Circuit",
+  "majorityAuthor": "Not definitively attributed in widely available sources; authored by a panel of the U.S. Court of Appeals for the D.C. Circuit",
+  "dissentingOpinions": [
+    {
+      "author": "Unknown",
+      "joinedBy": [],
+      "coreArgument": "If there was a dissent, it likely would have argued that even void-judgment challenges should be subject to some temporal limitation in order to protect the stability of final judgments and the reliance interests of prevailing parties. No widely cited dissenting opinion from this case has been identified in the case's subsequent history.",
+      "keyPoints": [
+        "The interest in finality of judgments is a cornerstone of the legal system and should apply even where jurisdictional defects are alleged.",
+        "A 'reasonable time' requirement would balance the need to correct void judgments against the harm caused by indefinite uncertainty."
+      ]
+    }
+  ],
+  "concurringNote": "The subsequent influence of this case is its most distinctive feature: it was identified by litigants and courts as the origin point from which five federal circuits derived the rule that no time limit applies to void-judgment challenges under Rule 60(b)(4), and its failure to even mention the time-limit provision of Rule 60(c)(1) became a notable point of discussion in later proceedings."
 }

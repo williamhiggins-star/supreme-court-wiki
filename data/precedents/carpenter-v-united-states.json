@@ -5,5 +5,79 @@
   "year": 2018,
   "summary": "The Supreme Court held that access to historical cell-site location information requires a warrant supported by probable cause, recognizing that digital data creates unique privacy concerns.",
   "significance": "This case established heightened Fourth Amendment protections for digital location data and may inform the Court's analysis of privacy interests in digital communications and metadata.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the government's acquisition of historical cell-site location information (CSLI) from a wireless carrier, without a warrant, constitute a search under the Fourth Amendment?",
+  "backgroundAndFacts": "In 2011, the FBI was investigating a series of armed robberies targeting Radio Shack and T-Mobile stores in and around Detroit, Michigan. After arresting four suspects, one of them confessed and handed over his cell phone along with the phone numbers of roughly fifteen other individuals he said had participated in the robbery ring. One of those numbers belonged to Timothy Ivory Carpenter.\n\nArmed with those phone numbers, FBI agents applied for court orders under a federal law called the Stored Communications Act. This law allows the government to compel wireless carriers to turn over certain telecommunications records — not with a warrant based on probable cause, but with a lower standard requiring only 'reasonable grounds' to believe the records are 'relevant and material to an ongoing criminal investigation.' Using these orders, the FBI obtained historical cell-site location information (CSLI) from MetroPCS and Sprint, Carpenter's two wireless carriers. Cell-site location information is the data generated every time a cell phone connects to a nearby cell tower — essentially a log showing which tower handled a phone's signal and when. Altogether, the government received 127 days' worth of CSLI data, totaling 12,898 individual location data points that cataloged Carpenter's physical movements over that period.\n\nAt trial, the prosecution used this CSLI data to place Carpenter's phone — and by extension, Carpenter himself — near the locations of four of the robberies at the approximate times they took place. An FBI agent testified that the records showed Carpenter's phone was within a half-mile to two miles of the robbery locations. Carpenter was convicted on six counts of aiding and abetting robbery affecting interstate commerce and six counts of aiding and abetting the use of a firearm during a federal crime of violence. He was sentenced to more than 116 years in prison.\n\nCarpenter moved to suppress the CSLI evidence, arguing that the FBI needed a warrant supported by probable cause under the Fourth Amendment rather than the lower-standard court order it had actually obtained. The trial court denied his motion, and the U.S. Court of Appeals for the Sixth Circuit affirmed. The Sixth Circuit relied on the so-called 'third-party doctrine,' a legal principle established in prior Supreme Court decisions holding that individuals have no reasonable expectation of privacy in information they voluntarily share with third parties — in this case, wireless carriers. The Supreme Court agreed to hear the case because the question of whether digital location data deserves Fourth Amendment protection was a matter of enormous importance in the modern era, and federal circuit courts were grappling with the issue.",
+  "parties": [
+    {
+      "party": "Timothy Ivory Carpenter",
+      "role": "petitioner",
+      "coreArgument": "Carpenter argued that obtaining 127 days of his historical cell-site location information without a warrant violated his Fourth Amendment right against unreasonable searches. He contended that CSLI reveals an extraordinarily detailed picture of a person's life and movements, and that the third-party doctrine should not apply to this kind of comprehensive digital surveillance.",
+      "supportingPoints": [
+        "Cell-site location information provides a near-perfect surveillance tool that tracks a person's movements over an extended period, revealing intimate details of their daily life, including visits to doctors, political gatherings, and houses of worship.",
+        "Unlike voluntarily handing a document to a business associate, people do not meaningfully 'choose' to share their location with wireless carriers — cell phones automatically generate CSLI whenever they are turned on, which is essentially all the time in modern life.",
+        "The sheer volume and precision of digital location data makes it fundamentally different from the limited business records at issue in prior third-party doctrine cases, and the Fourth Amendment must account for these technological realities."
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government argued that Carpenter had no reasonable expectation of privacy in CSLI because, under the well-established third-party doctrine, individuals forfeit Fourth Amendment protection over information they voluntarily convey to third parties such as phone companies. The Stored Communications Act's court-order mechanism was therefore sufficient.",
+      "supportingPoints": [
+        "The Supreme Court's prior decisions in United States v. Miller (bank records) and Smith v. Maryland (phone numbers dialed) established that a person has no legitimate expectation of privacy in information voluntarily turned over to third parties in the ordinary course of business.",
+        "CSLI records are business records created and owned by wireless carriers, not the personal papers or effects of the customer, so no Fourth Amendment 'search' occurs when the government obtains them from the carrier.",
+        "Requiring a warrant for CSLI would impose significant burdens on law enforcement investigations, particularly time-sensitive ones, and the Stored Communications Act already provides meaningful judicial oversight through its court-order requirement."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Chief Justice John G. Roberts Jr., the Supreme Court held that the government's acquisition of Timothy Carpenter's historical cell-site location information was a search within the meaning of the Fourth Amendment, and that the government generally must obtain a warrant supported by probable cause before compelling a wireless carrier to turn over such records.\n\nThe majority began by acknowledging that the Fourth Amendment's protections must keep pace with the 'seismic shifts in digital technology' that make it possible to compile detailed, encyclopedic records of a person's movements. Chief Justice Roberts wrote that CSLI provides an 'intimate window into a person's life, revealing not only his particular movements, but through them his familial, political, professional, religious, and sexual associations.' The Court emphasized that the time-stamped data at issue provided a comprehensive chronicle of Carpenter's physical presence, compiled every day, every moment, over the course of 127 days — a level of surveillance that would have been inconceivable before the digital age.\n\nCritically, the Court declined to extend the third-party doctrine to cover CSLI. Chief Justice Roberts explained that there is a 'world of difference between the limited types of personal information' involved in earlier third-party doctrine cases — like bank records and dialed phone numbers — and the 'exhaustive chronicle of location information casually collected by wireless carriers.' The majority identified two key reasons CSLI is different. First, it is 'detailed, encyclopedic, and effortlessly compiled,' providing the government with 'near perfect surveillance' at virtually no cost. Second, the collection of CSLI is not truly voluntary in any meaningful sense: cell phones are 'such a pervasive and insistent part of daily life' that carrying one is 'indispensable to participation in modern society,' and a phone logs CSLI by its very nature without any affirmative act by the user.\n\nThe Court was careful to note that its decision was narrow. It did not disturb the third-party doctrine as applied to conventional business records, nor did it address real-time CSLI or tower dumps (where the government obtains data on all phones connected to a particular tower). The Court also acknowledged that the warrant requirement is not absolute and that traditional exceptions to the warrant requirement — such as exigent circumstances — still apply. Nevertheless, the core holding was clear: given the 'unique nature of cell phone location records,' accessing seven days or more of historical CSLI constitutes a Fourth Amendment search, and the government must generally obtain a warrant before doing so.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Chief Justice John G. Roberts Jr.",
+  "dissentingOpinions": [
+    {
+      "author": "Justice Anthony M. Kennedy",
+      "joinedBy": [
+        "Justice Clarence Thomas",
+        "Justice Samuel A. Alito Jr."
+      ],
+      "coreArgument": "Justice Kennedy argued that the third-party doctrine squarely controlled this case. Because Carpenter's CSLI records were business records created and maintained by wireless carriers, and because Carpenter had no property interest in those records, the government did not conduct a 'search' of Carpenter's effects by obtaining them from the carriers through a valid court order.",
+      "keyPoints": [
+        "The cell-site records belonged to the wireless carriers, not to Carpenter, and the Fourth Amendment historically protects a person's own papers and effects — not records held by someone else.",
+        "The majority's decision creates an unprincipled and unworkable exception to the third-party doctrine that will cause confusion in lower courts and hamper legitimate law enforcement investigations.",
+        "The proper remedy for concerns about digital-age privacy is legislative action, such as the Stored Communications Act itself, not judicial expansion of the Fourth Amendment."
+      ]
+    },
+    {
+      "author": "Justice Clarence Thomas",
+      "joinedBy": [],
+      "coreArgument": "Justice Thomas argued that the entire 'reasonable expectation of privacy' framework from Katz v. United States is untethered from the text and original meaning of the Fourth Amendment. He contended that the Fourth Amendment protects against searches of one's own 'persons, houses, papers, and effects,' and since the CSLI records belonged to the wireless carriers, no search of Carpenter's property occurred.",
+      "keyPoints": [
+        "The Katz reasonable-expectation-of-privacy test has no basis in the original meaning of the Fourth Amendment and leads to unpredictable, subjective results.",
+        "Under a proper originalist reading, the Fourth Amendment only protects property interests, and Carpenter had no property interest in records owned by Sprint and MetroPCS."
+      ]
+    },
+    {
+      "author": "Justice Samuel A. Alito Jr.",
+      "joinedBy": [
+        "Justice Clarence Thomas"
+      ],
+      "coreArgument": "Justice Alito argued that the majority fundamentally confused two distinct legal mechanisms: a search (physically entering and examining a place or thing) and an order compelling a third party to produce its own business records. He contended that subpoenas and court orders directed at third parties have never historically been treated as Fourth Amendment 'searches' requiring warrants.",
+      "keyPoints": [
+        "For centuries, courts have distinguished between searches of a suspect's own property and orders requiring third parties to hand over their own records; the latter has never required a warrant.",
+        "The majority's decision will have far-reaching consequences beyond CSLI, potentially undermining the government's ability to use subpoenas and court orders to obtain a vast range of business records in criminal investigations.",
+        "Congress addressed this exact situation through the Stored Communications Act, which struck a reasonable balance between privacy and law enforcement needs."
+      ]
+    },
+    {
+      "author": "Justice Neil M. Gorsuch",
+      "joinedBy": [],
+      "coreArgument": "Justice Gorsuch disagreed with the majority's reliance on the Katz reasonable-expectation-of-privacy test, which he viewed as vague and ultimately dependent on judicial intuition rather than legal principle. He suggested that a return to the Fourth Amendment's original property-based foundation could provide stronger and more predictable privacy protections, and that Carpenter might have had a viable claim under such a framework — but that the argument had not been properly raised.",
+      "keyPoints": [
+        "The Katz test grants judges too much discretion to decide whose privacy expectations are 'reasonable,' effectively allowing the government's own surveillance practices to erode constitutional protections over time.",
+        "A property-rights or positive-law approach to the Fourth Amendment — asking whether Carpenter had a legally recognized interest in his CSLI under existing statutory or common law — could have provided a more principled basis for the decision but was not adequately briefed or argued.",
+        "The majority's opinion, while well-intentioned, offers little guidance for future cases and risks being either too narrow to protect digital privacy meaningfully or too broad in its implications for third-party records generally."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separate concurring opinions in this case. All five justices in the majority joined Chief Justice Roberts's opinion in full."
 }

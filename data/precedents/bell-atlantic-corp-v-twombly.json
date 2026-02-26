@@ -5,5 +5,48 @@
   "year": 2007,
   "summary": "Established that complaints must state enough facts to raise a plausible claim for relief, retiring the old 'no set of facts' standard.",
   "significance": "Referenced alongside Iqbal as a pleading standard safeguard that would prevent frivolous claims of intentional postal misconduct from surviving a motion to dismiss.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does a complaint alleging an antitrust conspiracy satisfy Federal Rule of Civil Procedure 8(a)(2) when it asserts parallel business conduct among competitors but does not include enough factual allegations to make the claim of a conspiracy plausible, rather than merely conceivable?",
+  "backgroundAndFacts": "In 1984, a federal court broke up the AT&T telephone monopoly into several regional companies, often called the 'Baby Bells.' These companies — known as Incumbent Local Exchange Carriers, or ILECs — each dominated phone service in their own geographic territory. The Telecommunications Act of 1996 was supposed to open these local markets to competition by requiring the ILECs to share their networks with new rival companies called Competitive Local Exchange Carriers, or CLECs. But competition was slow to materialize. The CLECs struggled, and the Baby Bells largely stayed out of each other's territories.\n\nWilliam Twombly and other telephone and internet subscribers filed a class-action lawsuit against Bell Atlantic Corporation and several other ILECs in 2003. The consumers alleged that the ILECs had violated Section 1 of the Sherman Antitrust Act — the federal law that prohibits conspiracies to restrain trade. Specifically, the plaintiffs claimed the ILECs had secretly agreed to do two things: first, to work together to prevent CLECs from gaining a foothold in any of their markets; and second, to stay out of each other's territories so they would not have to compete against one another. The evidence they pointed to was largely the companies' 'parallel conduct' — the fact that all the ILECs seemed to behave the same way, discouraging competitors and avoiding each other's turf.\n\nThe United States District Court for the Southern District of New York dismissed the complaint. The judge concluded that the plaintiffs had not alleged enough facts to support their claim of a conspiracy. Merely showing that competing companies behaved similarly did not prove they had reached an agreement, because each company might have independently decided that these actions were in its own self-interest.\n\nThe United States Court of Appeals for the Second Circuit reversed the dismissal. Applying the long-standing standard from the 1957 Supreme Court case Conley v. Gibson, the appeals court held that a complaint should not be thrown out unless there is 'no set of facts' the plaintiff could prove that would entitle them to relief. Under that generous standard, the Second Circuit found the complaint was legally sufficient.\n\nThe Supreme Court agreed to hear the case because the proper standard for evaluating complaints at the earliest stage of litigation — before any evidence is gathered — was a question of enormous importance affecting virtually every federal lawsuit filed in the country.",
+  "parties": [
+    {
+      "party": "Bell Atlantic Corp.",
+      "role": "petitioner",
+      "coreArgument": "Bell Atlantic argued that the plaintiffs' complaint should be dismissed because it relied on allegations of parallel business conduct that were just as consistent with independent decision-making as with an illegal conspiracy. Without additional facts suggesting an actual agreement, the complaint failed to state a valid antitrust claim.",
+      "supportingPoints": [
+        "Parallel conduct among competitors is not inherently suspicious — it is a natural feature of competitive markets where rational companies independently reach similar business strategies.",
+        "Allowing antitrust cases to proceed based solely on allegations of parallel conduct would expose companies to enormously expensive discovery processes, effectively coercing settlements even when no wrongdoing occurred.",
+        "The complaint offered no specific facts pointing to an actual agreement among the ILECs, such as details about when, where, or how any conspiracy was formed."
+      ]
+    },
+    {
+      "party": "William Twombly",
+      "role": "respondent",
+      "coreArgument": "Twombly and the other consumers argued that their complaint met the requirements of federal pleading rules because it gave fair notice of their claims and alleged specific parallel actions that, taken together, suggested a conspiracy. They contended that the traditional, more permissive pleading standard should apply.",
+      "supportingPoints": [
+        "Under the long-established Conley v. Gibson standard, a complaint should survive a motion to dismiss as long as any set of facts consistent with the allegations could entitle the plaintiff to relief.",
+        "The complaint did not merely recite legal conclusions — it identified specific parallel behaviors by the ILECs, including their shared resistance to CLECs and mutual avoidance of each other's markets.",
+        "Dismissing the case before discovery would prevent plaintiffs from ever obtaining the internal corporate documents that could prove the existence of a secret agreement."
+      ]
+    }
+  ],
+  "holding": "In a 7–2 decision authored by Justice David H. Souter, the Supreme Court reversed the Second Circuit and held that the complaint must be dismissed. The Court established a new pleading standard: to survive a motion to dismiss, a complaint must contain enough factual matter to state a claim for relief that is 'plausible on its face.' It is not enough for a complaint to be merely consistent with wrongdoing; the facts alleged must 'nudge' the claims 'across the line from conceivable to plausible.'\n\nThe majority explicitly retired the famous language from Conley v. Gibson, which had stated that a complaint should not be dismissed unless 'it appears beyond doubt that the plaintiff can prove no set of facts in support of his claim which would entitle him to relief.' Justice Souter wrote that this phrase, read literally, would allow virtually any complaint to survive dismissal as long as it contained the bare bones of a legal theory. The Court concluded that this 'no set of facts' formulation had 'earned its retirement' and no longer described the correct standard.\n\nApplying the new plausibility standard to the facts at hand, the Court found the plaintiffs' complaint fell short. The ILECs' parallel conduct — resisting competition from CLECs and refraining from entering each other's markets — was entirely consistent with each company independently pursuing its own rational self-interest. Without some additional factual allegation suggesting that an agreement had actually been made, the parallel behavior described in the complaint did not make a conspiracy plausible. It merely showed that the companies acted similarly, which is something competitors routinely do without any collusion whatsoever.\n\nThe Court also emphasized practical concerns. Antitrust litigation is extraordinarily expensive, particularly during the discovery phase when companies must produce millions of pages of documents. If complaints based on nothing more than parallel conduct could survive a motion to dismiss, defendants would face crushing discovery costs that could pressure them into settling meritless claims. The plausibility requirement was thus intended to serve as a meaningful filter, ensuring that only complaints with a realistic foundation proceed to the costly discovery stage.\n\nImportantly, the Court stressed that it was not imposing a heightened pleading standard or requiring plaintiffs to prove their case at the complaint stage. Rather, the ruling clarified that Federal Rule of Civil Procedure 8(a)(2) — which requires 'a short and plain statement of the claim showing that the pleader is entitled to relief' — demands more than labels, conclusions, or a bare recitation of the elements of a cause of action. The facts alleged must, when accepted as true, make the plaintiff's legal claim plausible, not just imaginable.",
+  "voteCount": "7-2",
+  "majorityAuthor": "David H. Souter",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "Ruth Bader Ginsburg"
+      ],
+      "coreArgument": "Justice Stevens argued that the majority had fundamentally changed the rules of federal civil procedure without proper justification. He believed the Conley v. Gibson standard had served the legal system well for fifty years, that the complaint adequately alleged a conspiracy, and that the Court was improperly requiring plaintiffs to plead detailed evidence at the very outset of a case.",
+      "keyPoints": [
+        "The Conley v. Gibson 'no set of facts' standard was well-understood, workable, and had been applied consistently by federal courts for half a century — the majority provided no compelling reason to abandon it.",
+        "The plaintiffs alleged specific parallel conduct that, viewed in the light most favorable to them as required at the motion-to-dismiss stage, was sufficient to suggest a plausible conspiracy rather than mere independent action.",
+        "The majority's concern about expensive discovery costs was a policy argument better addressed by Congress or through existing judicial tools for managing discovery, not by raising the bar for filing a complaint.",
+        "The new plausibility standard is inherently subjective and will lead to inconsistent results because different judges will have different intuitions about what counts as 'plausible.'"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately written concurring opinions in this case."
 }

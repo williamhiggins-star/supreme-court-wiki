@@ -5,5 +5,58 @@
   "year": 1988,
   "summary": "Established a federal common law defense for government contractors who follow reasonably precise government specifications, based on the FTCA's discretionary function exception and uniquely federal interests in procurement.",
   "significance": "The central precedent at issue. Petitioner argued it protects only contractors who follow government specifications and should be read narrowly. Respondent and the government argued for a broader combat-zone immunity beyond Boyle's framework.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether federal law shields a military equipment manufacturer from state tort liability for design defects when the manufacturer built the product according to specifications approved by the United States government.",
+  "backgroundAndFacts": "In April 1983, United States Marine Corps First Lieutenant David A. Boyle was serving as a helicopter copilot aboard a CH-53D Sea Stallion helicopter when it crashed into the Atlantic Ocean off the coast of Virginia Beach, Virginia. Boyle survived the initial impact of the crash, but as the helicopter sank beneath the water, he was unable to escape the cockpit. The escape hatch on the helicopter was designed to open outward, which meant that the enormous water pressure pressing against the submerged door made it virtually impossible to push open from inside. Boyle drowned, trapped in the cockpit.\n\nBoyle's father filed a lawsuit against the Sikorsky Division of United Technologies Corporation, the company that designed and manufactured the helicopter, in the United States District Court for the Eastern District of Virginia. The case was heard in federal court because the parties were from different states (diversity jurisdiction). The elder Boyle brought claims under Virginia state tort law, alleging that the helicopter had a defective design — specifically that the escape hatch should have been designed to open inward so a pilot could escape a submerged cockpit — and that Sikorsky had failed to properly repair a malfunctioning emergency escape system. At trial, a jury sided with the Boyle family, finding that the helicopter was defectively designed, and awarded $725,000 in compensatory damages.\n\nUnited Technologies appealed to the United States Court of Appeals for the Fourth Circuit. The Fourth Circuit reversed the jury's verdict, ruling that Sikorsky was protected from liability under what is known as the 'government contractor defense.' The appeals court reasoned that because Sikorsky had built the helicopter according to specifications set and approved by the Navy, the company could not be held liable under state law for alleged design defects in the product. The court concluded that holding the contractor liable for following the government's own design choices would undermine important federal interests in military procurement.\n\nThe Boyle family petitioned the Supreme Court to hear the case, and the Court agreed. The justices took the case because lower courts across the country had been split on whether such a defense existed and, if so, what its boundaries should be. The question was a significant one: it pitted the rights of injured individuals to seek compensation under state law against the federal government's interest in controlling military procurement decisions without the chilling effect of state tort lawsuits aimed at its contractors.",
+  "parties": [
+    {
+      "party": "Boyle (Estate of David A. Boyle)",
+      "role": "petitioner",
+      "coreArgument": "The Boyle family argued that Sikorsky should be held liable under Virginia state tort law for designing a helicopter with a defective escape hatch that caused their son's death. They contended that no federal rule should override their right to pursue a standard product liability claim against a private manufacturer.",
+      "supportingPoints": [
+        "State tort law has traditionally governed product liability claims against manufacturers, and Congress had never passed a law granting military contractors immunity from such claims.",
+        "The Federal Tort Claims Act was designed to waive the government's own immunity in some situations, not to create new immunity for private companies that do business with the government.",
+        "A jury had already weighed the evidence and found that the helicopter was defectively designed, and that verdict should be respected."
+      ]
+    },
+    {
+      "party": "United Technologies Corp.",
+      "role": "respondent",
+      "coreArgument": "United Technologies argued that it should be shielded from state tort liability because it manufactured the helicopter according to reasonably precise specifications approved by the United States military. Holding a contractor liable for following the government's own design requirements would effectively impose liability on the government through its contractors.",
+      "supportingPoints": [
+        "Military procurement is a uniquely federal interest, and state tort law should not be allowed to second-guess design decisions made by the federal government for military equipment.",
+        "The Federal Tort Claims Act's discretionary function exception protects the government from liability for its design choices; allowing suits against contractors who follow those designs would circumvent that protection.",
+        "Sikorsky built the helicopter's escape system to conform to the Navy's approved specifications and warned the government about known dangers, satisfying any reasonable standard for a contractor defense."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Antonin Scalia, the Supreme Court ruled in favor of United Technologies Corporation, holding that federal common law provides a defense to state tort claims for military contractors who build equipment according to government specifications. The Court affirmed the Fourth Circuit's reversal of the jury verdict in favor of the Boyle family.\n\nThe majority began by establishing that federal courts have the authority to create federal common law — judge-made rules that override state law — in areas involving 'uniquely federal interests' where a 'significant conflict' exists between an identifiable federal policy and the operation of state law. The Court identified the procurement of military equipment as just such an area. Because the Federal Tort Claims Act's 'discretionary function exception' shields the government itself from tort liability for discretionary decisions like military equipment design, the Court reasoned that allowing injured parties to sue the contractors who carried out those very same design decisions would effectively accomplish an end-run around the government's own immunity. The financial burden would ultimately fall back on the government through increased contract prices, and the threat of state tort liability could pressure contractors to deviate from government-approved designs.\n\nJustice Scalia articulated a three-part test that a military contractor must satisfy to invoke this defense: (1) the United States approved reasonably precise specifications for the equipment; (2) the equipment conformed to those specifications; and (3) the supplier warned the United States about dangers in the use of the equipment that were known to the supplier but not to the United States. This test was designed to ensure that the defense only applies when the government has exercised its discretion in a meaningful way over the design, and not when a contractor has essentially designed the product itself and simply obtained rubber-stamp approval.\n\nThe Court acknowledged that this ruling displaced state tort law in a significant area, but concluded that the federal interest in military procurement and the potential conflict with the government's own discretionary function immunity made it necessary. The case was remanded for proceedings consistent with this newly articulated standard, meaning that a court would need to determine whether Sikorsky could satisfy the three-part test on the facts of Boyle's case.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Antonin Scalia",
+  "dissentingOpinions": [
+    {
+      "author": "William J. Brennan Jr.",
+      "joinedBy": [
+        "Thurgood Marshall",
+        "Harry Blackmun"
+      ],
+      "coreArgument": "Justice Brennan argued that the majority had no legitimate basis for creating a new federal common law rule to immunize private contractors from state tort liability. He contended that Congress, not the courts, should decide whether military contractors deserve special protection, and that the majority had improperly extended the government's own immunity under the Federal Tort Claims Act to private companies.",
+      "keyPoints": [
+        "The discretionary function exception in the Federal Tort Claims Act was designed to protect governmental decision-making from judicial second-guessing, not to shield private corporations that profit from government contracts.",
+        "Congress had considered and declined to enact legislation granting military contractors immunity from tort suits, and the Court was effectively legislating in Congress's place.",
+        "The decision strips injured service members and their families of remedies that state law would otherwise provide, with no clear authorization from any statute or constitutional provision.",
+        "There is no genuine 'significant conflict' between state tort law and federal policy — holding a contractor liable does not prevent the government from procuring whatever equipment it wishes."
+      ]
+    },
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [],
+      "coreArgument": "Justice Stevens wrote separately to argue that even if some form of government contractor defense could exist, the majority had applied it incorrectly in this case. He emphasized that the evidence showed Sikorsky had substantial influence over the helicopter's design and that the jury had reasonably concluded the escape hatch was defective.",
+      "keyPoints": [
+        "The record suggested that the contractor played a significant role in shaping the design specifications rather than merely following the government's dictated requirements, which should undermine the defense.",
+        "The majority's new legal standard was announced without adequate consideration of whether the facts of this particular case warranted its application, and the jury's finding of a design defect should have carried significant weight."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions in this case. The majority opinion was joined in full by Chief Justice Rehnquist and Justices White, O'Connor, and Kennedy."
 }

@@ -5,5 +5,50 @@
   "year": 2012,
   "summary": "Held that the Fair Sentencing Act's reduced crack cocaine penalties applied to offenders sentenced after the Act took effect, even if their crimes predated it.",
   "significance": "Cited by the government to explain how Congress addressed the gap between the Fair Sentencing Act's prospective changes and the later enactment of Section 404 making those changes retroactive.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the Fair Sentencing Act of 2010, which reduced the sentencing disparity between crack cocaine and powder cocaine offenses, applies its more lenient mandatory minimum penalties to defendants who committed their crimes before the Act's effective date but were sentenced after it took effect.",
+  "backgroundAndFacts": "For decades, federal law treated crack cocaine offenses far more harshly than powder cocaine offenses. Under a 1986 law, possessing just 5 grams of crack cocaine triggered a five-year mandatory minimum sentence, while it took 500 grams of powder cocaine to trigger the same penalty — a 100-to-1 ratio. Over time, this disparity drew intense criticism because it disproportionately affected Black defendants and was not justified by the pharmacological differences between the two forms of the drug. In 2010, Congress passed the Fair Sentencing Act (FSA), which President Obama signed on August 3, 2010. The FSA raised the amount of crack cocaine needed to trigger mandatory minimums: from 5 grams to 28 grams for a five-year minimum, and from 50 grams to 280 grams for a ten-year minimum. This reduced the ratio from 100-to-1 to roughly 18-to-1.\n\nThe case consolidated the appeals of two defendants. Edward Dorsey II pleaded guilty to a crack cocaine offense. Because of the quantity involved and a prior felony drug conviction, he faced a ten-year mandatory minimum sentence under the old law. Corey Hill was convicted of involvement in a crack cocaine conspiracy involving between 50 and 280 grams of crack cocaine. Under the pre-FSA law, 50 grams triggered a ten-year mandatory minimum, but under the FSA, his quantity would only trigger a five-year mandatory minimum. Crucially, both men committed their offenses before August 3, 2010, but were sentenced after that date.\n\nBoth defendants argued that they should be sentenced under the FSA's more lenient thresholds, since they were being sentenced after the new law took effect. The government disagreed, and the United States Court of Appeals for the Seventh Circuit ruled against both defendants, holding that the old, harsher penalties still applied because their criminal conduct occurred before the FSA was enacted.\n\nThe Supreme Court agreed to hear the case because federal appeals courts around the country were split on the issue. Some circuits held that the FSA applied to all sentencings occurring after its effective date regardless of when the crime was committed, while others — like the Seventh Circuit — held it only applied to offenses committed after the Act became law. The split meant that defendants facing identical conduct could receive dramatically different sentences depending on where they were prosecuted, creating an urgent need for a uniform national rule.",
+  "parties": [
+    {
+      "party": "Edward Dorsey II and Corey Hill",
+      "role": "petitioner",
+      "coreArgument": "The Fair Sentencing Act's reduced mandatory minimums should apply to anyone sentenced after the Act took effect on August 3, 2010, regardless of when the underlying crime occurred. Congress intended the FSA to correct a widely recognized injustice, and applying the old, harsher penalties to defendants sentenced under a new legal regime would perpetuate the very disparity Congress meant to eliminate.",
+      "supportingPoints": [
+        "Congress designed the FSA to remedy the unjust 100-to-1 crack-to-powder sentencing disparity, and it would undermine that purpose to continue imposing the old penalties on defendants sentenced after the reform",
+        "The text and structure of the FSA, including the absence of any delayed effective date or explicit limitation to future offenses, indicate Congress intended the new minimums to apply immediately to all future sentencings",
+        "Applying different mandatory minimums to defendants sentenced on the same day — based solely on whether their conduct fell days before or after August 3, 2010 — would create arbitrary and unjust disparities that Congress could not have intended"
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "Under the federal general savings statute (1 U.S.C. § 109), when Congress changes a criminal penalty, the old penalty continues to apply to offenses committed before the change unless Congress expressly says otherwise. The FSA contained no such express statement, so the old mandatory minimums should apply to pre-enactment conduct.",
+      "supportingPoints": [
+        "The general savings statute creates a default rule that the repeal or amendment of a penalty statute does not affect any prior offense, and the FSA did not explicitly override this default",
+        "Courts should not assume Congress intended a statute to apply retroactively absent clear evidence, and the FSA's silence on the issue means the old penalties are preserved for pre-enactment offenses",
+        "Applying the FSA's new thresholds to pre-enactment conduct would effectively give the statute a retroactive effect, which raises due process and separation-of-powers concerns"
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Stephen Breyer, the Supreme Court reversed the Seventh Circuit and held that the Fair Sentencing Act's more lenient mandatory minimum penalties apply to all defendants sentenced after the Act's August 3, 2010 effective date, even if their offenses were committed before that date.\n\nThe majority began by acknowledging the federal general savings statute, which ordinarily preserves old penalties for offenses committed before a new law takes effect. However, Justice Breyer explained that this default rule yields when there is sufficient indication that Congress intended a different result. The Court found such indications throughout the FSA's text, structure, and legislative context. Congress was addressing a sentencing disparity that had been criticized for years as fundamentally unjust, and the FSA was the culmination of a deliberate and bipartisan effort to fix it. Applying the old, discredited penalties to defendants sentenced under the new legal regime would directly undermine Congress's corrective purpose.\n\nThe majority also pointed to practical consequences. Without the FSA applying to post-enactment sentencings, two defendants sentenced on the same day for identical conduct could receive wildly different sentences — a ten-year mandatory minimum versus a five-year minimum — based solely on whether the offense occurred a few days before or after August 3, 2010. The Court found it implausible that Congress would have intended such arbitrary outcomes, especially given that the entire point of the FSA was to reduce unwarranted sentencing disparities.\n\nAdditionally, the Court noted that the FSA contained no language limiting itself to future offenses, and its legislative history supported the conclusion that Congress expected the new thresholds to apply to all sentencings going forward. The Court distinguished the general savings statute by explaining that it serves as a background principle, not an inflexible command, and that Congress can implicitly override it when contextual evidence is strong enough. Here, the evidence was compelling.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Stephen Breyer",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "John G. Roberts",
+        "Antonin Scalia",
+        "Samuel Alito"
+      ],
+      "coreArgument": "The dissent argued that the general savings statute provides a clear default rule — old penalties apply to old offenses — and that the FSA contained no express language overriding that default. Without a clear congressional statement to the contrary, courts should not infer that Congress intended the new, lower penalties to apply to pre-enactment conduct.",
+      "keyPoints": [
+        "The general savings statute exists precisely to prevent the confusion and unfairness that can arise when penalty changes are applied to offenses already committed, and the majority improperly weakened this longstanding statutory protection",
+        "The FSA's silence on temporal application should be read as acquiescence to the savings statute's default rule, not as evidence of an intent to override it",
+        "The majority relied too heavily on policy considerations and inferences about congressional purpose rather than on the actual text of the statute, effectively rewriting the law to achieve what the majority considered a more just result",
+        "Permitting courts to override the savings statute based on contextual clues and legislative purpose creates uncertainty about when the default rule will be honored and when it will be set aside"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separate concurring opinions filed in this case; the five justices in the majority all joined Justice Breyer's opinion in full."
 }

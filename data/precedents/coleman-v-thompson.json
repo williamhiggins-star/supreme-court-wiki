@@ -5,5 +5,49 @@
   "year": 1991,
   "summary": "The Court held that federal courts generally will not review claims not properly raised in state court unless the petitioner can show cause and prejudice for the default or fundamental miscarriage of justice.",
   "significance": "Establishes principles of procedural default in habeas review, holding that failure to comply with state procedural rules may bar federal review; relevant to the respondent's argument that Pitchford's trial-level procedural default is binding.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Can a federal court review a state prisoner's constitutional claims through habeas corpus when the prisoner's lawyers failed to comply with a state procedural filing deadline during state post-conviction proceedings, and can attorney error in state habeas proceedings constitute 'cause' to excuse such a procedural default?",
+  "backgroundAndFacts": "In 1981, Wanda McCoy was raped and murdered in her home in Grundy, Virginia. Roger Keith Coleman, a coal miner who was married to one of McCoy's relatives and who lived nearby, was charged with the crime. Coleman was tried in Virginia state court, convicted of capital murder and rape, and sentenced to death. He maintained his innocence throughout his case.\n\nAfter his conviction and sentence were upheld on direct appeal, Coleman pursued state habeas corpus relief — a legal process where a prisoner asks a court to review whether constitutional errors occurred at trial. The state habeas court in Virginia (the Buchanan County Circuit Court) denied all of Coleman's claims. This is where the critical procedural mistake happened: Virginia law required that a notice of appeal from the trial court's habeas decision be filed within 30 days. Coleman's attorneys filed the notice of appeal three days late — on the 33rd day. The Supreme Court of Virginia dismissed Coleman's appeal as untimely, refusing to consider any of his constitutional claims on their merits.\n\nColeman then turned to the federal courts, filing a petition for federal habeas corpus relief. The central question became whether the federal courts could look at his claims at all, given that the state courts had refused to consider them because of the missed filing deadline. The federal district court found that most of Coleman's claims were procedurally defaulted — meaning the federal court could not review them because Coleman had failed to properly raise them in state court. The Fourth Circuit Court of Appeals largely agreed.\n\nThe Supreme Court agreed to hear the case because it raised fundamental questions about the relationship between state and federal courts, specifically about when federal courts may step in to review a state prisoner's constitutional claims after the prisoner has failed to follow state court procedures. The case also squarely presented the question of whether a lawyer's negligence during state post-conviction proceedings could serve as an excuse — what the law calls 'cause' — for the procedural default. Given that Coleman faced the death penalty, the stakes could not have been higher.",
+  "parties": [
+    {
+      "party": "Roger Keith Coleman",
+      "role": "petitioner",
+      "coreArgument": "Coleman argued that the federal courts should review his constitutional claims despite the late filing by his attorneys in state court. He contended that his lawyers' negligence in missing the deadline constituted 'cause' sufficient to excuse the procedural default, since he had no personal control over his attorneys' actions.",
+      "supportingPoints": [
+        "Coleman had no personal responsibility for the late filing; his attorneys made the error, and he should not be punished for their mistake with his life",
+        "The underlying constitutional claims — including allegations of prosecutorial misconduct and ineffective assistance of trial counsel — were serious and meritorious, and refusing to review them risked a fundamental miscarriage of justice",
+        "Because the state provided him counsel for post-conviction proceedings, the state should bear responsibility when that counsel performed deficiently, just as it would on direct appeal"
+      ]
+    },
+    {
+      "party": "Charles E. Thompson (Warden)",
+      "role": "respondent",
+      "coreArgument": "Thompson, representing the Commonwealth of Virginia, argued that Coleman's failure to comply with the state's filing deadline was a valid and independent state procedural ground that barred federal habeas review. Because there is no constitutional right to a lawyer in state post-conviction proceedings, attorney error at that stage cannot constitute 'cause' to excuse the default.",
+      "supportingPoints": [
+        "The principles of federalism require federal courts to respect state procedural rules, and Virginia's 30-day filing deadline was a legitimate, consistently enforced rule",
+        "Under existing precedent, there is no constitutional right to counsel in state habeas proceedings, so attorney negligence at that stage cannot be attributed to the state",
+        "Allowing prisoners to bypass state procedural defaults by blaming their post-conviction lawyers would undermine the finality of state court judgments and open the floodgates to federal relitigation"
+      ]
+    }
+  ],
+  "holding": "In a 6–3 decision authored by Justice Sandra Day O'Connor, the Supreme Court ruled against Coleman and held that federal courts generally may not review claims that were not properly raised in state court due to a procedural default, unless the prisoner can demonstrate both 'cause' for the default and actual 'prejudice' from the alleged constitutional violation — or can show that failing to hear the claims would result in a 'fundamental miscarriage of justice,' such as the conviction of someone who is actually innocent.\n\nThe majority first addressed the 'adequate and independent state ground' doctrine. Under this doctrine, when a state court declines to address a prisoner's federal constitutional claims because the prisoner failed to meet a state procedural requirement, and that procedural rule is both adequate (regularly followed and consistently applied) and independent (not intertwined with federal law), a federal habeas court is likewise barred from reviewing those claims. The Court found that Virginia's 30-day filing deadline was exactly such a rule — it was clear, consistently enforced, and independent of any federal question. The Virginia Supreme Court's dismissal of Coleman's appeal rested entirely on this state procedural ground.\n\nThe most consequential part of the ruling addressed whether attorney error during state habeas proceedings could constitute 'cause' to excuse a procedural default. The Court held that it could not. The majority reasoned that because there is no constitutional right to a lawyer in state post-conviction (habeas) proceedings — unlike on direct appeal, where the right to counsel is guaranteed — the state bears no responsibility for an attorney's mistakes at that stage. An attorney's negligence in state habeas proceedings is attributable to the prisoner, not the state. Therefore, Coleman could not use his lawyers' late filing as 'cause' to unlock federal review of his claims.\n\nJustice O'Connor acknowledged the harshness of the result but emphasized that the principles of federalism — the respect federal courts owe to state court systems and their procedural rules — required this outcome. The Court noted that states are not constitutionally required to provide post-conviction proceedings at all, and that extending the right to effective counsel to those proceedings would fundamentally alter the balance between state and federal courts. Coleman's claims were therefore procedurally barred, and his death sentence stood.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Sandra Day O'Connor",
+  "dissentingOpinions": [
+    {
+      "author": "Harry A. Blackmun",
+      "joinedBy": [
+        "Thurgood Marshall",
+        "John Paul Stevens"
+      ],
+      "coreArgument": "Justice Blackmun argued passionately that the majority's rigid application of procedural default rules was fundamentally unjust, especially in a capital case. He contended that Coleman was being sent to his death not because his constitutional claims lacked merit, but because his lawyer filed a piece of paper three days late — an error entirely outside Coleman's control.",
+      "keyPoints": [
+        "The majority created an impossible situation: a prisoner has no constitutional right to effective counsel in state habeas proceedings, yet any errors that counsel makes during those proceedings are attributed to the prisoner and can permanently bar federal review of serious constitutional violations",
+        "Federalism and procedural rules should not be elevated to the point where they override the fundamental fairness that the Constitution guarantees, particularly when a person's life is at stake",
+        "The Court should have recognized that when a state chooses to provide counsel for post-conviction proceedings, the state should bear some responsibility for that counsel's performance, especially when the consequence of error is the extinguishment of all further review",
+        "The dissent emphasized that the underlying constitutional claims — including prosecutorial misconduct and ineffective assistance of trial counsel — were substantial and deserved review on the merits, and that denying review based on a technicality risked a grave injustice"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately noteworthy concurring opinions in this case; the six justices in the majority joined Justice O'Connor's opinion without writing separately."
 }

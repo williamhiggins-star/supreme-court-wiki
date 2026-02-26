@@ -5,5 +5,47 @@
   "year": 1949,
   "summary": "Upheld the application in federal court of a state law requiring shareholders bringing derivative suits to post a bond as security for litigation costs.",
   "significance": "Respondents argued the Delaware AOM requirement is analogous to the bond requirement upheld in Cohen, as both are conditions on maintaining a cause of action. Petitioner argued Cohen involved a manifestly substantive requirement unlike the Delaware procedural law.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does a state law requiring shareholders who bring derivative lawsuits to post a security bond for the corporation's litigation expenses apply in federal court when the case is heard under diversity jurisdiction?",
+  "backgroundAndFacts": "Beneficial Industrial Loan Corporation was a company incorporated in Delaware with its principal place of business in New Jersey. Harry Cohen was a shareholder who owned a relatively small stake in the company. Cohen filed a derivative lawsuit — a type of suit where a shareholder sues on behalf of the corporation itself — alleging that certain officers and directors of Beneficial had engaged in mismanagement, fraud, and waste of corporate assets. He brought the case in federal court based on diversity of citizenship jurisdiction, meaning the federal court had authority to hear the case because the parties were from different states.\n\nThe legal wrinkle arose from a New Jersey statute enacted in 1945. That law required any shareholder who owned less than 5 percent of a corporation's outstanding shares, or whose shares had a market value of less than $50,000, to post a bond as security for the corporation's reasonable litigation expenses — including attorney's fees — if the shareholder ultimately lost the derivative suit. The purpose of the law was to discourage frivolous or 'strike' suits brought by shareholders with tiny stakes who had little financial risk if the suit failed. Cohen's holdings fell below both thresholds, so the corporation moved to require him to post bond.\n\nThe federal district court refused to apply the New Jersey statute, reasoning that it was a procedural rule that conflicted with the federal rules governing derivative suits. At the time, Federal Rule of Civil Procedure 23 (which then dealt with derivative actions) contained no such security-for-expenses requirement. The district court believed federal procedural rules should control in federal court.\n\nThe Third Circuit Court of Appeals reversed, holding that the New Jersey bond requirement was substantive in nature and therefore had to be applied by federal courts sitting in diversity under the principles established by the Supreme Court in its landmark Erie Railroad decision. That decision had established that federal courts hearing state-law claims must apply state substantive law rather than fashioning their own.\n\nThe Supreme Court agreed to hear the case because it raised an important question about the boundary between substance and procedure in federal diversity cases — a question with significant practical consequences for shareholders across the country who wished to bring derivative suits in federal court.",
+  "parties": [
+    {
+      "party": "Harry Cohen",
+      "role": "petitioner",
+      "coreArgument": "Cohen argued that the New Jersey security-for-expenses statute was a procedural rule that should not apply in federal court. He maintained that the Federal Rules of Civil Procedure governed how derivative suits were conducted in federal court, and since those rules did not require a security bond, none should be imposed.",
+      "supportingPoints": [
+        "Federal Rule of Civil Procedure 23, which governed derivative actions in federal court, did not include any requirement to post a security bond, and federal procedural rules should take precedence over conflicting state procedural rules",
+        "The bond requirement was essentially a rule about how lawsuits are conducted — a matter of courtroom procedure — rather than a rule defining anyone's substantive legal rights",
+        "Applying the state statute in federal court would effectively deny small shareholders access to federal courts for derivative suits, undermining the purpose of diversity jurisdiction"
+      ]
+    },
+    {
+      "party": "Beneficial Industrial Loan Corp.",
+      "role": "respondent",
+      "coreArgument": "Beneficial argued that the New Jersey bond requirement was a substantive condition on the right to bring a derivative suit, not merely a procedural rule. Because it was substantive, the Erie doctrine required federal courts sitting in diversity to apply it, ensuring that the outcome of the case would not differ depending on whether it was filed in state or federal court.",
+      "supportingPoints": [
+        "The security-for-expenses statute created a substantive right for the corporation to be protected from the costs of frivolous shareholder litigation, and this right should not vanish simply because the suit was filed in federal court",
+        "Allowing shareholders to avoid the bond requirement by choosing federal court over state court would produce exactly the kind of forum-shopping that the Erie doctrine was designed to prevent",
+        "The derivative suit itself is a creation of equity that exists only because courts allow a shareholder to enforce rights that belong to the corporation, and states have the power to define the conditions under which that extraordinary remedy is available"
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled 6–3 in favor of Beneficial Industrial Loan Corp., holding that the New Jersey security-for-expenses statute must be applied by federal courts exercising diversity jurisdiction. Justice Robert H. Jackson wrote the majority opinion.\n\nThe majority began by explaining the unique nature of the shareholder derivative suit. Unlike an ordinary lawsuit, a derivative action allows a shareholder to step into the shoes of the corporation and sue on its behalf. Because this is an extraordinary remedy, the Court reasoned, states have broad authority to define the terms and conditions under which such suits may be brought. The New Jersey legislature's decision to require a security bond from small shareholders was a legitimate exercise of that authority — it was designed to protect corporations and their other shareholders from bearing the costs of meritless litigation.\n\nJustice Jackson emphasized that the bond requirement was not merely a rule about how to conduct a lawsuit. Rather, it was a substantive condition that determined whether a particular plaintiff could maintain a derivative action at all. It created a new right for the corporation — the right to demand security — and imposed a new obligation on the suing shareholder. If federal courts ignored this requirement, a shareholder could escape a significant state-law obligation simply by filing in federal rather than state court. This would produce the kind of inequitable result that the Erie doctrine was designed to prevent: different outcomes in the same dispute depending solely on the choice of courthouse.\n\nThe Court acknowledged that the Federal Rules of Civil Procedure governed many aspects of how derivative suits were handled in federal court, but concluded that Rule 23 (as it existed at the time) did not address the question of security-for-expenses. Therefore, there was no true conflict between the state statute and the federal rules. The state law filled a gap that the federal rules left open, and applying it was fully consistent with the policies underlying both the Erie doctrine and the Rules Enabling Act.\n\nThe decision had wide-ranging practical implications. It meant that state legislatures could impose conditions on derivative suits — such as bond requirements — that would follow shareholders into federal court, preventing them from using diversity jurisdiction as an escape hatch from state-imposed restrictions on shareholder litigation.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Robert H. Jackson",
+  "dissentingOpinions": [
+    {
+      "author": "Wiley B. Rutledge",
+      "joinedBy": [
+        "William O. Douglas",
+        "Frank Murphy"
+      ],
+      "coreArgument": "Justice Rutledge argued that the New Jersey bond requirement was procedural in nature and conflicted with the Federal Rules of Civil Procedure, which should govern the conduct of derivative suits in federal court. He believed the majority's decision effectively allowed state legislatures to override federal procedural rules and close the doors of federal courts to small shareholders.",
+      "keyPoints": [
+        "Federal Rule of Civil Procedure 23 already comprehensively governed derivative suits in federal court, and the state bond requirement directly conflicted with the procedures established by that rule, which did not impose any such condition",
+        "The practical effect of the majority's holding was to allow states to strip small shareholders of meaningful access to federal courts by imposing financial barriers that Congress and the federal rulemakers had chosen not to impose",
+        "The bond requirement was a litigation condition — a rule about how and whether a lawsuit can proceed — which is the essence of procedure, and labeling it 'substantive' blurred the line between substance and procedure in a way that threatened the integrity of the federal court system"
+      ]
+    }
+  ]
 }

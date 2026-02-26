@@ -5,5 +5,62 @@
   "year": 2000,
   "summary": "The Court held that any fact, other than a prior conviction, that increases the penalty beyond the prescribed statutory maximum must be submitted to a jury and proved beyond a reasonable doubt.",
   "significance": "Cited to highlight the major downstream consequence of classifying restitution as criminal punishment: any fact necessary to increase the maximum restitution amount would require a jury finding, potentially disrupting the entire federal restitution system.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Due Process Clause of the Fourteenth Amendment and the Sixth Amendment's jury trial guarantee require that any fact (other than a prior conviction) that increases the maximum criminal sentence beyond the statutory maximum be submitted to a jury and proved beyond a reasonable doubt?",
+  "backgroundAndFacts": "In December 1994, Charles C. Apprendi Jr. fired several .22-caliber bullets into the home of an African-American family that had recently moved into his previously all-white neighborhood in Vineland, New Jersey. No one was physically injured, but the attack was terrifying and destructive. When police arrested Apprendi, he made statements suggesting the shooting was racially motivated — that he did not want the family in his neighborhood because of their race. He later recanted those statements and claimed his motive was unrelated to race.\n\nApprendi was charged with multiple offenses. Through a plea agreement, he pleaded guilty to two counts of second-degree possession of a firearm for an unlawful purpose — an offense that normally carried a prison sentence of five to ten years under New Jersey law — as well as one count of unlawful possession of an antipersonnel bomb, a third-degree offense. As part of the deal, the prosecution reserved the right to seek an enhanced sentence under New Jersey's hate crime statute. That law allowed a trial judge to increase a defendant's sentence beyond the normal statutory maximum if the judge found, by a preponderance of the evidence (meaning 'more likely than not'), that the crime was committed with the purpose of intimidating a person or group because of race, color, gender, religion, sexual orientation, or ethnicity.\n\nAfter a separate hearing, the trial judge concluded that Apprendi's crime was indeed racially motivated and imposed a 12-year prison sentence on one of the firearms counts — two years beyond the 10-year maximum that would normally apply to a second-degree offense. Critically, this finding of racial bias was made by the judge alone, not by a jury, and it was based on the lower 'preponderance of the evidence' standard rather than the more demanding 'beyond a reasonable doubt' standard used at criminal trials.\n\nApprendi appealed, arguing that the Constitution required any fact that increased his maximum sentence to be found by a jury beyond a reasonable doubt. Both the Appellate Division of the New Jersey Superior Court and the New Jersey Supreme Court rejected his argument and upheld the sentence. The United States Supreme Court then agreed to take the case, recognizing that it raised a fundamental question about the constitutional boundary between what a judge may decide at sentencing and what the jury must decide at trial.",
+  "parties": [
+    {
+      "party": "Charles C. Apprendi Jr.",
+      "role": "petitioner",
+      "coreArgument": "Apprendi argued that the New Jersey hate crime statute was unconstitutional because it allowed a judge — rather than a jury — to make a factual finding that increased his maximum prison sentence beyond what the underlying offense allowed. He contended that the Constitution requires any fact that raises the ceiling of punishment to be treated like an element of the crime: submitted to the jury and proved beyond a reasonable doubt.",
+      "supportingPoints": [
+        "The Sixth Amendment guarantees the right to a jury trial for criminal defendants, meaning a jury — not a judge — must find the facts that determine the severity of punishment.",
+        "The Due Process Clause requires that the prosecution prove beyond a reasonable doubt every fact necessary to the punishment imposed, and a fact that doubles the maximum sentence is clearly such a fact.",
+        "Labeling racial motivation a 'sentencing factor' rather than an 'element of the offense' is a mere technicality that cannot override fundamental constitutional protections; the practical effect of the finding was to expose the defendant to far greater punishment."
+      ]
+    },
+    {
+      "party": "New Jersey",
+      "role": "respondent",
+      "coreArgument": "New Jersey argued that its hate crime statute was a permissible sentencing enhancement that did not violate the Constitution. The state maintained that legislatures have broad authority to define which facts are elements of a crime and which are sentencing factors, and that judges have long been trusted to make factual findings at sentencing.",
+      "supportingPoints": [
+        "The legislature chose to classify racial motivation as a sentencing factor rather than an element of a separate, greater offense, and courts should defer to that legislative judgment.",
+        "Judges have historically exercised wide discretion at sentencing, considering many facts that were never presented to a jury, and this practice is deeply embedded in the American legal tradition.",
+        "Requiring every sentencing factor to be proved to a jury beyond a reasonable doubt would be unworkable and would disrupt long-established sentencing systems across the country."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice John Paul Stevens, the Supreme Court ruled in favor of Apprendi and struck down the enhanced sentence. The Court held that, other than the fact of a prior conviction, any fact that increases the penalty for a crime beyond the prescribed statutory maximum must be submitted to a jury and proved beyond a reasonable doubt. Because the New Jersey hate crime enhancement allowed a judge to find racial motivation by a mere preponderance of the evidence and then impose a sentence above the otherwise applicable maximum, it violated Apprendi's constitutional rights under the Fifth Amendment's Due Process Clause (as applied to the states through the Fourteenth Amendment) and the Sixth Amendment's guarantee of a jury trial.\n\nJustice Stevens grounded the decision in the historical roots of the jury trial right, tracing its origins back to English common law and the founding era. The majority emphasized that the right to a jury trial is not merely a procedural formality — it is a fundamental safeguard designed to prevent the government from wielding unchecked power over a person's liberty. When a factual finding has the effect of exposing a defendant to a punishment greater than what would otherwise be legally authorized, that finding is, for constitutional purposes, the equivalent of an element of a greater offense. It does not matter whether the legislature calls the fact a 'sentencing factor' or an 'element'; what matters is its real-world effect on the defendant's liberty.\n\nThe Court acknowledged that judges have traditionally exercised discretion within the range of sentences authorized by statute, and the ruling did not disturb that practice. A judge may still consider many factors when choosing a sentence within the lawful range. The constitutional line is drawn at the statutory maximum: once a factual finding is required to push the sentence above the maximum that could be imposed based solely on the jury's verdict, that fact must be found by the jury beyond a reasonable doubt.\n\nThe majority also recognized a narrow exception for the fact of a prior conviction, based on the Court's earlier reasoning that recidivism is a traditional basis for enhanced sentencing and raises distinct considerations. However, the Court declined to extend this exception any further. The overall message was clear: the government cannot evade the Constitution's protections by the simple device of labeling a crucial fact a 'sentencing factor' rather than an 'element of the crime.'",
+  "voteCount": "5-4",
+  "majorityAuthor": "John Paul Stevens",
+  "dissentingOpinions": [
+    {
+      "author": "Sandra Day O'Connor",
+      "joinedBy": [
+        "William H. Rehnquist",
+        "Anthony M. Kennedy",
+        "Stephen G. Breyer"
+      ],
+      "coreArgument": "Justice O'Connor argued that the majority's rule was a dramatic and unjustified departure from established precedent and would have sweeping, destructive consequences for criminal justice systems nationwide. She contended that legislatures have long had the authority to decide which facts are elements of a crime and which are sentencing factors, and that the majority's bright-line rule based on the 'statutory maximum' was unworkable and unnecessary.",
+      "keyPoints": [
+        "The distinction between elements of a crime and sentencing factors is a well-established part of American law, and the Constitution does not require every fact that influences punishment to be treated as an element proved to a jury beyond a reasonable doubt.",
+        "The majority's rule threatened to invalidate sentencing enhancement schemes used throughout the states and the federal system, including determinate sentencing guidelines designed to reduce arbitrary disparities in punishment.",
+        "The prior conviction exception acknowledged by the majority demonstrated the arbitrariness of its rule, since there is no principled reason why prior convictions should be the only facts exempt from the jury requirement.",
+        "Judges have historically been trusted to find facts at sentencing, and expanding the jury's role in this way could overwhelm the trial process and undermine modern sentencing reform efforts."
+      ]
+    },
+    {
+      "author": "Stephen G. Breyer",
+      "joinedBy": [
+        "William H. Rehnquist"
+      ],
+      "coreArgument": "Justice Breyer wrote a separate dissent primarily focused on the practical consequences of the majority's holding, warning that it could unravel determinate sentencing systems — including the Federal Sentencing Guidelines — that were specifically designed to make criminal punishment more fair, transparent, and uniform. He argued that the majority's constitutional principle, taken to its logical conclusion, was incompatible with the modern reality of sentencing.",
+      "keyPoints": [
+        "Modern sentencing guidelines systems, which rely on judicial factfinding to calculate precise sentences within structured ranges, represent one of the most important advances in criminal justice reform, and the majority's rule placed them in serious constitutional jeopardy.",
+        "The practical effect of requiring juries to find every fact that could increase a sentence would be to either return to a regime of unchecked judicial discretion (which sentencing reform was designed to curb) or to overburden the trial process with complex sentencing considerations that juries are poorly equipped to handle.",
+        "A rule that looks only to whether a fact increases the 'statutory maximum' creates a formalistic distinction that legislatures can easily manipulate, undermining the rule's effectiveness as a constitutional safeguard."
+      ]
+    }
+  ],
+  "concurringNote": "Justice Scalia wrote a concurring opinion emphasizing the originalist and historical foundations of the jury trial right, arguing that the Framers of the Constitution would never have accepted the notion that legislatures could strip the jury of its role by simply relabeling elements of offenses as sentencing factors. Justice Thomas wrote a separate concurrence going further than the majority, arguing that the prior conviction exception recognized in earlier precedent was wrongly decided and that the constitutional rule should apply to all facts that increase punishment — including prior convictions — without exception."
 }

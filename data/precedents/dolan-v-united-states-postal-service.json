@@ -5,5 +5,46 @@
   "year": 2006,
   "summary": "Held that the postal exception covers bad things that happen to the mail itself (not arriving, arriving damaged or late) but does not extend to separate injuries like slip-and-falls that merely occur around mail delivery.",
   "significance": "The central precedent interpreting the postal exception, which held the exception does not bar claims for injuries caused by how mail is placed (slip-and-fall from a package left on steps) and articulated a general rule about what injuries fall within the exception.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Federal Tort Claims Act's 'postal matter' exception — which bars lawsuits against the government for claims 'arising out of the loss, miscarriage, or negligent transmission of letters or postal matter' — prevent a person from suing when a postal carrier's negligent placement of mail on a porch causes them to trip and suffer personal injuries?",
+  "backgroundAndFacts": "Barbara Dolan lived in a home where her mail was delivered directly to her front porch by a United States Postal Service letter carrier. On the day in question, the carrier left packages of mail on Dolan's porch in a manner that created an obstacle. Dolan tripped over the mail, fell, and suffered injuries. She filed a lawsuit seeking money damages from the Postal Service for the carrier's negligence.\n\nDolan brought her claim under the Federal Tort Claims Act (FTCA), which is the main law that allows ordinary citizens to sue the federal government for the negligent actions of government employees. Without the FTCA, the government enjoys 'sovereign immunity,' meaning it cannot be sued at all. But the FTCA contains a list of specific exceptions — situations where the government's immunity is preserved and lawsuits are still barred. One of these is found in 28 U.S.C. § 2680(b), which blocks claims 'arising out of the loss, miscarriage, or negligent transmission of letters or postal matter.' The critical question was whether Dolan's slip-and-fall claim fell within this so-called 'postal matter exception.'\n\nThe federal district court dismissed Dolan's lawsuit, ruling that her injuries arose out of the 'negligent transmission' of postal matter and therefore fell within the exception. The United States Court of Appeals for the Third Circuit affirmed that dismissal, agreeing that because the injury was connected to how the mail was handled during delivery, the exception applied.\n\nThe Supreme Court agreed to hear the case because the federal courts of appeals had split on how broadly to read this exception. Some circuits had interpreted it narrowly to cover only claims about the mail itself — for instance, when mail is lost, delayed, or damaged. Other circuits read it more broadly to encompass any injury that occurred in connection with mail delivery, including personal injuries like Dolan's. This disagreement among the lower courts made the case an important one for the Supreme Court to resolve.",
+  "parties": [
+    {
+      "party": "Barbara Dolan",
+      "role": "petitioner",
+      "coreArgument": "Dolan argued that the postal matter exception was meant to protect the government from liability for what happens to the mail itself — lost letters, damaged packages, late deliveries — not from liability for separate personal injuries that merely happen to occur in connection with mail delivery. Her slip-and-fall injury was fundamentally different from a complaint about missing or damaged mail.",
+      "supportingPoints": [
+        "The words 'loss,' 'miscarriage,' and 'negligent transmission' all describe things that go wrong with the mail — they do not naturally describe a person tripping and getting hurt.",
+        "The exception was historically designed to prevent the government from becoming a universal insurer of every piece of mail, not to grant blanket immunity for all physical injuries caused by postal workers on the job.",
+        "Reading the exception broadly to cover any injury tangentially connected to mail delivery would effectively immunize the Postal Service from a wide range of ordinary negligence claims that Congress intended the FTCA to cover."
+      ]
+    },
+    {
+      "party": "United States Postal Service",
+      "role": "respondent",
+      "coreArgument": "The Postal Service argued that Dolan's injuries arose out of the transmission of postal matter — specifically, how the carrier placed and delivered the packages — and therefore fell squarely within the statutory exception. Because the negligent act was part of the delivery process, the exception should bar the claim.",
+      "supportingPoints": [
+        "The phrase 'arising out of' is broad and should encompass any claim that has a causal connection to the handling or delivery of mail, including personal injuries.",
+        "The negligent act — placing mail on the porch in a hazardous way — was inseparable from the act of transmitting postal matter, making the exception directly applicable.",
+        "Courts should interpret exceptions to sovereign immunity waivers broadly to respect the government's traditional immunity from suit."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled 7–2 in favor of Barbara Dolan, reversing the Third Circuit's decision. Justice Anthony Kennedy wrote the majority opinion. The Court held that the postal matter exception does not bar claims for personal injuries caused by the negligent manner in which mail is delivered; instead, the exception only covers claims about what happens to the mail itself.\n\nThe majority focused closely on the text of the statute. The words 'loss,' 'miscarriage,' and 'negligent transmission' each describe something that goes wrong with the mail during its journey — a letter that never arrives, a package that ends up at the wrong address, or an item that is damaged in transit. Justice Kennedy explained that these terms share a common focus: they all concern the failure of mail to reach its intended destination in the expected condition. A slip-and-fall injury caused by packages left on a porch does not fit naturally within any of these categories. Dolan was not complaining that her mail was lost or damaged; she was complaining that the carrier's negligence in placing the mail injured her.\n\nThe Court rejected the Postal Service's argument that the phrase 'arising out of' should be read so broadly as to sweep in any injury with a causal link to the delivery of mail. Justice Kennedy reasoned that such a reading would dramatically expand the exception beyond what its specific terms contemplated, effectively shielding the Postal Service from liability for a wide variety of negligence claims — from car accidents involving mail trucks to injuries caused by a carrier's carelessness on someone's property — that Congress clearly intended to allow under the FTCA.\n\nThe majority also noted that sovereign immunity exceptions should not be read more broadly than their terms require. While the government sometimes argued that waivers of immunity should be narrowly construed, the Court explained that the proper approach is to read the statute according to its plain meaning — neither stretching the exception beyond its words nor artificially shrinking it. Here, the plain meaning pointed clearly in Dolan's favor: the exception was about protecting the government from claims over the mail, not from personal injury lawsuits.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Anthony Kennedy",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "Antonin Scalia"
+      ],
+      "coreArgument": "Justice Thomas argued that Dolan's injuries did arise out of the 'negligent transmission' of postal matter, because the very act that caused her injury — the carrier negligently placing packages on her porch — was an integral part of the mail delivery process. In his view, the majority drew an artificial distinction between injuries to the mail and injuries to people when the statute's language was broad enough to cover both.",
+      "keyPoints": [
+        "The phrase 'arising out of the negligent transmission of postal matter' naturally encompasses any injury that results from the negligent handling of mail during the delivery process, not just damage to the mail itself.",
+        "The majority's narrow interpretation would create difficult line-drawing problems in future cases and was inconsistent with the broad causal language Congress chose in drafting the exception."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately noted concurring opinions that offered significant alternative reasoning beyond the majority opinion."
 }

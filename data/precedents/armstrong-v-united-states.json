@@ -5,5 +5,49 @@
   "year": 1960,
   "summary": "The Supreme Court articulated that the Just Compensation Clause was designed to prevent the government from forcing a few property owners alone to bear burdens that should be distributed across society, ensuring fairness in government acquisition of private property.",
   "significance": "States the foundational purpose of the Takings Clause: to bar the government from forcing some individuals to bear public burdens that should be borne by the public as a whole—directly applicable to a homeowner losing equity to benefit a county treasury.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the federal government's act of taking title to partially completed naval vessels—thereby destroying materialmen's liens that existed under state law—constitute a 'taking' of private property requiring just compensation under the Fifth Amendment?",
+  "backgroundAndFacts": "In the mid-1950s, the Rice Shipbuilding Company of East Boothbay, Maine, entered into a contract with the United States Navy to build several minesweeper hulls. To fulfill this contract, Rice purchased materials from various suppliers, including L.W. Armstrong and several other companies. Under Maine state law, these suppliers—known as 'materialmen'—automatically obtained liens on the vessels they helped build. A lien is essentially a legal claim on property that secures payment for the materials or labor someone has contributed. So if Rice failed to pay its suppliers, they had a legal right to seek payment from the value of the vessels themselves.\n\nRice Shipbuilding eventually defaulted on its Navy contract and also failed to pay the materialmen for the supplies they had provided. Under the terms of the contract between Rice and the Navy, the government had the right, upon default, to take title to all completed and partially completed vessels and any materials at the shipyard. The government exercised this right and took possession of the hulls and materials.\n\nHere was the problem: once the United States government took title to the vessels, the materialmen's liens were effectively wiped out. Under the legal doctrine of sovereign immunity, private parties cannot enforce liens against property owned by the federal government. So Armstrong and the other suppliers were left holding the bag—they had provided valuable materials, Rice had gone under without paying them, and now the legal claims they held against the vessels had been destroyed by the government's acquisition of those vessels.\n\nArmstrong and the other materialmen filed suit in the United States Court of Claims, arguing that the destruction of their liens amounted to a taking of their private property without just compensation, in violation of the Fifth Amendment. The Court of Claims ruled against them, holding that no compensable taking had occurred. The materialmen then appealed to the Supreme Court, which agreed to hear the case because it raised an important constitutional question about the scope of the Just Compensation Clause when government action destroys existing property rights.",
+  "parties": [
+    {
+      "party": "L.W. Armstrong et al.",
+      "role": "petitioner",
+      "coreArgument": "The materialmen argued that their liens on the partially completed vessels were genuine property interests protected by the Fifth Amendment. When the government took title to the vessels and thereby destroyed those liens, it effectively took the materialmen's property for public use without paying for it.",
+      "supportingPoints": [
+        "Under Maine law, the materialmen had valid, legally enforceable liens on the vessels, which are recognized property rights",
+        "The government's acquisition of the vessels directly and foreseeably caused the destruction of those liens through the operation of sovereign immunity",
+        "The Fifth Amendment's Just Compensation Clause is meant to ensure that the costs of government action do not fall disproportionately on a few private individuals"
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government argued that it had not 'taken' the materialmen's liens in any constitutional sense. It had simply exercised its contractual right to acquire the vessels upon default, and the destruction of the liens was merely an incidental consequence of that lawful action.",
+      "supportingPoints": [
+        "The government acquired the vessels through a valid contractual provision, not through an exercise of eminent domain",
+        "The materialmen voluntarily supplied materials to a private contractor, knowingly assuming the risk that the contractor might default",
+        "The sovereign immunity doctrine that extinguished the liens is a longstanding legal principle, not an act of taking"
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Hugo L. Black, the Supreme Court reversed the Court of Claims and held that the destruction of the materialmen's liens did constitute a taking of private property requiring just compensation under the Fifth Amendment. The Court ruled that the liens were legitimate property interests, and that the government could not simply destroy them without paying for them.\n\nJustice Black's opinion emphasized that the Fifth Amendment's Just Compensation Clause serves a broad protective purpose. He wrote the now-famous formulation: 'The Fifth Amendment's guarantee that private property shall not be taken for a public use without just compensation was designed to bar Government from forcing some people alone to bear public burdens which, in all fairness and justice, should be borne by the public as a whole.' This statement crystallized the fundamental principle underlying the Takings Clause and became one of the most frequently quoted passages in American property law.\n\nThe majority reasoned that it did not matter that the government had acquired the vessels through a contractual default clause rather than through a formal exercise of eminent domain. What mattered was the practical effect: the government's action directly destroyed the materialmen's property interests—their liens—and the government received the benefit of property unencumbered by those liens. The materialmen had valid property rights under state law, and the government's assumption of title wiped those rights out entirely.\n\nThe Court rejected the government's argument that the materialmen had assumed the risk by dealing with a private contractor. The majority found that the critical event was the government's affirmative decision to take title, which was the direct cause of the liens' destruction. Because the government benefited from having clear title to the vessels while the materialmen bore the entire loss, the Fifth Amendment required the government to provide just compensation.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Hugo L. Black",
+  "dissentingOpinions": [
+    {
+      "author": "John Marshall Harlan II",
+      "joinedBy": [
+        "Felix Frankfurter",
+        "Charles Evans Whittaker",
+        "Potter Stewart"
+      ],
+      "coreArgument": "Justice Harlan argued that the government had not 'taken' the materialmen's liens in any meaningful constitutional sense. He contended that the government simply exercised a legitimate contractual right to acquire the vessels, and the destruction of the liens was an indirect, incidental consequence of that lawful act rather than a compensable taking.",
+      "keyPoints": [
+        "The government acquired the vessels through the operation of a valid default clause in its contract with Rice, not through the exercise of eminent domain or any power directed at the liens themselves",
+        "The materialmen voluntarily extended credit to a private party and should bear the ordinary commercial risks of that decision, including the risk that government sovereign immunity might affect their liens",
+        "Extending the Takings Clause to cover indirect destruction of property interests incidental to a lawful government contract action stretches the Fifth Amendment beyond its intended scope"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately written concurring opinions of particular note in this case."
 }

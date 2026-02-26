@@ -4,5 +4,47 @@
   "year": 1979,
   "summary": "Rejected the idea that a balancing test should replace the probable cause requirement for seizures, emphasizing probable cause provides needed clarity for officers.",
   "significance": "Petitioner cited it for the principle that probable cause provides the 'relative simplicity and clarity necessary to the implementation of a workable rule,' arguing against open-ended balancing tests.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Fourth Amendment permit police to seize a person and transport him to a police station for custodial interrogation without probable cause or a warrant, based merely on a reasonable suspicion of criminal activity?",
+  "backgroundAndFacts": "In March 1971, the owner of a pizza parlor in Rochester, New York was killed during an attempted robbery. The police investigation initially stalled, but months later a jail informant provided a tip implicating Irving Dunaway in the crime. Despite this lead, detectives acknowledged they did not have enough evidence to obtain an arrest warrant. Nevertheless, a detective ordered other officers to 'pick up' Dunaway and bring him in for questioning.\n\nDunaway was located and taken to police headquarters. Although he was never formally told he was under arrest, it was clear he was not free to leave — officers later testified he would have been physically restrained if he had attempted to walk away. At the station, he was placed in an interrogation room and read his Miranda rights. Dunaway waived those rights and proceeded to make incriminating statements and draw sketches that linked him to the crime. He was then formally placed under arrest.\n\nDunaway moved to suppress his statements, arguing that his seizure by police violated the Fourth Amendment because it was carried out without probable cause. The trial court found that the police lacked probable cause but ultimately denied the suppression motion, reasoning that Dunaway was not technically 'arrested' and that his statements were voluntary. Dunaway pleaded guilty to attempted robbery and second-degree murder. On appeal, the New York courts upheld his conviction, with the New York Court of Appeals applying a balancing test — weighing the crime's severity and the strength of suspicion against Dunaway's privacy interests — to conclude that the seizure was reasonable even without probable cause.\n\nThe U.S. Supreme Court agreed to hear the case because the New York Court of Appeals had endorsed a flexible, case-by-case balancing test as a substitute for the traditional probable cause requirement in situations involving custodial interrogation at a police station. This raised a fundamental question about how the Fourth Amendment's protections apply when police want to bring someone in for questioning but lack the evidence needed to make a formal arrest.",
+  "parties": [
+    {
+      "party": "Irving Dunaway",
+      "role": "petitioner",
+      "coreArgument": "Dunaway argued that his detention and transportation to the police station for custodial interrogation amounted to a seizure under the Fourth Amendment that required probable cause. Because the police admittedly lacked probable cause, his detention was unconstitutional, and the incriminating statements he made during interrogation should be suppressed as fruits of that illegal seizure.",
+      "supportingPoints": [
+        "Being taken to a police station and placed in an interrogation room, with no freedom to leave, is functionally identical to an arrest and requires the same probable cause standard",
+        "The narrow exception for brief investigative stops recognized in Terry v. Ohio cannot be stretched to cover full custodial interrogations at a police station",
+        "The incriminating statements flowed directly from the illegal seizure and must be excluded under the 'fruit of the poisonous tree' doctrine"
+      ]
+    },
+    {
+      "party": "New York",
+      "role": "respondent",
+      "coreArgument": "New York argued that the police detention of Dunaway was reasonable under a balancing test that weighed the government's law enforcement interests against the individual's privacy rights. The state contended that probable cause should not be an absolute requirement for every police-citizen encounter and that the seriousness of the crime and the strength of the suspicion justified the detention.",
+      "supportingPoints": [
+        "Terry v. Ohio established that some seizures short of full arrest can be justified by less than probable cause through a balancing of interests",
+        "The gravity of the crime under investigation — a murder — and the information linking Dunaway to it made the brief detention at the station reasonable",
+        "Even if the detention was improper, Dunaway's voluntary waiver of Miranda rights and his voluntary statements were sufficiently independent of the seizure to be admissible"
+      ]
+    }
+  ],
+  "holding": "In a 6–2 decision authored by Justice William J. Brennan Jr., the Supreme Court reversed Dunaway's conviction and held that the police violated the Fourth Amendment when they seized him and brought him to the station for interrogation without probable cause. The Court rejected the idea that a generalized balancing test could replace the traditional probable cause requirement for seizures that go beyond the narrow scope of a brief, on-the-street investigative stop.\n\nJustice Brennan's majority opinion drew a firm line between the limited 'stop and frisk' encounters authorized by Terry v. Ohio and full-blown custodial detentions. Terry had permitted police to briefly detain someone based on reasonable suspicion, but only for narrowly targeted investigative purposes conducted on the spot. Dunaway's situation was fundamentally different: he was taken from his home to a police station, placed in an interrogation room, and subjected to custodial questioning — an experience that, in every meaningful way, was indistinguishable from a traditional arrest. The Court held that such a significant intrusion on a person's liberty demands the full protection of the probable cause standard.\n\nThe majority strongly rejected the balancing test that the New York Court of Appeals had employed. Justice Brennan wrote that the probable cause requirement provides the 'relative simplicity and clarity necessary to the implementation of a workable rule,' protecting both citizens from arbitrary police conduct and officers from having to make unpredictable, subjective judgments in the field. An open-ended balancing test, the Court warned, would effectively allow police to round up suspects for questioning on less than probable cause, seriously eroding Fourth Amendment protections.\n\nFinally, the Court held that Dunaway's incriminating statements had to be suppressed because they were obtained as a direct result of the unconstitutional detention. Applying the 'fruit of the poisonous tree' doctrine, the majority found that the connection between the illegal seizure and the confession was not sufficiently attenuated to purge the taint of the Fourth Amendment violation. The mere fact that Dunaway received Miranda warnings and waived them did not, by itself, break the causal chain between the unlawful detention and the statements that followed.",
+  "voteCount": "6-2",
+  "majorityAuthor": "William J. Brennan Jr.",
+  "dissentingOpinions": [
+    {
+      "author": "William Rehnquist",
+      "joinedBy": [
+        "Warren E. Burger"
+      ],
+      "coreArgument": "Justice Rehnquist argued that the Court should have applied a flexible balancing test rather than rigidly requiring probable cause for all custodial detentions. He contended that the majority's bright-line rule was unnecessarily inflexible and ignored the legitimate law enforcement interests at stake when police are investigating serious crimes like murder.",
+      "keyPoints": [
+        "The Fourth Amendment's core command is 'reasonableness,' which naturally invites a case-by-case balancing of governmental and individual interests rather than an absolute probable cause requirement for every detention",
+        "Dunaway's detention was brief and minimally intrusive compared to a full arrest, and the strength of the police suspicion combined with the seriousness of the crime being investigated made it reasonable",
+        "The majority's approach unnecessarily hamstrings police in the early investigative stages of serious criminal cases where probable cause has not yet fully developed"
+      ]
+    }
+  ],
+  "concurringNote": "Justice White wrote a concurring opinion emphasizing that while he agreed with the majority's result, he believed the Court should more explicitly clarify the circumstances under which brief, voluntary station-house questioning might be permissible, noting that not every request to accompany officers to the station necessarily constitutes a Fourth Amendment seizure. Justice Stevens did not participate in the case."
 }

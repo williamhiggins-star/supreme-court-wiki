@@ -5,5 +5,61 @@
   "year": 2022,
   "summary": "The Supreme Court held that a city sign ordinance distinguishing on-premises from off-premises signs was content-neutral because it did not discriminate based on subject matter or viewpoint, clarifying the content-based versus content-neutral distinction established in Reed v. Town of Gilbert.",
   "significance": "Cited by the government to define what makes a law 'content-based': only laws that discriminate based on subject matter or viewpoint qualify, not laws that merely regulate in a space involving content — supporting its argument that the Act targets foreign control, not speech.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does a city sign ordinance that distinguishes between on-premises signs (advertising activities on the same property) and off-premises signs (advertising activities located elsewhere) constitute a content-based regulation of speech under the First Amendment?",
+  "backgroundAndFacts": [
+    "The City of Austin, Texas, like many cities across the country, has a sign code that regulates outdoor advertising. One important distinction in Austin's code is between 'on-premises' signs — signs that advertise something happening at the location where the sign stands — and 'off-premises' signs, which are essentially traditional billboards advertising businesses or products located somewhere else. Under Austin's code, off-premises signs were subject to stricter regulations. Specifically, while the city allowed existing on-premises signs to be converted to newer, brighter digital displays, it prohibited owners of existing off-premises signs (billboards) from making the same upgrade.",
+    "Reagan National Advertising of Austin, LLC, is a company that owns billboard structures in the Austin area. When the company applied for permits to digitize some of its existing off-premises billboards — swapping static faces for electronic digital displays — the city denied the applications. The city said the signs were off-premises and therefore could not be digitized under its sign code. Reagan National sued, claiming that the on-premises versus off-premises distinction violated the First Amendment because it was a content-based restriction on speech.",
+    "Reagan National's key argument relied heavily on the Supreme Court's 2015 decision in Reed v. Town of Gilbert. In that case, the Court struck down a sign code that treated different categories of signs — political signs, ideological signs, and directional signs for events — differently based explicitly on the topic of the message. Reagan argued that Austin's code was similarly content-based because, to determine whether a sign was 'on-premises' or 'off-premises,' a government official would have to read the sign's message to see whether it related to an activity on the property.",
+    "The federal district court ruled in favor of the City of Austin, but the U.S. Court of Appeals for the Fifth Circuit reversed. The Fifth Circuit agreed with Reagan National, concluding that the on-premises/off-premises distinction was content-based under Reed because enforcing it required an official to evaluate the sign's communicative content. Because content-based laws face the most demanding form of judicial review — called strict scrutiny — the Fifth Circuit found the regulation likely unconstitutional.",
+    "The Supreme Court agreed to take the case because lower courts around the country had been deeply divided on this exact question after Reed. Some courts read Reed broadly, concluding that any law requiring someone to read a sign's message to apply it was automatically content-based. Other courts read Reed more narrowly. The split was significant because on-premises/off-premises sign distinctions are among the most common tools cities use to manage visual clutter and regulate billboards, and the outcome would affect sign codes across the nation."
+  ],
+  "parties": [
+    {
+      "party": "City of Austin",
+      "role": "petitioner",
+      "coreArgument": "The City argued that its sign code's distinction between on-premises and off-premises signs was content-neutral because it did not single out any particular topic, viewpoint, or subject matter for differential treatment. It merely regulated signs based on their location relative to the activity they referenced, which is a traditional, widely accepted form of land-use regulation.",
+      "supportingPoints": [
+        "The on-premises/off-premises distinction does not target any specific message, idea, or viewpoint — a sign promoting any topic receives the same treatment as long as it relates to the property where it is located.",
+        "This type of location-based sign regulation has been used and upheld for decades and serves legitimate interests in managing traffic safety, aesthetics, and urban blight caused by billboards.",
+        "Reed v. Town of Gilbert addressed a code that explicitly categorized signs by their subject matter (political, ideological, directional), which is fundamentally different from a locational distinction that merely requires determining the relationship between a sign and its premises."
+      ]
+    },
+    {
+      "party": "Reagan National Advertising of Austin, LLC",
+      "role": "respondent",
+      "coreArgument": "Reagan National argued that the on-premises/off-premises distinction was inherently content-based because a government official must read the message on the sign to determine whether it qualifies as on-premises or off-premises. Under Reed v. Town of Gilbert, any law that requires examination of a sign's content to be enforced should be treated as content-based and subjected to strict scrutiny.",
+      "supportingPoints": [
+        "You cannot tell whether a sign is on-premises or off-premises just by looking at its physical characteristics — you must read the sign's message and compare it to the activities on the property, which means the regulation turns on communicative content.",
+        "The Supreme Court's decision in Reed established that a law is content-based if it draws distinctions based on the message a speaker conveys, and the on-premises/off-premises distinction does exactly that.",
+        "Treating this distinction as content-neutral would create a loophole allowing governments to regulate speech based on content simply by framing the regulation as location-based."
+      ]
+    }
+  ],
+  "holding": [
+    "In a 6–3 decision authored by Justice Sonia Sotomayor, the Supreme Court reversed the Fifth Circuit and held that the City of Austin's sign code distinguishing on-premises signs from off-premises signs was content-neutral and therefore did not automatically trigger strict scrutiny under the First Amendment. The Court found that the distinction did not discriminate based on the topic, subject matter, or viewpoint of the speech on the signs.",
+    "The majority's core reasoning turned on clarifying what it means for a regulation to be 'content-based.' Justice Sotomayor explained that a law is content-based when it targets speech based on its communicative content — that is, when it singles out particular topics, subject matters, or viewpoints for favorable or unfavorable treatment. The Austin sign code did nothing of the sort. It did not say political signs get one set of rules and commercial signs get another. Instead, it drew a line based on the physical relationship between a sign and the property where it was located. A sign advertising anything — whether a restaurant, a political candidate, or a religious message — was treated identically as long as it related to activity happening on that same property.",
+    "The Court distinguished this case from Reed v. Town of Gilbert, where the town's sign code explicitly created different categories based on the function and topic of the speech (political signs, ideological signs, and temporary directional signs for events), with each category subject to different size, placement, and duration rules. The majority emphasized that Reed's lesson was that governments cannot adopt regulations that define regulated speech by its topic or subject matter. But, the Court explained, the mere fact that applying a rule requires looking at the content of speech — as many laws do — does not automatically make the rule content-based for First Amendment purposes. A law that requires some examination of speech to be enforced is different from a law that treats speech differently because of the message it communicates.",
+    "The majority also noted the deep historical roots of the on-premises/off-premises distinction, observing that it has been a standard part of sign regulation for many decades and was widely understood to be permissible long before Reed. The Court declined to extend Reed to sweep away this common form of land-use regulation. However, the Court sent the case back to the lower courts so they could evaluate the sign code under the appropriate level of constitutional review for content-neutral regulations, which is a less demanding standard called intermediate scrutiny.",
+    "The decision was significant because it effectively narrowed the broadest readings of Reed and reassured cities nationwide that their conventional sign codes were not automatically suspect under the First Amendment simply because someone must read a sign to apply the code."
+  ],
+  "voteCount": "6-3",
+  "majorityAuthor": "Sonia Sotomayor",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "Neil Gorsuch",
+        "Samuel Alito"
+      ],
+      "coreArgument": "Justice Thomas argued that the on-premises/off-premises distinction is plainly content-based because it requires a government official to read the sign's message, compare it to the activities occurring on the property, and make a judgment call based on what the sign says. In his view, the majority's ruling was inconsistent with the clear framework established in Reed v. Town of Gilbert and effectively weakened First Amendment protections for speech.",
+      "keyPoints": [
+        "A regulation that can only be enforced by reading and interpreting the message on a sign is, by definition, a content-based regulation — the government's decision depends entirely on the communicative content of the speech.",
+        "The majority's distinction between regulations that 'require reading a sign' and those that 'discriminate based on topic or viewpoint' introduces a confusing and unworkable new line that invites governments to circumvent Reed by disguising content-based regulations as locational ones.",
+        "Reed v. Town of Gilbert was decided precisely to create a bright-line rule that any law defining regulated speech by reference to its content is content-based, and the majority's opinion undermines that clarity.",
+        "The historical pedigree of the on-premises/off-premises distinction does not save it from First Amendment scrutiny — longstanding government practices can still violate constitutional rights."
+      ]
+    }
+  ],
+  "concurringNote": "Justice Stephen Breyer wrote a concurring opinion agreeing with the result but expressing his broader concern that the rigid content-based versus content-neutral framework from Reed v. Town of Gilbert is too inflexible. Breyer argued that courts should instead use a more proportional approach, weighing the government's regulatory interests against the speech restrictions, rather than relying on categorical labels that can lead to either over-protection or under-protection of speech in different contexts."
 }

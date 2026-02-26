@@ -5,5 +5,33 @@
   "year": 1932,
   "summary": "Held that where the same act violates two statutory provisions, there are two offenses only if each provision requires proof of an additional fact the other does not.",
   "significance": "Establishes the foundational test for determining whether two offenses are the 'same offense' for double jeopardy purposes: each must require proof of an element the other does not. All parties agree § 924(c)(1)(A) and § 924(j) fail this test because possessing a gun is a lesser-included element of fatally using one.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "When a single act or transaction violates two separate provisions of a criminal statute, does the defendant commit one offense or two, and can the government impose separate punishments for each?",
+  "backgroundAndFacts": "Harry Blockburger was a narcotics dealer who sold morphine hydrochloride to a man named Joe Rodriguez on several occasions in the early 1930s. These sales ran afoul of the Harrison Narcotics Act, a federal law that regulated the sale and distribution of certain drugs. Blockburger was indicted on multiple counts, and the case turned on the fact that some of his individual sales violated two different provisions of the Act at the same time.\n\nSpecifically, one provision of the Harrison Narcotics Act made it a crime to sell narcotics that were not in or from the original stamped package — a requirement designed to ensure that drugs could be traced through legitimate channels. A separate provision made it a crime to sell narcotics without first obtaining a written order from the buyer. When Blockburger sold morphine to Rodriguez, these sales sometimes broke both rules simultaneously: the drugs were not in their original stamped packaging, and Rodriguez had not provided a written order for them.\n\nBlockburger was convicted on multiple counts, and the trial court imposed consecutive prison sentences for two counts that arose from the very same sale — one count for selling outside the original stamped package, and another count for selling without a written order. In other words, one physical transaction led to two separate criminal convictions and two stacked punishments.\n\nBlockburger appealed, and the United States Court of Appeals for the Eighth Circuit affirmed his convictions and sentences. Blockburger then sought review from the United States Supreme Court, arguing that punishing him twice for what was essentially a single act was improper. The Supreme Court agreed to hear the case to resolve the important question of when a single act that violates more than one statute can be treated as multiple offenses carrying separate punishments.",
+  "parties": [
+    {
+      "party": "Harry Blockburger",
+      "role": "petitioner",
+      "coreArgument": "Blockburger argued that because both charges arose from the same physical act — a single sale of morphine — he had committed only one offense and could not be punished twice. Imposing consecutive sentences for what was really one crime, he contended, was unjust and unauthorized by the statute.",
+      "supportingPoints": [
+        "Both convictions stemmed from the very same sale of morphine to the same buyer at the same time, making it fundamentally one act rather than two",
+        "Congress did not clearly indicate that it intended to authorize multiple punishments for a single transaction under the Harrison Narcotics Act",
+        "Stacking consecutive sentences for one act effectively punishes the defendant more harshly than the legislature intended"
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government argued that the two provisions of the Harrison Narcotics Act addressed different evils and required proof of different facts, making them separate and distinct offenses even when violated by a single transaction. Because each provision targeted different conduct, separate punishments were appropriate.",
+      "supportingPoints": [
+        "The stamped-package provision and the written-order provision serve different regulatory purposes and protect against different harms",
+        "Each provision requires the government to prove a fact that the other does not — one requires proof of the absence of original stamped packaging, and the other requires proof of the absence of a written order",
+        "Congress created two separate prohibitions with separate penalty provisions, indicating its intent that violations of each would be independently punishable"
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled unanimously against Blockburger, affirming his convictions and the consecutive sentences. The opinion was written by Justice George Sutherland. The Court held that where a single act violates two distinct statutory provisions, the proper test for determining whether there are two offenses or only one is whether each provision requires proof of an additional fact or element that the other does not. If each provision demands proof of something the other does not, they constitute separate offenses, and separate punishments are permissible.\n\nApplying this test to Blockburger's case, Justice Sutherland explained that the stamped-package provision required the government to prove that the drugs were sold outside of their original stamped packaging — but it did not require proof that the buyer had failed to provide a written order. Conversely, the written-order provision required proof that the sale occurred without a written order from the buyer — but it did not require any proof about the packaging. Because each provision required proof of a fact that the other did not, the Court concluded they defined two separate offenses, not one.\n\nThe Court acknowledged the general principle that when a legislature creates two distinct criminal prohibitions, a single act may give rise to more than one offense. The key question is not whether the defendant performed one physical act or many, but whether the law defines the violations as legally distinct. Justice Sutherland emphasized that the applicable test is structural: it looks at the statutory elements — the specific facts the government must prove to secure a conviction — rather than the underlying conduct.\n\nThis ruling established what became widely known as the 'Blockburger test' or the 'same-elements test.' Under this framework, two crimes are considered the 'same offense' only if the elements of one are entirely contained within the elements of the other — that is, if one is a lesser-included offense of the other. If each crime requires proof of at least one element that the other does not, they are separate offenses and may be separately charged and punished. The decision was unanimous, with no dissenting opinions.",
+  "voteCount": "9-0",
+  "majorityAuthor": "George Sutherland",
+  "dissentingOpinions": []
 }
