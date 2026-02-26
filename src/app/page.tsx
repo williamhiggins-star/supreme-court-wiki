@@ -327,10 +327,10 @@ export default function HomePage() {
         <section id="counsel" className="max-w-7xl mx-auto px-6 pb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Counsel</h2>
           <p className="text-sm text-gray-500 mb-6">
-            Top {Math.min(30, lawyersData.lawyers.length)} attorneys by speaking time across all{" "}
-            {lawyersData.term} term oral arguments. Click a name to see the cases they argued.
+            Attorneys with 2 or more cases in the {lawyersData.term} term, ranked by speaking time.
+            Click a name to see the cases they argued.
           </p>
-          <LawyersSection lawyers={lawyersData.lawyers} />
+          <LawyersSection lawyers={lawyersData.lawyers.filter((l) => l.casesArgued >= 2)} />
         </section>
       )}
 
