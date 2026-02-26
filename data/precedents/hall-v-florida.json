@@ -5,5 +5,50 @@
   "year": 2014,
   "summary": "The Court struck down Florida's rule that any IQ score above 70 categorically disqualified a defendant from raising an intellectual disability claim, holding that courts must account for the standard error of measurement and, if the adjusted score falls within the clinically established range, must allow the defendant to present additional evidence of intellectual disability.",
   "significance": "Hall is at the center of this case because it prohibited states from using a rigid IQ cutoff that ignores the standard error of measurement, and both sides dispute what Hall requires when there are multiple IQ scores.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Eighth Amendment's ban on cruel and unusual punishment prohibit a state from using a rigid IQ score cutoff of 70 to categorically bar a death-row inmate from presenting additional evidence of intellectual disability?",
+  "backgroundAndFacts": "In 1978, Freddie Lee Hall and an accomplice kidnapped, sexually assaulted, and murdered Karol Hurst, a 21-year-old pregnant woman, in Leesburg, Florida. During the same crime spree, Hall also killed Lonnie Coburn, a sheriff's deputy. Hall was convicted of first-degree murder and sentenced to death. His case wound through the Florida courts for decades, involving multiple sentencing proceedings and appeals.\n\nIn 2002, the U.S. Supreme Court decided Atkins v. Virginia, which held that executing a person with intellectual disability violates the Eighth Amendment's prohibition against cruel and unusual punishment. However, the Atkins decision left it largely up to individual states to define and determine intellectual disability. Florida responded by adopting a strict, bright-line rule: a defendant could only be considered intellectually disabled — and thus exempt from execution — if he or she had an IQ score of 70 or below. If the score was 71 or higher, the defendant was categorically barred from presenting any further evidence of intellectual disability, regardless of other factors.\n\nHall attempted to use the Atkins ruling to avoid execution by claiming he was intellectually disabled. Throughout his life, Hall had been evaluated numerous times, and his IQ scores consistently fell in a narrow range, generally between 71 and 80. There was also extensive evidence that Hall had severe deficits in adaptive functioning — his ability to handle everyday tasks and social situations — dating back to childhood. Teachers, caregivers, and others had described him as having very limited intellectual abilities from a young age. Nevertheless, because his recorded IQ scores were all above 70, the Florida courts refused to let him present this additional evidence.\n\nThe Florida Supreme Court upheld the rigid IQ cutoff, ruling that Hall had not met the threshold requirement and therefore could not proceed with his intellectual disability claim. Hall then petitioned the U.S. Supreme Court, arguing that Florida's strict rule ignored well-established clinical and scientific understanding of how IQ tests work. The Supreme Court agreed to hear the case to resolve whether the Eighth Amendment permits a state to enforce such a rigid numerical cutoff.",
+  "parties": [
+    {
+      "party": "Freddie Lee Hall",
+      "role": "petitioner",
+      "coreArgument": "Hall argued that Florida's rigid IQ cutoff of 70 was unconstitutional because it ignored the inherent imprecision of IQ tests, which have a well-recognized standard error of measurement of approximately five points. He contended that when this margin of error was accounted for, his scores fell within the range that clinical professionals associate with intellectual disability, and he should have been allowed to present additional evidence of his condition.",
+      "supportingPoints": [
+        "The medical and psychological communities universally recognize that IQ scores are not exact measurements but have a standard error of measurement (SEM) of roughly five points, meaning a score of 73 could reflect a true IQ anywhere from 68 to 78.",
+        "The clinical definition of intellectual disability considers not just IQ scores but also deficits in adaptive behavior and the onset of the condition during the developmental period, and Hall had extensive evidence of all three.",
+        "A rigid cutoff at 70 created an unacceptable risk that persons with genuine intellectual disabilities — whom Atkins was designed to protect — would be executed in violation of the Eighth Amendment."
+      ]
+    },
+    {
+      "party": "Florida",
+      "role": "respondent",
+      "coreArgument": "Florida argued that states were given broad discretion under Atkins to define and implement procedures for determining intellectual disability, and that a clear IQ cutoff of 70 was a reasonable and administrable way to carry out that mandate. Florida contended that its rule was within the range of approaches left open by the earlier decision.",
+      "supportingPoints": [
+        "The Atkins decision explicitly left it to the states to develop their own standards for identifying intellectual disability, and a bright-line IQ score provides a clear, objective, and easily applied threshold.",
+        "Allowing defendants with IQ scores above 70 to present additional evidence would open the floodgates to frivolous claims and make it extremely difficult for courts to administer the Atkins rule.",
+        "Hall's IQ scores had been tested multiple times over many years and consistently came in above 70, suggesting his true intellectual functioning was above the threshold for intellectual disability."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Anthony Kennedy, the Supreme Court ruled that Florida's rigid IQ cutoff of 70 violated the Eighth Amendment. The Court held that when a defendant's IQ score is within the standard error of measurement of the clinically established threshold — meaning the score is not meaningfully distinguishable from a 70 — the state must allow the defendant to present additional evidence of intellectual disability, including evidence of deficits in adaptive behavior.\n\nThe majority's reasoning rested on two pillars. First, the Court emphasized the scientific consensus: every major clinical authority, including the American Association on Intellectual and Developmental Disabilities (AAIDD) and the American Psychiatric Association (APA), recognizes that IQ tests have a standard error of measurement of approximately five points. This means a person who scores 71 on an IQ test may in reality have a true IQ of 66 — well within the range of intellectual disability. Treating the score as an exact, fixed number, as Florida did, was fundamentally at odds with the science underlying IQ testing. A rigid cutoff therefore created a significant risk that genuinely intellectually disabled individuals would be executed.\n\nSecond, the Court looked at the broader practices of the states and the direction of professional and societal standards — a standard analytical framework in Eighth Amendment cases. The Court found that the vast majority of states that addressed the issue did not use a strict cutoff at 70, and that the clinical community was united in rejecting such an approach. This evolving consensus reinforced the conclusion that Florida's rule was constitutionally unacceptable.\n\nThe Court was careful to note that it was not requiring states to adopt any single method for assessing intellectual disability. States retain significant discretion. However, they may not adopt a rule that 'disregards established medical practice' in a way that creates an unacceptable risk of executing a person the Eighth Amendment protects. The case was sent back to Florida so that Hall could present the full range of evidence supporting his claim of intellectual disability, including his adaptive functioning deficits.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Anthony Kennedy",
+  "dissentingOpinions": [
+    {
+      "author": "Samuel Alito",
+      "joinedBy": [
+        "John Roberts",
+        "Antonin Scalia",
+        "Clarence Thomas"
+      ],
+      "coreArgument": "Justice Alito argued that the majority overstepped the boundaries set by Atkins v. Virginia, which explicitly granted states discretion to establish their own procedures for identifying intellectual disability. He maintained that Florida's choice to use a firm IQ cutoff of 70 was a reasonable exercise of that discretion and that the Constitution does not require states to adopt the clinical community's preferred approach.",
+      "keyPoints": [
+        "The Atkins decision deliberately left the definition and determination of intellectual disability to the states, and the majority's ruling improperly took away that discretion by mandating that states must account for the standard error of measurement in a specific way.",
+        "The clinical standards the majority relied upon were developed for diagnostic and treatment purposes, not for determining eligibility for the death penalty, and there is no constitutional requirement that courts follow medical manuals in setting legal standards.",
+        "The majority's approach would be difficult to administer in practice, as it effectively expands the pool of defendants who can bring intellectual disability claims and could lead to lengthy, complex litigation over the meaning and application of the standard error of measurement.",
+        "Florida's rule was not arbitrary — it was based on a widely recognized threshold and was designed to provide clear guidance to courts, which is a legitimate state interest."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions in this case."
 }

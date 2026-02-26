@@ -4,5 +4,34 @@
   "year": 1915,
   "summary": "Held that an involuntary non-suit ordered by a state court against a non-diverse defendant did not terminate that party's jurisdictional significance in the case.",
   "significance": "Respondent cited it from the voluntary/involuntary line of authority to show that even a formal involuntary non-suit of a non-diverse defendant under state procedure did not resolve the jurisdictional issue.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does an involuntary nonsuit (a court-ordered dismissal against the plaintiff's wishes) of a non-diverse defendant in state court eliminate that defendant's jurisdictional significance, thereby allowing the remaining diverse defendant to remove the case to federal court?",
+  "backgroundAndFacts": "This case arose from a personal injury lawsuit filed in Missouri state court by a plaintiff named Kettelhake. Kettelhake brought suit against multiple defendants, including the American Car & Foundry Company — a corporation organized under the laws of another state — and at least one additional defendant who, like Kettelhake, was a citizen of Missouri. Because parties on both sides of the lawsuit shared Missouri citizenship, there was no 'complete diversity' of citizenship between all plaintiffs and all defendants, which meant the case could not be removed to federal court under the federal removal statute.\n\nDuring the state court proceedings, the trial court ordered an involuntary nonsuit as to the non-diverse Missouri defendant. An involuntary nonsuit is a dismissal entered by the court against the plaintiff's wishes — typically because the court concluded that the plaintiff had failed to present enough evidence against that defendant to proceed. This was not something Kettelhake chose or requested; the court imposed it.\n\nAfter the non-diverse defendant was involuntarily dropped from the case, the American Car & Foundry Company moved to remove the case to federal court, arguing that with the Missouri defendant out, complete diversity now existed between the remaining parties. The federal courts addressed the question of whether removal was proper under these circumstances.\n\nThe case ultimately reached the United States Supreme Court because it raised an important question about the boundaries of federal diversity jurisdiction — specifically, whether an involuntary nonsuit against a non-diverse defendant had the same jurisdictional effect as a plaintiff's voluntary decision to drop that defendant from the lawsuit. The distinction mattered greatly because it affected whether defendants could gain access to a federal forum by pointing to procedural developments in state court that the plaintiff never intended.",
+  "parties": [
+    {
+      "party": "Kettelhake",
+      "role": "petitioner",
+      "coreArgument": "Kettelhake argued that the case belonged in state court because the non-diverse defendant had been part of the lawsuit from the beginning, and the involuntary nonsuit was not a voluntary act on the plaintiff's part. Therefore, the case should not be removable to federal court simply because a state court judge decided to dismiss one defendant.",
+      "supportingPoints": [
+        "The non-diverse defendant was a legitimate party to the suit, and the plaintiff did not dismiss that defendant voluntarily or as a tactic to later create diversity jurisdiction.",
+        "An involuntary nonsuit could potentially be set aside or reversed on appeal, meaning the non-diverse defendant's departure from the case was not necessarily permanent.",
+        "Allowing removal after an involuntary nonsuit would effectively let the court's procedural ruling override the plaintiff's choice of forum, which is generally protected under the removal framework."
+      ]
+    },
+    {
+      "party": "American Car & Foundry Co.",
+      "role": "respondent",
+      "coreArgument": "The American Car & Foundry Company argued that once the non-diverse defendant was eliminated from the case by the nonsuit, the remaining parties were completely diverse, and the company was entitled to remove the case to federal court where it could receive a presumably more neutral adjudication.",
+      "supportingPoints": [
+        "After the nonsuit, as a practical matter, only diverse parties remained in the litigation, satisfying the statutory requirement for complete diversity.",
+        "The removal statute should be interpreted to allow removal whenever the jurisdictional prerequisites are met, regardless of how the non-diverse party was eliminated.",
+        "The company had a statutory right to a federal forum when sued by a citizen of a different state, and the jurisdictional bar had been lifted by the state court's own action."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court held that the involuntary nonsuit ordered by the state court against the non-diverse defendant did not terminate that defendant's jurisdictional significance in the case. In other words, the case could not be removed to federal court simply because a state court judge had dismissed the non-diverse defendant over the plaintiff's objection.\n\nThe Court's reasoning drew a critical distinction between voluntary and involuntary actions by the plaintiff regarding non-diverse defendants. When a plaintiff voluntarily dismisses a non-diverse defendant — effectively choosing to restructure the litigation — it may be appropriate to treat the case as one between diverse parties going forward. But an involuntary nonsuit is fundamentally different: it is imposed upon the plaintiff by the court, it may be subject to reversal or reconsideration, and it does not reflect the plaintiff's intent to proceed without that defendant.\n\nThe majority opinion emphasized that permitting removal under these circumstances would allow the jurisdictional character of the case to be transformed by a procedural ruling that the plaintiff neither sought nor desired. Federal jurisdiction must be based on a genuine realignment of the parties, not on a potentially temporary procedural development in the state court. The involuntary nature of the nonsuit meant the non-diverse defendant remained jurisdictionally significant — the plaintiff had not abandoned the claim, and the claim might yet be revived.\n\nThe decision was rendered unanimously, reflecting the Court's firm view that federal diversity jurisdiction should not expand through involuntary procedural events imposed by state courts. The opinion was delivered by Justice Joseph R. Lamar.",
+  "voteCount": "9-0",
+  "majorityAuthor": "Joseph R. Lamar",
+  "dissentingOpinions": [],
+  "concurringNote": "There were no separate concurring opinions filed in this case; the Court spoke with one voice on the jurisdictional principle at issue."
 }

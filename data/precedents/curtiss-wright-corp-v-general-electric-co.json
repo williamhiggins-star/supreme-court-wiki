@@ -4,5 +4,44 @@
   "year": 1980,
   "summary": "Established guiding principles for district courts exercising discretion under Rule 54(b), including consideration of judicial administrative interests.",
   "significance": "Respondent cited it to show that district courts should consider judicial administrative interests when deciding whether to certify partial final judgments under Rule 54(b), which could resolve jurisdictional uncertainty early.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "What principles should guide a federal district court's exercise of discretion in certifying a partial final judgment for immediate appeal under Federal Rule of Civil Procedure 54(b), and what standard of review should appellate courts apply when evaluating that certification?",
+  "backgroundAndFacts": "This case arose from a commercial dispute between two major industrial corporations. General Electric Company held prime contracts with the United States Navy for the manufacture of components used in nuclear-powered naval vessels. GE, in turn, subcontracted portions of that work to Curtiss-Wright Corporation. Over time, disagreements developed between the two companies regarding their contractual obligations and payments under multiple subcontracts.\n\nCurtiss-Wright filed suit against General Electric in federal district court, asserting several breach-of-contract claims. GE responded with counterclaims of its own. The litigation was complex, involving multiple distinct claims and overlapping factual issues. At a certain point, the district court resolved some—but not all—of the claims through summary judgment in favor of Curtiss-Wright on certain breach-of-contract theories. Other claims and GE's counterclaims remained pending before the trial court.\n\nThe district court then took the step of certifying the partial judgment under Rule 54(b) of the Federal Rules of Civil Procedure. Rule 54(b) allows a trial court, in a case involving multiple claims or multiple parties, to direct the entry of final judgment on fewer than all the claims, as long as the court determines there is 'no just reason for delay.' This certification is significant because, without it, a party normally must wait until every claim in the case is resolved before filing an appeal.\n\nGE challenged the certification, and the United States Court of Appeals for the Third Circuit agreed, reversing the district court. The Third Circuit concluded that the district court had abused its discretion in certifying the partial judgment for immediate appeal, reasoning that the resolved claims were too closely intertwined with the remaining claims to justify separate appellate review at that stage.\n\nCurtiss-Wright then petitioned the Supreme Court, which agreed to hear the case in order to clarify the proper standards governing Rule 54(b) certifications—a procedural question with significant implications for how multi-claim federal litigation is managed across the country.",
+  "parties": [
+    {
+      "party": "Curtiss-Wright Corporation",
+      "role": "petitioner",
+      "coreArgument": "Curtiss-Wright argued that the district court properly exercised its discretion in certifying the partial judgment under Rule 54(b). The trial judge was in the best position to assess whether immediate appeal was appropriate, and the appellate court should have deferred to that judgment rather than substituting its own view.",
+      "supportingPoints": [
+        "The district court carefully considered whether there was 'no just reason for delay' before certifying the partial judgment, as Rule 54(b) requires.",
+        "The resolved claims were sufficiently distinct from the remaining claims and counterclaims to justify separate appellate treatment.",
+        "Requiring Curtiss-Wright to wait for all claims to be resolved before appealing would cause unnecessary delay and potential hardship, especially given the substantial sums of money at stake."
+      ]
+    },
+    {
+      "party": "General Electric Company",
+      "role": "respondent",
+      "coreArgument": "General Electric argued that the Third Circuit was correct to overturn the certification because the claims were too interrelated for piecemeal appellate review. Certifying the partial judgment prematurely risked inefficient and potentially duplicative appeals.",
+      "supportingPoints": [
+        "The resolved claims shared overlapping facts and legal issues with the counterclaims still pending in the district court, making separate appellate review unwise.",
+        "Rule 54(b) certification should be the exception rather than the rule, and courts should be cautious about fragmenting litigation into multiple appeals.",
+        "District courts should consider judicial administrative interests, including the potential for wasted appellate resources if remaining claims later alter the picture presented on appeal."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court reversed the Third Circuit in a decision authored by Justice William H. Rehnquist. The Court held that the district court had not abused its discretion in certifying the partial judgment under Rule 54(b) and laid out important guiding principles for how such certifications should be handled.\n\nThe majority emphasized that Rule 54(b) vests the trial court with discretion to determine whether there is 'no just reason for delay' in entering a final judgment on fewer than all claims. The Court explained that when exercising this discretion, the district court must act as a 'dispatcher,' weighing two broad categories of concerns. First, the court should consider judicial administrative interests—such as whether the resolved claims are sufficiently separable from the unresolved claims, whether piecemeal appeals would lead to inefficiency, and whether the appellate court would benefit from having a complete picture of the litigation. Second, the court should weigh the equities involved—including whether delay in allowing an appeal would cause hardship to the parties.\n\nCritically, the Court stressed that appellate courts should show substantial deference to the district court's Rule 54(b) determination. The trial judge, who is closest to the litigation and understands its dynamics, is in the best position to assess whether immediate appeal is warranted. An appellate court should not freely substitute its own judgment for that of the district court but should overturn a certification only upon a finding of abuse of discretion.\n\nThe Court found that the district court in this case had properly considered the relevant factors and had a legitimate basis for concluding that the resolved claims were distinct enough to warrant immediate appellate review. The decision was reached by a vote of 8 to 1.",
+  "voteCount": "8-1",
+  "majorityAuthor": "William H. Rehnquist",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [],
+      "coreArgument": "Justice Stevens dissented, arguing that the Third Circuit had been correct to find an abuse of discretion. He believed the claims in this case were sufficiently intertwined that certifying a partial judgment for immediate appeal was premature and risked the kind of piecemeal litigation that Rule 54(b) was designed to permit only in appropriate circumstances.",
+      "keyPoints": [
+        "The overlap between the certified claims and the remaining counterclaims made it imprudent to allow separate appellate review at this stage of the litigation.",
+        "The majority's emphasis on deference to the district court risked setting too low a bar for Rule 54(b) certification, potentially encouraging wasteful and fragmented appeals in complex multi-claim cases."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately noted concurring opinions that significantly departed from or elaborated upon the reasoning of the majority."
 }

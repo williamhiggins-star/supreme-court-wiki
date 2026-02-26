@@ -4,5 +4,49 @@
   "year": 2020,
   "summary": "Held that federal immigration law did not preempt Kansas from prosecuting identity fraud, emphasizing the limits of implied preemption under the Supremacy Clause.",
   "significance": "Petitioner invoked Justice Alito's opinion for the principle that the Supremacy Clause limits preemption to the Constitution, federal statutes, and treaties — not uncodified federal interests — challenging the theoretical basis of uniquely federal interest preemption.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the federal Immigration Reform and Control Act (IRCA) preempt the state of Kansas from prosecuting individuals under state identity-theft laws when those individuals used stolen Social Security numbers on federal and state tax-withholding forms to obtain employment?",
+  "backgroundAndFacts": "Ramiro Garcia, Donaldo Morales, and Guadalupe Ochoa-Lara were undocumented immigrants living and working in Kansas. Each of them used another person's Social Security number on tax-withholding forms — specifically, federal W-4 forms and Kansas K-4 forms — when they obtained jobs. These forms are standard paperwork that employees fill out so employers know how much tax to withhold from paychecks. Kansas prosecutors charged all three under the state's general identity-theft statute, which makes it a crime to use someone else's identifying information without authorization for any benefit.\n\nThe defendants argued that Kansas had no authority to prosecute them because a federal law — the Immigration Reform and Control Act of 1986 (IRCA) — already governed the process of employment verification for immigrants, and that this federal scheme 'preempted' (meaning displaced or overrode) any state attempt to punish conduct related to that process. IRCA created the I-9 form system, which requires employers to verify that new hires are authorized to work in the United States, and it explicitly prohibited states from imposing additional civil or criminal penalties on employers in connection with that verification process.\n\nAll three defendants were convicted in Kansas trial courts. On appeal, the Kansas Supreme Court reversed the convictions, agreeing with the defendants that IRCA impliedly preempted Kansas's prosecution. The state court reasoned that because the fraudulent use of Social Security numbers was intertwined with the federally regulated employment verification process, Kansas was effectively intruding into a domain reserved for the federal government.\n\nKansas then petitioned the U.S. Supreme Court to review the decision. The Supreme Court agreed to take the case because the question of how far federal immigration law limits state criminal enforcement was important and had generated disagreement among lower courts. The case touched on fundamental questions about the balance of power between the federal government and the states, particularly in the sensitive area of immigration enforcement.",
+  "parties": [
+    {
+      "party": "Kansas",
+      "role": "petitioner",
+      "coreArgument": "Kansas argued that its identity-theft law was a general criminal statute that applied equally to all people and all forms of identity fraud, and had nothing to do with immigration. The state maintained that IRCA did not preempt states from enforcing their own broadly applicable fraud laws, even if the underlying conduct happened to involve documents used during the employment process.",
+      "supportingPoints": [
+        "The Kansas identity-theft statute is a law of general applicability — it targets anyone who commits identity fraud for any purpose, not specifically immigrants or employment verification.",
+        "IRCA's express preemption clause is narrow: it only bars states from imposing penalties on employers related to hiring unauthorized workers, not from prosecuting workers for identity theft.",
+        "Kansas prosecuted the defendants based on information from tax-withholding forms (W-4 and K-4), which serve tax purposes, not the I-9 employment verification forms that IRCA specifically regulates."
+      ]
+    },
+    {
+      "party": "Ramiro Garcia (and co-respondents Donaldo Morales and Guadalupe Ochoa-Lara)",
+      "role": "respondent",
+      "coreArgument": "The respondents argued that IRCA created a comprehensive and exclusive federal system for handling employment eligibility verification, and that Kansas's prosecution for using false Social Security numbers on employment-related documents was an impermissible intrusion into that exclusively federal domain.",
+      "supportingPoints": [
+        "IRCA was designed to create a uniform, exclusively federal approach to employment verification, and allowing states to prosecute workers for using false documents in that context undermines federal control over immigration policy.",
+        "The W-4 tax-withholding form and the I-9 employment verification form are filled out as part of the same hiring process, making them functionally intertwined — states cannot neatly separate the two.",
+        "Allowing 50 states to independently criminalize conduct related to employment documents would create a patchwork of conflicting enforcement that Congress intended to avoid by passing IRCA."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Samuel Alito, the Supreme Court reversed the Kansas Supreme Court and held that federal immigration law did not preempt Kansas from prosecuting the respondents for identity theft. The Court concluded that Kansas's identity-theft statute was a generally applicable criminal law that fell well within the state's traditional power to combat fraud, and that nothing in IRCA — either expressly or by implication — stripped Kansas of the authority to enforce it.\n\nOn the question of express preemption, the majority examined the text of IRCA's preemption clause, which bars states from imposing civil or criminal sanctions on those who employ unauthorized aliens. Justice Alito explained that this language was specifically aimed at preventing states from punishing employers for hiring decisions — it said nothing about preventing states from prosecuting individuals who commit identity fraud. Since Kansas's statute was a broadly applicable fraud law not directed at immigration or employment practices, it did not fall within the scope of IRCA's express preemption.\n\nOn implied preemption, the majority rejected the argument that IRCA occupied the entire field of conduct related to employment documents. The Court emphasized a critical factual distinction: Kansas had prosecuted the defendants based on their use of stolen Social Security numbers on W-4 and K-4 tax-withholding forms, not on I-9 employment verification forms. Tax-withholding forms serve the purpose of tax administration, not immigration enforcement, and the federal government does not claim exclusive authority over those forms. The Court noted that IRCA does restrict the use of I-9 forms — barring their use for purposes other than enforcement of IRCA and certain other federal statutes — but that restriction does not extend to other documents completed during the hiring process.\n\nThe majority also found no conflict preemption — meaning that compliance with both Kansas law and federal law was perfectly possible. A person can obey both IRCA and Kansas's identity-theft statute simultaneously; there was no actual conflict forcing someone to violate one law in order to comply with the other. Justice Alito stressed that the presumption against preemption is particularly strong when states are exercising their historic police powers, such as combating fraud and identity theft. The Court's opinion underscored that the Supremacy Clause limits preemption to the actual text and operation of federal law — not to vague or uncodified federal policy interests.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Samuel Alito",
+  "dissentingOpinions": [
+    {
+      "author": "Stephen Breyer",
+      "joinedBy": [
+        "Ruth Bader Ginsburg",
+        "Sonia Sotomayor",
+        "Elena Kagan"
+      ],
+      "coreArgument": "Justice Breyer argued that while he agreed Kansas could in principle prosecute identity fraud using generally applicable laws, the specific prosecutions in this case were problematic because they relied on information that was inextricably linked to the federally regulated employment verification process. He contended that allowing states to use tax-withholding forms as a basis for prosecution effectively circumvented IRCA's careful federal control over the employment verification system.",
+      "keyPoints": [
+        "The W-4 form and the I-9 form are completed simultaneously during the same hiring process, and the Social Security number provided on the W-4 effectively reveals whether someone is work-authorized — the very determination IRCA reserves to the federal government.",
+        "Permitting states to use employment-related documents as evidence of identity fraud could undermine the balance Congress struck in IRCA between deterring illegal immigration and protecting authorized workers from discrimination.",
+        "The dissent did not argue that all state identity-theft prosecutions were preempted — only those where the state's case depended on information derived from the federally regulated hiring and verification context."
+      ]
+    }
+  ],
+  "concurringNote": "Justice Clarence Thomas, joined by Justice Neil Gorsuch, wrote a concurrence arguing that the Court should adopt an even narrower view of implied preemption, asserting that the Supremacy Clause gives preemptive force only to federal laws enacted in pursuance of the Constitution and does not support preemption based on unenacted federal purposes or broad field-preemption theories derived from perceived congressional intent."
 }

@@ -4,5 +4,47 @@
   "year": 2020,
   "summary": "Held that federal courts may review mixed questions of law and fact arising in immigration cases, rejecting the government's argument that judicial review was entirely foreclosed.",
   "significance": "Both sides referenced it as addressing the scope of judicial review of mixed questions under the INA, with the Court holding that not all mixed questions receive the same standard of review.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the phrase 'questions of law' in the Immigration and Nationality Act's judicial review provision (8 U.S.C. § 1252(a)(2)(D)) includes mixed questions of law and fact — specifically, the application of a legal standard to established facts — thereby allowing federal courts to review such determinations.",
+  "backgroundAndFacts": "Pedro Pablo Guerrero-Lasprilla and Ruben Ovalles were both lawful permanent residents of the United States who were convicted of drug-related offenses. As a result of these convictions, immigration judges ordered both men removed (deported) from the country. Under immigration law, a person who has been ordered removed generally has 90 days to file a 'motion to reopen' their case — essentially asking the Board of Immigration Appeals (BIA) to take another look. Both men missed this 90-day window by a significant margin.\n\nYears later, after the Supreme Court's 2010 decision in Vela v. Gonzales clarified certain aspects of immigration law that were relevant to their cases, both men filed motions to reopen, asking the BIA to apply 'equitable tolling.' Equitable tolling is a legal concept that allows a deadline to be extended if a person was diligent in pursuing their rights but was prevented from meeting the deadline by extraordinary circumstances beyond their control. Both men argued that they had acted with 'due diligence' — meaning they had tried their best to pursue their legal options despite the obstacles they faced.\n\nThe BIA denied both motions, concluding that neither man had demonstrated sufficient due diligence to justify reopening their cases past the deadline. Both men then appealed to the U.S. Court of Appeals for the Fifth Circuit, asking it to review the BIA's rulings. However, there was a major jurisdictional hurdle: under federal immigration law, judicial review of removal orders for noncitizens convicted of certain crimes is heavily restricted. The relevant statute, 8 U.S.C. § 1252(a)(2)(C), strips courts of most of their power to review such cases, but a companion provision, § 1252(a)(2)(D), preserves jurisdiction to review 'constitutional claims or questions of law.'\n\nThe Fifth Circuit ruled that it lacked jurisdiction to review the BIA's findings about due diligence, reasoning that whether someone was diligent enough was a factual question — not a 'question of law' — and therefore fell outside the narrow window of judicial review Congress had preserved. The Supreme Court agreed to hear the consolidated cases to resolve an important question about how far federal court review extends in immigration cases, particularly because other circuits had reached different conclusions on this issue.",
+  "parties": [
+    {
+      "party": "Pedro Pablo Guerrero-Lasprilla (and Ruben Ovalles)",
+      "role": "petitioner",
+      "coreArgument": "The petitioners argued that the phrase 'questions of law' in the judicial review statute naturally includes 'mixed questions of law and fact' — that is, questions about whether established facts satisfy a particular legal standard. They contended that federal courts must be allowed to review the BIA's application of the due diligence standard to undisputed facts.",
+      "supportingPoints": [
+        "The phrase 'questions of law' has long been understood in legal tradition to encompass mixed questions — the application of legal standards to established facts — and Congress would have been aware of this meaning when it drafted the statute.",
+        "The historical backdrop of habeas corpus review, which Congress intended to preserve with § 1252(a)(2)(D), has always included review of mixed questions of law and fact.",
+        "Denying review of mixed questions would effectively eliminate meaningful judicial oversight of BIA decisions for an entire class of noncitizens, leaving them with no recourse even when the BIA commits clear legal errors in applying standards like equitable tolling."
+      ]
+    },
+    {
+      "party": "William P. Barr, Attorney General",
+      "role": "respondent",
+      "coreArgument": "The government argued that 'questions of law' means only pure questions of law — abstract legal interpretations — and does not include the fact-intensive application of those legal standards to particular circumstances. The government maintained that Congress deliberately limited judicial review in these cases and that extending it to mixed questions would undermine that intent.",
+      "supportingPoints": [
+        "Congress clearly intended to restrict judicial review for noncitizens convicted of serious crimes, and interpreting 'questions of law' broadly to include mixed questions would swallow the rule by allowing courts to second-guess nearly every BIA decision.",
+        "The due diligence determination is inherently factual and case-specific, making it the kind of discretionary, fact-bound judgment that Congress meant to shield from judicial review.",
+        "Allowing courts to review mixed questions in immigration cases would open the floodgates to litigation, burdening federal courts and undermining the government's ability to efficiently enforce immigration law."
+      ]
+    }
+  ],
+  "holding": "In a 7–2 decision authored by Justice Stephen Breyer, the Supreme Court held that the phrase 'questions of law' in § 1252(a)(2)(D) of the Immigration and Nationality Act does include mixed questions of law and fact — specifically, the application of a legal standard to undisputed or established facts. This meant that federal courts of appeals do have jurisdiction to review the BIA's determination of whether a noncitizen exercised 'due diligence' for purposes of equitable tolling, and the Fifth Circuit was wrong to dismiss the petitioners' appeals for lack of jurisdiction.\n\nThe majority's reasoning rested on several pillars. First, Justice Breyer examined the ordinary legal meaning of 'questions of law,' looking at how courts and legal scholars have long understood the term. He concluded that the phrase has traditionally been understood to include the application of a legal standard to established facts. The Court pointed to longstanding precedent in administrative law and habeas corpus jurisprudence, noting that when courts review agency action, they routinely treat the application of legal standards to found facts as a reviewable legal question.\n\nSecond, the Court looked at the historical context of the statute. Section 1252(a)(2)(D) was enacted in 2005 as part of the REAL ID Act. Congress added this provision specifically to restore a degree of judicial review after prior legislation had been interpreted to strip courts of nearly all review power in certain immigration cases. The Court concluded that Congress intended to preserve at least the level of review that had historically been available through habeas corpus, and habeas review had long encompassed mixed questions of law and fact.\n\nThird, the majority addressed the government's concern about 'opening the floodgates.' Justice Breyer acknowledged that the ruling did not mean courts could freely re-examine all factual findings by the BIA. The review, he emphasized, was limited to the application of legal standards to facts already found by the agency; courts could not revisit the underlying factual determinations themselves. The case was remanded to the Fifth Circuit for further proceedings consistent with the Court's opinion.\n\nThe decision was a significant win for immigrants' rights, ensuring that a meaningful layer of judicial review remains available even in cases where Congress has otherwise severely limited the courts' role.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Stephen Breyer",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "Samuel Alito"
+      ],
+      "coreArgument": "Justice Thomas argued that the text of the statute draws a clear line between 'questions of law' and questions of fact, and that mixed questions — which require applying law to specific facts — fall on the factual side of that line. He contended that the majority's interpretation effectively erases the limits Congress placed on judicial review for noncitizens convicted of serious crimes.",
+      "keyPoints": [
+        "The plain text of § 1252(a)(2)(D) refers to 'questions of law,' and when Congress wanted to include fact-related inquiries, it knew how to say so explicitly; its choice of words should be respected.",
+        "The majority's reliance on habeas corpus history is misplaced because the REAL ID Act created a new and distinct statutory framework for judicial review, and there is no reason to assume Congress meant to replicate the full scope of habeas review.",
+        "Extending judicial review to mixed questions of law and fact in immigration cases will inevitably invite courts to re-examine fact-bound discretionary decisions, which is exactly what Congress sought to prevent when it enacted the review-stripping provisions."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions of particular note in this case; all seven justices in the majority joined Justice Breyer's opinion in full."
 }

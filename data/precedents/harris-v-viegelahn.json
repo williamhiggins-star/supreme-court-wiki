@@ -5,5 +5,34 @@
   "year": 2015,
   "summary": "The Court held that post-petition wages belong to the debtor after conversion from Chapter 13 to Chapter 7, emphasizing the Code's fresh-start policy and the distinct treatment of pre- and post-petition property.",
   "significance": "The Supreme Court's interpretation of the boundaries of the bankruptcy estate and debtors' rights to post-petition wages, relevant to understanding how the Code treats property acquired after filing.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "When a debtor converts a bankruptcy case from Chapter 13 to Chapter 7, must undistributed funds collected by the Chapter 13 trustee from the debtor's post-petition wages be returned to the debtor, or may the trustee distribute those funds to creditors?",
+  "backgroundAndFacts": "Charles Harris filed for Chapter 13 bankruptcy in 2010 in a federal bankruptcy court in the Western District of Texas. Chapter 13 is designed for individuals with regular income who want to repay some or all of their debts over time through a court-approved repayment plan. Under Harris's plan, a portion of his future wages would be collected by the Chapter 13 trustee, Mary Viegelahn, who would then distribute the money to his creditors on a scheduled basis.\n\nFor some time, the plan proceeded as expected, with payments being deducted from Harris's wages and held by the trustee for distribution. However, in 2013, Harris decided to convert his case from Chapter 13 to Chapter 7. Chapter 7 is a different kind of bankruptcy — rather than repaying debts over time, a debtor's existing non-exempt assets are liquidated, and most remaining debts are wiped out (discharged). A key feature of Chapter 7 is that a debtor's future earnings are generally not part of the bankruptcy estate, meaning creditors cannot claim them.\n\nAt the time Harris converted his case, Trustee Viegelahn was holding approximately $5,519.22 in funds that had been collected from Harris's post-petition wages but had not yet been distributed to creditors. After the conversion, rather than returning those funds to Harris, Viegelahn went ahead and distributed them to his creditors. Harris objected, arguing that since those wages were earned after his original bankruptcy filing, they belonged to him once the case converted to Chapter 7.\n\nThe bankruptcy court agreed with Harris and ordered the funds returned. However, the federal district court reversed that ruling, siding with the trustee. The U.S. Court of Appeals for the Fifth Circuit then affirmed the district court, holding that the trustee was permitted to distribute the undistributed post-petition wages to creditors even after conversion. The Supreme Court agreed to hear the case because federal appeals courts had split on this question — some circuits held that undistributed post-petition wages must be returned to the debtor upon conversion, while others allowed distribution to creditors.",
+  "parties": [
+    {
+      "party": "Charles E. Harris III",
+      "role": "petitioner",
+      "coreArgument": "Harris argued that his post-petition wages — money he earned after filing for Chapter 13 — were never part of the Chapter 7 bankruptcy estate once his case converted. Therefore, the trustee had no authority to distribute those funds to creditors and was required to return them to him.",
+      "supportingPoints": [
+        "Under Section 348(f)(1)(A) of the Bankruptcy Code, when a case converts from Chapter 13 to Chapter 7, the resulting Chapter 7 estate includes only property that was part of the estate when the original Chapter 13 petition was filed, not wages earned afterward.",
+        "Once conversion occurs, the Chapter 13 plan is no longer in effect and the trustee loses the authority to make distributions under that plan.",
+        "Allowing the trustee to keep and distribute post-petition wages after conversion would undermine the Bankruptcy Code's fundamental goal of giving debtors a financial fresh start."
+      ]
+    },
+    {
+      "party": "Mary K. Viegelahn",
+      "role": "respondent",
+      "coreArgument": "Viegelahn, the Chapter 13 trustee, argued that she had properly collected the wages under the confirmed Chapter 13 plan and was entitled — indeed obligated — to distribute those funds to creditors, even after conversion to Chapter 7.",
+      "supportingPoints": [
+        "The funds had already been lawfully collected under the Chapter 13 plan before conversion occurred, so they were no longer the debtor's property to reclaim.",
+        "The Bankruptcy Code does not contain an explicit provision requiring the trustee to return undistributed plan payments upon conversion.",
+        "Creditors had a legitimate expectation that funds collected under the Chapter 13 plan would be distributed to them as promised."
+      ]
+    }
+  ],
+  "holding": "In a unanimous 9–0 decision authored by Justice Ruth Bader Ginsburg, the Supreme Court reversed the Fifth Circuit and held that when a debtor converts a case from Chapter 13 to Chapter 7, any post-petition wages in the hands of the Chapter 13 trustee that have not yet been distributed to creditors must be returned to the debtor.\n\nThe Court grounded its reasoning firmly in the text and structure of the Bankruptcy Code. Under Section 348(f)(1)(A), when a Chapter 13 case is converted to Chapter 7, the property of the new Chapter 7 estate consists only of property that was part of the estate as of the date the debtor originally filed for bankruptcy. Post-petition wages — money the debtor earned after the original filing date — were never part of the estate at that initial moment. Consequently, these wages do not become part of the Chapter 7 estate upon conversion.\n\nThe Court also emphasized that conversion from Chapter 13 to Chapter 7 terminates the Chapter 13 plan and, with it, the trustee's authority to make distributions under that plan. Since the trustee's power to collect and distribute payments exists only under the umbrella of the Chapter 13 plan, once that plan ceases to operate, the trustee has no legal basis to continue distributing funds. The undistributed wages simply revert to the debtor.\n\nJustice Ginsburg underscored that this result aligns with the Bankruptcy Code's overarching fresh-start policy. One of the most important purposes of bankruptcy law is to give honest but unfortunate debtors an opportunity to begin their financial lives anew. Allowing creditors to reach post-petition wages after a Chapter 7 conversion would undercut that purpose by stripping the debtor of earnings that Congress intended to protect. The Court noted that its reading creates a coherent framework: pre-conversion property stays in the estate as originally defined, and post-petition earnings follow the debtor into the fresh start that Chapter 7 is designed to provide.",
+  "voteCount": "9-0",
+  "majorityAuthor": "Ruth Bader Ginsburg",
+  "dissentingOpinions": [],
+  "concurringNote": "There were no separate concurring opinions filed in this case; the Court was fully unanimous in both its judgment and reasoning."
 }

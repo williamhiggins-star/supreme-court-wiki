@@ -5,5 +5,49 @@
   "year": 1912,
   "summary": "A patent case holding that selling supplies with intent and purpose that they be used to infringe a patent could create contributory liability.",
   "significance": "Cited by Respondents for the proposition that selling a product with knowledge it would be used to infringe a patent supports contributory liability; the government countered that the facts showed specially suited goods and inducement.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Could a patent holder attach a condition to the sale of its patented machine restricting users to only the patent holder's own unpatented supplies, and could a third party who knowingly sold competing unpatented supplies for use with that machine be held liable for contributory patent infringement?",
+  "backgroundAndFacts": "The A.B. Dick Company held a patent on a rotary mimeograph — a stencil duplicating machine used to make copies of documents. When A.B. Dick sold its mimeograph machines, it attached a prominent license notice to each one. The notice stated, in essence, that the machine was sold under the restriction that it could only be used with stencil paper, ink, and other supplies manufactured by A.B. Dick Company itself. In other words, if you bought the machine, you were agreeing to buy all your consumable supplies exclusively from A.B. Dick as well.\n\nSidney Henry was in the business of selling office supplies. He sold a can of ink — not made by A.B. Dick — to a woman named Christina Aultman, who owned one of the restricted Dick mimeograph machines. Critically, Henry knew about the license restriction on the machine and knew the ink would be used with it in violation of that condition. The ink itself was not patented by anyone; it was a common, commercially available product. The question was whether Henry could be held legally responsible for helping Aultman violate the terms of her license.\n\nA.B. Dick Company sued Henry in federal court, claiming contributory infringement of its mimeograph patent. The company argued that because Aultman's use of a competitor's ink violated the license restriction, her use of the machine became unauthorized — and therefore infringing — and that Henry, by knowingly supplying the ink, had contributed to that infringement.\n\nThe lower courts ruled in favor of A.B. Dick Company. Henry appealed to the United States Supreme Court, arguing that the patent on the mimeograph machine could not possibly give A.B. Dick the right to control the market for ordinary, unpatented ink. The case raised fundamental questions about how far the power of a patent could reach — specifically, whether it could extend beyond the patented invention itself to cover everyday supplies used with it.\n\nThe Supreme Court agreed to hear the case because it presented a significant and unresolved question about the scope of a patent holder's rights, the legality of conditional restrictions on patented goods, and the boundaries of contributory infringement.",
+  "parties": [
+    {
+      "party": "Sidney Henry",
+      "role": "petitioner",
+      "coreArgument": "Henry argued that the patent on the mimeograph machine gave A.B. Dick no right to control the sale or use of ordinary unpatented ink. The license restriction was an improper attempt to extend the patent monopoly beyond the patented invention itself and into the market for common, everyday supplies.",
+      "supportingPoints": [
+        "The ink Henry sold was an ordinary, unpatented product freely available on the open market, and the patent laws gave A.B. Dick no monopoly over such products.",
+        "Allowing patent holders to tie unpatented supplies to their patented machines would create monopolies far broader than anything Congress intended when it enacted the patent laws.",
+        "A patent grants exclusive rights over the specific invention described in the patent — not the right to control all commerce in products that happen to be used alongside that invention."
+      ]
+    },
+    {
+      "party": "A.B. Dick Company",
+      "role": "respondent",
+      "coreArgument": "A.B. Dick argued that as patent holder, it had the absolute right to set conditions on how its patented machines were used, including requiring buyers to use only A.B. Dick supplies. Anyone who knowingly helped a buyer violate those conditions was contributing to patent infringement.",
+      "supportingPoints": [
+        "The patent right includes the lesser right to sell the patented article subject to conditions and restrictions — since A.B. Dick could have refused to sell the machine at all, it could certainly sell it with strings attached.",
+        "Aultman's use of the mimeograph with unauthorized ink violated the terms of her license, making her use of the machine an act of infringement.",
+        "Henry knew about the restriction when he sold the ink and deliberately helped Aultman infringe, making him liable as a contributory infringer."
+      ]
+    }
+  ],
+  "holding": "In a 4–3 decision, the Supreme Court ruled in favor of A.B. Dick Company, holding that a patent holder could lawfully attach use restrictions to the sale of a patented machine — including the condition that only the patent holder's own supplies be used — and that a third party who knowingly sold competing supplies for use with the restricted machine could be liable for contributory patent infringement. The majority opinion was authored by Justice Horace H. Lurton.\n\nThe majority reasoned that the patent grant gives the patent holder the exclusive right to make, use, and sell the patented invention. Because the patent holder could choose not to sell the machine at all, it necessarily had the lesser power to sell it subject to conditions. A conditional sale that restricts the buyer's use is, in effect, a limited license — and any use outside the scope of that license is unauthorized and therefore constitutes infringement. When Aultman used the machine with non-Dick ink, she was operating outside her license and thus infringing the patent.\n\nThe Court further held that the doctrine of contributory infringement applied to Henry's conduct. Henry knew about the restriction and intentionally sold ink to be used in a way that would violate it. By supplying the means for infringement with full knowledge of the circumstances, Henry had contributed to the violation of A.B. Dick's patent rights. The Court drew an analogy to general principles of law holding that one who knowingly aids another in committing a wrongful act shares in the liability.\n\nThe majority explicitly rejected Henry's argument that this result would improperly extend the patent monopoly. The Court reasoned that the restriction did not create a monopoly on ink in general — it merely set a condition on how one particular patented machine could be used. No one was forced to buy the machine, and anyone who did buy it was free to return it rather than comply with the restriction. The patent system, the majority said, was designed to reward inventors, and broad freedom to impose license conditions served that purpose.",
+  "voteCount": "4-3",
+  "majorityAuthor": "Horace H. Lurton",
+  "dissentingOpinions": [
+    {
+      "author": "Edward Douglass White",
+      "joinedBy": [
+        "Charles Evans Hughes",
+        "Joseph R. Lamar"
+      ],
+      "coreArgument": "Chief Justice White argued forcefully that the majority's decision allowed the patent holder to leverage a narrow patent on a single machine into a broad monopoly over entirely separate, unpatented products like ink and paper. This, White contended, was an illegitimate expansion of the patent grant far beyond what Congress ever intended, and it posed a serious danger to free competition in the marketplace.",
+      "keyPoints": [
+        "The patent laws grant a monopoly only over the specific patented invention — not over unpatented staple products that happen to be used with it. Allowing a patent holder to control the market for ordinary ink through a license restriction effectively creates a new monopoly that Congress never authorized.",
+        "The logical consequence of the majority's reasoning is that any patent holder could use license restrictions to dominate entire markets for common goods, stifling competition in ways that harm the public and distort the purpose of the patent system.",
+        "Contributory infringement doctrine was being stretched beyond recognition — Henry sold a lawful, unpatented product on the open market, and holding him liable for how a customer chose to use it was a dangerous extension of patent power over ordinary commercial activity.",
+        "The majority's rule effectively gave patent holders the power to restrain trade in unpatented goods, raising serious concerns about monopoly and the public interest that the patent system was supposed to balance."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately written concurring opinions of note in this case. Two justices did not participate in the decision."
 }

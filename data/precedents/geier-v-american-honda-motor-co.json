@@ -5,5 +5,50 @@
   "year": 2000,
   "summary": "The Supreme Court held that a state law claim challenging the adequacy of airbag design was preempted because it conflicted with federal safety standards and regulatory decisions made by NHTSA regarding airbag implementation.",
   "significance": "Geier addresses preemption of design defect and warning claims where federal agencies have approved product standards, relevant to whether EPA approval of pesticide labels preempts state warning claims.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does a federal motor vehicle safety standard that gave car manufacturers a choice among different passive restraint systems (including but not limited to airbags) preempt a state common-law tort claim alleging that a car was defectively designed because it lacked a driver's side airbag?",
+  "backgroundAndFacts": "In 1992, Alexis Geier was driving her 1987 Honda Accord when she was involved in a serious head-on collision. The car was equipped with manual lap and shoulder seatbelts, which Geier was wearing at the time, but it did not have an airbag. Geier suffered significant injuries and, along with her parents, sued American Honda Motor Company in the District of Columbia under local tort law. The Geiers argued that the 1987 Accord was defectively designed because Honda had failed to equip it with a driver's side airbag, which they claimed would have prevented or reduced Alexis's injuries.\n\nThe case turned on a complex federal regulatory backdrop. Under the National Traffic and Motor Vehicle Safety Act of 1966, the Department of Transportation (through the National Highway Traffic Safety Administration, or NHTSA) had issued Federal Motor Vehicle Safety Standard 208 (FMVSS 208). This standard addressed occupant crash protection and, for model year 1987 vehicles, required manufacturers to equip some percentage of their new cars with passive restraint systems — but it deliberately gave manufacturers a choice among different types of passive restraints. These options included airbags, automatic seatbelts, and other passive restraint technologies. NHTSA had intentionally designed this phase-in approach to encourage a variety of passive restraint systems rather than mandating airbags in every vehicle right away.\n\nThe federal safety statute contained two provisions that pulled in different directions. An express preemption clause stated that no state could establish a motor vehicle safety standard that was not identical to a federal standard. But a saving clause provided that compliance with a federal safety standard did not exempt any person from liability under common law. Honda argued that the Geiers' tort claim was preempted — meaning blocked — by the federal regulatory scheme because it would effectively force all manufacturers to install airbags, undermining the federal government's deliberate policy of allowing a mix of technologies.\n\nThe trial court agreed with Honda and granted summary judgment in its favor, finding the claim preempted. The United States Court of Appeals for the District of Columbia Circuit affirmed. The Supreme Court then agreed to hear the case to resolve a significant and recurring question about the relationship between federal vehicle safety regulations and state product liability lawsuits — an issue on which lower courts had reached conflicting conclusions.",
+  "parties": [
+    {
+      "party": "Alexis Geier",
+      "role": "petitioner",
+      "coreArgument": "Geier argued that her state tort claim alleging defective design was not preempted by federal law. She pointed to the saving clause in the federal safety statute, which explicitly preserved common-law liability, as proof that Congress intended to allow state tort suits to exist alongside federal safety standards.",
+      "supportingPoints": [
+        "The saving clause in the National Traffic and Motor Vehicle Safety Act expressly states that compliance with a federal safety standard does not exempt anyone from common-law liability, showing Congress intended to preserve state tort claims.",
+        "The express preemption clause targets only state legislative or regulatory safety 'standards,' not common-law tort actions brought by injured individuals.",
+        "A tort claim does not impose a fixed regulatory 'standard' on manufacturers — it simply lets a jury evaluate whether a particular design choice was reasonable under the circumstances, which is fundamentally different from a regulatory mandate."
+      ]
+    },
+    {
+      "party": "American Honda Motor Co.",
+      "role": "respondent",
+      "coreArgument": "Honda argued that Geier's tort claim was preempted because it directly conflicted with the federal government's deliberate regulatory policy under FMVSS 208, which intentionally gave manufacturers the choice of which passive restraint system to install rather than mandating airbags in every car.",
+      "supportingPoints": [
+        "FMVSS 208 was specifically designed to encourage a gradual phase-in of a variety of passive restraint technologies, and a state tort suit demanding airbags would undermine this carefully calibrated federal regulatory approach.",
+        "Even though the saving clause preserved some state tort claims, it did not save claims that actually conflicted with the objectives and purposes of the federal regulatory scheme.",
+        "The Department of Transportation's own regulatory history showed that NHTSA deliberately rejected an all-airbag mandate in favor of allowing manufacturer choice, and allowing tort liability for the absence of airbags would frustrate that federal policy."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Stephen Breyer, the Supreme Court ruled in favor of American Honda and held that Geier's state tort claim was preempted by federal law. However, the majority's reasoning was nuanced. The Court first addressed whether the express preemption clause in the Safety Act blocked Geier's claim, and concluded it did not — the express preemption clause applied to state statutes and regulations (positive enactments of law), not to common-law tort suits. The Court also agreed that the saving clause meant that some state tort claims could coexist with federal safety standards.\n\nBut the majority then turned to the doctrine of implied conflict preemption — a legal principle holding that state law is preempted when it actually conflicts with federal law, regardless of whether Congress expressly said so. The Court held that the saving clause did not bar courts from considering whether a particular tort claim conflicted with a specific federal regulation's objectives. In other words, the saving clause preserved tort claims in general, but it did not automatically save every possible tort claim from preemption.\n\nThe critical question was whether Geier's specific claim — that Honda should have installed an airbag — conflicted with FMVSS 208. The Court examined the extensive regulatory history of the standard and found that NHTSA had deliberately designed it to give manufacturers a choice among passive restraint systems. The agency wanted to encourage experimentation and gradual introduction of different technologies, including airbags, automatic seatbelts, and other devices. NHTSA was concerned that an all-airbag mandate would have provoked a political backlash, potentially derailing the entire passive restraint program. Allowing a tort suit that effectively required all manufacturers to install airbags would conflict with and frustrate these carefully considered federal regulatory objectives.\n\nThe Department of Transportation itself filed an amicus brief supporting Honda's position, explaining that FMVSS 208 was intended to promote a mix of passive restraint devices and that state tort suits requiring airbags would undermine that policy. The Court gave significant weight to the agency's interpretation of its own regulation's purposes. Based on all of this, the majority concluded that Geier's no-airbag tort claim stood as an obstacle to the accomplishment and execution of the full purposes and objectives of FMVSS 208, and was therefore preempted under conflict preemption principles.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Stephen Breyer",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "David Souter",
+        "Clarence Thomas",
+        "Ruth Bader Ginsburg"
+      ],
+      "coreArgument": "Justice Stevens argued that when Congress included a saving clause explicitly preserving common-law liability, it meant exactly what it said — state tort claims should survive alongside the federal safety standards. The dissent contended that the majority improperly used implied conflict preemption to override Congress's clear textual choice to preserve tort suits, essentially reading the saving clause out of the statute.",
+      "keyPoints": [
+        "The saving clause was a direct and specific expression of Congress's intent to preserve state common-law claims, and the majority's use of implied conflict preemption effectively nullified this clear legislative command.",
+        "The presence of both an express preemption clause and a saving clause in the same statute showed that Congress carefully considered the preemption question and struck a deliberate balance — courts should respect that balance rather than second-guess it through implied preemption analysis.",
+        "FMVSS 208 set a minimum safety standard, and the fact that it gave manufacturers a choice of compliance methods did not mean it was designed to shield them from tort liability for choosing the least protective option.",
+        "The majority gave too much weight to the agency's litigation-driven interpretation of its own regulation, and the regulatory history did not clearly support the conclusion that NHTSA intended to protect manufacturers from tort claims for failing to install airbags."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions in this case, though the five-justice majority included Chief Justice Rehnquist and Justices O'Connor, Scalia, and Kennedy alongside Justice Breyer."
 }

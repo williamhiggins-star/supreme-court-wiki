@@ -4,5 +4,48 @@
   "year": 1986,
   "summary": "Addressed the standard of review for the determination of whether particular workers qualified as 'seamen' under federal labor law.",
   "significance": "Petitioner cited it as another example of a mixed question — whether workers qualified as 'seamen' under the Fair Labor Standards Act — that courts review de novo when facts are undisputed.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "What is the proper standard of appellate review for a trial court's determination of whether particular workers qualify as 'seamen' exempt from the overtime provisions of the Fair Labor Standards Act?",
+  "backgroundAndFacts": "Icicle Seafoods, Inc. operated floating fish processing vessels in the waters off Alaska. The company employed workers aboard these ships whose primary job was to process fish — cleaning, sorting, and packaging the catch — rather than performing traditional maritime duties like navigation or vessel maintenance. A group of these workers, led by respondent Worthington, filed suit claiming they were entitled to overtime pay under the Fair Labor Standards Act (FLSA), the federal law that sets baseline workplace protections including overtime requirements.\n\nIcicle Seafoods defended itself by arguing that these workers fell under the FLSA's exemption for 'seamen.' Under the statute, workers who qualify as seamen are exempt from the Act's overtime requirements, reflecting Congress's recognition that maritime work operates under different conditions. Whether someone is a 'seaman' depends on a combination of factual circumstances — the nature of their duties, their relationship to the vessel, and how much of their work is tied to the ship's maritime mission.\n\nThe federal district court, after hearing evidence and making factual findings, concluded that the fish processing workers did qualify as seamen and were therefore exempt from the FLSA's overtime provisions. Worthington and the other workers appealed to the United States Court of Appeals for the Ninth Circuit, which reversed the district court's determination. Critically, the Ninth Circuit conducted its own independent (de novo) evaluation of whether the workers were seamen, rather than deferring to the trial court's factual findings under the more limited 'clearly erroneous' standard prescribed by Federal Rule of Civil Procedure 52(a).\n\nIcicle Seafoods petitioned the Supreme Court, arguing that the Ninth Circuit had overstepped its proper role by reweighing the evidence and substituting its own judgment for that of the trial judge. The Supreme Court agreed to hear the case to address the important procedural question of how appellate courts should review these kinds of mixed determinations — where applying a legal label like 'seaman' depends heavily on underlying factual findings.",
+  "parties": [
+    {
+      "party": "Icicle Seafoods, Inc.",
+      "role": "petitioner",
+      "coreArgument": "Icicle Seafoods argued that the trial court's determination that its workers were 'seamen' rested on factual findings that should be reviewed under the deferential 'clearly erroneous' standard of Rule 52(a), not reexamined from scratch by the appellate court. The Ninth Circuit improperly substituted its own view of the facts for that of the district judge who actually heard the evidence.",
+      "supportingPoints": [
+        "Federal Rule of Civil Procedure 52(a) commands that a trial court's findings of fact shall not be set aside unless 'clearly erroneous,' and this rule applies even when the ultimate determination involves applying a legal standard to those facts.",
+        "The trial judge who heard live testimony and weighed evidence firsthand is in a far better position than an appellate court to evaluate the nature of the workers' duties and their relationship to the vessel.",
+        "Allowing appellate courts to freely reweigh the factual underpinnings of the 'seaman' determination would undermine the role of trial courts and lead to inconsistent outcomes."
+      ]
+    },
+    {
+      "party": "Worthington",
+      "role": "respondent",
+      "coreArgument": "Worthington and the other workers argued that whether someone qualifies as a 'seaman' under the FLSA is a mixed question of law and fact that appellate courts are entitled to review independently. The Ninth Circuit properly exercised its authority to determine that fish processing workers do not fit the legal definition of seamen.",
+      "supportingPoints": [
+        "The question of whether workers are 'seamen' involves applying a legal standard to the facts, and appellate courts have the authority to independently assess whether the correct legal standard was applied.",
+        "Fish processing workers perform factory-type labor that happens to take place aboard a vessel, and they do not perform the maritime duties traditionally associated with seamen.",
+        "Congress intended the FLSA's overtime protections to cover workers like these, and an overly deferential standard of review would allow trial courts to improperly narrow those protections."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court reversed the Ninth Circuit in a 6–3 decision, with Chief Justice Warren Burger writing for the majority. The Court held that the Ninth Circuit erred by conducting a de novo review of the district court's determination that the workers were seamen. Instead, the appellate court should have applied the 'clearly erroneous' standard of Federal Rule of Civil Procedure 52(a) to the trial court's underlying factual findings.\n\nThe majority emphasized that Rule 52(a) exists for good reason: trial judges who hear testimony and observe witnesses are uniquely positioned to evaluate factual questions, and appellate courts must respect those findings unless they are left with a definite and firm conviction that a mistake has been made. The Court acknowledged that determining whether workers are 'seamen' involves a mixed question — it requires applying a legal concept to a particular set of facts. However, the majority stressed that this does not give appellate courts license to disregard the factual findings on which the legal determination rests.\n\nThe Court reasoned that the trial court's factual findings about the nature of the workers' duties, their connection to the vessel's maritime operations, and the overall character of their employment were classic findings of fact entitled to deference. The Ninth Circuit should have accepted those factual findings unless they were clearly erroneous and then determined whether, based on those facts, the legal conclusion followed. By independently reassessing the evidence, the Ninth Circuit had exceeded its proper appellate role.\n\nThe decision reinforced the broader principle that Rule 52(a) applies robustly to trial court findings, even in cases where the ultimate legal conclusion requires characterizing facts under a statutory standard. The case was remanded for further proceedings consistent with this holding.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Warren E. Burger",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "William J. Brennan Jr.",
+        "Thurgood Marshall"
+      ],
+      "coreArgument": "Justice Stevens argued that whether workers qualify as 'seamen' under the FLSA is fundamentally a question about the proper scope of a statutory exemption — a legal question that appellate courts should be free to review independently. The dissent contended that the majority's approach gave too much unreviewable power to trial courts on a question that Congress intended to have a uniform, legally defined answer.",
+      "keyPoints": [
+        "The classification of workers as 'seamen' determines the reach of an important federal statutory protection, and uniformity in the application of this legal standard requires meaningful appellate review.",
+        "While the underlying historical facts (what the workers actually did) deserve deference, the ultimate conclusion about whether those facts make someone a 'seaman' is a legal judgment that appellate courts are fully competent to make.",
+        "The majority's approach risks allowing different trial courts to reach conflicting conclusions about virtually identical workers, with no effective appellate check to ensure consistent application of the statute."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately noted concurring opinions in this case."
 }

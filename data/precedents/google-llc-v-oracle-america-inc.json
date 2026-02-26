@@ -4,5 +4,48 @@
   "year": 2021,
   "summary": "Held that whether copying of software code constituted fair use was a legal question reviewed de novo, even though it required detailed examination of the factual record.",
   "significance": "Petitioner cited it as an example where the Court reviewed a mixed question (fair use) de novo despite extensive fact-intensive analysis, arguing the persecution question deserves the same treatment.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Did Google's copying of roughly 11,500 lines of Oracle's Java API declaring code for use in its Android smartphone platform constitute permissible 'fair use' under federal copyright law?",
+  "backgroundAndFacts": "This case centers on one of the most valuable pieces of software in modern history: the Java programming language platform, originally created by Sun Microsystems. Java includes what are known as Application Programming Interfaces, or APIs — essentially a structured set of shortcuts that allow programmers to call up pre-written functions (like sorting a list or performing a math operation) without having to write those functions from scratch. APIs have two parts: the 'declaring code,' which is the name and organizational structure a programmer types to invoke a function, and the 'implementing code,' which is the behind-the-scenes instructions that actually carry out the task. Millions of programmers learned Java and became fluent in its API structure, making Java one of the most widely used programming languages in the world.\n\nWhen Google developed its Android operating system for smartphones in the mid-2000s, it wanted to attract the vast community of Java programmers. Google wrote its own implementing code from scratch, but it copied approximately 11,500 lines of Java's declaring code — the names and organizational hierarchy that programmers already knew and relied upon. Google tried to negotiate a license with Sun Microsystems, but the companies could not reach an agreement. Oracle later acquired Sun Microsystems in 2010 and sued Google for copyright infringement.\n\nThe case had a long and winding journey through the courts. A federal district court in California initially ruled that the API declarations were not copyrightable at all. The Federal Circuit reversed that decision, holding that the declaring code was indeed protected by copyright. A second jury trial then found that Google's copying was protected by the doctrine of 'fair use,' but the Federal Circuit reversed again, ruling that Google's use was not fair as a matter of law. By the time the case reached the Supreme Court, billions of dollars in potential damages were at stake, and the tech industry was deeply divided over the implications for software development.\n\nThe Supreme Court agreed to hear the case because it raised fundamental questions about how copyright law applies to computer software — particularly the functional, utilitarian building blocks that programmers rely upon to write new programs. The case also presented an important procedural question about whether the fair use determination should be reviewed as a question of law (decided fresh by appellate courts) or as a question of fact (where the jury's finding would receive deference).",
+  "parties": [
+    {
+      "party": "Google LLC",
+      "role": "petitioner",
+      "coreArgument": "Google argued that its copying of Java's declaring code was a classic case of fair use. It contended that it used only the functional, organizational elements of Java's API to create an entirely new platform for smartphones — a transformative purpose — and that treating such reuse as infringement would stifle innovation across the software industry.",
+      "supportingPoints": [
+        "Google copied only the declaring code — the shorthand names and organization — that programmers needed to know, and wrote millions of lines of its own original implementing code, making its use highly transformative.",
+        "The declaring code is inherently functional and serves as an interface between programmers and pre-written tasks, placing it at the outer boundary of copyright protection rather than its creative core.",
+        "Blocking reuse of API declarations would lock in existing platforms, harm interoperability, and give Oracle control over the community of programmers who had invested years learning Java — undermining the very purpose of copyright to promote the progress of science and useful arts."
+      ]
+    },
+    {
+      "party": "Oracle America, Inc.",
+      "role": "respondent",
+      "coreArgument": "Oracle argued that its Java API declaring code was original, creative, copyrightable expression and that Google's wholesale copying of 11,500 lines — done for a purely commercial purpose in direct competition with Java — was not fair use but simple piracy designed to avoid paying for a license.",
+      "supportingPoints": [
+        "The declaring code involved substantial creative choices about naming, grouping, and organizing thousands of software methods, and Congress intended copyright to protect such original expression in computer programs.",
+        "Google's use was not transformative because it copied the declaring code for the same purpose Oracle created it — to allow developers to write programs using Java commands — and deployed it on smartphones, a market Oracle was actively pursuing.",
+        "Google's copying destroyed Oracle's opportunity to license Java for the mobile platform, causing direct market harm, and the jury's fair use finding should be set aside because no reasonable jury could have found fair use on these facts."
+      ]
+    }
+  ],
+  "holding": "In a 6–2 decision authored by Justice Stephen Breyer (with Justice Amy Coney Barrett not participating), the Supreme Court ruled in Google's favor, holding that Google's copying of Oracle's Java API declaring code was protected fair use. Importantly, the Court chose to assume without deciding that the declaring code was copyrightable, finding it could resolve the case on the fair use question alone.\n\nThe Court conducted its own independent analysis of the four statutory fair use factors, treating fair use as a mixed question of law and fact subject to de novo (fresh) review by appellate courts, even though the analysis required careful examination of detailed factual circumstances. On the first factor — the purpose and character of the use — the Court found that Google's copying was transformative because it reimplemented the declaring code in a fundamentally different computing environment (smartphones) rather than the desktop and laptop environment Java was designed for. Google used the copied material as a building block to create a new platform with new creative expression.\n\nOn the second factor — the nature of the copyrighted work — the Court emphasized that declaring code is inherently different from other types of copyrighted works. It is bound up with uncopyrightable ideas (the division and organization of computing tasks) and with the invested learning of the programmer community. This functional character pushed it toward the uncopyrightable end of the spectrum. On the third factor — the amount copied — the Court noted that while 11,500 lines sounds like a lot, it represented only a tiny fraction (about 0.4 percent) of the total Java API code, and Google copied only what was needed to allow programmers to use their existing skills in a new context.\n\nFinally, on the fourth factor — the effect on the market — the Court found that Android did not serve as a market substitute for Java SE in the markets Oracle had traditionally served. The Court emphasized that enforcing copyright here would not so much compensate Oracle as give it a windfall based on the lock-in effect of programmers' existing knowledge, potentially harming the public interest in creative development of new software platforms. Weighing all four factors together, the Court concluded that Google's copying constituted fair use as a matter of law.",
+  "voteCount": "6-2",
+  "majorityAuthor": "Stephen Breyer",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "Samuel Alito"
+      ],
+      "coreArgument": "Justice Thomas argued that the majority's holding was a dramatic departure from established copyright principles. He contended that Google copied 11,500 lines of creative, copyrightable code for the exact same commercial purpose Oracle created it — to attract programmers — and used it in the very smartphone market Oracle was poised to enter, making it a textbook case of harmful, non-fair use.",
+      "keyPoints": [
+        "The declaring code was original and creative, involving innumerable choices about how to name, group, and organize thousands of methods, and Congress explicitly extended copyright protection to computer programs in 1980.",
+        "Google's use was not transformative because it copied the declaring code to serve the identical function — providing a familiar interface for Java developers — just on a different device, which is not a new purpose or meaning under fair use precedent.",
+        "Google's copying caused massive market harm, destroying Oracle's ability to license Java for mobile devices and diverting a platform (Android) worth tens of billions of dollars, exactly the kind of harm the fourth fair use factor is designed to prevent.",
+        "The majority's decision effectively creates a special, more permissive fair use regime for software that has no basis in the Copyright Act, risks undermining protection for all manner of copyrighted computer code, and rewards Google for refusing to pay for a license it could easily have afforded."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separate concurring opinions in this case; the six justices in the majority all joined Justice Breyer's opinion without additional comment."
 }

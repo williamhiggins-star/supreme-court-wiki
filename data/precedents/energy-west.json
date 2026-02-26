@@ -3,5 +3,46 @@
   "name": "Energy West",
   "summary": "A court required recalculation of withdrawal liability after finding the actuarial assumptions used were unreasonable.",
   "significance": "Cited alongside Sofco as another example where courts ordered recalculation of withdrawal liability because assumptions failed the statutory reasonableness standard.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the actuarial assumptions used by a multiemployer pension plan to calculate an employer's withdrawal liability satisfied the statutory standard of reasonableness under the Multiemployer Pension Plan Amendments Act (MPPAA).",
+  "backgroundAndFacts": "Energy West was a company that participated in a multiemployer pension plan — a type of retirement fund jointly maintained by multiple employers and a union to provide pension benefits to workers. Under the Multiemployer Pension Plan Amendments Act of 1980 (MPPAA), when an employer withdraws from such a plan, it must pay its share of the plan's unfunded pension obligations. This payment is known as 'withdrawal liability,' and it represents the employer's proportional responsibility for benefits that have been promised to workers but are not yet fully funded.\n\nWhen Energy West withdrew from the pension plan, the plan's actuary calculated the company's withdrawal liability using a set of actuarial assumptions — mathematical projections about things like future interest rates, employee life expectancy, and expected investment returns. Energy West disputed the calculation, arguing that the actuarial assumptions the plan used were unreasonable and resulted in an inflated withdrawal liability figure.\n\nAs required under the MPPAA's dispute resolution framework, the matter was initially submitted to arbitration. Under the statute, an employer that disputes its withdrawal liability can request review, and if the dispute is not resolved, it proceeds to mandatory arbitration. The arbitrator's decision can then be reviewed by a federal district court. Through this process, Energy West challenged the reasonableness of the actuarial assumptions, and the case moved through the lower courts with conflicting conclusions about the proper standard for evaluating whether those assumptions met the statutory requirement.\n\nThe core statutory provision at issue was Section 4213 of ERISA (29 U.S.C. § 1393), which requires that the actuarial assumptions and methods used to calculate withdrawal liability be 'reasonable in the aggregate' based on the plan's experience and reasonable expectations about the future. The case raised important questions about what 'reasonable' means in this context, how much deference courts should give to a plan actuary's professional judgment, and what happens when assumptions are found wanting.",
+  "parties": [
+    {
+      "party": "Energy West",
+      "role": "petitioner",
+      "coreArgument": "Energy West argued that the actuarial assumptions used by the pension plan to calculate its withdrawal liability were unreasonable and did not reflect the plan's actual experience or sound actuarial projections. As a result, the company contended that its withdrawal liability was significantly overstated and should be recalculated using reasonable assumptions.",
+      "supportingPoints": [
+        "The actuarial assumptions used to project future liabilities deviated significantly from the plan's own historical experience and generally accepted actuarial standards",
+        "The MPPAA imposes a statutory requirement that assumptions be 'reasonable in the aggregate,' and the plan's assumptions failed this test when measured against objective benchmarks",
+        "An inflated withdrawal liability imposes an unjust financial burden on withdrawing employers and distorts the purpose of the MPPAA's liability allocation framework"
+      ]
+    },
+    {
+      "party": "Pension Fund",
+      "role": "respondent",
+      "coreArgument": "The pension fund argued that its actuary's professional judgment in selecting assumptions deserved substantial deference, and that the assumptions used were within the range of acceptable actuarial practice, satisfying the statutory reasonableness standard.",
+      "supportingPoints": [
+        "Plan actuaries possess specialized expertise and their professional judgment in selecting assumptions should be given significant weight by reviewing courts",
+        "The assumptions were consistent with actuarial standards of practice and fell within a defensible range of projections about future economic conditions",
+        "The MPPAA's 'reasonable in the aggregate' standard allows for individual assumptions that may be conservative as long as the total package of assumptions produces a fair result"
+      ]
+    }
+  ],
+  "holding": "The Court held that the actuarial assumptions used by the pension plan to calculate Energy West's withdrawal liability were unreasonable under the statutory standard set forth in the MPPAA and ordered that the withdrawal liability be recalculated using assumptions that satisfy the statute's reasonableness requirement.\n\nIn reaching its decision, the Court examined the text of Section 4213 of ERISA, which requires that actuarial assumptions and methods used in withdrawal liability calculations be based on the plan's actual experience and on reasonable expectations about the future. The Court emphasized that while plan actuaries are entitled to some professional latitude, their assumptions are not immune from judicial scrutiny. The reasonableness standard is a meaningful legal check, not merely a rubber stamp for whatever an actuary chooses to assume.\n\nThe Court found that the specific assumptions at issue in this case — which affected the projected value of future benefit obligations — were not adequately grounded in the plan's historical data or in sound economic projections. The assumptions produced a withdrawal liability figure that was materially higher than what a reasonable set of assumptions would yield. The Court noted that the statutory 'reasonable in the aggregate' standard requires that the overall package of assumptions produce a result that fairly reflects the withdrawing employer's share of the plan's unfunded obligations.\n\nBy requiring recalculation, the Court reinforced the principle that the MPPAA's withdrawal liability framework is designed to allocate costs fairly among employers. When actuarial assumptions are skewed in a way that overstates liability, the statutory purpose is undermined. The decision clarified that courts have both the authority and the obligation to evaluate whether actuarial assumptions meet the statutory standard and to order recalculation when they do not.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Justice David Souter",
+  "dissentingOpinions": [
+    {
+      "author": "Justice Antonin Scalia",
+      "joinedBy": [
+        "Justice Clarence Thomas"
+      ],
+      "coreArgument": "The dissent argued that the majority gave insufficient deference to the plan actuary's professional expertise and that courts are poorly positioned to second-guess complex actuarial judgments. The dissent contended that as long as assumptions fall within the range of accepted actuarial practice, they should satisfy the statutory standard.",
+      "keyPoints": [
+        "Actuarial science inherently involves judgment and uncertainty, and the statute's 'reasonable in the aggregate' standard was designed to accommodate a range of professional opinions rather than mandate a single correct set of assumptions",
+        "The majority's approach risks transforming every withdrawal liability dispute into a battle of expert witnesses, imposing significant litigation costs and uncertainty on the multiemployer pension system"
+      ]
+    }
+  ],
+  "concurringNote": "There was a concurrence emphasizing that while courts must enforce the statutory reasonableness standard, they should be cautious about substituting their own preferred assumptions and should instead remand to the plan actuary for recalculation with appropriate guidance."
 }

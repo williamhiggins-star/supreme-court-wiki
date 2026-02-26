@@ -5,5 +5,48 @@
   "year": 2019,
   "summary": "Held that a Section 1983 fabricated-evidence claim does not accrue until the criminal proceedings terminate in the plaintiff's favor, extending Heck's favorable-termination logic.",
   "significance": "Cited by respondent for the principle that Heck's domain extends even to persons not yet convicted, showing the bar is broader than just habeas access.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "When does the statute of limitations begin to run on a Section 1983 claim alleging that a government official fabricated evidence used in criminal proceedings — when the plaintiff first learns of the fabricated evidence, or when the criminal proceedings end in the plaintiff's favor?",
+  "backgroundAndFacts": "Edward McDonough served as the Democratic Commissioner of the Rensselaer County Board of Elections in Troy, New York. In 2009, allegations of absentee ballot fraud surfaced in connection with a Working Families Party primary election. A special district attorney, Youel Smith, was appointed to investigate and prosecute the matter. Smith brought criminal charges against McDonough, accusing him of involvement in the ballot fraud scheme.\n\nMcDonough maintained his innocence and alleged that Smith had fabricated evidence to build the case against him. Specifically, McDonough claimed that Smith had manufactured false evidence and manipulated the investigation to support the criminal charges. McDonough's first trial ended in a mistrial, and he was retried. In 2012, a jury acquitted McDonough of all charges.\n\nFollowing his acquittal, McDonough filed a civil rights lawsuit under 42 U.S.C. § 1983, alleging that Smith had violated his constitutional right to due process under the Fourteenth Amendment by fabricating evidence and using it against him in the criminal proceedings. The critical legal dispute was not about whether Smith fabricated evidence, but about timing: had McDonough filed his lawsuit too late?\n\nNew York has a three-year statute of limitations for Section 1983 claims. If the clock started running when McDonough first became aware that fabricated evidence was being used against him during the criminal proceedings, his lawsuit was filed too late. If the clock did not start until his acquittal in 2012, the suit was timely. The Second Circuit Court of Appeals held that the claim did not accrue until the criminal proceedings ended in McDonough's favor, meaning the lawsuit was timely filed. The Supreme Court agreed to hear the case to resolve uncertainty about when such fabricated-evidence claims accrue for statute-of-limitations purposes.",
+  "parties": [
+    {
+      "party": "Edward McDonough",
+      "role": "petitioner",
+      "coreArgument": "McDonough argued that his fabricated-evidence claim under Section 1983 should not accrue — and thus the statute of limitations should not begin to run — until the underlying criminal case ended in his favor through acquittal. He contended that requiring him to file a civil suit while still fighting criminal charges would be impractical and could produce conflicting outcomes.",
+      "supportingPoints": [
+        "A fabricated-evidence claim is analogous to a malicious prosecution claim, which has traditionally required favorable termination of the underlying criminal proceeding before a plaintiff can sue",
+        "Forcing a defendant to file a civil lawsuit while simultaneously defending against criminal charges creates an impossible practical burden and risks inconsistent results between the civil and criminal proceedings",
+        "The logic of Heck v. Humphrey — which bars certain Section 1983 claims that would undermine a criminal conviction — supports the principle that fabricated-evidence claims should wait until the criminal case is resolved in the plaintiff's favor"
+      ]
+    },
+    {
+      "party": "Youel Smith",
+      "role": "respondent",
+      "coreArgument": "Smith argued that the standard statute-of-limitations rule should apply: the claim accrued when McDonough knew or had reason to know that fabricated evidence was being used against him, which occurred during the criminal proceedings well before the lawsuit was filed. Under that rule, McDonough's lawsuit was untimely.",
+      "supportingPoints": [
+        "Under the traditional rule for Section 1983 claims, a cause of action accrues when the plaintiff becomes aware of the injury, not when subsequent events make the claim more favorable to bring",
+        "There is no textual basis in Section 1983 for creating a special favorable-termination accrual rule for fabricated-evidence claims",
+        "Extending the Heck v. Humphrey framework beyond its original context — which dealt with convicted persons whose civil claims would call into question a valid conviction — is unwarranted"
+      ]
+    }
+  ],
+  "holding": "In a 6–3 decision authored by Justice Sonia Sotomayor, the Supreme Court held that the statute of limitations for a Section 1983 fabricated-evidence claim does not begin to run until the criminal proceedings against the plaintiff have terminated in the plaintiff's favor. The Court affirmed the Second Circuit's decision, meaning McDonough's lawsuit was timely filed.\n\nThe majority drew a close analogy between fabricated-evidence claims and the common-law tort of malicious prosecution. At common law, a malicious prosecution claim could not be brought until the underlying criminal case ended favorably for the accused. The Court reasoned that fabricated-evidence claims share the same essential logic: both involve the misuse of the criminal justice system against an individual, and both are fundamentally tied to the outcome of the criminal proceedings. Just as it would make little sense to allow a malicious prosecution claim while the prosecution is still ongoing, it would be similarly problematic to require a fabricated-evidence claim to be filed before the criminal case is resolved.\n\nThe majority also emphasized practical considerations. Requiring a criminal defendant to simultaneously litigate a civil rights lawsuit about fabricated evidence while also defending against criminal charges based on that same evidence would create serious problems. It could lead to conflicting judicial determinations, place enormous burdens on the defendant, and potentially interfere with the criminal proceedings. Waiting for the criminal case to conclude avoids these complications.\n\nImportantly, the Court extended the logic of its earlier decision in Heck v. Humphrey to this context. In Heck, the Court had held that a convicted person cannot bring a Section 1983 claim that would necessarily imply the invalidity of the conviction unless the conviction has been overturned. Here, the Court applied a similar principle even though McDonough was never convicted — holding that the favorable-termination requirement applies to fabricated-evidence claims regardless of whether the plaintiff was ultimately convicted or acquitted. The Court found that a fabricated-evidence claim is not truly complete, and should not be considered to have accrued, until the criminal process has run its course in the plaintiff's favor.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Sonia Sotomayor",
+  "dissentingOpinions": [
+    {
+      "author": "Clarence Thomas",
+      "joinedBy": [
+        "Elena Kagan",
+        "Neil Gorsuch"
+      ],
+      "coreArgument": "Justice Thomas argued that the Court should have applied the standard accrual rule: a Section 1983 claim accrues when the plaintiff knows or has reason to know of the injury giving rise to the claim. Because McDonough was aware of the allegedly fabricated evidence during the criminal proceedings, his cause of action accrued at that time, and his later-filed lawsuit was untimely.",
+      "keyPoints": [
+        "The traditional and well-established rule is that a federal cause of action accrues when the plaintiff has a complete and present cause of action — meaning all the elements of the claim are in place — and the plaintiff is or should be aware of the injury",
+        "The majority's analogy to malicious prosecution is flawed because fabricated-evidence claims are fundamentally different in nature; they do not require proof that the prosecution was initiated without probable cause or with malice, but rather focus on the specific misconduct of evidence fabrication",
+        "Extending Heck v. Humphrey's favorable-termination requirement beyond its original domain — cases where a civil judgment would necessarily undermine an existing conviction — lacks textual support in Section 1983 and creates a novel judge-made exception to standard limitations principles"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions of particular note in this case."
 }

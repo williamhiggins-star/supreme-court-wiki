@@ -5,5 +5,59 @@
   "year": 2023,
   "summary": "Held that a prisoner who had already filed a Section 2255 motion could not use Section 2241 to raise a statutory claim that his conduct was not criminal, because Congress specifically limited second or successive 2255 motions to constitutional claims.",
   "significance": "The government cited it to show that Congress deliberately limited when prisoners can bring second or successive habeas claims, allowing only constitutional (not statutory) claims. The petitioner cited it to distinguish the kind of statutory conflict that triggers implicit preclusion.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Can a federal prisoner who has already filed a motion under 28 U.S.C. § 2255 use a separate habeas corpus petition under 28 U.S.C. § 2241 to argue that an intervening change in statutory interpretation means his conduct was never actually criminal?",
+  "backgroundAndFacts": "Marcus DeAngelo Jones was a federal prisoner convicted of being a felon in possession of a firearm under 18 U.S.C. § 922(g). This is a federal law that makes it illegal for certain categories of people — including convicted felons — to possess firearms. Jones was convicted, sentenced, and his conviction became final. He then filed what is called a Section 2255 motion, which is the standard legal mechanism for federal prisoners to challenge their convictions or sentences after their direct appeals have been exhausted. That motion was denied.\n\nYears later, the Supreme Court decided a case called Rehaif v. United States in 2019. In Rehaif, the Court interpreted the felon-in-possession statute and held that to convict someone under § 922(g), the government must prove not only that the defendant possessed a firearm, but also that the defendant knew he belonged to the category of people barred from having one — in other words, that he knew he was a felon. Jones believed this ruling meant his own conviction was invalid because at his trial, the government had never been required to prove he knew about his felon status.\n\nJones wanted to go back to court with this argument, but he faced a significant procedural barrier. Federal law strictly limits 'second or successive' Section 2255 motions. Under § 2255(h), a prisoner can only file another § 2255 motion if it is based on either newly discovered evidence of innocence or a new rule of constitutional law that the Supreme Court has made retroactively applicable. The Rehaif decision was a matter of statutory interpretation — how to read a criminal statute — not a new constitutional rule. So Jones could not meet either of those requirements.\n\nFacing this roadblock, Jones attempted an alternative path. He filed a habeas corpus petition under a different statute, 28 U.S.C. § 2241, which is the general federal habeas statute. He relied on what is known as the 'savings clause' in § 2255(e), which says that a prisoner may use a § 2241 petition if the § 2255 remedy is 'inadequate or ineffective to test the legality of his detention.' Jones argued that because § 2255's restrictions made it impossible for him to raise his Rehaif-based claim, the § 2255 process was 'inadequate or ineffective' for his situation, and he should be allowed to proceed under § 2241.\n\nThe Eighth Circuit Court of Appeals rejected Jones's argument, holding that § 2241 was not available to him. Several other federal appeals courts had reached different conclusions on similar questions, creating a split among the circuits. The Supreme Court agreed to hear the case to resolve this disagreement and clarify when — if ever — a federal prisoner can bypass § 2255's restrictions by filing a § 2241 petition based on a new statutory interpretation.",
+  "parties": [
+    {
+      "party": "Marcus DeAngelo Jones",
+      "role": "petitioner",
+      "coreArgument": "Jones argued that because Section 2255's strict limits on second or successive motions made it literally impossible for him to raise his claim — that an intervening Supreme Court decision showed his conduct was never criminal — the Section 2255 remedy was 'inadequate or ineffective' within the meaning of the savings clause. Therefore, he should be permitted to file a habeas petition under Section 2241 instead.",
+      "supportingPoints": [
+        "The Rehaif decision changed the legal understanding of what the government must prove to convict someone under the felon-in-possession statute, potentially meaning Jones's conduct was never actually criminal as defined by law.",
+        "Section 2255's limits on second or successive motions only allow claims based on new constitutional rules, not new statutory interpretation rulings, leaving prisoners like Jones with no avenue to challenge convictions that may be legally invalid.",
+        "The savings clause exists precisely for situations where the Section 2255 process fails to provide a meaningful opportunity to challenge an unlawful detention, and denying access to Section 2241 in this context would mean some prisoners remain imprisoned for conduct that is not actually a crime."
+      ]
+    },
+    {
+      "party": "Dewayne Hendrix (Warden)",
+      "role": "respondent",
+      "coreArgument": "The government, represented by the warden, argued that Section 2255 is not 'inadequate or ineffective' simply because it does not permit a particular type of second or successive claim. Congress deliberately limited repeat collateral attacks, and allowing prisoners to circumvent those limits through Section 2241 would undermine the entire statutory framework.",
+      "supportingPoints": [
+        "Congress made a deliberate policy choice when it restricted second or successive Section 2255 motions to claims involving new constitutional rules or newly discovered evidence, and courts should not override that choice by interpreting the savings clause as a loophole.",
+        "A prisoner had a full opportunity to raise all arguments in his first Section 2255 motion, and the fact that the law changed afterward does not make the process 'inadequate or ineffective' — it simply means finality attaches to the conviction.",
+        "Allowing prisoners to use Section 2241 whenever a new statutory interpretation decision is issued would open the floodgates to relitigation and fundamentally undermine the restrictions Congress placed on habeas proceedings through the Antiterrorism and Effective Death Penalty Act (AEDPA)."
+      ]
+    }
+  ],
+  "holding": "In a 6–3 decision authored by Justice Clarence Thomas, the Supreme Court held that Marcus DeAngelo Jones could not use a Section 2241 habeas petition to raise his claim that an intervening Supreme Court decision on statutory interpretation showed his conduct was not criminal. The Court ruled that the savings clause of Section 2255(e) does not permit prisoners to bypass the restrictions on second or successive Section 2255 motions simply because those restrictions prevent them from raising a particular type of claim.\n\nThe majority reasoned that Section 2255 was enacted in 1948 as a substitute for traditional habeas corpus under Section 2241 for federal prisoners challenging their convictions. The savings clause, the Court explained, was designed to preserve the habeas remedy only in unusual situations where the Section 2255 process itself is structurally unable to function — for example, if the sentencing court no longer exists. It was not meant to serve as an escape hatch for prisoners who find that the substantive limitations on second or successive motions block their particular claims.\n\nJustice Thomas emphasized that Congress, through the Antiterrorism and Effective Death Penalty Act of 1996 (AEDPA), deliberately chose to limit second or successive collateral attacks to two categories: claims based on newly discovered evidence of innocence and claims based on new rules of constitutional law made retroactive by the Supreme Court. Congress chose not to include claims based on new rules of statutory interpretation. The Court held that reading the savings clause to allow exactly the types of claims Congress excluded from § 2255(h) would effectively nullify those restrictions and contradict Congress's intent.\n\nThe majority acknowledged that this result means some federal prisoners who may have been convicted of conduct that is not actually criminal under a later statutory interpretation will have no further judicial remedy. However, the Court noted that such prisoners are not entirely without recourse — they can seek executive clemency. The Court also stressed the importance of finality in criminal proceedings and Congress's authority to define the scope of post-conviction review. Ultimately, the majority concluded that a remedy being limited is not the same as a remedy being 'inadequate or ineffective,' and that Section 2255's gatekeeping provisions represent a conscious legislative trade-off between accuracy and finality that courts must respect.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Clarence Thomas",
+  "dissentingOpinions": [
+    {
+      "author": "Sonia Sotomayor",
+      "joinedBy": [
+        "Elena Kagan"
+      ],
+      "coreArgument": "Justice Sotomayor argued that the majority's reading of the savings clause was too narrow and that Section 2255 is genuinely 'inadequate or ineffective' when it provides no mechanism at all for a prisoner to argue that he is imprisoned for conduct that a later Supreme Court decision has clarified is not criminal. She contended that the savings clause was historically understood to preserve access to habeas review in precisely such circumstances.",
+      "keyPoints": [
+        "The traditional purpose of habeas corpus is to ensure that no person is imprisoned for conduct that is not criminal, and the majority's holding leaves a gap that betrays this fundamental principle.",
+        "The savings clause should be read in light of its historical context, which shows that Congress intended to preserve habeas as a safety valve for cases where Section 2255's procedural limits would otherwise leave a prisoner detained unlawfully with no path to judicial review.",
+        "Pointing prisoners toward executive clemency as their only remedy is not an adequate substitute for judicial review of whether their imprisonment is lawful under the statute they were convicted of violating."
+      ]
+    },
+    {
+      "author": "Ketanji Brown Jackson",
+      "joinedBy": [
+        "Elena Kagan"
+      ],
+      "coreArgument": "Justice Jackson wrote separately to argue that the majority's interpretation conflicted with the text, history, and purpose of the habeas corpus statute and the savings clause. She emphasized that the Suspension Clause of the Constitution may require that some habeas remedy remain available to prisoners who claim their conduct was not criminalized by statute.",
+      "keyPoints": [
+        "The majority's decision creates a constitutionally troubling result by effectively stripping all judicial review for an identifiable class of prisoners who may be serving sentences for conduct that Congress never made illegal.",
+        "The text of the savings clause is best read to preserve Section 2241 as an available remedy when the limitations of Section 2255 leave a prisoner without any meaningful mechanism to challenge the legality of his detention.",
+        "The historical writ of habeas corpus, which the Constitution's Suspension Clause protects, has always encompassed claims that a prisoner's conduct falls outside the scope of the criminal statute under which he was convicted."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions of particular note in this case; all six justices in the majority joined Justice Thomas's opinion in full."
 }

@@ -4,5 +4,49 @@
   "year": 2012,
   "summary": "Held that Congress can abrogate sovereign immunity without using specific magic words, as long as the intent is clear from the statute's overall structure and provisions.",
   "significance": "Central precedent on how Congress can abrogate sovereign immunity without magic words — through the 'sum total' of statutory provisions, particularly by creating a cause of action against government entities that would be negated by immunity.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Privacy Act of 1974's waiver of sovereign immunity for 'actual damages' permit individuals to recover nonpecuniary damages — such as emotional distress and mental anguish — from the federal government for violations of the Act?",
+  "backgroundAndFacts": "Stanmore Cooper was a private pilot licensed by the Federal Aviation Administration (FAA) who was also HIV-positive. Federal aviation rules required pilots to disclose all medical conditions when applying for or renewing their medical certificates. Cooper did not report his HIV diagnosis to the FAA. At the same time, Cooper was receiving Social Security disability benefits from the Social Security Administration (SSA) specifically because of his HIV/AIDS condition.\n\nThe Department of Transportation and the SSA participated in a joint data-sharing program informally called 'Operation Safe Pilot.' The program cross-referenced government databases to identify pilots who might have unreported medical conditions — essentially comparing pilot records with disability and medical records from other agencies. Through this program, the government discovered that Cooper was receiving HIV-related disability benefits while simultaneously holding a medical certificate on which he had not disclosed his condition.\n\nCooper was criminally indicted for making false statements to a government agency. He ultimately reached an agreement in which the charges were dropped in exchange for his voluntarily surrendering his pilot's medical certificate. After this episode, Cooper sued the federal government under the Privacy Act of 1974, alleging that the sharing of his sensitive medical records between the SSA and the FAA violated the Act's restrictions on interagency disclosure of personal information. He sought damages — specifically, compensation for the emotional distress and mental anguish caused by the government's unauthorized disclosure of his HIV status.\n\nThe federal district court sided with the government, ruling that the Privacy Act did not waive sovereign immunity for nonpecuniary (non-monetary) damages like emotional distress. The U.S. Court of Appeals for the Ninth Circuit reversed, holding that the phrase 'actual damages' in the Privacy Act was broad enough to include nonpecuniary damages. The FAA, on behalf of the federal government, petitioned the Supreme Court, which agreed to hear the case to resolve a split among the federal circuits on whether 'actual damages' in the Privacy Act covers mental and emotional harm.",
+  "parties": [
+    {
+      "party": "Federal Aviation Administration (FAA)",
+      "role": "petitioner",
+      "coreArgument": "The FAA argued that the Privacy Act's waiver of sovereign immunity, which permits suits for 'actual damages,' does not clearly and unambiguously authorize recovery of nonpecuniary damages such as emotional distress. Because waivers of sovereign immunity must be strictly construed in favor of the government, any ambiguity in the term 'actual damages' should be resolved against allowing such claims.",
+      "supportingPoints": [
+        "The term 'actual damages' is ambiguous and has been used historically to mean different things in different legal contexts — sometimes including only economic loss, sometimes including emotional harm.",
+        "Under longstanding Supreme Court precedent, any waiver of the federal government's sovereign immunity must be unambiguously expressed in statutory text, and ambiguities must be construed in favor of the sovereign.",
+        "Congress could have used clearer language — such as 'general damages' or 'compensatory damages' — if it intended to include nonpecuniary harms, and its failure to do so is telling."
+      ]
+    },
+    {
+      "party": "Stanmore Cooper",
+      "role": "respondent",
+      "coreArgument": "Cooper argued that the Privacy Act clearly waives sovereign immunity for all compensatory damages, including damages for emotional distress and mental anguish. He contended that 'actual damages' is a well-understood legal term that encompasses both pecuniary and nonpecuniary harm, and that limiting it to only economic losses would gut the statute's protections for people like him.",
+      "supportingPoints": [
+        "The term 'actual damages' has a long common-law history of meaning all real, compensatory damages — as opposed to nominal or punitive damages — and that meaning naturally includes emotional distress.",
+        "Many Privacy Act violations, particularly unauthorized disclosures of sensitive medical information, cause primarily emotional and dignitary harm rather than direct financial loss, so limiting recovery to economic damages would leave most victims without a meaningful remedy.",
+        "The overall structure and purpose of the Privacy Act demonstrate that Congress intended to create a genuine remedy for individuals harmed by the government's mishandling of personal information."
+      ]
+    }
+  ],
+  "holding": "In a 5–3 decision (Justice Kagan was recused), the Supreme Court reversed the Ninth Circuit and held that the Privacy Act does not unambiguously authorize recovery of nonpecuniary damages such as emotional distress and mental anguish. The majority opinion was authored by Justice Samuel Alito.\n\nThe majority began by reaffirming the foundational principle that the federal government cannot be sued without its consent, a doctrine known as sovereign immunity. When Congress does consent to suit by waiving sovereign immunity, the waiver must be unambiguously expressed in statutory text. Importantly, the Court acknowledged that Congress does not need to use specific 'magic words' to waive sovereign immunity — the intent can be discerned from the statute's text, structure, and overall provisions. However, any ambiguity in the scope of that waiver must be resolved in favor of the government.\n\nApplying this framework, the majority examined the term 'actual damages' as used in the Privacy Act and found it genuinely ambiguous. Justice Alito surveyed the historical usage of the phrase and concluded that it had been used in different ways across different areas of law. In some contexts, 'actual damages' had been understood to include all compensatory damages (both economic and emotional). In other contexts, particularly in certain statutory schemes, it had been limited to proven out-of-pocket economic losses. Because the term carried both meanings, the Court concluded it was not a clear and unambiguous waiver of sovereign immunity for nonpecuniary harms.\n\nGiven this ambiguity, the strict-construction rule required the Court to interpret the waiver narrowly — in the government's favor. The majority therefore held that Cooper could not recover damages for emotional distress under the Privacy Act. The practical effect of this ruling was significant: many Privacy Act violations cause primarily emotional rather than financial harm, and the decision effectively limited the universe of recoverable damages to proven economic losses.",
+  "voteCount": "5-3",
+  "majorityAuthor": "Samuel Alito",
+  "dissentingOpinions": [
+    {
+      "author": "Sonia Sotomayor",
+      "joinedBy": [
+        "Ruth Bader Ginsburg",
+        "Stephen Breyer"
+      ],
+      "coreArgument": "Justice Sotomayor argued that 'actual damages' is a well-established legal term with a clear and predominant meaning that encompasses all real compensatory damages, including damages for emotional distress and mental anguish. She contended that the majority manufactured ambiguity where none existed, and in doing so, effectively stripped the Privacy Act of any meaningful remedy for many of its most serious violations.",
+      "keyPoints": [
+        "At common law and in the vast majority of legal usage, 'actual damages' has consistently been understood as the opposite of 'nominal' or 'punitive' damages — meaning it covers all genuinely compensatory damages, whether pecuniary or nonpecuniary.",
+        "The Privacy Act was specifically designed to protect individuals from government mishandling of sensitive personal information, and violations of that duty most commonly produce emotional rather than economic harm — making the majority's interpretation self-defeating.",
+        "The majority's conclusion that the term is ambiguous relies on cherry-picked counter-examples from narrow statutory contexts, ignoring the term's dominant and ordinary meaning in American law.",
+        "By limiting damages to economic losses, the majority created a hollow right — recognizing that the government wrongfully disclosed a person's most sensitive information but offering no realistic path to compensation."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions in this case. Justice Elena Kagan recused herself and did not participate in the consideration or decision."
 }

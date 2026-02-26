@@ -4,5 +4,46 @@
   "year": 2002,
   "summary": "Held that courts should remand to the BIA rather than deciding issues in the first instance, recognizing the agency's expertise in immigration law.",
   "significance": "The government cited it for the principle that the agency has expertise in immigration matters and courts should generally defer to agency determinations.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "When a federal court of appeals reverses the Board of Immigration Appeals (BIA) on one issue, should the court decide remaining unresolved issues itself or remand the case back to the BIA for the agency to address them in the first instance?",
+  "backgroundAndFacts": "Orlando Ventura was a native and citizen of Guatemala who came to the United States and sought asylum and withholding of deportation. He claimed that he had been persecuted by Guatemalan guerrillas and feared returning to his home country. Under immigration law, a person who can show past persecution is generally presumed to have a well-founded fear of future persecution — unless the government can demonstrate that conditions in the home country have changed enough to eliminate that fear.\n\nThe Board of Immigration Appeals (BIA), the administrative body that handles immigration appeals within the executive branch, denied Ventura's claims. The BIA concluded that Ventura had not established that he had suffered past persecution in Guatemala, and therefore never reached the separate question of whether country conditions had changed sufficiently to rebut any presumption of future persecution.\n\nVentura appealed to the United States Court of Appeals for the Ninth Circuit. The Ninth Circuit disagreed with the BIA on the past persecution question, finding that Ventura had indeed established past persecution. But the court then went a step further: instead of sending the case back to the BIA to evaluate the changed-country-conditions question — an issue the BIA had never addressed — the Ninth Circuit decided that issue itself. The court concluded that conditions in Guatemala had not changed enough to overcome the presumption of future persecution and ruled in Ventura's favor.\n\nThe Immigration and Naturalization Service (INS) petitioned the Supreme Court, arguing that the Ninth Circuit had overstepped its role by deciding an issue that the BIA had never considered. The Supreme Court agreed to hear the case to address a recurring problem: courts of appeals resolving immigration issues that properly belonged to the agency in the first instance.",
+  "parties": [
+    {
+      "party": "Immigration and Naturalization Service (INS)",
+      "role": "petitioner",
+      "coreArgument": "The INS argued that the Ninth Circuit violated a fundamental principle of administrative law by deciding the changed-country-conditions question itself rather than sending it back to the BIA. According to the INS, the BIA — as the expert agency on immigration matters — should have the first opportunity to evaluate that issue.",
+      "supportingPoints": [
+        "The BIA never addressed whether country conditions in Guatemala had changed because it denied Ventura's claim on a different ground (lack of past persecution), so the Ninth Circuit was deciding an issue without any prior agency determination to review.",
+        "Under the well-established 'ordinary remand rule' from SEC v. Chenery Corp., courts must give agencies the chance to address issues within their expertise before judicial intervention.",
+        "Allowing courts to bypass agency consideration undermines the deference owed to administrative agencies in their areas of specialized knowledge."
+      ]
+    },
+    {
+      "party": "Orlando Ventura",
+      "role": "respondent",
+      "coreArgument": "Ventura argued that the Ninth Circuit acted appropriately in resolving the changed-country-conditions issue because the record was sufficiently developed and remanding would cause unnecessary delay without any meaningful benefit.",
+      "supportingPoints": [
+        "The factual record was already before the court and contained sufficient evidence for the Ninth Circuit to evaluate whether conditions in Guatemala had changed.",
+        "Requiring a remand would prolong the case and delay resolution for an asylum seeker who had already demonstrated past persecution.",
+        "The Ninth Circuit had the authority to review the evidence and reach a conclusion on the issue without further agency input."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court reversed the Ninth Circuit in a per curiam opinion — an unsigned decision issued by the Court as a whole — decided on November 12, 2002. The Court held that the Ninth Circuit erred by deciding the changed-country-conditions question itself instead of remanding the case to the BIA. The decision was handed down summarily, meaning the Court decided it without full briefing or oral argument, underscoring that the legal principle at stake was well-settled.\n\nThe Court relied on what it called the 'ordinary remand rule,' rooted in the long-standing principle from SEC v. Chenery Corp. that a reviewing court should not decide an issue that the relevant agency has not yet had the chance to address. The BIA had denied Ventura's claim solely on the ground that he had not shown past persecution, and therefore it never evaluated whether Guatemalan country conditions had changed. When the Ninth Circuit reversed the BIA on the past persecution finding, the proper course was to send the case back so the BIA could apply its expertise to the remaining question.\n\nThe Court emphasized that the BIA, as the specialized agency responsible for immigration matters, possesses expertise that courts do not. The agency might consider factors, weigh evidence, or apply policy considerations that a court would not anticipate. Allowing the BIA to address the changed-conditions issue first would ensure that the judicial review process rested on a complete administrative record and a reasoned agency determination.\n\nThe Court acknowledged that there could be rare circumstances justifying a departure from the ordinary remand rule, but found that no such exception applied here. The Ninth Circuit had not identified any special reason to bypass the BIA's expertise, and the case presented a straightforward application of the remand principle. The Court vacated the Ninth Circuit's judgment and remanded the case so that it could be returned to the BIA for further proceedings.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Per Curiam",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "David Souter"
+      ],
+      "coreArgument": "Justice Stevens argued that the Ninth Circuit's decision to resolve the changed-country-conditions issue was reasonable under the circumstances and that a remand to the BIA was unnecessary. He believed the record was sufficiently clear and that requiring the BIA to revisit the case would only delay justice for an asylum seeker who had already demonstrated past persecution.",
+      "keyPoints": [
+        "The record before the Ninth Circuit was adequate for the court to evaluate the changed-conditions question, making a remand an exercise in procedural formalism rather than a substantive necessity.",
+        "Requiring remand in every such case imposes significant costs — including prolonged uncertainty and delay — on vulnerable individuals seeking asylum protection."
+      ]
+    }
+  ],
+  "concurringNote": "There were no notable concurring opinions in this case. The per curiam opinion spoke for the seven-justice majority without separate concurrences."
 }

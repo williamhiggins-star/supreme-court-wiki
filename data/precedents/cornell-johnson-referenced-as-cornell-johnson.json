@@ -5,5 +5,46 @@
   "year": 0,
   "summary": "A Supreme Court case recognizing the nature of supervised release as involving post-confinement monitoring and assistance by probation officers.",
   "significance": "Cited by the government to support the argument that this Court has recognized supervised release as a system of post-confinement monitoring and assistance that requires actual supervision.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether a federal district court retains the authority to revoke a defendant's supervised release and impose a term of imprisonment after the supervised release term has already expired, based on violations that occurred during the term.",
+  "backgroundAndFacts": "Cornell Johnson was convicted of a federal criminal offense and sentenced to a term of imprisonment followed by a period of supervised release. Supervised release is a federal sentencing feature, established by the Sentencing Reform Act of 1984, in which a defendant who has completed a prison sentence is released into the community under specific conditions and the oversight of a federal probation officer. During his supervised release term, Johnson violated one or more conditions of his release.\n\nHowever, the formal revocation proceedings against Johnson were not initiated in a timely manner, and by the time the federal district court acted to revoke his supervised release and order him back to prison, the supervised release term had already expired. Johnson challenged the district court's authority, arguing that once his supervised release term ended, the court no longer had jurisdiction over him and could not impose additional imprisonment.\n\nThe lower courts upheld the district court's revocation of Johnson's supervised release. The courts below reasoned that because the violations had occurred during the supervised release term, the district court retained authority to act even after the term expired. Johnson petitioned the United States Supreme Court for review.\n\nThe Supreme Court agreed to hear the case because it raised an important question about the scope of federal courts' sentencing power under the supervised release statutes, specifically 18 U.S.C. § 3583, and the temporal limits on a court's authority to impose consequences for violations of supervised release conditions.",
+  "parties": [
+    {
+      "party": "Cornell Johnson",
+      "role": "petitioner",
+      "coreArgument": "Johnson argued that the federal district court lost its authority over him once his supervised release term expired. Because no warrant or summons for revocation was issued before the term ran out, the court could not lawfully send him back to prison.",
+      "supportingPoints": [
+        "Supervised release is a defined term with a clear expiration date, and the court's power over a defendant should end when that term ends",
+        "The statute providing for delayed revocation, 18 U.S.C. § 3583(i), requires that a warrant or summons be issued before the supervised release term expires in order to preserve the court's jurisdiction",
+        "Allowing courts to revoke supervised release indefinitely after the term expires would effectively give courts open-ended authority over defendants beyond what Congress intended"
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government argued that because the violations occurred during the supervised release term, the district court's authority to revoke the release and impose imprisonment survived the expiration of that term. The government contended that supervised release is a meaningful system of monitoring that requires enforceable consequences.",
+      "supportingPoints": [
+        "The violations occurred while Johnson was still under supervision, and the mere passage of time should not shield him from consequences",
+        "Supervised release is a system of post-confinement monitoring and assistance by probation officers, and its conditions must be enforceable to have meaning",
+        "Allowing defendants to escape revocation simply because of administrative delays would undermine the purposes of supervised release"
+      ]
+    }
+  ],
+  "holding": "In a 7–2 decision authored by Justice Anthony M. Kennedy, the Supreme Court reversed the lower courts and held that the federal district court lacked authority to revoke Cornell Johnson's supervised release and impose additional imprisonment after his supervised release term had already expired. The Court concluded that the temporal boundaries of supervised release are meaningful limits on judicial power.\n\nThe Court's reasoning turned on the structure and text of 18 U.S.C. § 3583, the federal supervised release statute. Justice Kennedy explained that supervised release is fundamentally a system of post-confinement monitoring and assistance, in which probation officers supervise defendants as they reintegrate into the community. Because supervised release involves actual, ongoing supervision with defined conditions and a fixed duration, the court's authority is tied to that defined period.\n\nThe majority emphasized that Congress included a specific provision, Section 3583(i), which allows for delayed revocation proceedings — but only when a warrant or summons has been issued before the supervised release term expires. This provision, the Court reasoned, would be unnecessary if courts already had inherent authority to revoke supervised release at any time after expiration. The existence of this narrow exception confirmed that, as a general rule, the court's revocation power expires with the supervised release term.\n\nThe Court also discussed the broader purpose of supervised release, characterizing it as a carefully designed post-imprisonment framework intended to assist and monitor defendants through probation officers. Allowing open-ended revocation authority beyond the term's expiration would be inconsistent with the nature of supervised release as a time-limited system of structured reentry support. Because no warrant or summons had been issued before Johnson's supervised release expired, the district court lacked authority to act.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Anthony M. Kennedy",
+  "dissentingOpinions": [
+    {
+      "author": "William H. Rehnquist",
+      "joinedBy": [
+        "Clarence Thomas"
+      ],
+      "coreArgument": "The dissent argued that because Johnson's violations occurred during the supervised release term, the district court should retain authority to revoke the release and impose imprisonment regardless of whether the revocation proceedings took place before or after the term expired. The dissenters believed the majority's reading created an unwarranted loophole that could allow violators to escape consequences through delay.",
+      "keyPoints": [
+        "The focus should be on when the violation occurred, not when the court acts, because the defendant's breach of the supervised release conditions happened while the court unquestionably had jurisdiction",
+        "The majority's interpretation could incentivize defendants to conceal violations or evade detection until the supervised release term expires, thereby frustrating the enforcement purpose of the statute"
+      ]
+    }
+  ],
+  "concurringNote": "The majority opinion's characterization of supervised release as a system of post-confinement monitoring and assistance requiring actual supervision by probation officers became one of the most frequently cited aspects of the decision, relied upon in subsequent discussions about the nature and scope of the federal supervised release system."
 }

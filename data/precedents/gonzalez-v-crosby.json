@@ -5,5 +5,47 @@
   "year": 2005,
   "summary": "The Court addressed the relationship between procedural dispositions and the second-or-successive framework under AEDPA.",
   "significance": "Cited by the government for the proposition that a dismissal is effectively a denial of an application, countering petitioner's argument that the court of appeals' dismissal did not trigger (b)(3)(E).",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether a Federal Rule of Civil Procedure 60(b) motion filed in a habeas corpus proceeding should be treated as a 'second or successive' habeas application under the Antiterrorism and Effective Death Penalty Act (AEDPA), thereby requiring prior authorization from a court of appeals before it can be filed.",
+  "backgroundAndFacts": "Aurelio Gonzalez was convicted of murder and other crimes in a Florida state court and sentenced to a lengthy prison term. After exhausting his state appeals and post-conviction remedies, he filed a federal habeas corpus petition under 28 U.S.C. § 2254 in 1997, asking a federal court to review his conviction. The federal district court, however, dismissed his petition as untimely — AEDPA, a 1996 law that tightened the rules for federal habeas petitions, imposed a one-year statute of limitations, and the court found Gonzalez had filed too late. The Eleventh Circuit Court of Appeals affirmed that dismissal.\n\nIn 2000, the Supreme Court decided a case called Artuz v. Bennett, which clarified the meaning of a 'properly filed' state post-conviction application for purposes of tolling (pausing) AEDPA's one-year clock. Gonzalez believed this decision changed the analysis of whether his federal petition had been timely, because the tolling rules should have given him more time. He went back to the district court and filed a motion under Federal Rule of Civil Procedure 60(b), which allows courts to reopen final judgments for reasons such as newly clarified legal rules or extraordinary circumstances.\n\nThe district court denied the Rule 60(b) motion. On appeal, the Eleventh Circuit took an even harder line: it held that the Rule 60(b) motion was really a 'second or successive' habeas petition in disguise. Under AEDPA, prisoners cannot file a second habeas petition without first getting permission from a court of appeals, and such permission is granted only in narrow circumstances. Because Gonzalez had not obtained this authorization, the Eleventh Circuit said the district court lacked jurisdiction to even consider the motion.\n\nThis question — whether a Rule 60(b) motion in a habeas case should always be recharacterized as a successive habeas petition — had divided the federal courts of appeals, with different circuits reaching conflicting conclusions. The Supreme Court agreed to hear the case to resolve this important procedural split, which affected how prisoners across the country could seek to reopen their cases.",
+  "parties": [
+    {
+      "party": "Aurelio Gonzalez",
+      "role": "petitioner",
+      "coreArgument": "Gonzalez argued that his Rule 60(b) motion was an ordinary procedural motion, not a new habeas petition. He was not raising new claims about his conviction but was merely asking the court to reconsider its procedural ruling that his original petition had been untimely, in light of a subsequent Supreme Court decision that clarified the applicable tolling rules.",
+      "supportingPoints": [
+        "The Rule 60(b) motion challenged only the court's statute-of-limitations ruling, not the merits of his underlying conviction, so it should not be treated as a habeas application.",
+        "AEDPA's restrictions on second or successive petitions were designed to prevent prisoners from relitigating the substance of their convictions, not to bar ordinary procedural motions in already-existing cases.",
+        "The intervening Supreme Court decision in Artuz v. Bennett constituted an extraordinary circumstance justifying relief under Rule 60(b)(6), because it changed the legal framework that led to his petition being dismissed as untimely."
+      ]
+    },
+    {
+      "party": "James V. Crosby, Jr., Secretary, Florida Department of Corrections",
+      "role": "respondent",
+      "coreArgument": "Crosby argued that any motion seeking to reopen a habeas case that has been finally resolved is effectively a new habeas application and must comply with AEDPA's strict gatekeeping requirements for second or successive petitions. Allowing prisoners to use Rule 60(b) as an end-run around AEDPA would undermine Congress's intent to bring finality to habeas proceedings.",
+      "supportingPoints": [
+        "AEDPA was designed to prevent the abuse of habeas corpus through repeated filings, and Rule 60(b) motions that seek to revive dismissed habeas cases serve the same function as successive petitions.",
+        "Treating Rule 60(b) motions as outside AEDPA's framework would create a massive loophole, allowing prisoners to bypass the authorization requirement simply by labeling their filings as procedural motions.",
+        "Even if the motion were properly considered under Rule 60(b), a change in decisional law does not constitute the kind of extraordinary circumstances required for relief under Rule 60(b)(6)."
+      ]
+    }
+  ],
+  "holding": "In a 7–2 decision authored by Justice Antonin Scalia, the Supreme Court crafted a middle-ground approach. The Court rejected both the broadest version of each side's argument and established a framework for determining when a Rule 60(b) motion in a habeas case is really a disguised successive petition and when it is a legitimate procedural motion.\n\nThe Court held that a Rule 60(b) motion is a 'second or successive' habeas application if it seeks to add a new ground for relief from the state court conviction, or if it attacks the federal court's previous resolution of a habeas claim on the merits. In those situations, the motion is substantively a new habeas claim and must satisfy AEDPA's gatekeeping requirements — meaning the prisoner must first obtain authorization from a court of appeals. However, when a Rule 60(b) motion targets only a defect in the integrity of the federal habeas proceeding itself — such as a challenge to a procedural ruling like a statute-of-limitations dismissal — it is not a successive habeas petition and can be considered by the district court under the ordinary rules.\n\nApplying this framework to Gonzalez's case, the Court concluded that his Rule 60(b) motion was not a second or successive habeas petition. He was challenging the court's procedural ruling that his petition was untimely, not asserting or reasserting claims about errors in his state conviction. The Eleventh Circuit had therefore been wrong to treat it as a successive petition.\n\nHowever, the Court went on to hold that the district court had not abused its discretion in ultimately denying the Rule 60(b) motion on the merits. Rule 60(b)(6) requires 'extraordinary circumstances' to justify reopening a final judgment, and the Court concluded that a change in the interpretation of a statute of limitations — even one brought about by a Supreme Court decision — did not meet that demanding standard in Gonzalez's case. The judgment denying relief was therefore affirmed, albeit on different reasoning than the Eleventh Circuit had used.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Antonin Scalia",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "Stephen Breyer"
+      ],
+      "coreArgument": "Justice Stevens argued that the majority's framework for distinguishing between 'true' Rule 60(b) motions and disguised successive habeas petitions was unnecessarily complicated and would prove difficult to administer in practice. He believed the Court should have taken a simpler approach and that Gonzalez deserved relief on the merits of his motion.",
+      "keyPoints": [
+        "The majority's distinction between motions attacking procedural rulings and those attacking the merits creates a complex classification problem that will generate confusion and satellite litigation in the lower courts.",
+        "The Court should have been more generous in recognizing that an intervening Supreme Court decision that directly undermined the basis for dismissing a habeas petition can constitute extraordinary circumstances warranting Rule 60(b) relief.",
+        "AEDPA's restrictions on successive petitions should not be interpreted so broadly as to trap prisoners in procedural errors that were caused by unclear legal standards that the Supreme Court later clarified."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions in this case, though the majority opinion itself represented a compromise position that neither fully embraced the petitioner's broad reading of Rule 60(b) availability nor the respondent's categorical treatment of all such motions as successive petitions."
 }

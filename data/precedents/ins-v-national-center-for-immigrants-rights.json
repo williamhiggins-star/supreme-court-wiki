@@ -5,5 +5,48 @@
   "year": 1991,
   "summary": "The Supreme Court addressed standards for facial challenges to agency regulations, holding that a regulation is not facially invalid merely because some applications may be improper; the challenger must demonstrate the regulation's primary standards are unauthorized by the statute.",
   "significance": "The government relied on this case for the facial challenge standard it urged the Court to apply, arguing that a challenger cannot defeat a regulation by pointing to marginal applications that might be impermissible — the regulation's core standards must themselves contradict the statute.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether an Immigration and Naturalization Service (INS) regulation that allowed the government to condition an alien's release on bond upon the requirement that the alien not accept employment was a valid exercise of the Attorney General's authority, and what standard courts should apply when evaluating facial challenges to agency regulations.",
+  "backgroundAndFacts": "Under the Immigration and Nationality Act (INA), the Attorney General had broad authority to decide whether to release aliens detained during deportation proceedings. The statute allowed the Attorney General to release such aliens on bond and to impose 'such conditions as the Attorney General may prescribe.' In exercising this power, the INS promulgated a regulation — found at 8 C.F.R. § 242.2(d) — that authorized INS district directors to impose a condition of release that prohibited the alien from accepting employment without specific INS authorization. In other words, if a deportable alien wanted to be let out of detention on bond, one of the strings attached could be a ban on working.\n\nThe National Center for Immigrants' Rights, Inc. (NCIR), an advocacy organization, brought a class action lawsuit on behalf of detained aliens challenging this regulation. NCIR argued that the regulation was 'facially invalid' — meaning it was unlawful on its face, in all or nearly all applications — because the INA separately provided that certain aliens in deportation proceedings could be eligible for work authorization. NCIR contended that the regulation effectively allowed the Attorney General to override these statutory work authorization provisions through the back door of bond conditions, which Congress never intended.\n\nThe U.S. District Court for the Central District of California agreed with NCIR and struck down the regulation. The U.S. Court of Appeals for the Ninth Circuit affirmed, holding that the regulation exceeded the Attorney General's statutory authority because it impermissibly restricted aliens' access to employment authorization that Congress had made available.\n\nThe INS petitioned the Supreme Court to review the case, arguing that the Ninth Circuit had applied the wrong legal standard in evaluating the facial challenge and had improperly struck down a regulation that was lawful in the vast majority of its applications. The Supreme Court agreed to hear the case to resolve the important question of how courts should evaluate broad facial challenges to agency regulations.",
+  "parties": [
+    {
+      "party": "Immigration and Naturalization Service (INS)",
+      "role": "petitioner",
+      "coreArgument": "The INS argued that the Attorney General had broad statutory discretion to set conditions for the release of detained aliens on bond, and that restricting employment was a reasonable and permissible condition. The INS further argued that a regulation cannot be struck down on its face merely because some marginal applications might be improper.",
+      "supportingPoints": [
+        "The INA expressly granted the Attorney General authority to impose 'such conditions as the Attorney General may prescribe' when releasing aliens on bond, which naturally includes restricting employment",
+        "Preventing unauthorized employment by deportable aliens served legitimate government interests, including discouraging aliens from developing deeper ties to the community that might complicate removal",
+        "Even if the regulation could hypothetically be applied in some cases that conflicted with statutory work authorization provisions, that did not make the regulation facially invalid — the proper remedy in those cases would be an as-applied challenge, not a wholesale invalidation of the entire regulation"
+      ]
+    },
+    {
+      "party": "National Center for Immigrants' Rights, Inc. (NCIR)",
+      "role": "respondent",
+      "coreArgument": "NCIR argued that the regulation was facially unlawful because it allowed the Attorney General to use bond conditions to effectively override Congress's separate decision to make certain deportable aliens eligible for work authorization. The regulation, they contended, was inconsistent with the statutory scheme as a whole.",
+      "supportingPoints": [
+        "The INA contained provisions that specifically allowed certain aliens in deportation proceedings to obtain work authorization, and the regulation effectively nullified those provisions",
+        "Congress did not intend for the Attorney General's bond-condition authority to be so broad as to override other specific statutory rights it had granted to aliens",
+        "The regulation was not a legitimate exercise of bond-setting discretion but rather an end-run around the statutory framework governing work authorization for aliens"
+      ]
+    }
+  ],
+  "holding": "In a 6–3 decision authored by Chief Justice William H. Rehnquist, the Supreme Court reversed the Ninth Circuit and upheld the INS regulation. The Court held that the Attorney General's broad statutory authority to set conditions for bond release encompassed the power to restrict employment, and that the regulation was not facially invalid simply because it might conflict with work authorization provisions in some individual applications.\n\nThe Court's reasoning rested on two main pillars. First, the majority emphasized the breadth of the Attorney General's discretion under the INA. The statute said the Attorney General could impose 'such conditions as the Attorney General may prescribe,' and the Court found that this language was broad enough to include employment restrictions. Restricting employment was a reasonable condition to attach to bond release because the government had a legitimate interest in managing the circumstances of aliens awaiting deportation and in preventing them from becoming more deeply embedded in the community.\n\nSecond, and perhaps more significantly for future cases, the Court articulated the standard for facial challenges to agency regulations. The majority held that a challenger cannot successfully defeat a regulation merely by pointing to hypothetical or marginal situations in which the regulation might be applied in an unauthorized manner. Instead, the challenger must show that the regulation's primary standards — its core applications — are themselves unauthorized by the underlying statute. The Court reasoned that it would be impractical and inappropriate to strike down entire regulations based on the possibility that some fraction of their applications might be problematic. The proper remedy for those marginal cases would be individual, as-applied challenges.\n\nApplying this standard, the Court concluded that the employment restriction was lawful in the vast majority of its applications. Most aliens in deportation proceedings did not have an independent statutory right to work authorization, so requiring them not to work as a condition of release was well within the Attorney General's authority. The fact that a few aliens might have had a plausible claim to statutory work authorization did not render the entire regulation facially invalid.",
+  "voteCount": "6-3",
+  "majorityAuthor": "William H. Rehnquist",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "Harry A. Blackmun",
+        "David H. Souter"
+      ],
+      "coreArgument": "Justice Stevens argued that the majority gave the Attorney General's bond-condition authority an improperly expansive reading and that the regulation effectively overrode Congress's deliberate choice to make certain deportable aliens eligible for work authorization. The dissent contended that the regulation was not simply a matter of setting bond conditions but was a substantive policy decision that conflicted with the broader statutory scheme.",
+      "keyPoints": [
+        "The Attorney General's discretion to set bond conditions, while broad, was not unlimited and could not be used to override specific statutory provisions granting work authorization eligibility to certain aliens",
+        "The majority's facial challenge standard was too lenient toward the government and made it too difficult for challengers to hold agencies accountable when regulations exceeded statutory bounds",
+        "The regulation was not merely about managing the logistics of bond release but effectively altered the substantive rights Congress had granted to aliens in deportation proceedings"
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately notable concurring opinions in this case."
 }

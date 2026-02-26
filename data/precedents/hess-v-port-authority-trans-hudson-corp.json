@@ -5,5 +5,49 @@
   "year": 1994,
   "summary": "The Court held that the Port Authority, a bi-state entity created by New York and New Jersey, was not entitled to sovereign immunity, applying a substance-based analysis examining financial independence, control, and corporate structure.",
   "significance": "Both sides relied on Hess for its multifactor arm-of-the-state analysis; NJ Transit distinguished it as a bi-state entity case while the plaintiffs cited it for the principle that corporate form and financial independence from the state are critical factors.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether the Port Authority of New York and New Jersey, a bi-state entity, qualifies as an 'arm of the state' entitled to Eleventh Amendment sovereign immunity from private lawsuits in federal court.",
+  "backgroundAndFacts": "The Port Authority of New York and New Jersey is a bi-state governmental entity created by an interstate compact between New York and New Jersey in 1921, with the consent of Congress. It operates major transportation infrastructure in the New York–New Jersey metropolitan area, including bridges, tunnels, airports, and a commuter rail line called PATH (Port Authority Trans-Hudson Corporation). PATH runs rail transit service between Manhattan and several communities in northern New Jersey.\n\nJeffrey Hess and other PATH employees brought lawsuits against the Port Authority under the Federal Employers' Liability Act (FELA), a federal statute that allows railroad workers to sue their employers for on-the-job injuries caused by the employer's negligence. The Port Authority moved to dismiss the suits, arguing that it was protected by the Eleventh Amendment to the U.S. Constitution, which generally shields states from being sued by private parties in federal court. In essence, the Port Authority claimed it was so closely tied to the two states that created it that it should share in their constitutional immunity from suit.\n\nThe United States District Court for the District of New Jersey denied the Port Authority's claim of sovereign immunity and allowed the employees' suits to proceed. On appeal, the Third Circuit Court of Appeals reversed, concluding that the Port Authority was indeed an arm of the states of New York and New Jersey and therefore entitled to Eleventh Amendment protection.\n\nThe Supreme Court agreed to hear the case because of the significant and recurring question of when government-created entities qualify for sovereign immunity—a question with enormous practical consequences for workers and others who might need to sue such entities. The case also presented the novel question of how to apply sovereign immunity doctrine to a bi-state entity that serves two states rather than one, a situation the Court had not squarely addressed.",
+  "parties": [
+    {
+      "party": "Jeffrey Hess et al.",
+      "role": "petitioner",
+      "coreArgument": "The PATH employees argued that the Port Authority was not entitled to Eleventh Amendment immunity because it was a financially independent, self-sustaining corporate entity whose debts and legal obligations would not be paid from either New York's or New Jersey's state treasuries. They contended that the core purpose of sovereign immunity is to protect state finances, and since no state treasury was at risk, immunity should not apply.",
+      "supportingPoints": [
+        "The Port Authority is financially self-sufficient, funding its operations through its own tolls, fares, fees, and bond issuances rather than through state appropriations or tax revenues",
+        "Neither New York nor New Jersey is legally obligated to cover the Port Authority's debts or satisfy judgments entered against it, meaning no state treasury would be affected by a lawsuit",
+        "The Port Authority operates with a distinct corporate structure and substantial autonomy from both states, functioning more like an independent business enterprise than a traditional state agency"
+      ]
+    },
+    {
+      "party": "Port Authority Trans-Hudson Corporation",
+      "role": "respondent",
+      "coreArgument": "The Port Authority argued that it was an arm of the states of New York and New Jersey and therefore shared in their Eleventh Amendment immunity. It contended that because it was created by two sovereign states through an interstate compact approved by Congress, and because the states exercised control over its governance, it should be treated like any other state entity for immunity purposes.",
+      "supportingPoints": [
+        "The Port Authority was created by a formal interstate compact between two sovereign states with congressional approval, making it an exercise of state sovereignty",
+        "The governors of both states appoint the Port Authority's board of commissioners and retain veto power over the Authority's actions, demonstrating substantial state control",
+        "The Port Authority performs essential governmental functions—operating public transportation and infrastructure—that would otherwise fall to the states themselves"
+      ]
+    }
+  ],
+  "holding": "In a 6–3 decision authored by Justice Ruth Bader Ginsburg, the Supreme Court reversed the Third Circuit and held that the Port Authority of New York and New Jersey was not entitled to Eleventh Amendment sovereign immunity. The Court concluded that the Port Authority was not an 'arm of the state' and therefore could be sued by its employees under FELA in federal court.\n\nJustice Ginsburg's majority opinion grounded the analysis in the core purpose of the Eleventh Amendment: protecting state treasuries from the burden of paying judgments in private lawsuits. The Court explained that the question of whether an entity qualifies for sovereign immunity is not answered by labels or formalities, but by a substance-based inquiry into the entity's actual relationship with the state. The critical question is whether a judgment against the entity would effectively come out of a state's own pocket.\n\nApplying this framework, the Court examined several factors and found that the Port Authority failed to qualify for immunity. Most importantly, the Port Authority was financially independent—it generated its own revenue from tolls, fares, and facility charges, and funded itself through its own bond issues. Neither New York nor New Jersey had any legal obligation to fund the Port Authority's operations or pay any judgments against it. A lawsuit against the Port Authority would not threaten either state's treasury, which the Court identified as the central concern the Eleventh Amendment was designed to address.\n\nThe Court also considered the Port Authority's governance structure, its degree of autonomy from the two states, and the way it was treated under state law. While the governors appointed commissioners and retained veto power, the Port Authority otherwise operated with considerable independence as a distinct corporate entity. The Court noted that the bi-state nature of the entity further complicated any claim of immunity, since the entity served two sovereigns and could not be neatly categorized as a part of either one's government. Taken together, these factors demonstrated that the Port Authority was not the kind of entity the Eleventh Amendment was meant to protect.\n\nThe decision established a pragmatic, multi-factor approach to evaluating arm-of-the-state claims, emphasizing that financial independence from the state treasury is the most significant consideration. The ruling ensured that workers employed by entities like the Port Authority retained their federal statutory rights to sue for workplace injuries.",
+  "voteCount": "6-3",
+  "majorityAuthor": "Ruth Bader Ginsburg",
+  "dissentingOpinions": [
+    {
+      "author": "Sandra Day O'Connor",
+      "joinedBy": [
+        "Antonin Scalia",
+        "Clarence Thomas"
+      ],
+      "coreArgument": "Justice O'Connor argued that the Port Authority should be entitled to sovereign immunity because it was created by two sovereign states acting through an interstate compact, performs core governmental functions, and is subject to significant state control through gubernatorial appointments and veto power. She contended that the majority placed too much emphasis on the financial independence factor while undervaluing the entity's governmental nature and the states' structural control over it.",
+      "keyPoints": [
+        "The Port Authority was created through a formal exercise of state sovereignty—an interstate compact approved by Congress—and this origin should carry substantial weight in the immunity analysis",
+        "The majority's heavy focus on whether state treasuries are directly at risk improperly narrows the Eleventh Amendment, which also protects the dignity and sovereignty of states and their instrumentalities",
+        "The states exercise meaningful control over the Port Authority through the appointment of commissioners and veto power over its minutes, demonstrating the entity functions as an arm of both states even if it is financially self-sustaining",
+        "The practical effect of the majority's rule is that states can lose constitutional immunity simply by structuring their instrumentalities to be financially self-supporting, which penalizes fiscal responsibility"
+      ]
+    }
+  ],
+  "concurringNote": "Justice Stevens joined the majority opinion but also wrote a brief concurring opinion emphasizing the importance of the Eleventh Amendment's core purpose of protecting state treasuries, and noting that the unique bi-state character of the Port Authority further undermined its claim to immunity on behalf of either individual state."
 }

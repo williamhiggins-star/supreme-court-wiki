@@ -5,5 +5,48 @@
   "year": 1986,
   "summary": "The Court held that restitution obligations imposed as conditions of a criminal sentence are not dischargeable in bankruptcy, recognizing restitution as serving rehabilitative and punitive criminal justice goals.",
   "significance": "Cited for the Court's observation that courts of appeals had uniformly treated restitution as criminal punishment, forming the backdrop against which Congress later enacted the MVRA.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Whether a restitution obligation imposed as a condition of probation in a state criminal case can be discharged in a federal bankruptcy proceeding under the Bankruptcy Code.",
+  "backgroundAndFacts": "Carolyn Kelly was a Connecticut resident who received welfare benefits—specifically Aid to Families with Dependent Children (AFDC)—to which she was not entitled. After an investigation, she was charged with and convicted of larceny in Connecticut state court for committing welfare fraud. The court sentenced her to a suspended prison term and placed her on probation, with the condition that she pay restitution to the State of Connecticut's Department of Income Maintenance, headed by Commissioner Robinson. Under Connecticut law, such restitution payments were directed to the state's criminal injuries compensation fund.\n\nAfter her conviction, Kelly filed a petition for personal bankruptcy under Chapter 7 of the federal Bankruptcy Code. She sought to have the restitution obligation discharged—that is, legally wiped away—as part of her bankruptcy case. The central legal dispute was whether the restitution was the kind of debt that bankruptcy law allows a debtor to escape. The relevant section of the Bankruptcy Code, Section 523(a)(7), says that a debtor cannot discharge 'a fine, penalty, or forfeiture payable to and for the benefit of a governmental unit' so long as it 'is not compensation for actual pecuniary loss.' Kelly argued that her restitution was essentially compensation for the state's actual financial loss—the welfare payments she had improperly received—and therefore did not fall within this exception, meaning it should be dischargeable.\n\nThe bankruptcy court sided with Kelly, concluding that restitution was compensatory in nature and could be discharged. On appeal, the federal district court reversed, and the United States Court of Appeals for the Second Circuit affirmed the district court's ruling. The Second Circuit held that the restitution obligation was not dischargeable because it was imposed as part of a criminal sentence and served purposes beyond mere compensation, such as rehabilitation and punishment.\n\nThe Supreme Court agreed to hear the case because different federal courts had been reaching conflicting conclusions about whether criminal restitution orders could be wiped out through bankruptcy. The case raised important questions about the relationship between federal bankruptcy law and the power of state courts to impose criminal sentences.",
+  "parties": [
+    {
+      "party": "Carolyn Kelly",
+      "role": "petitioner",
+      "coreArgument": "Kelly argued that her restitution obligation was essentially a debt that compensated the state for its actual financial loss from her welfare fraud, and therefore it did not fall within the Bankruptcy Code's exception for fines and penalties. Because the restitution matched the amount the state had lost, she contended it was 'compensation for actual pecuniary loss' and should be dischargeable in bankruptcy like any other debt.",
+      "supportingPoints": [
+        "The plain language of Section 523(a)(7) only protects from discharge fines or penalties that are 'not compensation for actual pecuniary loss,' and restitution by definition compensates for a specific financial loss suffered by the victim.",
+        "The restitution amount was calculated based on the actual dollar amount of welfare payments improperly received, making it inherently compensatory rather than punitive.",
+        "Federal bankruptcy law is designed to give honest debtors a fresh start, and allowing states to use criminal restitution to effectively create non-dischargeable debts would undermine this fundamental purpose."
+      ]
+    },
+    {
+      "party": "Hilda Robinson, Commissioner of Income Maintenance of Connecticut",
+      "role": "respondent",
+      "coreArgument": "Robinson argued that restitution imposed as a condition of a criminal sentence is fundamentally a criminal sanction, not an ordinary debt. Because it serves the criminal justice goals of punishment and rehabilitation, it should be treated as a penalty under Section 523(a)(7) and not be dischargeable in bankruptcy.",
+      "supportingPoints": [
+        "Restitution ordered as a condition of probation is part of the criminal sentencing process and is designed primarily to serve rehabilitative and punitive purposes, not to compensate victims.",
+        "The state sentencing court has broad discretion in setting restitution amounts based on the offender's circumstances, which shows it functions as a criminal sanction rather than a compensatory award.",
+        "Allowing federal bankruptcy courts to override state criminal sentences would be an extraordinary intrusion into state sovereignty over criminal justice, which Congress did not intend."
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled 7–2 in favor of Robinson, holding that restitution obligations imposed as conditions of a state criminal sentence are not dischargeable in bankruptcy. The majority opinion was written by Justice Lewis F. Powell Jr.\n\nThe Court began by emphasizing a critical interpretive principle: federal courts should be very reluctant to read federal statutes in a way that interferes with the states' power to administer their own criminal justice systems. The Court stated that this presumption against federal intrusion into state criminal proceedings should guide the interpretation of the Bankruptcy Code. Unless Congress clearly indicated otherwise, the Court would not read the bankruptcy laws to permit the nullification of a state court's criminal sentence.\n\nTurning to the text and purpose of Section 523(a)(7), the Court held that restitution imposed as part of a criminal sentence falls within the exception for fines and penalties that are not dischargeable. The Court acknowledged that restitution might appear compensatory on the surface—after all, the amount often corresponds to the victim's loss. However, the Court explained that in the criminal context, restitution serves fundamentally different purposes. A sentencing judge uses restitution as a tool of rehabilitation, helping the offender confront the consequences of the crime, and as a form of punishment. The sentencing judge retains discretion over the amount and terms of restitution, tailoring it to the offender's situation. This distinguishes criminal restitution from a simple civil debt.\n\nThe Court also examined the legislative history of the Bankruptcy Code and found support for this interpretation. Congress had intended Section 523(a)(7) to preserve the ability of governmental entities to enforce penal sanctions. The Court noted that virtually every court of appeals to consider the question had treated criminal restitution as punishment rather than mere compensation. Reading the statute to allow discharge of criminal restitution, the Court concluded, would represent an unprecedented federal intrusion into state criminal sentencing—a result Congress never intended.\n\nFinally, the Court stressed the practical consequences of the opposing interpretation. If bankruptcy could erase criminal restitution, it would frustrate state sentencing courts and potentially allow offenders to escape meaningful consequences for their crimes simply by filing for bankruptcy. The majority thus affirmed the Second Circuit's decision that Kelly's restitution obligation survived her bankruptcy discharge.",
+  "voteCount": "7-2",
+  "majorityAuthor": "Lewis F. Powell Jr.",
+  "dissentingOpinions": [
+    {
+      "author": "Thurgood Marshall",
+      "joinedBy": [
+        "John Paul Stevens"
+      ],
+      "coreArgument": "Justice Marshall argued that the majority departed from the plain language of the statute. He contended that restitution is, by its very nature, compensation for actual pecuniary loss, and the text of Section 523(a)(7) clearly excludes such compensation from the non-discharge exception. In Marshall's view, the majority's concerns about federalism, while understandable, did not justify rewriting the statute's clear terms.",
+      "keyPoints": [
+        "The plain text of Section 523(a)(7) only prevents discharge of penalties that are 'not compensation for actual pecuniary loss,' and criminal restitution—calculated to match the victim's financial harm—is plainly compensation for pecuniary loss, regardless of the additional rehabilitative purposes it may serve.",
+        "The majority's reliance on federalism concerns and legislative history effectively overrode the clear statutory language, which is an improper approach to statutory interpretation.",
+        "Congress knew how to make criminal obligations non-dischargeable when it wanted to and could have explicitly addressed criminal restitution, but chose language that, read naturally, would make restitution dischargeable.",
+        "The majority's approach created an unprincipled distinction, since the same monetary obligation could be non-dischargeable when ordered by a criminal court but dischargeable when ordered by a civil court, even though the financial harm to the victim is identical."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions of particular note in this case."
 }

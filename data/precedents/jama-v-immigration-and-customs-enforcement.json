@@ -5,5 +5,50 @@
   "year": 2005,
   "summary": "Applied the principle that congressional silence on a particular issue should not be read as an implicit prohibition.",
   "significance": "Cited for Justice Scalia's opinion stating the principle that the Court does not lightly assume Congress omitted from statutes text it meant to include.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Immigration and Nationality Act require that a country accept or consent to receiving an alien before the United States can remove (deport) that person to that country under 8 U.S.C. § 1231(b)(2)?",
+  "backgroundAndFacts": "Keyse Jama was a native of Somalia who had been living in the United States. After being convicted of a criminal offense in Minnesota — a third-degree assault — he was placed in removal (deportation) proceedings by the federal government. The immigration authorities determined that he was removable and ordered him deported to Somalia, his country of birth.\n\nThe problem was that Somalia, at the time, had no functioning central government. Since the collapse of the Siad Barre regime in 1991, the country had been mired in civil war and lacked any recognized national authority that could formally agree to accept a deported person. Jama argued that the immigration statute — specifically 8 U.S.C. § 1231(b)(2), which governs where aliens are to be sent when removed — required the destination country to accept the person before the government could carry out the deportation. Because no Somali government existed to provide that acceptance, Jama contended he could not lawfully be sent there.\n\nThe government disagreed, arguing that acceptance by the destination country was not required under the relevant portion of the statute. The case went before the United States Court of Appeals for the Eighth Circuit, which sided with the government and ruled that the statute did not mandate acceptance from the receiving country in all removal scenarios.\n\nThe Supreme Court agreed to hear the case because federal appeals courts had reached conflicting conclusions on this question. Some circuits required acceptance by the destination country; others did not. This kind of disagreement among the circuits — known as a 'circuit split' — is a common reason the Supreme Court steps in to settle the law.",
+  "parties": [
+    {
+      "party": "Keyse Jama",
+      "role": "petitioner",
+      "coreArgument": "Jama argued that the Immigration and Nationality Act required the destination country to accept or consent to receiving an alien before the government could carry out the removal. Because Somalia had no functioning government capable of granting such acceptance, his deportation there was unlawful.",
+      "supportingPoints": [
+        "The overall statutory scheme contemplates cooperation between nations, and removal to a country that has not agreed to accept a person is fundamentally at odds with that framework.",
+        "Other provisions of the same statute explicitly reference 'acceptance' by a destination country, suggesting that acceptance is a baseline expectation throughout the removal process.",
+        "Sending a person to a country with no functioning government raises serious humanitarian and practical concerns, and Congress could not have intended to authorize such removals without any safeguard of consent."
+      ]
+    },
+    {
+      "party": "Immigration and Customs Enforcement (ICE)",
+      "role": "respondent",
+      "coreArgument": "ICE argued that the statute's text does not impose an acceptance requirement in every subsection governing removal of aliens. Where Congress wanted to require acceptance, it said so explicitly; where it was silent, no such requirement should be read in.",
+      "supportingPoints": [
+        "Section 1231(b)(2) contains some provisions that explicitly mention acceptance by the destination country and others that do not, and this difference must be treated as intentional and meaningful.",
+        "Reading an acceptance requirement into provisions where Congress omitted one would effectively give foreign nations a veto over the United States' ability to enforce its immigration laws.",
+        "The government has broad authority over immigration, and courts should not impose additional procedural requirements that Congress chose not to include in the statute."
+      ]
+    }
+  ],
+  "holding": "In a 5–4 decision authored by Justice Antonin Scalia, the Supreme Court ruled in favor of the government, holding that the Immigration and Nationality Act does not require the acceptance of the destination country before an alien can be removed there under certain provisions of § 1231(b)(2).\n\nThe majority's reasoning centered on close attention to the statutory text. Justice Scalia observed that Congress explicitly required the destination country's acceptance in some subsections of the removal statute but conspicuously omitted that requirement in others. Applying the well-established interpretive principle of 'expressio unius est exclusio alterius' — the idea that when a law explicitly mentions something in one place but leaves it out elsewhere, the omission is presumed to be deliberate — the Court concluded that Congress intentionally chose not to require acceptance in every removal scenario.\n\nJustice Scalia emphasized that the Court does not lightly assume that Congress accidentally left out language it intended to include. If Congress had wanted acceptance to be a universal requirement, it knew how to say so and chose not to. The silence of the statute on this point in certain subsections was meaningful, not an oversight.\n\nThe practical consequence of the ruling was significant: the federal government could remove aliens to countries that had not formally agreed to take them back, including to countries like Somalia that lacked a functioning central government. The decision reinforced the principle that courts should interpret statutes as written, rather than reading in requirements that the text does not contain, even when doing so might raise difficult practical or humanitarian questions.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Antonin Scalia",
+  "dissentingOpinions": [
+    {
+      "author": "David Souter",
+      "joinedBy": [
+        "John Paul Stevens",
+        "Ruth Bader Ginsburg",
+        "Stephen Breyer"
+      ],
+      "coreArgument": "Justice Souter argued that the statute, read as a whole, contemplated a system of cooperative international removal, and that interpreting it to allow deportation to a country that had not consented was contrary to the statute's structure and purpose. He raised concerns about the real-world consequences of deporting individuals to lawless territories with no functioning government.",
+      "keyPoints": [
+        "The overall statutory framework presupposes a functioning government in the destination country that can accept and process the returning alien, and the absence of explicit acceptance language in some subsections does not necessarily mean Congress intended to dispense with that baseline expectation.",
+        "The majority's textual analysis was too narrow and overlooked the broader context and purpose of the removal provisions, which were designed to operate within a framework of international cooperation.",
+        "Deporting a person to a country with no government to receive them raises serious humanitarian concerns that counsel against reading the statute to permit such outcomes without clear congressional authorization.",
+        "Congressional silence on a specific point should not automatically be interpreted as permission, especially when the consequences of that reading are so severe and unlikely to have been considered by the enacting Congress."
+      ]
+    }
+  ],
+  "concurringNote": "There were no separately filed concurring opinions of particular note in this case."
 }

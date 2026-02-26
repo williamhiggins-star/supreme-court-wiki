@@ -5,5 +5,48 @@
   "year": 0,
   "summary": "Interpreted the customs exception to the FTCA, which used broader language covering all detention of goods by customs officers regardless of intent.",
   "significance": "Cited by respondent to show that Congress knew how to write a broad exception covering both intentional and unintentional conduct, as it did in the customs-handling exception, but chose narrower language for the postal exception.",
-  "topics": []
+  "topics": [],
+  "legalQuestion": "Does the Federal Tort Claims Act's exception for claims 'arising in respect of' the detention of goods by customs officers bar lawsuits for property damage caused by negligent handling during customs inspections, or does it only bar claims challenging the detention itself?",
+  "backgroundAndFacts": "Walter Kosak was a traveler returning to the United States from abroad. When he arrived, U.S. Customs officers inspected his luggage and personal belongings. During the course of that inspection, Kosak alleged that customs officers negligently damaged several items of his property. He sought to recover compensation for this damage from the federal government.\n\nKosak filed suit under the Federal Tort Claims Act (FTCA), a federal law that generally allows private citizens to sue the United States government for injuries caused by the negligence of federal employees. However, the FTCA contains a number of specific exceptions — categories of claims for which the government has not waived its sovereign immunity and thus cannot be sued. One of those exceptions, found in 28 U.S.C. § 2680(c), bars any claim 'arising in respect of the assessment or collection of any tax or customs duty, or the detention of any goods, merchandise, or other property by any officer of customs or excise or any other law enforcement officer.'\n\nThe government moved to dismiss Kosak's lawsuit, arguing that his claim fell squarely within this customs exception. The federal district court agreed and dismissed the case. On appeal, the United States Court of Appeals for the Third Circuit affirmed the dismissal, concluding that the broad language of the exception covered claims for damage that occurred during the customs inspection process, not just claims directly challenging whether the detention was lawful.\n\nKosak petitioned the Supreme Court, arguing that the exception should be read more narrowly to bar only claims about the decision to detain goods — not claims about careless handling of those goods during inspection. The Supreme Court agreed to hear the case because the scope of this exception was an important and recurring question about when citizens could hold the government accountable for damage done by its agents.",
+  "parties": [
+    {
+      "party": "Walter Kosak",
+      "role": "petitioner",
+      "coreArgument": "Kosak argued that the customs exception in the FTCA should be read narrowly to bar only claims directly challenging the legality of a customs officer's decision to detain goods, not claims for negligent damage to property during a routine inspection. His claim was about carelessness, not about the propriety of the detention itself.",
+      "supportingPoints": [
+        "The word 'detention' in the statute refers to the act of holding or seizing goods, and a negligence claim about property damage is fundamentally different from a challenge to the detention itself",
+        "Reading the exception broadly to cover all negligence during customs inspections would leave travelers with no remedy for damage caused by government carelessness, undermining the FTCA's general purpose of allowing tort claims against the government",
+        "The FTCA's exceptions to the government's waiver of sovereign immunity should be strictly construed, because the overall purpose of the statute was to allow citizens to recover for government negligence"
+      ]
+    },
+    {
+      "party": "United States",
+      "role": "respondent",
+      "coreArgument": "The government argued that the statutory phrase 'arising in respect of... the detention of any goods' is deliberately broad language that covers all claims connected to the detention of goods by customs officers, including claims for negligent damage during inspection. Congress intentionally shielded customs operations from tort liability.",
+      "supportingPoints": [
+        "The phrase 'arising in respect of' is expansive and signals that Congress intended to cover not just the act of detention, but all related activities and consequences of that detention, including the handling of goods",
+        "Congress had practical reasons for broadly protecting customs activities from tort suits, as customs inspections necessarily involve handling large volumes of property and exposing the government to negligence claims would unduly burden customs enforcement",
+        "The plain text of the statute does not distinguish between intentional and negligent conduct — it sweeps broadly to cover any claim arising from the detention of goods"
+      ]
+    }
+  ],
+  "holding": "The Supreme Court ruled against Kosak in a 5–4 decision, holding that the customs exception in the FTCA bars not only claims challenging the legality of a customs detention but also claims for negligent damage to goods that occurs during the detention and inspection process. The majority opinion was written by Justice Thurgood Marshall.\n\nThe Court's reasoning centered on the breadth of the statutory language. Justice Marshall explained that the phrase 'arising in respect of... the detention of any goods' is deliberately expansive. The words 'arising in respect of' cast a wider net than more limited phrases like 'caused by' or 'resulting from.' Congress chose language that encompassed all claims that have a connection to the detention of goods by customs officers, not just claims that directly challenge whether the detention was legally justified.\n\nThe majority also examined the legislative history and practical purpose behind the exception. The Court noted that Congress understood that customs enforcement necessarily involves the inspection, handling, and temporary possession of travelers' property. By using broad language, Congress signaled its intent to shield these activities from tort liability, even when officers acted carelessly. The alternative reading — which would have allowed negligence suits while barring only challenges to the detention decision itself — would have largely gutted the exception, since few people would sue to challenge the legality of a routine inspection rather than to recover for damage done during one.\n\nThe Court acknowledged that this interpretation meant travelers like Kosak had no remedy under the FTCA for property damaged during customs inspections, but it concluded that this was the result Congress intended. The Court affirmed the Third Circuit's judgment dismissing Kosak's claim.",
+  "voteCount": "5-4",
+  "majorityAuthor": "Thurgood Marshall",
+  "dissentingOpinions": [
+    {
+      "author": "John Paul Stevens",
+      "joinedBy": [
+        "William J. Brennan Jr.",
+        "Harry A. Blackmun",
+        "Sandra Day O'Connor"
+      ],
+      "coreArgument": "Justice Stevens argued that the customs exception should be interpreted more narrowly, consistent with the FTCA's overall remedial purpose of allowing citizens to recover for government negligence. The dissent contended that 'detention of goods' refers specifically to the act of seizing and holding property, and that claims for careless damage during handling are fundamentally different from claims about detention itself.",
+      "keyPoints": [
+        "The FTCA's exceptions to the government's waiver of sovereign immunity should be strictly construed because the statute was designed to provide a remedy for citizens harmed by government negligence, and broad readings of exceptions frustrate that purpose",
+        "The majority's expansive reading of 'arising in respect of' effectively immunizes customs officers from all tort liability for property damage, leaving travelers with no recourse even when officers act with clear negligence",
+        "Congress likely intended the exception to protect the government from suits challenging enforcement decisions — such as whether goods were properly seized — not to insulate the government from liability for carelessly destroying a traveler's belongings"
+      ]
+    }
+  ]
 }
