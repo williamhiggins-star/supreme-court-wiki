@@ -25,8 +25,8 @@ export function formatDate(dateStr: string): string {
 
 export function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decided" {
   if (c.docketStatus === "decided") return "decided";
-  if (c.docketStatus === "upcoming") return "upcoming";
   if (c.outcome) return "decided";
+  if (!c.argumentDate) return "upcoming";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const [y, m, d] = c.argumentDate.split("-").map(Number);

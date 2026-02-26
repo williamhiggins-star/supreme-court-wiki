@@ -105,6 +105,45 @@ async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]>
 }
 
 // ---------------------------------------------------------------------------
+// Step 1b — Promote argued cases (upcoming → petition)
+// ---------------------------------------------------------------------------
+
+/**
+ * For any "upcoming" case whose argumentDate is in the past, flip
+ * docketStatus to "petition" so it appears in the Argued column.
+ * This runs every day and requires no API calls.
+ */
+function promoteArguedCases(existingSlugs: Set<string>): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let promoted = 0;
+
+  for (const slug of existingSlugs) {
+    const filePath = path.join(CASES_DIR, `${slug}.json`);
+    let caseData: CaseSummary;
+    try {
+      caseData = JSON.parse(fs.readFileSync(filePath, "utf-8")) as CaseSummary;
+    } catch {
+      continue;
+    }
+
+    if (caseData.docketStatus !== "upcoming") continue;
+    if (!caseData.argumentDate) continue;
+
+    const [y, m, d] = caseData.argumentDate.split("-").map(Number);
+    const argDate = new Date(y, m - 1, d);
+    if (argDate >= today) continue;
+
+    caseData.docketStatus = "petition";
+    fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
+    console.log(`  ✓ promoted to argued: ${caseData.title} (argued ${caseData.argumentDate})`);
+    promoted++;
+  }
+
+  return promoted;
+}
+
+// ---------------------------------------------------------------------------
 // Step 2 — Process new transcripts
 // ---------------------------------------------------------------------------
 
@@ -567,6 +606,10 @@ async function main() {
   const existingSlugs = getExistingCaseSlugs();
   console.log(`Existing cases in data/: ${existingSlugs.size}`);
 
+  // Step 1b: Promote argued cases (upcoming → petition, no API needed)
+  console.log("\nPromoting argued cases...");
+  const promoted = promoteArguedCases(existingSlugs);
+
   // Step 1 + 2: New transcripts
   const transcripts = await fetchTranscriptList(termYear);
   const newTranscripts = await processNewTranscripts(
@@ -588,10 +631,11 @@ async function main() {
   await updateCalendar(termYear);
 
   console.log("\n=== Summary ===");
+  console.log(`  Cases promoted to argued  : ${promoted}`);
   console.log(`  New transcripts processed : ${newTranscripts}`);
   console.log(`  Upcoming cases added      : ${newUpcoming}`);
   console.log(`  Decisions updated         : ${decisionsUpdated}`);
-  console.log(`  Total changes             : ${newTranscripts + newUpcoming + decisionsUpdated}`);
+  console.log(`  Total changes             : ${promoted + newTranscripts + newUpcoming + decisionsUpdated}`);
   console.log(`Finished at: ${new Date().toISOString()}`);
 }
 
