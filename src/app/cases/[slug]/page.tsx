@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCaseBySlug, getAllCases, getAllTerms } from "@/lib/data";
 import { DecisionSection } from "@/components/DecisionSection";
+import { getArticlesForCase } from "@/lib/articles";
+import type { Article } from "@/types";
 
 export async function generateStaticParams() {
   return getAllCases().map((c) => ({ slug: c.slug }));
@@ -28,6 +30,8 @@ export default async function CasePage({
 
   // Build a slug→term name lookup so pills show "Ghost Gun" not "ghost gun"
   const termMap = new Map(getAllTerms().map((t) => [t.slug, t.term]));
+
+  const articles = c.termYear === "2025" ? getArticlesForCase(c.slug) : [];
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -194,6 +198,17 @@ export default async function CasePage({
             </div>
           </Section>
         )}
+
+        {/* Analysis & Opinions */}
+        {articles.length > 0 && (
+          <Section title="Analysis &amp; Opinions">
+            <div className="space-y-4">
+              {articles.map((article) => (
+                <CaseArticleEntry key={article.id} article={article} />
+              ))}
+            </div>
+          </Section>
+        )}
       </div>
     </main>
   );
@@ -224,6 +239,28 @@ function Prose({ text }: { text: string }) {
           {para}
         </p>
       ))}
+    </div>
+  );
+}
+
+function CaseArticleEntry({ article }: { article: Article }) {
+  return (
+    <div className="bg-white rounded-lg border border-gray-200 p-5 space-y-2">
+      <div className="flex items-center gap-2 text-xs text-gray-500">
+        <span className="bg-gray-100 px-2 py-0.5 rounded font-medium text-gray-700">
+          {article.source}
+        </span>
+        <span>{article.publishedAt}</span>
+      </div>
+      <a
+        href={article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block text-base font-semibold text-gray-900 hover:text-blue-700 hover:underline leading-snug"
+      >
+        {article.title} ↗
+      </a>
+      <p className="text-sm text-gray-600 leading-relaxed">{article.summary}</p>
     </div>
   );
 }

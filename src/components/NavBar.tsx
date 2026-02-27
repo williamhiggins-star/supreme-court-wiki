@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { label: "Court Calendar", href: "#court-calendar" },
   { label: "Circuit Splits", href: "/appeals" },
   { label: "Appellate Impacts", href: "/appellate-impacts" },
+  { label: "Analysis", href: "/analysis" },
 ];
 
 function SearchIcon() {

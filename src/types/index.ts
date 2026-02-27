@@ -102,3 +102,19 @@ export interface ProcessingResult {
   newTerms: LegalTerm[];
   newPrecedents: PrecedentCase[];
 }
+
+export interface Article {
+  id: string;               // sha1(url).slice(0,16)
+  title: string;
+  url: string;
+  source: string;           // "SCOTUSblog", "The Atlantic", etc.
+  sourceDomain: string;     // "scotusblog.com"
+  publishedAt: string;      // YYYY-MM-DD
+  summary: string;          // Claude 2–3 sentence summary
+  relatedCaseSlugs: string[];
+}
+
+export interface ArticlesData {
+  generated: string;
+  articles: Article[];
+}
