@@ -110,6 +110,7 @@ export interface Article {
   source: string;           // "SCOTUSblog", "The Atlantic", etc.
   sourceDomain: string;     // "scotusblog.com"
   publishedAt: string;      // YYYY-MM-DD
+  author?: string;          // byline from RSS feed, if available
   summary: string;          // Claude 2–3 sentence summary
   relatedCaseSlugs: string[];
 }

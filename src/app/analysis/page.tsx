@@ -76,6 +76,7 @@ function ArticleCard({
         <span className="bg-gray-100 px-2 py-0.5 rounded font-medium text-gray-700">
           {article.source}
         </span>
+        {article.author && <span className="font-medium text-gray-600">{article.author}</span>}
         <span>{article.publishedAt}</span>
       </div>
 

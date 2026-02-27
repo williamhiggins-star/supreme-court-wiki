@@ -38,37 +38,41 @@ const CASES_DIR = path.join(DATA_DIR, "cases");
 const OUT_PATH  = path.join(DATA_DIR, "articles.json");
 
 const RSS_FEEDS = [
-  { source: "SCOTUSblog",           domain: "scotusblog.com",      url: "https://www.scotusblog.com/feed/" },
-  { source: "The Atlantic",         domain: "theatlantic.com",     url: "https://www.theatlantic.com/feed/all/" },
-  { source: "The New Yorker",       domain: "newyorker.com",       url: "https://www.newyorker.com/feed/everything" },
-  { source: "NY Mag Intelligencer", domain: "nymag.com",           url: "https://nymag.com/feeds/intelligencer.rss" },
-  { source: "NYT Politics",         domain: "nytimes.com",         url: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml" },
-  { source: "NYT Opinion",          domain: "nytimes.com",         url: "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml" },
-  { source: "Washington Post",      domain: "washingtonpost.com",  url: "https://feeds.washingtonpost.com/rss/politics" },
-  { source: "The Dispatch",         domain: "thedispatch.com",     url: "https://thedispatch.com/feed/" },
-  { source: "Financial Times",      domain: "ft.com",              url: "https://www.ft.com/?format=rss" },
+  { source: "SCOTUSblog",           domain: "scotusblog.com",      url: "https://www.scotusblog.com/feed/",                                       trustAll: true  },
+  { source: "The Atlantic",         domain: "theatlantic.com",     url: "https://www.theatlantic.com/feed/all/",                                  trustAll: false },
+  { source: "The New Yorker",       domain: "newyorker.com",       url: "https://www.newyorker.com/feed/everything",                              trustAll: false },
+  { source: "NY Mag Intelligencer", domain: "nymag.com",           url: "https://nymag.com/feeds/intelligencer.rss",                              trustAll: false },
+  { source: "NYT Politics",         domain: "nytimes.com",         url: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",               trustAll: false },
+  { source: "NYT Opinion",          domain: "nytimes.com",         url: "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml",                trustAll: false },
+  { source: "Washington Post",      domain: "washingtonpost.com",  url: "https://feeds.washingtonpost.com/rss/politics",                          trustAll: false },
+  { source: "The Dispatch",         domain: "thedispatch.com",     url: "https://thedispatch.com/feed/",                                          trustAll: false },
+  { source: "Financial Times",      domain: "ft.com",              url: "https://www.ft.com/?format=rss",                                         trustAll: false },
 ];
 
-const SCOTUS_KEYWORDS = [
+// Phrases that unambiguously indicate an article is about the Supreme Court.
+// These must appear in the article TITLE (not just a passing mention in the description).
+// "justice" alone matches "Justice Department"; "court" alone matches any court;
+// individual last names match unrelated people. Only exact multi-word phrases are used.
+const STRONG_SCOTUS_PHRASES = [
   "supreme court",
   "scotus",
-  "justices",
-  "oral argument",
-  "cert granted",
   "certiorari",
-  "ruling",
-  "decision",
-  "opinion",
-  "dissent",
-  "alito",
-  "thomas",
-  "sotomayor",
-  "kagan",
-  "gorsuch",
-  "kavanaugh",
-  "barrett",
-  "jackson",
-  "roberts",
+  "cert. granted",
+  "cert. denied",
+  "cert granted",
+  "cert denied",
+  "oral argument",
+  "chief justice",
+  "john roberts",     // commonly referenced without "Chief Justice" prefix
+  "justice alito",
+  "justice thomas",
+  "justice sotomayor",
+  "justice kagan",
+  "justice gorsuch",
+  "justice kavanaugh",
+  "justice barrett",
+  "justice jackson",
+  "justice roberts",
 ];
 
 const MAX_AGE_DAYS = 90;
@@ -83,6 +87,7 @@ interface Article {
   source: string;
   sourceDomain: string;
   publishedAt: string;
+  author?: string;
   summary: string;
   relatedCaseSlugs: string[];
 }
@@ -99,6 +104,7 @@ interface RawItem {
   source: string;
   sourceDomain: string;
   publishedAt: string;
+  author: string;
   description: string;
 }
 
@@ -132,6 +138,28 @@ function extractTag(xml: string, tag: string): string {
   const m = xml.match(re);
   if (!m) return "";
   return extractCdata(m[1]).trim();
+}
+
+function extractAuthor(block: string): string {
+  // dc:creator is the standard for NYT, WaPo, SCOTUSblog
+  const dcCreator = extractTag(block, "dc:creator");
+  if (dcCreator) return stripHtml(dcCreator).trim();
+
+  // Atom: <author><name>...</name></author>
+  const authorBlockMatch = block.match(/<author>([\s\S]*?)<\/author>/i);
+  if (authorBlockMatch) {
+    const name = extractTag(authorBlockMatch[1], "name");
+    if (name) return stripHtml(extractCdata(name)).trim();
+    // Plain RSS 2.0 author — may be "email@domain (Display Name)" or just a name
+    const plain = stripHtml(extractCdata(authorBlockMatch[1])).trim();
+    const parenName = plain.match(/\(([^)]+)\)/);
+    if (parenName) return parenName[1].trim();
+    // Skip bare email addresses
+    if (/^[^\s@]+@[^\s@]+$/.test(plain)) return "";
+    return plain;
+  }
+
+  return "";
 }
 
 function makeId(url: string): string {
@@ -172,6 +200,9 @@ function parseRssFeed(
     const publishedAt = parseDate(rawDate);
     if (!publishedAt) continue;
 
+    // Author
+    const author = extractAuthor(block);
+
     // Description / summary
     const rawDesc =
       extractTag(block, "description") ||
@@ -182,17 +213,20 @@ function parseRssFeed(
 
     const id = makeId(url);
 
-    items.push({ id, title, url, source, sourceDomain: domain, publishedAt, description });
+    items.push({ id, title, url, source, sourceDomain: domain, publishedAt, author, description });
   }
 
   return items;
 }
 
-function isScotusRelevant(item: RawItem, caseTitleWords: string[]): boolean {
-  const text = `${item.title} ${item.description}`.toLowerCase();
-  if (SCOTUS_KEYWORDS.some((kw) => text.includes(kw))) return true;
-  if (caseTitleWords.some((w) => text.includes(w))) return true;
-  return false;
+function isScotusRelevant(item: RawItem, _caseTitleWords: string[]): boolean {
+  // Require a strong SCOTUS phrase in the article TITLE.
+  // Description-only matches produce too many false positives: general political feeds
+  // routinely mention "supreme court" or case party words in passing.
+  // SCOTUSblog (trustAll: true) is the authoritative per-case source; other outlets
+  // writing about a specific SCOTUS case will always name the court in the headline.
+  const titleLower = item.title.toLowerCase();
+  return STRONG_SCOTUS_PHRASES.some((kw) => titleLower.includes(kw));
 }
 
 // ── Load case context ─────────────────────────────────────────────────────────
@@ -200,7 +234,6 @@ function isScotusRelevant(item: RawItem, caseTitleWords: string[]): boolean {
 interface CaseContext {
   slug: string;
   title: string;
-  titleWords: string[];
   termYear: string;
 }
 
@@ -212,11 +245,7 @@ function loadCases(): CaseContext[] {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const d: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), "utf-8"));
       if (d.termYear !== "2025") continue;
-      const titleWords = (d.title as string)
-        .toLowerCase()
-        .split(/\s+/)
-        .filter((w: string) => w.length > 4);
-      results.push({ slug: d.slug, title: d.title, titleWords, termYear: d.termYear });
+      results.push({ slug: d.slug, title: d.title, termYear: d.termYear });
     } catch { /* skip */ }
   }
   return results;
@@ -324,7 +353,6 @@ ${articleBlocks}`;
 
   try {
     const parsed: SummaryResult[] = JSON.parse(raw.slice(jsonStart, jsonEnd + 1));
-    // Pad or trim to match item count
     while (parsed.length < items.length) {
       parsed.push({ summary: "", relatedCaseSlugs: [] });
     }
@@ -353,7 +381,6 @@ async function main() {
   const caseContexts = loadCases();
   console.log(`Loaded ${caseContexts.length} 2025-term cases for context\n`);
 
-  const allCaseTitleWords = caseContexts.flatMap((c) => c.titleWords);
   const validSlugs = new Set(caseContexts.map((c) => c.slug));
 
   // Cutoff date
@@ -367,22 +394,27 @@ async function main() {
     console.log(`Fetching ${feed.source}...`);
     const items = await fetchFeed(feed.url, feed.source, feed.domain);
     console.log(`  ${items.length} items parsed`);
-    candidateItems.push(...items);
+
+    // SCOTUSblog: trust all articles; others: require SCOTUS relevance check
+    const relevant = feed.trustAll
+      ? items
+      : items.filter((item) => isScotusRelevant(item, []));
+    console.log(`  ${relevant.length} SCOTUS-relevant`);
+    candidateItems.push(...relevant);
     await new Promise((r) => setTimeout(r, 300));
   }
 
-  console.log(`\nTotal raw items: ${candidateItems.length}`);
+  console.log(`\nTotal SCOTUS-relevant items: ${candidateItems.length}`);
 
-  // Filter: relevance, age, dedup
+  // Filter: age and dedup against existing
   const newItems = candidateItems.filter((item) => {
     if (item.publishedAt < cutoffStr) return false;
     if (existingIds.has(item.id)) return false;
     if (existingUrls.has(item.url)) return false;
-    if (!isScotusRelevant(item, allCaseTitleWords)) return false;
     return true;
   });
 
-  console.log(`New SCOTUS-relevant items: ${newItems.length}`);
+  console.log(`New items (not yet in DB): ${newItems.length}`);
 
   if (newItems.length === 0) {
     console.log("\nNo new articles to process.");
@@ -411,7 +443,7 @@ async function main() {
           console.warn(`  ✗ No summary for: ${item.title.slice(0, 60)}`);
           continue;
         }
-        summarised.push({
+        const article: Article = {
           id: item.id,
           title: item.title,
           url: item.url,
@@ -420,9 +452,12 @@ async function main() {
           publishedAt: item.publishedAt,
           summary: result.summary,
           relatedCaseSlugs,
-        });
+        };
+        if (item.author) article.author = item.author;
+        summarised.push(article);
         console.log(
           `  ✓ ${item.title.slice(0, 60)}` +
+            (item.author ? ` (${item.author})` : "") +
             (relatedCaseSlugs.length ? ` [${relatedCaseSlugs.join(", ")}]` : ""),
         );
       }
@@ -431,7 +466,7 @@ async function main() {
     }
   }
 
-  // Merge with existing, sort by date desc, remove old (>90 days)
+  // Merge with existing, sort by date desc, drop articles older than cutoff
   const merged = [...existing.articles, ...summarised].filter(
     (a) => a.publishedAt >= cutoffStr,
   );
