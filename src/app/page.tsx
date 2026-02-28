@@ -4,6 +4,7 @@ import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getCircuitMapData } from "@/lib/circuits-server";
 import { groupCasesByCircuit, circuitKeyToNumber } from "@/lib/circuits";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
+import { getArticlesData } from "@/lib/articles";
 import { getJusticesData } from "@/lib/justices";
 import { getLawyersData } from "@/lib/lawyers";
 import { CourtCalendar } from "@/components/CourtCalendar";
@@ -79,6 +80,8 @@ export default function HomePage() {
   const justicesData = getJusticesData();
   const lawyersData = getLawyersData();
   const splitsData = getCircuitSplitsData();
+  const articlesData = getArticlesData();
+  const previewArticles = (articlesData?.articles ?? []).slice(0, 6);
 
   // Pre-compute per-circuit split summaries for the map component
   const splitsByCircuit: Record<number, import("@/lib/circuits").CircuitSplitSummary[]> = {};
@@ -132,166 +135,218 @@ export default function HomePage() {
         <NavBar />
       </header>
 
-      <section id="docket" className="max-w-7xl mx-auto px-6 py-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+      {/* Docket + Circuit Splits + Analysis sidebar — unified 4-col layout */}
+      <section className="max-w-7xl mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 
-          {/* Upcoming Oral Arguments */}
-          <div className="flex flex-col">
+          {/* Left 3 cols: Docket then Circuit Splits */}
+          <div className="lg:col-span-3 flex flex-col gap-10">
+
+            {/* The Docket */}
+            <div id="docket">
+              <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+
+                {/* Upcoming Oral Arguments */}
+                <div className="flex flex-col">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
+                    Upcoming
+                  </h3>
+                  {upcoming.length === 0 ? (
+                    <p className="text-gray-400 text-sm italic">No cases</p>
+                  ) : (
+                    <>
+                      <div className="flex flex-col gap-3">
+                        {upcoming.slice(0, PAGE_SIZE).map((c) => (
+                          <Link
+                            key={c.slug}
+                            href={`/cases/${c.slug}`}
+                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                          >
+                            <p className="text-xs text-gray-400 mb-1">
+                              {c.termYear} Term · {c.caseNumber}
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900 leading-snug">
+                              {c.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatDate(c.argumentDate)}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
+                      {upcoming.length > PAGE_SIZE && (
+                        <Link
+                          href="/docket/upcoming"
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                        >
+                          View all {upcoming.length} cases →
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Argued */}
+                <div className="flex flex-col">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
+                    Argued
+                  </h3>
+                  {argued.length === 0 ? (
+                    <p className="text-gray-400 text-sm italic">No cases</p>
+                  ) : (
+                    <>
+                      <div className="flex flex-col gap-3">
+                        {argued.slice(0, PAGE_SIZE).map((c) => (
+                          <Link
+                            key={c.slug}
+                            href={`/cases/${c.slug}`}
+                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                          >
+                            <p className="text-xs text-gray-400 mb-1">
+                              {c.termYear} Term · {c.caseNumber}
+                            </p>
+                            <p className="text-sm font-semibold text-gray-900 leading-snug">
+                              {c.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Argued {formatDate(c.argumentDate)}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
+                      {argued.length > PAGE_SIZE && (
+                        <Link
+                          href="/docket/argued"
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                        >
+                          View all {argued.length} cases →
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Decided */}
+                <div className="flex flex-col">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
+                    Decided
+                  </h3>
+                  {decided.length === 0 ? (
+                    <p className="text-gray-400 text-sm italic">No cases</p>
+                  ) : (
+                    <>
+                      <div className="flex flex-col gap-3">
+                        {decided.slice(0, PAGE_SIZE).map((item) => (
+                          <Link
+                            key={item.slug}
+                            href={item.href}
+                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                          >
+                            <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
+                            <p className="text-sm font-semibold text-gray-900 leading-snug">
+                              {item.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
+                              {item.voteSplit ? ` · ${item.voteSplit}` : ""}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
+                      {decided.length > PAGE_SIZE && (
+                        <Link
+                          href="/docket/decided"
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                        >
+                          View all {decided.length} cases →
+                        </Link>
+                      )}
+                    </>
+                  )}
+                </div>
+
+              </div>
+            </div>
+
+            {/* Circuit Splits */}
+            {(() => {
+              const statusOrder: Record<string, number> = { scotus_pending: 0, open: 1 };
+              const featured = [...(splitsData?.splits ?? [])]
+                .filter((s) => s.status !== "scotus_resolved")
+                .sort((a, b) => {
+                  const od = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
+                  if (od !== 0) return od;
+                  return b.lastUpdated.localeCompare(a.lastUpdated);
+                })
+                .slice(0, 2);
+              if (featured.length === 0) return null;
+              return (
+                <div id="circuit-splits">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                    Current Circuit Splits
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-6">
+                    These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {featured.map((s) => (
+                      <SplitCard key={s.id} split={s} />
+                    ))}
+                  </div>
+                  <p className="mt-4 text-xs text-gray-400">
+                    Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
+                    <a href="/appeals" className="text-blue-600 hover:underline">
+                      See all circuit splits &rarr;
+                    </a>
+                  </p>
+                </div>
+              );
+            })()}
+
+          </div>{/* end left col-span-3 */}
+
+          {/* Right col: Analysis & Opinions preview */}
+          <div className="lg:col-span-1 flex flex-col">
             <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
-              Upcoming
+              Analysis &amp; Opinions
             </h3>
-            {upcoming.length === 0 ? (
-              <p className="text-gray-400 text-sm italic">No cases</p>
+            {previewArticles.length === 0 ? (
+              <p className="text-gray-400 text-sm italic">No articles yet.</p>
             ) : (
               <>
                 <div className="flex flex-col gap-3">
-                  {upcoming.slice(0, PAGE_SIZE).map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/cases/${c.slug}`}
+                  {previewArticles.map((article) => (
+                    <a
+                      key={article.id}
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
                     >
                       <p className="text-xs text-gray-400 mb-1">
-                        {c.termYear} Term · {c.caseNumber}
+                        {article.source}
+                        {article.author ? ` · ${article.author}` : ""}
                       </p>
                       <p className="text-sm font-semibold text-gray-900 leading-snug">
-                        {c.title}
+                        {article.title} ↗
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {formatDate(c.argumentDate)}
-                      </p>
-                    </Link>
+                      <p className="text-xs text-gray-500 mt-1">{article.publishedAt}</p>
+                    </a>
                   ))}
                 </div>
-                {upcoming.length > PAGE_SIZE && (
-                  <Link
-                    href="/docket/upcoming"
-                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
-                  >
-                    View all {upcoming.length} cases →
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Argued */}
-          <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
-              Argued
-            </h3>
-            {argued.length === 0 ? (
-              <p className="text-gray-400 text-sm italic">No cases</p>
-            ) : (
-              <>
-                <div className="flex flex-col gap-3">
-                  {argued.slice(0, PAGE_SIZE).map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/cases/${c.slug}`}
-                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                    >
-                      <p className="text-xs text-gray-400 mb-1">
-                        {c.termYear} Term · {c.caseNumber}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-900 leading-snug">
-                        {c.title}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Argued {formatDate(c.argumentDate)}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-                {argued.length > PAGE_SIZE && (
-                  <Link
-                    href="/docket/argued"
-                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
-                  >
-                    View all {argued.length} cases →
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Decided */}
-          <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
-              Decided
-            </h3>
-            {decided.length === 0 ? (
-              <p className="text-gray-400 text-sm italic">No cases</p>
-            ) : (
-              <>
-                <div className="flex flex-col gap-3">
-                  {decided.slice(0, PAGE_SIZE).map((item) => (
-                    <Link
-                      key={item.slug}
-                      href={item.href}
-                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                    >
-                      <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
-                      <p className="text-sm font-semibold text-gray-900 leading-snug">
-                        {item.title}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
-                        {item.voteSplit ? ` · ${item.voteSplit}` : ""}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-                {decided.length > PAGE_SIZE && (
-                  <Link
-                    href="/docket/decided"
-                    className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
-                  >
-                    View all {decided.length} cases →
-                  </Link>
-                )}
+                <Link
+                  href="/analysis"
+                  className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                >
+                  View all analysis →
+                </Link>
               </>
             )}
           </div>
 
         </div>
       </section>
-
-      {(() => {
-        // Priority: scotus_pending first, then open (newest first). Never show resolved.
-        const statusOrder: Record<string, number> = { scotus_pending: 0, open: 1 };
-        const featured = [...(splitsData?.splits ?? [])]
-          .filter((s) => s.status !== "scotus_resolved")
-          .sort((a, b) => {
-            const od = (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1);
-            if (od !== 0) return od;
-            return b.lastUpdated.localeCompare(a.lastUpdated);
-          })
-          .slice(0, 2);
-        if (featured.length === 0) return null;
-        return (
-          <section id="circuit-splits" className="max-w-7xl mx-auto px-6 pb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">
-              Current Circuit Splits
-            </h2>
-            <p className="text-sm text-gray-500 mb-6">
-              These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {featured.map((s) => (
-                <SplitCard key={s.id} split={s} />
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-gray-400">
-              Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
-              <a href="/appeals" className="text-blue-600 hover:underline">
-                See all circuit splits &rarr;
-              </a>
-            </p>
-          </section>
-        );
-      })()}
 
       <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
