@@ -137,12 +137,11 @@ export default function HomePage() {
 
       {/* Docket + Circuit Splits + Analysis sidebar — unified 4-col layout */}
       <section id="docket" className="max-w-7xl mx-auto px-6 py-10">
-        {/* Section header sits above the grid so all 4 columns start flush */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-6 items-stretch">
 
           {/* Left 3 cols: Docket then Circuit Splits */}
           <div className="lg:col-span-3 flex flex-col lg:pr-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
 
             {/* Docket sub-columns */}
             <div>
