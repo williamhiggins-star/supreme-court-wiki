@@ -81,7 +81,7 @@ export default function HomePage() {
   const lawyersData = getLawyersData();
   const splitsData = getCircuitSplitsData();
   const articlesData = getArticlesData();
-  const previewArticles = (articlesData?.articles ?? []).slice(0, 6);
+  const previewArticles = articlesData?.articles ?? [];
 
   // Pre-compute per-circuit split summaries for the map component
   const splitsByCircuit: Record<number, import("@/lib/circuits").CircuitSplitSummary[]> = {};
@@ -337,7 +337,7 @@ export default function HomePage() {
                 </div>
                 <Link
                   href="/analysis"
-                  className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
+                  className="mt-auto pt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                 >
                   View all analysis →
                 </Link>
