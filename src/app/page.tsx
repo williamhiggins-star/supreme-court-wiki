@@ -309,9 +309,9 @@ export default function HomePage() {
 
           {/* Right col: Analysis & Opinions preview */}
           <div className="lg:col-span-1 flex flex-col lg:border-l lg:border-gray-300 lg:pl-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
-              Analysis &amp; Opinions
-            </h3>
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">
+              Analysis<br />&amp; Opinions
+            </h2>
             {previewArticles.length === 0 ? (
               <p className="text-gray-400 text-sm italic">No articles yet.</p>
             ) : (
