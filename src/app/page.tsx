@@ -82,6 +82,7 @@ export default function HomePage() {
   const splitsData = getCircuitSplitsData();
   const articlesData = getArticlesData();
   const previewArticles = (articlesData?.articles ?? []).slice(0, 8);
+  const caseMap = new Map(cases.map((c) => [c.slug, c.title]));
 
   // Pre-compute per-circuit split summaries for the map component
   const splitsByCircuit: Record<number, import("@/lib/circuits").CircuitSplitSummary[]> = {};
@@ -317,22 +318,41 @@ export default function HomePage() {
               <>
                 <div className="flex flex-col gap-3">
                   {previewArticles.map((article) => (
-                    <a
+                    <div
                       key={article.id}
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                      className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
                     >
                       <p className="text-xs text-gray-400 mb-1">
                         {article.source}
                         {article.author ? ` · ${article.author}` : ""}
                       </p>
-                      <p className="text-sm font-semibold text-gray-900 leading-snug">
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline"
+                      >
                         {article.title} ↗
-                      </p>
+                      </a>
                       <p className="text-xs text-gray-500 mt-1">{article.publishedAt}</p>
-                    </a>
+                      {article.relatedCaseSlugs.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {article.relatedCaseSlugs.map((slug) => {
+                            const title = caseMap.get(slug);
+                            if (!title) return null;
+                            return (
+                              <Link
+                                key={slug}
+                                href={`/cases/${slug}`}
+                                className="text-xs text-blue-600 hover:underline"
+                              >
+                                {title} →
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
                 <Link
