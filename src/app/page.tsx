@@ -81,7 +81,7 @@ export default function HomePage() {
   const lawyersData = getLawyersData();
   const splitsData = getCircuitSplitsData();
   const articlesData = getArticlesData();
-  const previewArticles = articlesData?.articles ?? [];
+  const previewArticles = (articlesData?.articles ?? []).slice(0, 8);
 
   // Pre-compute per-circuit split summaries for the map component
   const splitsByCircuit: Record<number, import("@/lib/circuits").CircuitSplitSummary[]> = {};
