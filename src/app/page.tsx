@@ -139,10 +139,10 @@ export default function HomePage() {
       <section id="docket" className="max-w-7xl mx-auto px-6 py-10">
         {/* Section header sits above the grid so all 4 columns start flush */}
         <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-y-6 items-stretch">
 
           {/* Left 3 cols: Docket then Circuit Splits */}
-          <div className="lg:col-span-3 flex flex-col gap-10">
+          <div className="lg:col-span-3 flex flex-col lg:pr-6">
 
             {/* Docket sub-columns */}
             <div>
@@ -283,7 +283,7 @@ export default function HomePage() {
                 .slice(0, 2);
               if (featured.length === 0) return null;
               return (
-                <div id="circuit-splits">
+                <div id="circuit-splits" className="border-t border-gray-300 mt-10 pt-10">
                   <h2 className="text-2xl font-bold text-gray-800 mb-1">
                     Current Circuit Splits
                   </h2>
@@ -308,7 +308,7 @@ export default function HomePage() {
           </div>{/* end left col-span-3 */}
 
           {/* Right col: Analysis & Opinions preview */}
-          <div className="lg:col-span-1 flex flex-col">
+          <div className="lg:col-span-1 flex flex-col lg:border-l lg:border-gray-300 lg:pl-6">
             <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
               Analysis &amp; Opinions
             </h3>
