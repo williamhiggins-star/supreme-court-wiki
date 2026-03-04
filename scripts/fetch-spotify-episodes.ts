@@ -128,7 +128,8 @@ async function main() {
     // Skip if already matched
     if (c.podcastEpisodeUrl) { skipped++; continue; }
 
-    // Only match cases that have been argued (argument date in the past)
+    // Only match current term (2025) cases that have been argued
+    if (c.termYear !== "2025") continue;
     if (!c.argumentDate || c.argumentDate >= today) continue;
 
     let bestScore = 0;
