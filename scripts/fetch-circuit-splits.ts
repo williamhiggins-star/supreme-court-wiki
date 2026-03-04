@@ -190,6 +190,10 @@ function resolveCircuitKey(courtStr: string): string {
 
 // ── Load pending SCOTUS cases for context ─────────────────────────────────────
 
+// Regex that reliably signals a circuit split exists
+const SPLIT_SIGNAL_RE =
+  /\b(circuit split|circuits (are|have been|have) (divided|split)|split (among|between|in) the circuits|conflict (among|between|in) the circuits|circuits? (disagree|conflict)|sister circuits|other circuits have held|courts (are|have been|have) (divided|split))\b/i;
+
 interface ScotusContext {
   slug: string;
   caseNumber: string;
@@ -197,6 +201,8 @@ interface ScotusContext {
   legalQuestion: string;
   termYear: string;
   docketStatus?: string;
+  /** Set when the case description itself describes a circuit split. */
+  splitDescription?: string;
 }
 
 function loadPendingScotus(): ScotusContext[] {
@@ -208,6 +214,11 @@ function loadPendingScotus(): ScotusContext[] {
       const d: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), "utf-8"));
       if (d.termYear !== "2025") continue;
       if (d.docketStatus === "decided") continue;
+
+      // Detect whether this SCOTUS case describes a circuit split
+      const splitText = [d.significance ?? "", d.backgroundAndFacts ?? ""].join(" ");
+      const describesSplit = SPLIT_SIGNAL_RE.test(splitText);
+
       results.push({
         slug: d.slug,
         caseNumber: d.caseNumber,
@@ -215,6 +226,10 @@ function loadPendingScotus(): ScotusContext[] {
         legalQuestion: d.legalQuestion ?? "",
         termYear: d.termYear,
         docketStatus: d.docketStatus,
+        // Include the first ~600 chars of significance as the split description
+        splitDescription: describesSplit
+          ? (d.significance ?? "").slice(0, 600)
+          : undefined,
       });
     } catch { /* skip */ }
   }
@@ -292,16 +307,37 @@ async function analyzeSplits(
     })
     .join("\n");
 
-  const scotusBlock = scotusCases
+  // Split SCOTUS cases into two groups: those that describe a split (higher priority)
+  // and the rest (used only for cross-reference linking).
+  const scotusSplitCases = scotusCases.filter((c) => c.splitDescription);
+  const scotusRefCases   = scotusCases.filter((c) => !c.splitDescription);
+
+  const scotusSplitBlock = scotusSplitCases.length > 0
+    ? scotusSplitCases
+        .map(
+          (c) =>
+            `• ${c.caseNumber} — ${c.title} [slug: ${c.slug}]\n` +
+            `  Legal question: ${c.legalQuestion}\n` +
+            `  Why it matters (describes the split): ${c.splitDescription}`,
+        )
+        .join("\n\n")
+    : "(none)";
+
+  const scotusRefBlock = scotusRefCases
     .map(
       (c) =>
         `• ${c.caseNumber} — ${c.title}\n  Question: ${c.legalQuestion}\n  Slug: ${c.slug}`,
     )
     .join("\n");
 
-  const prompt = `You are an expert federal appellate attorney analyzing circuit court opinions to identify active circuit splits — genuine doctrinal disagreements between federal circuit courts on a question of federal law.
+  const prompt = `You are an expert federal appellate attorney identifying active circuit splits — genuine doctrinal disagreements between federal circuit courts on a question of federal law.
 
-Below are recent published federal circuit court opinions that appear to discuss or acknowledge circuit splits. For each DISTINCT split you can identify, return a structured entry.
+You have TWO sources of evidence:
+
+SOURCE A — Recent circuit court opinions from CourtListener that discuss circuit splits.
+SOURCE B — Pending SCOTUS cases whose own descriptions explicitly describe a circuit split (these are the splits that caused SCOTUS to grant cert; they are REAL and MUST appear in your output if you can populate at least two named circuits on different sides).
+
+For each DISTINCT split you identify from either source, return a structured entry.
 
 Return ONLY a valid JSON array (no prose, no markdown). Each element must match this schema exactly:
 
@@ -337,18 +373,21 @@ Rules:
 - A split REQUIRES AT LEAST 2 named circuits on DIFFERENT sides — skip any split where you cannot name specific circuits on both sides
 - Do NOT invent circuit positions — only include circuits explicitly identified in the text
 - For circuit keys, use: ca1, ca2, ca3, ca4, ca5, ca6, ca7, ca8, ca9, ca10, ca11, cadc, cafc
-- If a pending SCOTUS case is directly related to a split, set relatedScotusSlug and relatedScotusTitle
+- SOURCE B (SCOTUS-described splits) MUST be included when you can identify at least 2 named circuits on different sides — their relatedScotusSlug and relatedScotusTitle must be set
 - If SCOTUS has already resolved the split, set status to "scotus_resolved"
-- If SCOTUS has granted cert, set status to "scotus_pending"
+- If SCOTUS has granted cert on a split, set status to "scotus_pending" and fill relatedScotusSlug / relatedScotusTitle
 - Otherwise status is "open"
 - Merge opinions about the same split into one entry
-- Maximum 15 splits — prioritize the most significant ones
+- Maximum 20 splits — prioritize significant ones; SOURCE B entries are always significant
 - If you cannot identify any genuine splits, return an empty array []
 
-Pending SCOTUS cases for cross-reference:
-${scotusBlock}
+SOURCE B — SCOTUS cases that explicitly describe circuit splits (MUST generate entries for these):
+${scotusSplitBlock}
 
-Opinion documents:
+SOURCE A (cross-reference only for non-SOURCE-B SCOTUS links):
+${scotusRefBlock}
+
+SOURCE A — Circuit court opinion documents from CourtListener:
 ${opinionBlocks}`;
 
   console.log("  Sending to Claude for analysis...");
