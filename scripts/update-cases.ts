@@ -534,6 +534,128 @@ function updateDecidedCases(
 }
 
 // ---------------------------------------------------------------------------
+// Step 2b — Fill missing keyExchanges for promoted argued cases
+// ---------------------------------------------------------------------------
+//
+// When a case is promoted from "upcoming" → "petition" by promoteArguedCases,
+// it retains keyExchanges: [] from its stub. processNewTranscripts then skips
+// it because it is no longer "upcoming". This step catches those cases once
+// their transcript is published.
+
+const KEY_EXCHANGES_SYSTEM = `You are a legal expert analyzing Supreme Court oral argument transcripts.
+You always respond with valid JSON matching the exact schema provided. Do not include any text outside the JSON object.`;
+
+function buildKeyExchangesPrompt(transcriptText: string, parties: string[]): string {
+  const MAX_CHARS = 150_000;
+  const trimmed =
+    transcriptText.length > MAX_CHARS
+      ? transcriptText.slice(0, MAX_CHARS) + "\n\n[TRANSCRIPT TRIMMED]"
+      : transcriptText;
+  return `Read this Supreme Court oral argument transcript and extract the most revealing exchanges between justices and each counsel.
+
+Return a JSON object with EXACTLY this structure:
+{
+  "parties": [
+    {
+      "party": "<exact party name>",
+      "keyExchanges": [
+        {
+          "justice": "Justice Name",
+          "question": "What the justice asked (1-2 sentences)",
+          "context": "Why this line of questioning matters (1 sentence)",
+          "significance": "What it revealed about the justice's thinking (1 sentence)"
+        }
+      ]
+    }
+  ]
+}
+
+Rules:
+- At most 3 keyExchanges per party — choose the most revealing ones only
+- Match "party" exactly to one of: ${parties.map((p) => `"${p}"`).join(", ")}
+- Return ONLY the JSON object, no other text
+
+TRANSCRIPT:
+${trimmed}`;
+}
+
+async function fillMissingKeyExchanges(
+  client: Anthropic,
+  transcripts: TranscriptEntry[],
+  existingSlugs: Set<string>
+): Promise<number> {
+  const transcriptMap = new Map(transcripts.map((t) => [t.caseNumber, t.transcriptUrl]));
+  let filled = 0;
+
+  for (const slug of existingSlugs) {
+    const filePath = path.join(CASES_DIR, `${slug}.json`);
+    let caseData: CaseSummary;
+    try {
+      caseData = JSON.parse(fs.readFileSync(filePath, "utf-8")) as CaseSummary;
+    } catch {
+      continue;
+    }
+
+    // Only argued (petition) or decided cases need this
+    if (caseData.docketStatus !== "petition" && caseData.docketStatus !== "decided") continue;
+
+    const hasExchanges = caseData.parties.some(
+      (p) => p.keyExchanges && p.keyExchanges.length > 0
+    );
+    if (hasExchanges) continue;
+
+    const transcriptUrl = transcriptMap.get(caseData.caseNumber);
+    if (!transcriptUrl) continue; // transcript not published yet
+
+    console.log(`\n  Filling key exchanges for: ${caseData.title}`);
+    try {
+      const pdfBuffer = await downloadPdf(transcriptUrl);
+      const text = await extractText(pdfBuffer);
+      const partyNames = caseData.parties.map((p) => p.party);
+      const model = process.env.MODEL ?? "claude-opus-4-6";
+
+      const response = await withRetry(() =>
+        client.messages.create({
+          model,
+          max_tokens: 8000,
+          system: KEY_EXCHANGES_SYSTEM,
+          messages: [
+            { role: "user", content: buildKeyExchangesPrompt(text, partyNames) },
+          ],
+        })
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const textBlock = (response.content as any[]).find((b) => b.type === "text");
+      if (!textBlock?.text) throw new Error("No text in response");
+
+      const jsonMatch = (textBlock.text as string).match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("No JSON in response");
+
+      const result = JSON.parse(jsonMatch[0]) as {
+        parties: Array<{ party: string; keyExchanges: CaseSummary["parties"][number]["keyExchanges"] }>;
+      };
+
+      for (const rp of result.parties) {
+        const ep = caseData.parties.find((p) => p.party === rp.party);
+        if (ep) ep.keyExchanges = rp.keyExchanges;
+      }
+      if (!caseData.transcriptUrl.endsWith(".pdf")) {
+        caseData.transcriptUrl = transcriptUrl;
+      }
+
+      fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
+      console.log(`  ✓ Key exchanges added for ${caseData.title}`);
+      filled++;
+    } catch (err) {
+      console.error(`  Error filling key exchanges for ${caseData.title}: ${err}`);
+    }
+  }
+
+  return filled;
+}
+
+// ---------------------------------------------------------------------------
 // Step 5 — Update conference calendar from case distribution schedule PDF
 // ---------------------------------------------------------------------------
 
@@ -619,6 +741,10 @@ async function main() {
     termYear
   );
 
+  // Step 2b: Fill key exchanges for any argued cases still missing them
+  console.log("\nFilling missing key exchanges...");
+  const keyExchangesFilled = await fillMissingKeyExchanges(client, transcripts, existingSlugs);
+
   // Step 3: Upcoming arguments
   const upcoming = await fetchUpcomingArguments();
   const newUpcoming = await processUpcomingCases(client, upcoming, existingSlugs);
@@ -633,9 +759,10 @@ async function main() {
   console.log("\n=== Summary ===");
   console.log(`  Cases promoted to argued  : ${promoted}`);
   console.log(`  New transcripts processed : ${newTranscripts}`);
+  console.log(`  Key exchanges backfilled  : ${keyExchangesFilled}`);
   console.log(`  Upcoming cases added      : ${newUpcoming}`);
   console.log(`  Decisions updated         : ${decisionsUpdated}`);
-  console.log(`  Total changes             : ${promoted + newTranscripts + newUpcoming + decisionsUpdated}`);
+  console.log(`  Total changes             : ${promoted + newTranscripts + keyExchangesFilled + newUpcoming + decisionsUpdated}`);
   console.log(`Finished at: ${new Date().toISOString()}`);
 }
 
