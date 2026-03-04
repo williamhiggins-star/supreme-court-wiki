@@ -195,20 +195,23 @@ export function groupCasesByCircuit(
   return result;
 }
 
-// Circuit centroid overrides (AlbersUSA 975×610 viewport)
+// Circuit centroid overrides (AlbersUSA 975×610 viewport).
+// Computed via topojson.merge per circuit + pathFn.centroid on the combined geometry,
+// using the same projection (geoAlbersUsa scale 1300, translate [487.5, 305]).
+// Circuit 9 excludes AK (02) and HI (15) so the badge stays over the continental west.
 const CIRCUIT_CENTROID_OVERRIDES: Record<number, [number, number]> = {
-  1:  [872, 120],
-  2:  [790, 155],
-  3:  [750, 195],
-  4:  [710, 250],
-  5:  [520, 420],
-  6:  [660, 255],
-  7:  [600, 215],
-  8:  [485, 185],
-  9:  [170, 265],
-  10: [375, 290],
-  11: [665, 390],
-  12: [730, 210],
+  1:  [911, 116],
+  2:  [844, 168],
+  3:  [815, 228],
+  4:  [794, 331],
+  5:  [477, 466],
+  6:  [687, 266],
+  7:  [620, 231],
+  8:  [493, 216],
+  9:  [166, 207],
+  10: [343, 306],
+  11: [727, 460],
+  12: [828, 267],
 };
 
 export function getCircuitCentroids(
