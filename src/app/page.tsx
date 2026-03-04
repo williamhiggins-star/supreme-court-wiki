@@ -131,7 +131,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-ft-paper">
       <header className="bg-ft-pink pt-10 px-6">
         <h1 className="mx-auto text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight text-center">
-          <span style={{ fontFamily: "Graphika81, Georgia, serif" }}>Supreme Court Tracker</span>
+          <span style={{ fontFamily: "Graphika81, Georgia, serif" }}>SCOTUS Dashboard</span>
         </h1>
         <NavBar />
       </header>
