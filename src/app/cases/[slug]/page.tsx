@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getCaseBySlug, getAllCases, getAllTerms } from "@/lib/data";
 import { DecisionSection } from "@/components/DecisionSection";
 import { getArticlesForCase } from "@/lib/articles";
+import { getCircuitSplitForCase } from "@/lib/circuit-splits";
+import { SplitCardEmbed } from "@/components/CircuitSplitsSection";
 import type { Article } from "@/types";
 
 export async function generateStaticParams() {
@@ -32,6 +34,7 @@ export default async function CasePage({
   const termMap = new Map(getAllTerms().map((t) => [t.slug, t.term]));
 
   const articles = c.termYear === "2025" ? getArticlesForCase(c.slug) : [];
+  const circuitSplit = getCircuitSplitForCase(c.slug);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -117,6 +120,13 @@ export default async function CasePage({
         <Section title="Why This Case Matters">
           <Prose text={c.significance} />
         </Section>
+
+        {/* Circuit split — shown when this case resolves an active split */}
+        {circuitSplit && (
+          <Section title="The Circuit Split">
+            <SplitCardEmbed split={circuitSplit} />
+          </Section>
+        )}
 
         {/* Parties */}
         <Section title="The Arguments">

@@ -48,3 +48,9 @@ export function getCircuitSplitsData(): CircuitSplitsData | null {
     return null;
   }
 }
+
+export function getCircuitSplitForCase(slug: string): CircuitSplit | null {
+  const data = getCircuitSplitsData();
+  if (!data) return null;
+  return data.splits.find((s) => s.relatedScotusSlug === slug) ?? null;
+}

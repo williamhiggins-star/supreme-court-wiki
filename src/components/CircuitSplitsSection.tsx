@@ -105,6 +105,27 @@ function PositionColumn({ pos, index }: { pos: CircuitPosition; index: number })
   );
 }
 
+/** Compact embed for case pages: description + positions, no question header. */
+export function SplitCardEmbed({ split }: { split: CircuitSplit }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      {/* Description only — legalQuestion is already on the case page */}
+      <div className="px-4 pt-4 pb-3 border-b border-gray-100">
+        <p className="text-xs text-gray-500 leading-relaxed">
+          {split.description}
+        </p>
+      </div>
+
+      {/* Positions */}
+      <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+        {split.positions.map((pos, i) => (
+          <PositionColumn key={pos.label} pos={pos} index={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function SplitCard({ split }: { split: CircuitSplit }) {
   const totalCircuits = split.positions.reduce((n, p) => n + p.circuits.length, 0);
 
