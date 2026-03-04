@@ -107,6 +107,9 @@ export default function HomePage() {
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const tomorrowDate = new Date(now);
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrow = `${tomorrowDate.getFullYear()}-${String(tomorrowDate.getMonth() + 1).padStart(2, "0")}-${String(tomorrowDate.getDate()).padStart(2, "0")}`;
 
   const casesByCircuit = groupCasesByCircuit(cases, today);
 
@@ -162,11 +165,23 @@ export default function HomePage() {
                           <Link
                             key={c.slug}
                             href={`/cases/${c.slug}`}
-                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                            className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
+                              c.argumentDate === today
+                                ? "border-2 border-green-500"
+                                : c.argumentDate === tomorrow
+                                ? "border-2 border-yellow-400"
+                                : "border border-gray-200 hover:border-gray-400"
+                            }`}
                           >
-                            <p className="text-xs text-gray-400 mb-1">
-                              {c.termYear} Term · {c.caseNumber}
-                            </p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                              {c.argumentDate === today && (
+                                <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
+                              )}
+                              {c.argumentDate === tomorrow && (
+                                <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
+                              )}
+                            </div>
                             <p className="text-sm font-semibold text-gray-900 leading-snug">
                               {c.title}
                             </p>
@@ -242,9 +257,18 @@ export default function HomePage() {
                           <Link
                             key={item.slug}
                             href={item.href}
-                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
+                            className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
+                              item.decisionDate === today
+                                ? "border-2 border-green-500"
+                                : "border border-gray-200 hover:border-gray-400"
+                            }`}
                           >
-                            <p className="text-xs text-gray-400 mb-1">{item.sub}</p>
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-xs text-gray-400">{item.sub}</p>
+                              {item.decisionDate === today && (
+                                <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>
+                              )}
+                            </div>
                             <p className="text-sm font-semibold text-gray-900 leading-snug">
                               {item.title}
                             </p>
