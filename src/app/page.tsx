@@ -186,10 +186,9 @@ export default function HomePage() {
                             );
                           }
                           return (
-                            <Link
+                            <div
                               key={c.slug}
-                              href={`/cases/${c.slug}`}
-                              className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
+                              className={`bg-white rounded p-4 hover:shadow-sm transition-all ${
                                 isTomorrow
                                   ? "border-2 border-yellow-400"
                                   : "border border-gray-200 hover:border-gray-400"
@@ -201,9 +200,11 @@ export default function HomePage() {
                                   <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
                                 )}
                               </div>
-                              <p className="text-sm font-semibold text-gray-900 leading-snug">{c.title}</p>
+                              <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                                {c.title}
+                              </Link>
                               <p className="text-xs text-gray-500 mt-1">{formatDate(c.argumentDate)}</p>
-                            </Link>
+                            </div>
                           );
                         })}
                       </div>
@@ -245,11 +246,13 @@ export default function HomePage() {
                             );
                           }
                           return (
-                            <Link key={c.slug} href={`/cases/${c.slug}`} className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+                            <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
                               <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
-                              <p className="text-sm font-semibold text-gray-900 leading-snug">{c.title}</p>
+                              <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                                {c.title}
+                              </Link>
                               <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
-                            </Link>
+                            </div>
                           );
                         })}
                       </div>
@@ -278,33 +281,25 @@ export default function HomePage() {
                         {decided.slice(0, PAGE_SIZE).map((item) => {
                           const isToday = item.decisionDate === today;
                           const borderCls = isToday ? "border-2 border-green-500" : "border border-gray-200 hover:border-gray-400";
-                          const meta = (
-                            <>
+                          return (
+                            <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
                               <div className="flex items-center justify-between mb-1">
                                 <p className="text-xs text-gray-400">{item.sub}</p>
                                 {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
                               </div>
-                              <p className="text-sm font-semibold text-gray-900 leading-snug">{item.title}</p>
+                              <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                                {item.title}
+                              </Link>
                               <p className="text-xs text-gray-500 mt-1">
                                 {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
                                 {item.voteSplit ? ` · ${item.voteSplit}` : ""}
                               </p>
-                            </>
-                          );
-                          if (item.podcastEpisodeUrl) {
-                            return (
-                              <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
-                                {meta}
+                              {item.podcastEpisodeUrl && (
                                 <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
                                   Listen on Spotify ↗
                                 </a>
-                              </div>
-                            );
-                          }
-                          return (
-                            <Link key={item.slug} href={item.href} className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
-                              {meta}
-                            </Link>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
