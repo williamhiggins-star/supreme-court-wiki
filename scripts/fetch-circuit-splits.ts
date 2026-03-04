@@ -201,6 +201,8 @@ interface ScotusContext {
   legalQuestion: string;
   termYear: string;
   docketStatus?: string;
+  /** true when docketStatus === "decided" — split should be marked scotus_resolved */
+  resolved?: boolean;
   /** Set when the case description itself describes a circuit split. */
   splitDescription?: string;
 }
@@ -213,11 +215,13 @@ function loadPendingScotus(): ScotusContext[] {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const d: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), "utf-8"));
       if (d.termYear !== "2025") continue;
-      if (d.docketStatus === "decided") continue;
 
       // Detect whether this SCOTUS case describes a circuit split
       const splitText = [d.significance ?? "", d.backgroundAndFacts ?? ""].join(" ");
       const describesSplit = SPLIT_SIGNAL_RE.test(splitText);
+
+      // Include decided cases only when they describe a split (resolved splits)
+      if (d.docketStatus === "decided" && !describesSplit) continue;
 
       results.push({
         slug: d.slug,
@@ -226,6 +230,7 @@ function loadPendingScotus(): ScotusContext[] {
         legalQuestion: d.legalQuestion ?? "",
         termYear: d.termYear,
         docketStatus: d.docketStatus,
+        resolved: d.docketStatus === "decided",
         // Include the first ~600 chars of significance as the split description
         splitDescription: describesSplit
           ? (d.significance ?? "").slice(0, 600)
@@ -316,7 +321,7 @@ async function analyzeSplits(
     ? scotusSplitCases
         .map(
           (c) =>
-            `• ${c.caseNumber} — ${c.title} [slug: ${c.slug}]\n` +
+            `• ${c.caseNumber} — ${c.title} [slug: ${c.slug}]${c.resolved ? " [DECIDED — set status: scotus_resolved]" : " [CERT GRANTED — set status: scotus_pending]"}\n` +
             `  Legal question: ${c.legalQuestion}\n` +
             `  Why it matters (describes the split): ${c.splitDescription}`,
         )
@@ -572,15 +577,42 @@ async function main() {
     console.error("  ✗ Claude analysis failed:", err);
   }
 
-  // 5 — Save
+  // 5 — Merge with existing SCOTUS-linked splits so non-deterministic LLM runs
+  //     don't silently drop splits that were previously identified.
+  const outPath = path.join(DATA_DIR, "circuit-splits.json");
+  let existingSplits: CircuitSplit[] = [];
+  try {
+    const existing = JSON.parse(fs.readFileSync(outPath, "utf-8")) as CircuitSplitsData;
+    existingSplits = existing.splits ?? [];
+  } catch { /* first run — nothing to merge */ }
+
+  // New splits take precedence by relatedScotusSlug (re-generated) or by id.
+  const newRelatedSlugs = new Set(
+    splits.filter((s) => s.relatedScotusSlug).map((s) => s.relatedScotusSlug as string)
+  );
+  const newIds = new Set(splits.map((s) => s.id));
+
+  // Preserve existing SCOTUS-linked splits that this run didn't regenerate.
+  const preserved = existingSplits.filter(
+    (s) => s.relatedScotusSlug &&
+           !newRelatedSlugs.has(s.relatedScotusSlug) &&
+           !newIds.has(s.id)
+  );
+
+  if (preserved.length > 0) {
+    console.log(`  Preserving ${preserved.length} existing SCOTUS-linked split(s) not regenerated this run:`);
+    preserved.forEach((s) => console.log(`    • ${s.id}`));
+  }
+
+  const mergedSplits = [...splits, ...preserved];
+
   const output: CircuitSplitsData = {
     generated: new Date().toISOString().split("T")[0],
-    splits,
+    splits: mergedSplits,
   };
 
-  const outPath = path.join(DATA_DIR, "circuit-splits.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
-  console.log(`\n✓ Saved ${splits.length} circuit splits → ${outPath}`);
+  console.log(`\n✓ Saved ${mergedSplits.length} circuit splits (${splits.length} new + ${preserved.length} preserved) → ${outPath}`);
 }
 
 main().catch((e) => {
