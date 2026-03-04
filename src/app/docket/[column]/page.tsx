@@ -112,32 +112,47 @@ function UpcomingList({ cases, today, tomorrow }: { cases: CaseSummary[]; today:
             {formatDate(date)}
           </h2>
           <div className="flex flex-col gap-3">
-            {dateCases.map((c) => (
-              <Link
-                key={c.slug}
-                href={`/cases/${c.slug}`}
-                className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
-                  c.argumentDate === today
-                    ? "border-2 border-green-500"
-                    : c.argumentDate === tomorrow
-                    ? "border-2 border-yellow-400"
-                    : "border border-gray-200 hover:border-gray-400"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
-                  {c.argumentDate === today && (
-                    <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
-                  )}
-                  {c.argumentDate === tomorrow && (
-                    <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
-                  )}
-                </div>
-                <p className="text-sm font-semibold text-gray-900 leading-snug">
-                  {c.title}
-                </p>
-              </Link>
-            ))}
+            {dateCases.map((c) => {
+              const isToday = c.argumentDate === today;
+              const isTomorrow = c.argumentDate === tomorrow;
+              if (isToday) {
+                return (
+                  <div key={c.slug} className="bg-white rounded p-4 border-2 border-green-500">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                        <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
+                        <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
+                          Listen Live ↗
+                        </a>
+                      </div>
+                    </div>
+                    <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                      {c.title}
+                    </Link>
+                  </div>
+                );
+              }
+              return (
+                <Link
+                  key={c.slug}
+                  href={`/cases/${c.slug}`}
+                  className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
+                    isTomorrow
+                      ? "border-2 border-yellow-400"
+                      : "border border-gray-200 hover:border-gray-400"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                    {isTomorrow && (
+                      <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
+                    )}
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900 leading-snug">{c.title}</p>
+                </Link>
+              );
+            })}
           </div>
         </div>
       ))}
