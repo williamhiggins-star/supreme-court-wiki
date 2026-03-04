@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllCases } from "@/lib/data";
+import { getCircuitSplitsData } from "@/lib/circuit-splits";
 import {
   formatDate,
   getDocketStatus,
@@ -36,6 +37,13 @@ export default async function DocketColumnPage({
   const col = column as Column;
 
   const cases = getAllCases();
+
+  const splitsData = getCircuitSplitsData();
+  const splitSlugs = new Set(
+    (splitsData?.splits ?? [])
+      .filter((s) => s.relatedScotusSlug)
+      .map((s) => s.relatedScotusSlug as string)
+  );
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -79,20 +87,20 @@ export default async function DocketColumnPage({
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {col === "upcoming" && (
-          <UpcomingList cases={upcoming} today={today} tomorrow={tomorrow} />
+          <UpcomingList cases={upcoming} today={today} tomorrow={tomorrow} splitSlugs={splitSlugs} />
         )}
         {col === "argued" && (
-          <ArguedList cases={argued} />
+          <ArguedList cases={argued} splitSlugs={splitSlugs} />
         )}
         {col === "decided" && (
-          <DecidedList items={decided} today={today} />
+          <DecidedList items={decided} today={today} splitSlugs={splitSlugs} />
         )}
       </div>
     </main>
   );
 }
 
-function UpcomingList({ cases, today, tomorrow }: { cases: CaseSummary[]; today: string; tomorrow: string }) {
+function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSummary[]; today: string; tomorrow: string; splitSlugs: Set<string> }) {
   if (cases.length === 0)
     return <p className="text-gray-400 italic">No upcoming cases.</p>;
 
@@ -125,6 +133,11 @@ function UpcomingList({ cases, today, tomorrow }: { cases: CaseSummary[]; today:
                         <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
                           Listen Live ↗
                         </a>
+                        {splitSlugs.has(c.slug) && (
+                          <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                            Circuit Split
+                          </Link>
+                        )}
                       </div>
                     </div>
                     <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
@@ -144,9 +157,16 @@ function UpcomingList({ cases, today, tomorrow }: { cases: CaseSummary[]; today:
                 >
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
-                    {isTomorrow && (
-                      <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
-                    )}
+                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                      {isTomorrow && (
+                        <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
+                      )}
+                      {splitSlugs.has(c.slug) && (
+                        <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                          Circuit Split
+                        </Link>
+                      )}
+                    </div>
                   </div>
                   <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                     {c.title}
@@ -161,42 +181,38 @@ function UpcomingList({ cases, today, tomorrow }: { cases: CaseSummary[]; today:
   );
 }
 
-function ArguedList({ cases }: { cases: CaseSummary[] }) {
+function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: Set<string> }) {
   if (cases.length === 0)
     return <p className="text-gray-400 italic">No argued cases.</p>;
 
   return (
     <div className="flex flex-col gap-3">
-      {cases.map((c) => {
-        if (c.podcastEpisodeUrl) {
-          return (
-            <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
-              <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
-              <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
-                {c.title}
+      {cases.map((c) => (
+        <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+            {splitSlugs.has(c.slug) && (
+              <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                Circuit Split
               </Link>
-              <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
-              <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
-                Listen on Spotify ↗
-              </a>
-            </div>
-          );
-        }
-        return (
-          <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
-            <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
-            <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
-              {c.title}
-            </Link>
-            <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+            )}
           </div>
-        );
-      })}
+          <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+            {c.title}
+          </Link>
+          <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+          {c.podcastEpisodeUrl && (
+            <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+              Listen on Spotify ↗
+            </a>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
 
-function DecidedList({ items, today }: { items: DecidedItem[]; today: string }) {
+function DecidedList({ items, today, splitSlugs }: { items: DecidedItem[]; today: string; splitSlugs: Set<string> }) {
   if (items.length === 0)
     return <p className="text-gray-400 italic">No decided cases.</p>;
 
@@ -209,7 +225,14 @@ function DecidedList({ items, today }: { items: DecidedItem[]; today: string }) 
           <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
             <div className="flex items-center justify-between mb-1">
               <p className="text-xs text-gray-400">{item.sub}</p>
-              {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+              <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+                {splitSlugs.has(item.slug) && (
+                  <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                    Circuit Split
+                  </Link>
+                )}
+              </div>
             </div>
             <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
               {item.title}

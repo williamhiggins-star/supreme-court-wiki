@@ -82,6 +82,11 @@ export default function HomePage() {
   const justicesData = getJusticesData();
   const lawyersData = getLawyersData();
   const splitsData = getCircuitSplitsData();
+  const splitSlugs = new Set(
+    (splitsData?.splits ?? [])
+      .filter((s) => s.relatedScotusSlug)
+      .map((s) => s.relatedScotusSlug as string)
+  );
   const articlesData = getArticlesData();
   const previewArticles = (articlesData?.articles ?? []).slice(0, 8);
   const caseMap = new Map(cases.map((c) => [c.slug, c.title]));
@@ -176,6 +181,11 @@ export default function HomePage() {
                                     <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
                                       Listen Live ↗
                                     </a>
+                                    {splitSlugs.has(c.slug) && (
+                                      <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                                        Circuit Split
+                                      </Link>
+                                    )}
                                   </div>
                                 </div>
                                 <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
@@ -196,9 +206,16 @@ export default function HomePage() {
                             >
                               <div className="flex items-center justify-between mb-1">
                                 <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
-                                {isTomorrow && (
-                                  <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
-                                )}
+                                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                  {isTomorrow && (
+                                    <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
+                                  )}
+                                  {splitSlugs.has(c.slug) && (
+                                    <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                                      Circuit Split
+                                    </Link>
+                                  )}
+                                </div>
                               </div>
                               <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                 {c.title}
@@ -230,31 +247,27 @@ export default function HomePage() {
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
-                        {argued.slice(0, PAGE_SIZE).map((c) => {
-                          if (c.podcastEpisodeUrl) {
-                            return (
-                              <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
-                                <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
-                                <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
-                                  {c.title}
+                        {argued.slice(0, PAGE_SIZE).map((c) => (
+                          <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                              {splitSlugs.has(c.slug) && (
+                                <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                                  Circuit Split
                                 </Link>
-                                <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
-                                <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
-                                  Listen on Spotify ↗
-                                </a>
-                              </div>
-                            );
-                          }
-                          return (
-                            <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
-                              <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
-                              <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
-                                {c.title}
-                              </Link>
-                              <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+                              )}
                             </div>
-                          );
-                        })}
+                            <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                              {c.title}
+                            </Link>
+                            <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+                            {c.podcastEpisodeUrl && (
+                              <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+                                Listen on Spotify ↗
+                              </a>
+                            )}
+                          </div>
+                        ))}
                       </div>
                       {argued.length > PAGE_SIZE && (
                         <Link
@@ -285,7 +298,14 @@ export default function HomePage() {
                             <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
                               <div className="flex items-center justify-between mb-1">
                                 <p className="text-xs text-gray-400">{item.sub}</p>
-                                {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+                                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                  {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+                                  {splitSlugs.has(item.slug) && (
+                                    <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                                      Circuit Split
+                                    </Link>
+                                  )}
+                                </div>
                               </div>
                               <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                 {item.title}
