@@ -44,6 +44,7 @@ export type DecidedItem = {
   href: string;
   decisionDate?: string;
   voteSplit?: string;
+  podcastEpisodeUrl?: string;
 };
 
 export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
@@ -60,6 +61,7 @@ export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
       href: `/cases/${c.slug}`,
       decisionDate: c.decisionDate,
       voteSplit,
+      podcastEpisodeUrl: c.podcastEpisodeUrl,
     };
   });
   items.sort((a, b) => {
@@ -227,23 +229,29 @@ export default function HomePage() {
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
-                        {argued.slice(0, PAGE_SIZE).map((c) => (
-                          <Link
-                            key={c.slug}
-                            href={`/cases/${c.slug}`}
-                            className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
-                          >
-                            <p className="text-xs text-gray-400 mb-1">
-                              {c.termYear} Term · {c.caseNumber}
-                            </p>
-                            <p className="text-sm font-semibold text-gray-900 leading-snug">
-                              {c.title}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Argued {formatDate(c.argumentDate)}
-                            </p>
-                          </Link>
-                        ))}
+                        {argued.slice(0, PAGE_SIZE).map((c) => {
+                          if (c.podcastEpisodeUrl) {
+                            return (
+                              <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+                                <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
+                                <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                                  {c.title}
+                                </Link>
+                                <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+                                <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+                                  Listen on Spotify ↗
+                                </a>
+                              </div>
+                            );
+                          }
+                          return (
+                            <Link key={c.slug} href={`/cases/${c.slug}`} className="block bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+                              <p className="text-xs text-gray-400 mb-1">{c.termYear} Term · {c.caseNumber}</p>
+                              <p className="text-sm font-semibold text-gray-900 leading-snug">{c.title}</p>
+                              <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+                            </Link>
+                          );
+                        })}
                       </div>
                       {argued.length > PAGE_SIZE && (
                         <Link
@@ -267,31 +275,38 @@ export default function HomePage() {
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
-                        {decided.slice(0, PAGE_SIZE).map((item) => (
-                          <Link
-                            key={item.slug}
-                            href={item.href}
-                            className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${
-                              item.decisionDate === today
-                                ? "border-2 border-green-500"
-                                : "border border-gray-200 hover:border-gray-400"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <p className="text-xs text-gray-400">{item.sub}</p>
-                              {item.decisionDate === today && (
-                                <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>
-                              )}
-                            </div>
-                            <p className="text-sm font-semibold text-gray-900 leading-snug">
-                              {item.title}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
-                              {item.voteSplit ? ` · ${item.voteSplit}` : ""}
-                            </p>
-                          </Link>
-                        ))}
+                        {decided.slice(0, PAGE_SIZE).map((item) => {
+                          const isToday = item.decisionDate === today;
+                          const borderCls = isToday ? "border-2 border-green-500" : "border border-gray-200 hover:border-gray-400";
+                          const meta = (
+                            <>
+                              <div className="flex items-center justify-between mb-1">
+                                <p className="text-xs text-gray-400">{item.sub}</p>
+                                {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+                              </div>
+                              <p className="text-sm font-semibold text-gray-900 leading-snug">{item.title}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
+                                {item.voteSplit ? ` · ${item.voteSplit}` : ""}
+                              </p>
+                            </>
+                          );
+                          if (item.podcastEpisodeUrl) {
+                            return (
+                              <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
+                                {meta}
+                                <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+                                  Listen on Spotify ↗
+                                </a>
+                              </div>
+                            );
+                          }
+                          return (
+                            <Link key={item.slug} href={item.href} className={`block bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
+                              {meta}
+                            </Link>
+                          );
+                        })}
                       </div>
                       {decided.length > PAGE_SIZE && (
                         <Link

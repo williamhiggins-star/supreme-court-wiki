@@ -69,6 +69,12 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: npx tsx scripts/fetch-analysis-articles.ts
 
+      - name: Match Spotify podcast episodes to argued cases
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: npx tsx scripts/fetch-spotify-episodes.ts
+
       - name: Commit new case data
         run: |
           git config user.name "Supreme Court Wiki Bot"

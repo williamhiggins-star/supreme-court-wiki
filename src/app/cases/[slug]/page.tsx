@@ -81,6 +81,33 @@ export default async function CasePage({
           </Section>
         )}
 
+        {/* Spotify oral argument recording */}
+        {c.podcastEpisodeUrl && (() => {
+          const m = c.podcastEpisodeUrl.match(/episode\/([A-Za-z0-9]+)/);
+          if (!m) return null;
+          const embedUrl = `https://open.spotify.com/embed/episode/${m[1]}?utm_source=generator`;
+          return (
+            <Section title="Oral Argument Recording">
+              <iframe
+                style={{ borderRadius: "12px" }}
+                src={embedUrl}
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+              />
+              <p className="mt-2 text-xs text-gray-400">
+                Via{" "}
+                <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
+                  Spotify ↗
+                </a>
+              </p>
+            </Section>
+          );
+        })()}
+
         {/* Background */}
         <Section title="Background & Facts">
           <Prose text={c.backgroundAndFacts} />
