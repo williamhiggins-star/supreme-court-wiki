@@ -18,6 +18,9 @@ const COLUMN_LABELS: Record<Column, string> = {
   decided: "Decided",
 };
 
+// Revalidate every hour so "Decided Today" / "Today" badges clear within 24 h.
+export const revalidate = 3600;
+
 export function generateStaticParams() {
   return [
     { column: "upcoming" },

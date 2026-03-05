@@ -132,7 +132,7 @@ function promoteArguedCases(existingSlugs: Set<string>): number {
 
     const [y, m, d] = caseData.argumentDate.split("-").map(Number);
     const argDate = new Date(y, m - 1, d);
-    if (argDate >= today) continue;
+    if (argDate > today) continue;
 
     caseData.docketStatus = "petition";
     fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));

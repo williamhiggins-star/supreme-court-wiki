@@ -15,6 +15,9 @@ import { LawyersSection } from "@/components/LawyersSection";
 import { NavBar } from "@/components/NavBar";
 import type { CaseSummary } from "@/types";
 
+// Revalidate every hour so "Decided Today" / "Today" badges clear within 24 h of the event day.
+export const revalidate = 3600;
+
 export function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -32,7 +35,7 @@ export function getDocketStatus(c: CaseSummary): "upcoming" | "argued" | "decide
   today.setHours(0, 0, 0, 0);
   const [y, m, d] = c.argumentDate.split("-").map(Number);
   const argDate = new Date(y, m - 1, d);
-  if (argDate >= today) return "upcoming";
+  if (argDate > today) return "upcoming";
   return "argued";
 }
 
