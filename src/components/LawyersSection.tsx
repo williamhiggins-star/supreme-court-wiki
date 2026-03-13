@@ -80,7 +80,7 @@ export function LawyersSection({ lawyers }: Props) {
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-0">
         {[leftCol, rightCol].map((col, ci) => (
-          <div key={ci} className="divide-y divide-gray-100">
+          <div key={ci} className="divide-y divide-[var(--tan)]/30">
             {col.map((l, i) => (
               <LawyerRow
                 key={l.label}
@@ -99,16 +99,21 @@ export function LawyersSection({ lawyers }: Props) {
       {/* Pinned popup */}
       {selectedLawyer && (
         <div
-          className="absolute z-10 bg-white border border-gray-200 rounded shadow-lg w-[300px]"
+          className="absolute z-10 bg-[var(--ivory)] border border-[var(--tan)] rounded shadow-lg w-[300px]"
           style={panelStyle()}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-3 pt-3 pb-2 border-b border-gray-100">
-            <p className="text-xs font-bold text-gray-800 leading-tight">{selectedLawyer.name}</p>
+          <div className="flex items-center justify-between px-3 pt-3 pb-2 border-b border-[var(--tan)]/30">
+            <p
+              className="text-[var(--charcoal)] leading-tight"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "13px" }}
+            >
+              {selectedLawyer.name}
+            </p>
             <button
               onClick={() => setSelectedLabel(null)}
-              className="text-gray-400 hover:text-gray-700 text-sm leading-none ml-2 shrink-0"
+              className="text-[var(--warm-gray)] hover:text-[var(--charcoal)] text-sm leading-none ml-2 shrink-0"
               aria-label="Close"
             >✕</button>
           </div>
@@ -133,10 +138,13 @@ export function LawyersSection({ lawyers }: Props) {
 function WinLossSummary({ lawyer }: { lawyer: LawyerStat }) {
   const pending = lawyer.casesArgued - lawyer.wins - lawyer.losses;
   return (
-    <div className="flex items-center gap-4 px-3 py-2 border-b border-gray-100 text-xs font-semibold">
-      <span className="text-emerald-600">Wins: {lawyer.wins}</span>
-      <span className="text-rose-600">Losses: {lawyer.losses}</span>
-      {pending > 0 && <span className="text-gray-400">Pending: {pending}</span>}
+    <div
+      className="flex items-center gap-4 px-3 py-2 border-b border-[var(--tan)]/30"
+      style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px", fontWeight: 500 }}
+    >
+      <span className="text-[var(--forest)]">Wins: {lawyer.wins}</span>
+      <span className="text-[var(--rust)]">Losses: {lawyer.losses}</span>
+      {pending > 0 && <span className="text-[var(--warm-gray)]">Pending: {pending}</span>}
     </div>
   );
 }
@@ -147,11 +155,11 @@ function CaseRow({ c }: { c: LawyerCase }) {
   const hasVoting = c.majorityAuthor || c.dissentAuthors?.length;
 
   return (
-    <li className="text-xs leading-snug">
+    <li className="leading-snug" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
       {/* Outcome badge + case link */}
       <div className="flex items-start gap-1.5">
         <OutcomeBadge outcome={c.outcome} />
-        <Link href={`/cases/${c.slug}`} className="text-blue-700 hover:underline flex-1">
+        <Link href={`/cases/${c.slug}`} className="text-[var(--rust)] hover:underline flex-1">
           {c.caseNumber} – {c.title}
         </Link>
       </div>
@@ -170,10 +178,31 @@ function CaseRow({ c }: { c: LawyerCase }) {
 
 function OutcomeBadge({ outcome }: { outcome?: string }) {
   if (outcome === "won")
-    return <span className="shrink-0 inline-block px-1 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">W</span>;
+    return (
+      <span
+        className="shrink-0 inline-block px-1 py-0.5 rounded-[3px] border border-[var(--forest)]/30 bg-[var(--forest)]/10 text-[var(--forest)]"
+        style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px" }}
+      >
+        W
+      </span>
+    );
   if (outcome === "lost")
-    return <span className="shrink-0 inline-block px-1 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">L</span>;
-  return <span className="shrink-0 inline-block px-1 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-400">–</span>;
+    return (
+      <span
+        className="shrink-0 inline-block px-1 py-0.5 rounded-[3px] border border-[var(--rust)]/30 bg-[var(--rust)]/10 text-[var(--rust)]"
+        style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px" }}
+      >
+        L
+      </span>
+    );
+  return (
+    <span
+      className="shrink-0 inline-block px-1 py-0.5 rounded-[3px] border border-[var(--tan)] bg-[var(--tan)]/10 text-[var(--warm-gray)]"
+      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px" }}
+    >
+      –
+    </span>
+  );
 }
 
 function JusticeCircles({
@@ -198,16 +227,16 @@ function JusticeCircles({
   return (
     <div className="flex items-center gap-1 mt-1 ml-5 flex-wrap">
       {isPer && (
-        <span className="text-[10px] text-gray-400 italic mr-1">Per curiam</span>
+        <span className="text-[var(--warm-gray)] italic mr-1" style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}>Per curiam</span>
       )}
       {ordered.map((key) => {
         const isMaj     = key === majorityAuthor && !isPer;
         const isDissent = dissentSet.has(key);
         const ring = isMaj
-          ? "ring-2 ring-emerald-500"
+          ? "ring-2 ring-[var(--forest)]"
           : isDissent
-          ? "ring-2 ring-rose-400"
-          : "ring-1 ring-gray-200";
+          ? "ring-2 ring-[var(--rust)]"
+          : "ring-1 ring-[var(--tan)]";
         const title = [
           justiceShortName(key),
           isMaj     ? "(majority)" : "",
@@ -231,7 +260,7 @@ function JusticeCircles({
   );
 }
 
-// ── Lawyer row (unchanged bar layout) ─────────────────────────────────────────
+// ── Lawyer row ─────────────────────────────────────────────────────────────────
 
 function LawyerRow({
   lawyer: l,
@@ -253,16 +282,17 @@ function LawyerRow({
 
   return (
     <div className="flex items-start gap-3 py-3">
-      <span className="shrink-0 w-6 text-right text-xs text-gray-400 mt-0.5 font-medium">
+      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px" }} className="shrink-0 w-6 text-right text-[var(--warm-gray)] mt-0.5">
         {rank}
       </span>
 
       <div className="flex-1 min-w-0">
         <button
           onClick={onNameClick}
-          className={`text-sm font-bold text-left leading-tight mb-1.5 hover:text-blue-700 transition-colors cursor-pointer ${
-            isSelected ? "text-blue-700 underline" : "text-gray-900"
+          className={`text-left leading-tight mb-1.5 hover:text-[var(--rust)] transition-colors cursor-pointer ${
+            isSelected ? "text-[var(--rust)] underline" : "text-[var(--charcoal)]"
           }`}
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "14px" }}
         >
           {l.name}
         </button>
@@ -270,27 +300,27 @@ function LawyerRow({
         {/* Speaking time bar */}
         <div className="mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
-              <div className="h-2.5 rounded-full bg-blue-500" style={{ width: `${minutePct}%` }} />
+            <div className="flex-1 bg-[var(--tan)]/20 rounded-full h-2.5 overflow-hidden">
+              <div className="h-2.5 rounded-full bg-[var(--rust)]" style={{ width: `${minutePct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] whitespace-nowrap w-16 text-right">
               {l.estimatedMinutes.toLocaleString()} min
             </span>
           </div>
-          <p className="text-[10px] text-gray-400 mt-0.5">Speaking time</p>
+          <p className="text-[var(--warm-gray)] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Speaking time</p>
         </div>
 
         {/* Cases argued bar */}
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
-              <div className="h-2.5 rounded-full bg-amber-400" style={{ width: `${casesPct}%` }}/>
+            <div className="flex-1 bg-[var(--tan)]/20 rounded-full h-2.5 overflow-hidden">
+              <div className="h-2.5 rounded-full bg-[var(--gold)]" style={{ width: `${casesPct}%` }}/>
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] whitespace-nowrap w-16 text-right">
               {l.casesArgued} {l.casesArgued === 1 ? "case" : "cases"}
             </span>
           </div>
-          <p className="text-[10px] text-gray-400 mt-0.5">Cases argued</p>
+          <p className="text-[var(--warm-gray)] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Cases argued</p>
         </div>
       </div>
     </div>

@@ -71,16 +71,23 @@ export default async function DocketColumnPage({
   const decided = buildDecidedList(decidedCases);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <main className="min-h-screen bg-[var(--cream)]">
+      <header className="bg-[var(--cream)] border-b border-[var(--tan)]">
         <div className="max-w-4xl mx-auto px-6 py-6">
-          <Link href="/" className="text-sm text-blue-600 hover:underline">
-            ← Back to Docket
+          <Link
+            href="/"
+            className="text-[var(--warm-gray)] hover:text-[var(--rust)] transition-colors"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.08em" }}
+          >
+            &larr; Back to Docket
           </Link>
-          <h1 className="mt-3 text-2xl font-bold text-gray-900">
+          <h1
+            className="mt-3 text-2xl text-[var(--charcoal)]"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+          >
             {COLUMN_LABELS[col]}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "13px" }}>
             {col === "upcoming" && `${upcoming.length} cases scheduled`}
             {col === "argued" && `${argued.length} cases argued, awaiting decision`}
             {col === "decided" && `${decided.length} entries`}
@@ -105,7 +112,7 @@ export default async function DocketColumnPage({
 
 function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSummary[]; today: string; tomorrow: string; splitSlugs: Set<string> }) {
   if (cases.length === 0)
-    return <p className="text-gray-400 italic">No upcoming cases.</p>;
+    return <p className="text-[var(--warm-gray)] italic" style={{ fontFamily: "'Lora', Georgia, serif" }}>No upcoming cases.</p>;
 
   // Group by argument date for easier scanning
   const grouped = new Map<string, CaseSummary[]>();
@@ -119,7 +126,10 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
     <div className="space-y-6">
       {[...grouped.entries()].map(([date, dateCases]) => (
         <div key={date}>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+          <h2
+            className="mb-2 text-[var(--warm-gray)]"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
+          >
             {formatDate(date)}
           </h2>
           <div className="flex flex-col gap-3">
@@ -128,22 +138,36 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
               const isTomorrow = c.argumentDate === tomorrow;
               if (isToday) {
                 return (
-                  <div key={c.slug} className="bg-white rounded p-4 border-2 border-green-500">
+                  <div key={c.slug} className="bg-[var(--ivory)] rounded p-4 border-2 border-[var(--rust)] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
                       <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                        <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
-                        <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
-                          Listen Live ↗
+                        <span
+                          className="px-2 py-0.5 rounded-[3px] border border-[var(--rust)] bg-[var(--rust)]/10 text-[var(--rust)]"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                        >
+                          Today at 10:00
+                        </span>
+                        <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-[3px] border border-[var(--rust)] bg-[var(--rust)]/10 text-[var(--rust)] hover:bg-[var(--rust)]/20 transition-colors"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                        >
+                          Listen Live
                         </a>
                         {splitSlugs.has(c.slug) && (
-                          <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                          <Link href="/appeals"
+                            className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
+                            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
+                          >
                             Circuit Split
                           </Link>
                         )}
                       </div>
                     </div>
-                    <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                    <Link href={`/cases/${c.slug}`}
+                      className="text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
+                      style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+                    >
                       {c.title}
                     </Link>
                   </div>
@@ -152,26 +176,37 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
               return (
                 <div
                   key={c.slug}
-                  className={`bg-white rounded p-4 hover:shadow-sm transition-all ${
+                  className={`bg-[var(--ivory)] rounded p-4 hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${
                     isTomorrow
-                      ? "border-2 border-yellow-400"
-                      : "border border-gray-200 hover:border-gray-400"
+                      ? "border-2 border-[var(--gold)]"
+                      : "border border-[var(--tan)] hover:border-[var(--rust)]"
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                    <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       {isTomorrow && (
-                        <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
+                        <span
+                          className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/10 text-[var(--gold)]"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                        >
+                          Tomorrow at 10:00
+                        </span>
                       )}
                       {splitSlugs.has(c.slug) && (
-                        <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                        <Link href="/appeals"
+                          className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
+                        >
                           Circuit Split
                         </Link>
                       )}
                     </div>
                   </div>
-                  <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                  <Link href={`/cases/${c.slug}`}
+                    className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+                  >
                     {c.title}
                   </Link>
                 </div>
@@ -186,27 +221,36 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
 
 function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: Set<string> }) {
   if (cases.length === 0)
-    return <p className="text-gray-400 italic">No argued cases.</p>;
+    return <p className="text-[var(--warm-gray)] italic" style={{ fontFamily: "'Lora', Georgia, serif" }}>No argued cases.</p>;
 
   return (
     <div className="flex flex-col gap-3">
       {cases.map((c) => (
-        <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
+        <div key={c.slug} className="bg-[var(--ivory)] border border-[var(--tan)] rounded p-4 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+            <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
             {splitSlugs.has(c.slug) && (
-              <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+              <Link href="/appeals"
+                className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
+                style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
+              >
                 Circuit Split
               </Link>
             )}
           </div>
-          <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+          <Link href={`/cases/${c.slug}`}
+            className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+          >
             {c.title}
           </Link>
-          <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+          <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">Argued {formatDate(c.argumentDate)}</p>
           {c.podcastEpisodeUrl && (
-            <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
-              Listen on Spotify ↗
+            <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer"
+              className="mt-1.5 block text-[var(--forest)] hover:underline"
+              style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}
+            >
+              Listen on Spotify
             </a>
           )}
         </div>
@@ -217,36 +261,52 @@ function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: S
 
 function DecidedList({ items, today, splitSlugs }: { items: DecidedItem[]; today: string; splitSlugs: Set<string> }) {
   if (items.length === 0)
-    return <p className="text-gray-400 italic">No decided cases.</p>;
+    return <p className="text-[var(--warm-gray)] italic" style={{ fontFamily: "'Lora', Georgia, serif" }}>No decided cases.</p>;
 
   return (
     <div className="flex flex-col gap-2">
       {items.map((item) => {
         const isToday = item.decisionDate === today;
-        const borderCls = isToday ? "border-2 border-green-500" : "border border-gray-200 hover:border-gray-400";
+        const borderCls = isToday ? "border-2 border-[var(--forest)]" : "border border-[var(--tan)] hover:border-[var(--rust)]";
         return (
-          <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
+          <div key={item.slug} className={`bg-[var(--ivory)] rounded p-4 hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${borderCls}`}>
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs text-gray-400">{item.sub}</p>
+              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{item.sub}</p>
               <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
+                {isToday && (
+                  <span
+                    className="px-2 py-0.5 rounded-[3px] border border-[var(--forest)] bg-[var(--forest)]/10 text-[var(--forest)]"
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                  >
+                    Decided Today
+                  </span>
+                )}
                 {splitSlugs.has(item.slug) && (
-                  <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
+                  <Link href="/appeals"
+                    className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
+                  >
                     Circuit Split
                   </Link>
                 )}
               </div>
             </div>
-            <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+            <Link href={item.href}
+              className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+            >
               {item.title}
             </Link>
-            <p className="text-xs text-gray-500 mt-1">
+            <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">
               {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
               {item.voteSplit ? ` · ${item.voteSplit}` : ""}
             </p>
             {item.podcastEpisodeUrl && (
-              <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
-                Listen on Spotify ↗
+              <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer"
+                className="mt-1.5 block text-[var(--forest)] hover:underline"
+                style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}
+              >
+                Listen on Spotify
               </a>
             )}
           </div>

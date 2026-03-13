@@ -19,7 +19,7 @@ export function JusticesSection({ justices }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-0">
       {[leftCol, rightCol].map((col, ci) => (
-        <div key={ci} className="divide-y divide-gray-100">
+        <div key={ci} className="divide-y divide-[var(--tan)]/30">
           {col.map((j) => (
             <JusticeRow
               key={j.key}
@@ -72,73 +72,76 @@ function JusticeRow({
 
       {/* Name + bars */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-bold text-gray-900 mb-2 leading-tight">
+        <p
+          className="text-[var(--charcoal)] mb-2 leading-tight"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "14px" }}
+        >
           {j.displayName}
         </p>
 
         {/* Speaking time bar */}
         <div className="mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div className="h-3 rounded-full bg-blue-500" style={{ width: `${minutePct}%` }} />
+            <div className="flex-1 bg-[var(--tan)]/20 rounded-full h-3 overflow-hidden">
+              <div className="h-3 rounded-full bg-[var(--rust)]" style={{ width: `${minutePct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] whitespace-nowrap w-16 text-right">
               {j.estimatedMinutes.toLocaleString()} min
             </span>
           </div>
-          <p className="text-[10px] text-gray-400 mt-0.5">Speaking time</p>
+          <p className="text-[var(--warm-gray)] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Speaking time</p>
         </div>
 
         {/* Speaking turns bar */}
         <div className="mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
-              <div className="h-3 rounded-full bg-amber-400" style={{ width: `${questionPct}%` }} />
+            <div className="flex-1 bg-[var(--tan)]/20 rounded-full h-3 overflow-hidden">
+              <div className="h-3 rounded-full bg-[var(--gold)]" style={{ width: `${questionPct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] whitespace-nowrap w-16 text-right">
               {j.questions.toLocaleString()} turns
             </span>
           </div>
-          <p className="text-[10px] text-gray-400 mt-0.5">Speaking turns</p>
+          <p className="text-[var(--warm-gray)] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Speaking turns</p>
         </div>
 
         {/* Opinions stacked bar */}
         <div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div className="flex-1 bg-[var(--tan)]/20 rounded-full h-3 overflow-hidden">
               {totalOpinions > 0 ? (
                 <div
                   className="h-3 flex overflow-hidden rounded-full"
                   style={{ width: `${opinionBarPct}%` }}
                 >
                   {j.majorityOpinions > 0 && (
-                    <div className="h-full bg-indigo-500" style={{ width: `${majPct}%` }} />
+                    <div className="h-full bg-[var(--forest)]" style={{ width: `${majPct}%` }} />
                   )}
                   {j.concurrences > 0 && (
-                    <div className="h-full bg-emerald-400" style={{ width: `${concPct}%` }} />
+                    <div className="h-full bg-[var(--gold)]" style={{ width: `${concPct}%` }} />
                   )}
                   {j.dissents > 0 && (
-                    <div className="h-full bg-rose-400" style={{ width: `${disPct}%` }} />
+                    <div className="h-full bg-[var(--rust)]" style={{ width: `${disPct}%` }} />
                   )}
                 </div>
               ) : null}
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] whitespace-nowrap w-16 text-right">
               {totalOpinions} opinion{totalOpinions !== 1 ? "s" : ""}
             </span>
           </div>
           {/* Segment legend */}
           <div className="flex items-center gap-3 mt-0.5">
-            <span className="flex items-center gap-1 text-[10px] text-gray-400">
-              <span className="inline-block w-2 h-2 rounded-sm bg-indigo-500" />
+            <span className="flex items-center gap-1 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}>
+              <span className="inline-block w-2 h-2 rounded-sm bg-[var(--forest)]" />
               {j.majorityOpinions} majority
             </span>
-            <span className="flex items-center gap-1 text-[10px] text-gray-400">
-              <span className="inline-block w-2 h-2 rounded-sm bg-emerald-400" />
+            <span className="flex items-center gap-1 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}>
+              <span className="inline-block w-2 h-2 rounded-sm bg-[var(--gold)]" />
               {j.concurrences} concurring
             </span>
-            <span className="flex items-center gap-1 text-[10px] text-gray-400">
-              <span className="inline-block w-2 h-2 rounded-sm bg-rose-400" />
+            <span className="flex items-center gap-1 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}>
+              <span className="inline-block w-2 h-2 rounded-sm bg-[var(--rust)]" />
               {j.dissents} dissenting
             </span>
           </div>

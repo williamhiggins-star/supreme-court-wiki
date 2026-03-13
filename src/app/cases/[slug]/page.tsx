@@ -37,37 +37,49 @@ export default async function CasePage({
   const circuitSplit = getCircuitSplitForCase(c.slug);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+    <main className="min-h-screen bg-[var(--cream)]">
+      <header className="bg-[var(--cream)] border-b border-[var(--tan)]">
         <div className="max-w-4xl mx-auto px-6 py-6">
-          <Link href="/" className="text-sm text-blue-600 hover:underline">
-            ← All Cases
+          <Link
+            href="/"
+            className="text-[var(--warm-gray)] hover:text-[var(--rust)] transition-colors"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.08em" }}
+          >
+            &larr; All Cases
           </Link>
           <div className="mt-3">
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+            <span
+              className="text-[var(--warm-gray)]"
+              style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
               {c.termYear} Term · {c.caseNumber}
             </span>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900">{c.title}</h1>
-            <p className="mt-2 text-base text-gray-600 leading-relaxed">
+            <h1
+              className="mt-1 text-2xl text-[var(--charcoal)]"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+            >
+              {c.title}
+            </h1>
+            <p className="mt-2 text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
               {c.legalQuestion}
             </p>
           </div>
-          <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
+          <div className="mt-4 flex items-center gap-4" style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px" }}>
             {c.docketStatus === "upcoming" ? (
-              <span className="text-blue-600 font-medium">
+              <span className="text-[var(--rust)]" style={{ fontWeight: 500 }}>
                 Oral argument scheduled for {formatDate(c.argumentDate)} at 10:00 a.m. ET
               </span>
             ) : (
               <>
-                <span>Argued {formatDate(c.argumentDate)}</span>
+                <span className="text-[var(--warm-gray)]">Argued {formatDate(c.argumentDate)}</span>
                 {c.transcriptUrl && (
                   <a
                     href={c.transcriptUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
+                    className="text-[var(--rust)] hover:underline"
                   >
-                    Official Transcript ↗
+                    Official Transcript
                   </a>
                 )}
               </>
@@ -101,10 +113,10 @@ export default async function CasePage({
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
               />
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
                 Via{" "}
-                <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
-                  Spotify ↗
+                <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--forest)] hover:underline">
+                  Spotify
                 </a>
               </p>
             </Section>
@@ -131,7 +143,7 @@ export default async function CasePage({
         {/* Parties */}
         <Section title="The Arguments">
           {c.docketStatus === "upcoming" && (
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg px-5 py-4 text-sm text-blue-800">
+            <div className="mb-6 bg-[var(--rust)]/10 border border-[var(--rust)]/30 rounded-lg px-5 py-4 text-[var(--charcoal)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
               Oral argument is scheduled for {formatDate(c.argumentDate)} at 10:00 a.m. ET.
               The positions below reflect each party&rsquo;s written briefs. This section will be updated following argument.
             </div>
@@ -140,21 +152,27 @@ export default async function CasePage({
             {c.parties.map((party) => (
               <div
                 key={party.party}
-                className="bg-white rounded-lg border border-gray-200 p-6"
+                className="bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="font-semibold text-gray-900">
+                  <span
+                    className="text-[var(--charcoal)]"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
+                  >
                     {party.party}
                   </span>
-                  <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded capitalize">
+                  <span
+                    className="px-2 py-0.5 rounded-[3px] capitalize border border-[var(--tan)] bg-[var(--cream)] text-[var(--warm-gray)]"
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                  >
                     {party.role}
                   </span>
                 </div>
-                <p className="text-gray-700 leading-relaxed mb-4">
+                <p className="text-[var(--charcoal)] leading-relaxed mb-4" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
                   {party.coreArgument}
                 </p>
                 {party.supportingPoints.length > 0 && (
-                  <ul className="space-y-1.5 text-sm text-gray-600 list-disc list-inside">
+                  <ul className="space-y-1.5 text-[var(--charcoal)] list-disc list-inside" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
                     {party.supportingPoints.map((pt, i) => (
                       <li key={i}>{pt}</li>
                     ))}
@@ -162,18 +180,24 @@ export default async function CasePage({
                 )}
                 {party.keyExchanges.length > 0 && (
                   <div className="mt-5 space-y-4">
-                    <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                    <h4
+                      className="text-[var(--warm-gray)]"
+                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
+                    >
                       Key Exchanges with Justices
                     </h4>
                     {party.keyExchanges.map((ex, i) => (
-                      <div key={i} className="pl-4 border-l-2 border-blue-200">
-                        <p className="text-sm font-medium text-gray-800">
+                      <div key={i} className="pl-4 border-l-[3px] border-[var(--rust)]">
+                        <p
+                          className="text-[var(--charcoal)]"
+                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "13px" }}
+                        >
                           {ex.justice}
                         </p>
-                        <p className="text-sm text-gray-600 mt-0.5 italic">
+                        <p className="text-[var(--charcoal)] mt-0.5 italic" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
                           &ldquo;{ex.question}&rdquo;
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-[var(--warm-gray)] mt-1" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
                           {ex.significance}
                         </p>
                       </div>
@@ -193,23 +217,29 @@ export default async function CasePage({
                 <Link
                   key={p.caseSlug}
                   href={`/precedents/${p.caseSlug}`}
-                  className="block bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-400 hover:shadow-sm transition-all"
+                  className="block bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-5 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p
+                        className="text-[var(--charcoal)]"
+                        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
+                      >
                         {p.caseName}
                       </p>
                       {p.citation && (
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-0.5">
                           {p.citation}
                         </p>
                       )}
-                      <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+                      <p className="text-[var(--charcoal)] mt-1.5 leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
                         {p.reasonCited}
                       </p>
                     </div>
-                    <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded capitalize whitespace-nowrap">
+                    <span
+                      className="px-2 py-0.5 rounded-[3px] capitalize whitespace-nowrap border border-[var(--tan)] bg-[var(--cream)] text-[var(--warm-gray)]"
+                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+                    >
                       {p.citedBy}
                     </span>
                   </div>
@@ -227,7 +257,8 @@ export default async function CasePage({
                 <Link
                   key={termSlug}
                   href={`/terms/${termSlug}`}
-                  className="inline-block bg-blue-50 text-blue-700 text-sm px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors"
+                  className="inline-block bg-[var(--forest)]/10 text-[var(--forest)] px-3 py-1.5 rounded-[3px] border border-[var(--forest)]/30 hover:bg-[var(--forest)]/20 transition-colors"
+                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}
                 >
                   {termMap.get(termSlug) ?? termSlug.replace(/-/g, " ")}
                 </Link>
@@ -260,7 +291,10 @@ function Section({
 }) {
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+      <h2
+        className="mb-4 pb-2 border-b border-[var(--tan)] text-[var(--charcoal)]"
+        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "20px" }}
+      >
         {title}
       </h2>
       {children}
@@ -272,7 +306,7 @@ function Prose({ text }: { text: string }) {
   return (
     <div className="space-y-3">
       {text.split("\n\n").map((para, i) => (
-        <p key={i} className="text-gray-700 leading-relaxed">
+        <p key={i} className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
           {para}
         </p>
       ))}
@@ -282,23 +316,27 @@ function Prose({ text }: { text: string }) {
 
 function CaseArticleEntry({ article }: { article: Article }) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-5 space-y-2">
-      <div className="flex items-center gap-2 text-xs text-gray-500">
-        <span className="bg-gray-100 px-2 py-0.5 rounded font-medium text-gray-700">
+    <div className="bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-5 space-y-2 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center gap-2" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+        <span
+          className="bg-[var(--cream)] px-2 py-0.5 rounded-[3px] border border-[var(--tan)] text-[var(--charcoal)]"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
+        >
           {article.source}
         </span>
-        {article.author && <span className="font-medium text-gray-600">{article.author}</span>}
-        <span>{article.publishedAt}</span>
+        {article.author && <span className="text-[var(--warm-gray)]">{article.author}</span>}
+        <span className="text-[var(--warm-gray)]">{article.publishedAt}</span>
       </div>
       <a
         href={article.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block text-base font-semibold text-gray-900 hover:text-blue-700 hover:underline leading-snug"
+        className="block text-[var(--charcoal)] hover:text-[var(--rust)] leading-snug transition-colors"
+        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
       >
-        {article.title} ↗
+        {article.title}
       </a>
-      <p className="text-sm text-gray-600 leading-relaxed">{article.summary}</p>
+      <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>{article.summary}</p>
     </div>
   );
 }
