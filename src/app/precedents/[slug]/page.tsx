@@ -23,25 +23,16 @@ export default async function PrecedentPage({
   );
 
   return (
-    <main className="min-h-screen bg-[var(--cream)]">
+    <main className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[var(--cream)] border-b border-[var(--tan)]">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 py-6">
-          <Link
-            href="/precedents"
-            className="text-[var(--warm-gray)] hover:text-[var(--rust)] transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.08em" }}
-          >
-            &larr; Key Precedents
+          <Link href="/precedents" className="text-sm text-blue-600 hover:underline">
+            ← Key Precedents
           </Link>
           <div className="mt-3">
-            <h1
-              className="text-2xl text-[var(--charcoal)]"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
-            >
-              {p.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px" }}>
+            <h1 className="text-2xl font-bold text-gray-900">{p.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm text-gray-400">
               {p.citation && <span>{p.citation}</span>}
               {p.year && (
                 <>
@@ -52,7 +43,7 @@ export default async function PrecedentPage({
             </div>
           </div>
           {p.legalQuestion && (
-            <p className="mt-3 text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+            <p className="mt-3 text-base text-gray-600 leading-relaxed">
               {p.legalQuestion}
             </p>
           )}
@@ -78,27 +69,21 @@ export default async function PrecedentPage({
                 {p.parties!.map((party) => (
                   <div
                     key={party.party}
-                    className="bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+                    className="bg-white rounded-lg border border-gray-200 p-6"
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <span
-                        className="text-[var(--charcoal)]"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
-                      >
+                      <span className="font-semibold text-gray-900">
                         {party.party}
                       </span>
-                      <span
-                        className="px-2 py-0.5 rounded-[3px] capitalize border border-[var(--tan)] bg-[var(--cream)] text-[var(--warm-gray)]"
-                        style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
-                      >
+                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded capitalize">
                         {party.role}
                       </span>
                     </div>
-                    <p className="text-[var(--charcoal)] leading-relaxed mb-4" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+                    <p className="text-gray-700 leading-relaxed mb-4">
                       {party.coreArgument}
                     </p>
                     {party.supportingPoints.length > 0 && (
-                      <ul className="space-y-1.5 text-[var(--charcoal)] list-disc list-inside" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+                      <ul className="space-y-1.5 text-sm text-gray-600 list-disc list-inside">
                         {party.supportingPoints.map((pt, i) => (
                           <li key={i}>{pt}</li>
                         ))}
@@ -112,14 +97,11 @@ export default async function PrecedentPage({
         ) : (
           <>
             <Section title="What the Court Decided">
-              <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>{p.summary}</p>
+              <p className="text-gray-700 leading-relaxed">{p.summary}</p>
             </Section>
-            <div
-              className="bg-[var(--gold)]/10 border border-[var(--gold)]/30 rounded-lg px-5 py-4 text-[var(--charcoal)]"
-              style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}
-            >
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 text-sm text-amber-800">
               Full entry not yet generated. Run{" "}
-              <code style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px" }} className="bg-[var(--gold)]/15 px-1 rounded">
+              <code className="font-mono bg-amber-100 px-1 rounded">
                 npm run enrich-precedents
               </code>{" "}
               to add it.
@@ -137,18 +119,13 @@ export default async function PrecedentPage({
                   <Link
                     key={c.slug}
                     href={`/cases/${c.slug}`}
-                    className="block bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-5 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+                    className="block bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-400 hover:shadow-sm transition-all"
                   >
-                    <p
-                      className="text-[var(--charcoal)]"
-                      style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
-                    >
-                      {c.title}
-                    </p>
-                    <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-0.5">
+                    <p className="font-semibold text-gray-900">{c.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
                       {c.termYear} Term · {c.caseNumber}
                     </p>
-                    <p className="text-[var(--charcoal)] mt-1.5 leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+                    <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
                       {ref.reasonCited}
                     </p>
                   </Link>
@@ -164,8 +141,7 @@ export default async function PrecedentPage({
               {p.topics.map((topic) => (
                 <span
                   key={topic}
-                  className="bg-[var(--cream)] border border-[var(--tan)] text-[var(--charcoal)] px-3 py-1 rounded-[3px]"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}
+                  className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full"
                 >
                   {topic}
                 </span>
@@ -187,10 +163,7 @@ function Section({
 }) {
   return (
     <section>
-      <h2
-        className="mb-4 pb-2 border-b border-[var(--tan)] text-[var(--charcoal)]"
-        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "20px" }}
-      >
+      <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
         {title}
       </h2>
       {children}
@@ -202,7 +175,7 @@ function Prose({ text }: { text: string }) {
   return (
     <div className="space-y-3">
       {text.split("\n\n").map((para, i) => (
-        <p key={i} className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+        <p key={i} className="text-gray-700 leading-relaxed">
           {para}
         </p>
       ))}

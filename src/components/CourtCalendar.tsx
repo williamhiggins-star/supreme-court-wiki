@@ -69,25 +69,22 @@ export function CourtCalendar({ events, today }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_272px] gap-6 items-start">
       {/* Calendar grid */}
-      <div className="bg-[var(--ivory)] border border-[var(--tan)] rounded-lg overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         {/* Month nav */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--tan)] bg-[var(--cream)]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-gray-50">
           <button
             onClick={() => navigate(-1)}
-            className="px-2.5 py-1 text-base text-[var(--warm-gray)] hover:bg-[var(--tan)]/20 rounded leading-none"
+            className="px-2.5 py-1 text-base text-gray-500 hover:bg-gray-200 rounded leading-none"
             aria-label="Previous month"
           >
             ‹
           </button>
-          <span
-            className="text-[var(--charcoal)]"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
-          >
+          <span className="text-sm font-semibold text-gray-800">
             {MONTHS[month - 1]} {year}
           </span>
           <button
             onClick={() => navigate(1)}
-            className="px-2.5 py-1 text-base text-[var(--warm-gray)] hover:bg-[var(--tan)]/20 rounded leading-none"
+            className="px-2.5 py-1 text-base text-gray-500 hover:bg-gray-200 rounded leading-none"
             aria-label="Next month"
           >
             ›
@@ -95,12 +92,11 @@ export function CourtCalendar({ events, today }: Props) {
         </div>
 
         {/* Day name headers */}
-        <div className="grid grid-cols-7 border-b border-[var(--tan)]">
+        <div className="grid grid-cols-7 border-b border-gray-200">
           {DAYS.map((d) => (
             <div
               key={d}
-              className="text-center text-[var(--warm-gray)] py-2"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em" }}
+              className="text-center text-xs font-medium text-gray-400 py-2"
             >
               {d}
             </div>
@@ -114,7 +110,7 @@ export function CourtCalendar({ events, today }: Props) {
               return (
                 <div
                   key={`blank-${i}`}
-                  className="min-h-16 border-b border-r border-[var(--tan)]/30 bg-[var(--cream)]/40"
+                  className="min-h-16 border-b border-r border-gray-100 bg-gray-50/40"
                 />
               );
             }
@@ -128,17 +124,16 @@ export function CourtCalendar({ events, today }: Props) {
             return (
               <div
                 key={day}
-                className={`min-h-16 p-1 border-b border-r border-[var(--tan)]/30 ${
-                  isToday ? "ring-2 ring-inset ring-[var(--rust)]" : ""
+                className={`min-h-16 p-1 border-b border-r border-gray-100 ${
+                  isToday ? "bg-blue-50" : ""
                 }`}
               >
                 <span
-                  className={`block text-right mb-0.5 ${
+                  className={`text-xs block text-right mb-0.5 ${
                     isToday
-                      ? "text-[var(--rust)]"
-                      : "text-[var(--warm-gray)]"
+                      ? "text-blue-700 font-bold"
+                      : "text-gray-400"
                   }`}
-                  style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px", fontWeight: isToday ? 700 : 400 }}
                 >
                   {day}
                 </span>
@@ -147,19 +142,15 @@ export function CourtCalendar({ events, today }: Props) {
                     <Link
                       key={`${ei}-${ci}`}
                       href={`/cases/${c.slug}`}
-                      className="block leading-tight bg-[var(--rust)]/10 text-[var(--rust)] hover:bg-[var(--rust)]/20 rounded px-1 py-0.5 mb-0.5 transition-colors"
-                      style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}
+                      className="block text-[10px] leading-tight bg-amber-100 text-amber-800 hover:bg-amber-200 rounded px-1 py-0.5 mb-0.5"
                     >
-                      <span style={{ fontWeight: 500 }}>{c.caseNumber}</span>
+                      <span className="font-semibold">{c.caseNumber}</span>
                       <span className="block line-clamp-2">{c.title}</span>
                     </Link>
                   ))
                 )}
                 {confEvs.length > 0 && (
-                  <span
-                    className="block leading-tight text-[var(--warm-gray)] rounded px-1 py-0.5 truncate"
-                    style={{ fontFamily: "'DM Mono', monospace", fontSize: "10px" }}
-                  >
+                  <span className="block text-[10px] leading-tight bg-blue-100 text-blue-700 rounded px-1 py-0.5 truncate">
                     Conf.
                   </span>
                 )}
@@ -169,38 +160,35 @@ export function CourtCalendar({ events, today }: Props) {
         </div>
 
         {/* Legend */}
-        <div className="flex gap-4 px-3 py-2 border-t border-[var(--tan)]/30 bg-[var(--cream)]">
-          <span className="flex items-center gap-1.5 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px" }}>
-            <span className="w-2.5 h-2.5 rounded-sm bg-[var(--rust)]/20 border border-[var(--rust)]/40 inline-block" />
+        <div className="flex gap-4 px-3 py-2 border-t border-gray-100 bg-gray-50">
+          <span className="flex items-center gap-1.5 text-xs text-gray-500">
+            <span className="w-2.5 h-2.5 rounded-sm bg-amber-100 border border-amber-300 inline-block" />
             Oral Argument
           </span>
-          <span className="flex items-center gap-1.5 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px" }}>
-            <span className="w-2.5 h-2.5 rounded-sm border border-[var(--tan)] inline-block" />
+          <span className="flex items-center gap-1.5 text-xs text-gray-500">
+            <span className="w-2.5 h-2.5 rounded-sm bg-blue-100 border border-blue-300 inline-block" />
             Conference
           </span>
-          <span className="flex items-center gap-1.5 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px" }}>
-            <span className="w-2.5 h-2.5 rounded-sm ring-2 ring-[var(--rust)] inline-block" />
+          <span className="flex items-center gap-1.5 text-xs text-gray-500">
+            <span className="w-2.5 h-2.5 rounded-sm bg-blue-50 border border-blue-300 inline-block" />
             Today
           </span>
         </div>
       </div>
 
       {/* Sidebar: month events */}
-      <div className="bg-[var(--ivory)] border border-[var(--tan)] rounded-lg overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-        <div className="px-4 py-3 border-b border-[var(--tan)] bg-[var(--cream)]">
-          <h3
-            className="text-[var(--warm-gray)]"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-          >
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500">
             {MONTHS[month - 1]} {year}
           </h3>
         </div>
         {monthEvents.length === 0 ? (
-          <p className="px-4 py-4 italic text-[var(--warm-gray)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "13px" }}>
+          <p className="px-4 py-4 text-xs italic text-gray-400">
             No events this month.
           </p>
         ) : (
-          <ul className="divide-y divide-[var(--tan)]/30 overflow-y-auto max-h-[440px]">
+          <ul className="divide-y divide-gray-100 overflow-y-auto max-h-[440px]">
             {monthEvents.map((ev, i) => {
               const label = new Date(
                 ev.date + "T12:00:00"
@@ -212,8 +200,8 @@ export function CourtCalendar({ events, today }: Props) {
               if (ev.type === "conference") {
                 return (
                   <li key={i} className="px-4 py-2.5">
-                    <span className="text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>{label}</span>
-                    <p className="text-[var(--warm-gray)] mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}>
+                    <span className="text-xs text-gray-400">{label}</span>
+                    <p className="text-xs font-medium text-blue-700 mt-0.5">
                       Conference
                     </p>
                   </li>
@@ -224,12 +212,12 @@ export function CourtCalendar({ events, today }: Props) {
                 <li key={`${i}-${j}`}>
                   <Link
                     href={`/cases/${c.slug}`}
-                    className="block px-4 py-2.5 hover:bg-[var(--cream)] transition-colors"
+                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
                   >
-                    <span className="text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+                    <span className="text-xs text-gray-400">
                       {label} · {c.caseNumber}
                     </span>
-                    <p className="text-[var(--charcoal)] mt-0.5 leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "13px" }}>
+                    <p className="text-xs font-medium text-gray-800 mt-0.5 leading-snug">
                       {c.title}
                     </p>
                   </Link>

@@ -18,6 +18,14 @@ const TYPE_LABELS: Record<SearchItem["type"], string> = {
   lawyer: "Counsel",
 };
 
+const TYPE_COLORS: Record<SearchItem["type"], string> = {
+  case:      "bg-blue-100 text-blue-700",
+  precedent: "bg-purple-100 text-purple-700",
+  split:     "bg-amber-100 text-amber-700",
+  justice:   "bg-emerald-100 text-emerald-700",
+  lawyer:    "bg-slate-100 text-slate-600",
+};
+
 interface Props {
   onClose: () => void;
 }
@@ -91,13 +99,13 @@ export function SearchModal({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-[var(--ivory)] rounded-xl shadow-2xl overflow-hidden border border-[var(--tan)]"
+        className="w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Input row */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--tan)]/30">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
           <svg
-            className="w-5 h-5 text-[var(--warm-gray)] shrink-0"
+            className="w-5 h-5 text-gray-400 shrink-0"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -112,13 +120,12 @@ export function SearchModal({ onClose }: Props) {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Search cases, justices, counsel…"
-            className="flex-1 text-[var(--charcoal)] placeholder-[var(--warm-gray)] outline-none bg-transparent"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px" }}
+            className="flex-1 text-sm text-gray-900 placeholder-gray-400 outline-none bg-transparent"
           />
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="text-[var(--warm-gray)] hover:text-[var(--charcoal)]"
+              className="text-gray-400 hover:text-gray-600"
               aria-label="Clear"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -132,9 +139,9 @@ export function SearchModal({ onClose }: Props) {
         {trimmed.length >= 2 ? (
           <div className="max-h-96 overflow-y-auto py-1">
             {index === null ? (
-              <p className="px-4 py-3 text-[var(--warm-gray)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>Loading&hellip;</p>
+              <p className="px-4 py-3 text-sm text-gray-400">Loading&hellip;</p>
             ) : results.length === 0 ? (
-              <p className="px-4 py-3 text-[var(--warm-gray)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+              <p className="px-4 py-3 text-sm text-gray-400">
                 No results for &ldquo;{query}&rdquo;
               </p>
             ) : (
@@ -144,24 +151,22 @@ export function SearchModal({ onClose }: Props) {
                   onClick={() => navigate(item.href)}
                   onMouseEnter={() => setActiveIdx(i)}
                   className={`w-full text-left flex items-center gap-3 px-4 py-2.5 transition-colors ${
-                    i === activeIdx ? "bg-[var(--cream)]" : ""
+                    i === activeIdx ? "bg-gray-50" : ""
                   }`}
                 >
                   <span
-                    className="shrink-0 px-1.5 py-0.5 rounded-[3px] border border-[var(--tan)] bg-[var(--cream)] text-[var(--warm-gray)]"
-                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}
+                    className={`shrink-0 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                      TYPE_COLORS[item.type]
+                    }`}
                   >
                     {TYPE_LABELS[item.type]}
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span
-                      className="block text-[var(--charcoal)] truncate"
-                      style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "14px" }}
-                    >
+                    <span className="block text-sm font-medium text-gray-900 truncate">
                       {item.title}
                     </span>
                     {item.subtitle && (
-                      <span className="block text-[var(--warm-gray)] truncate" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+                      <span className="block text-xs text-gray-400 truncate">
                         {item.subtitle}
                       </span>
                     )}
@@ -171,7 +176,7 @@ export function SearchModal({ onClose }: Props) {
             )}
           </div>
         ) : (
-          <p className="px-4 py-3 text-[var(--warm-gray)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "13px" }}>
+          <p className="px-4 py-3 text-xs text-gray-400">
             Type at least 2 characters to search &mdash; cases, justices, counsel, circuit splits, and precedents.
           </p>
         )}

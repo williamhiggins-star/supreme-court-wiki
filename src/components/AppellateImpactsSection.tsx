@@ -8,12 +8,20 @@ interface Props {
   generated: string;
 }
 
+const AREA_COLOURS: Record<string, { bg: string; text: string; activeBg: string; activeText: string }> = {
+  "Securities":            { bg: "bg-cyan-100",    text: "text-cyan-700",    activeBg: "bg-cyan-600",    activeText: "text-white" },
+  "Antitrust":             { bg: "bg-red-100",     text: "text-red-700",     activeBg: "bg-red-600",     activeText: "text-white" },
+  "Labor & Employment":    { bg: "bg-teal-100",    text: "text-teal-700",    activeBg: "bg-teal-600",    activeText: "text-white" },
+  "Intellectual Property": { bg: "bg-violet-100",  text: "text-violet-700",  activeBg: "bg-violet-600",  activeText: "text-white" },
+  "Arbitration":           { bg: "bg-blue-100",    text: "text-blue-700",    activeBg: "bg-blue-600",    activeText: "text-white" },
+  "Class Actions":         { bg: "bg-orange-100",  text: "text-orange-700",  activeBg: "bg-orange-600",  activeText: "text-white" },
+  "Bankruptcy":            { bg: "bg-amber-100",   text: "text-amber-700",   activeBg: "bg-amber-600",   activeText: "text-white" },
+};
+
 function areaChip(area: string) {
+  const colour = AREA_COLOURS[area] ?? { bg: "bg-gray-100", text: "text-gray-600", activeBg: "bg-gray-600", activeText: "text-white" };
   return (
-    <span
-      className="inline-block px-2 py-0.5 rounded-[3px] border border-[var(--tan)] bg-[var(--cream)] text-[var(--warm-gray)]"
-      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}
-    >
+    <span className={`inline-block text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded ${colour.bg} ${colour.text}`}>
       {area}
     </span>
   );
@@ -26,8 +34,7 @@ function courtBadge(court: string, url: string) {
       target="_blank"
       rel="noopener noreferrer"
       title="View full opinion on CourtListener"
-      className="inline-block px-2 py-0.5 rounded-[3px] bg-[var(--charcoal)] text-[var(--cream)] hover:bg-[var(--warm-gray)] transition-colors"
-      style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: "11px" }}
+      className="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-gray-800 text-white hover:bg-gray-600 transition-colors"
     >
       {court}
     </a>
@@ -46,12 +53,12 @@ function formatDate(dateStr: string): string {
 
 function ImpactCard({ impact }: { impact: AppellateImpact }) {
   return (
-    <div className="bg-[var(--ivory)] border border-[var(--tan)] rounded-lg overflow-hidden hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-      <div className="px-4 pt-4 pb-3 border-b border-[var(--tan)]/30">
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 hover:shadow-sm transition-all">
+      <div className="px-4 pt-4 pb-3 border-b border-gray-100">
         <div className="flex flex-wrap items-start gap-2 mb-2">
           {areaChip(impact.area)}
           {courtBadge(impact.court, impact.url)}
-          <span className="ml-auto text-[var(--warm-gray)] shrink-0" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+          <span className="ml-auto text-[11px] text-gray-400 shrink-0">
             {formatDate(impact.date)}
           </span>
         </div>
@@ -60,43 +67,36 @@ function ImpactCard({ impact }: { impact: AppellateImpact }) {
           href={impact.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors mb-1"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+          className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 mb-1"
         >
           {impact.caseName}
         </a>
         {impact.docketNumber && (
-          <p className="text-[var(--warm-gray)] mb-2" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>{impact.docketNumber}</p>
+          <p className="text-[11px] text-gray-400 mb-2">{impact.docketNumber}</p>
         )}
 
-        <p className="text-[var(--charcoal)] leading-snug mb-1.5 italic" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px", fontWeight: 500 }}>
+        <p className="text-xs font-medium text-gray-700 leading-snug mb-1.5 italic">
           {impact.legalQuestion}
         </p>
-        <p className="text-[var(--warm-gray)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "13px" }}>
+        <p className="text-xs text-gray-500 leading-relaxed">
           {impact.description}
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-[var(--tan)]/30">
-        <div className="flex-1 border-t-2 border-[var(--forest)] pt-3 px-4 pb-4">
-          <p
-            className="mb-1 text-[var(--forest)]"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em" }}
-          >
+      <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+        <div className="flex-1 border-t-2 border-emerald-400 pt-3 px-4 pb-4">
+          <p className="text-xs font-bold uppercase tracking-wide mb-1 text-emerald-700">
             Favorable to Business
           </p>
-          <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "13px" }}>
+          <p className="text-xs text-gray-600 leading-relaxed">
             {impact.positiveImplications}
           </p>
         </div>
-        <div className="flex-1 border-t-2 border-[var(--rust)] pt-3 px-4 pb-4">
-          <p
-            className="mb-1 text-[var(--rust)]"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.08em" }}
-          >
+        <div className="flex-1 border-t-2 border-rose-400 pt-3 px-4 pb-4">
+          <p className="text-xs font-bold uppercase tracking-wide mb-1 text-rose-700">
             Risk for Business
           </p>
-          <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "13px" }}>
+          <p className="text-xs text-gray-600 leading-relaxed">
             {impact.negativeImplications}
           </p>
         </div>
@@ -110,7 +110,7 @@ export function AppellateImpactsSection({ impacts, generated }: Props) {
 
   if (impacts.length === 0) {
     return (
-      <p className="text-[var(--warm-gray)] italic" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+      <p className="text-sm text-gray-400 italic">
         No appellate impacts on file yet — run the daily update to populate.
       </p>
     );
@@ -130,27 +130,26 @@ export function AppellateImpactsSection({ impacts, generated }: Props) {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           onClick={() => setActiveArea(null)}
-          className={`px-3 py-1.5 rounded-[3px] border transition-colors ${
+          className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
             activeArea === null
-              ? "bg-[var(--charcoal)] text-[var(--cream)] border-[var(--charcoal)]"
-              : "bg-[var(--ivory)] text-[var(--warm-gray)] border-[var(--tan)] hover:border-[var(--rust)]"
+              ? "bg-gray-900 text-white border-gray-900"
+              : "bg-white text-gray-600 border-gray-300 hover:border-gray-500"
           }`}
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}
         >
           All
         </button>
         {presentAreas.map((area) => {
+          const colour = AREA_COLOURS[area] ?? { bg: "bg-gray-100", text: "text-gray-600", activeBg: "bg-gray-600", activeText: "text-white" };
           const isActive = activeArea === area;
           return (
             <button
               key={area}
               onClick={() => setActiveArea(isActive ? null : area)}
-              className={`px-3 py-1.5 rounded-[3px] border transition-colors ${
+              className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                 isActive
-                  ? "bg-[var(--charcoal)] text-[var(--cream)] border-[var(--charcoal)]"
-                  : "bg-[var(--ivory)] text-[var(--warm-gray)] border-[var(--tan)] hover:border-[var(--rust)]"
+                  ? `${colour.activeBg} ${colour.activeText} border-transparent`
+                  : `${colour.bg} ${colour.text} border-transparent hover:opacity-80`
               }`}
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}
             >
               {area}
             </button>
@@ -160,7 +159,7 @@ export function AppellateImpactsSection({ impacts, generated }: Props) {
 
       {/* Cards */}
       {filtered.length === 0 ? (
-        <p className="text-[var(--warm-gray)] italic" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>No results for this category.</p>
+        <p className="text-sm text-gray-400 italic">No results for this category.</p>
       ) : (
         <div className="grid grid-cols-1 gap-5">
           {filtered.map((imp) => (
@@ -169,7 +168,7 @@ export function AppellateImpactsSection({ impacts, generated }: Props) {
         </div>
       )}
 
-      <p className="mt-6 text-right text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+      <p className="mt-6 text-xs text-gray-400 text-right">
         Last updated {generated} · Source: CourtListener · Analysis: Claude AI
       </p>
     </div>

@@ -141,13 +141,10 @@ export default function HomePage() {
   const decided = buildDecidedList(decidedCases);
 
   return (
-    <main className="min-h-screen bg-[var(--cream)]">
-      <header className="bg-[var(--cream)] pt-10 px-6">
-        <h1
-          className="mx-auto text-3xl sm:text-4xl font-bold text-[var(--charcoal)] tracking-tight text-center"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-        >
-          SCOTUS Dashboard
+    <main className="min-h-screen bg-ft-paper">
+      <header className="bg-ft-pink pt-10 px-6">
+        <h1 className="mx-auto text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight text-center">
+          <span style={{ fontFamily: "Graphika81, Georgia, serif" }}>SCOTUS Dashboard</span>
         </h1>
         <NavBar />
       </header>
@@ -158,12 +155,7 @@ export default function HomePage() {
 
           {/* Left 3 cols: Docket then Circuit Splits */}
           <div className="lg:col-span-3 flex flex-col lg:pr-6">
-            <h2
-              className="text-2xl font-bold text-[var(--charcoal)] mb-8"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-            >
-              The Docket
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">The Docket</h2>
 
             {/* Docket sub-columns */}
             <div>
@@ -171,14 +163,11 @@ export default function HomePage() {
 
                 {/* Upcoming Oral Arguments */}
                 <div className="flex flex-col">
-                  <h3
-                    className="pb-2 mb-4 border-b border-[var(--tan)] text-[var(--warm-gray)]"
-                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-                  >
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
                     Upcoming
                   </h3>
                   {upcoming.length === 0 ? (
-                    <p className="text-[var(--warm-gray)] text-sm italic">No cases</p>
+                    <p className="text-gray-400 text-sm italic">No cases</p>
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
@@ -187,79 +176,54 @@ export default function HomePage() {
                           const isTomorrow = c.argumentDate === tomorrow;
                           if (isToday) {
                             return (
-                              <div key={c.slug} className="bg-[var(--ivory)] rounded p-4 border-2 border-[var(--rust)] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+                              <div key={c.slug} className="bg-white rounded p-4 border-2 border-green-500">
                                 <div className="flex items-center justify-between mb-1">
-                                  <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
+                                  <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                                   <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                                    <span
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--rust)] bg-[var(--rust)]/10 text-[var(--rust)]"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
-                                      Today at 10:00
-                                    </span>
-                                    <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer"
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--rust)] bg-[var(--rust)]/10 text-[var(--rust)] hover:bg-[var(--rust)]/20 transition-colors"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
-                                      Listen Live
+                                    <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
+                                    <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
+                                      Listen Live ↗
                                     </a>
                                     {splitSlugs.has(c.slug) && (
-                                      <Link href="/appeals"
-                                        className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
-                                        style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
-                                      >
+                                      <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
                                         Circuit Split
                                       </Link>
                                     )}
                                   </div>
                                 </div>
-                                <Link href={`/cases/${c.slug}`}
-                                  className="text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
-                                  style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
-                                >
+                                <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                   {c.title}
                                 </Link>
-                                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">{formatDate(c.argumentDate)}</p>
+                                <p className="text-xs text-gray-500 mt-1">{formatDate(c.argumentDate)}</p>
                               </div>
                             );
                           }
                           return (
                             <div
                               key={c.slug}
-                              className={`bg-[var(--ivory)] rounded p-4 hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${
+                              className={`bg-white rounded p-4 hover:shadow-sm transition-all ${
                                 isTomorrow
-                                  ? "border-2 border-[var(--gold)]"
-                                  : "border border-[var(--tan)] hover:border-[var(--rust)]"
+                                  ? "border-2 border-yellow-400"
+                                  : "border border-gray-200 hover:border-gray-400"
                               }`}
                             >
                               <div className="flex items-center justify-between mb-1">
-                                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
+                                <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                                   {isTomorrow && (
-                                    <span
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/10 text-[var(--gold)]"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
-                                      Tomorrow at 10:00
-                                    </span>
+                                    <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
                                   )}
                                   {splitSlugs.has(c.slug) && (
-                                    <Link href="/appeals"
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
+                                    <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
                                       Circuit Split
                                     </Link>
                                   )}
                                 </div>
                               </div>
-                              <Link href={`/cases/${c.slug}`}
-                                className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
-                              >
+                              <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                 {c.title}
                               </Link>
-                              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">{formatDate(c.argumentDate)}</p>
+                              <p className="text-xs text-gray-500 mt-1">{formatDate(c.argumentDate)}</p>
                             </div>
                           );
                         })}
@@ -267,10 +231,9 @@ export default function HomePage() {
                       {upcoming.length > PAGE_SIZE && (
                         <Link
                           href="/docket/upcoming"
-                          className="mt-4 text-center text-[var(--rust)] hover:underline border border-[var(--tan)] rounded py-2 bg-[var(--ivory)] hover:bg-[var(--cream)] transition-colors"
-                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "13px" }}
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                         >
-                          View all {upcoming.length} cases
+                          View all {upcoming.length} cases →
                         </Link>
                       )}
                     </>
@@ -279,43 +242,31 @@ export default function HomePage() {
 
                 {/* Argued */}
                 <div className="flex flex-col">
-                  <h3
-                    className="pb-2 mb-4 border-b border-[var(--tan)] text-[var(--warm-gray)]"
-                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-                  >
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
                     Argued
                   </h3>
                   {argued.length === 0 ? (
-                    <p className="text-[var(--warm-gray)] text-sm italic">No cases</p>
+                    <p className="text-gray-400 text-sm italic">No cases</p>
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
                         {argued.slice(0, PAGE_SIZE).map((c) => (
-                          <div key={c.slug} className="bg-[var(--ivory)] border border-[var(--tan)] rounded p-4 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+                          <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
                             <div className="flex items-center justify-between mb-1">
-                              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{c.termYear} Term · {c.caseNumber}</p>
+                              <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                               {splitSlugs.has(c.slug) && (
-                                <Link href="/appeals"
-                                  className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
-                                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
-                                >
+                                <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
                                   Circuit Split
                                 </Link>
                               )}
                             </div>
-                            <Link href={`/cases/${c.slug}`}
-                              className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
-                              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
-                            >
+                            <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                               {c.title}
                             </Link>
-                            <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">Argued {formatDate(c.argumentDate)}</p>
+                            <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
                             {c.podcastEpisodeUrl && (
-                              <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer"
-                                className="mt-1.5 block text-[var(--forest)] hover:underline"
-                                style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}
-                              >
-                                Listen on Spotify
+                              <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+                                Listen on Spotify ↗
                               </a>
                             )}
                           </div>
@@ -324,10 +275,9 @@ export default function HomePage() {
                       {argued.length > PAGE_SIZE && (
                         <Link
                           href="/docket/argued"
-                          className="mt-4 text-center text-[var(--rust)] hover:underline border border-[var(--tan)] rounded py-2 bg-[var(--ivory)] hover:bg-[var(--cream)] transition-colors"
-                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "13px" }}
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                         >
-                          View all {argued.length} cases
+                          View all {argued.length} cases →
                         </Link>
                       )}
                     </>
@@ -336,59 +286,40 @@ export default function HomePage() {
 
                 {/* Decided */}
                 <div className="flex flex-col">
-                  <h3
-                    className="pb-2 mb-4 border-b border-[var(--tan)] text-[var(--warm-gray)]"
-                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-                  >
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 border-b border-gray-300 pb-2 mb-4">
                     Decided
                   </h3>
                   {decided.length === 0 ? (
-                    <p className="text-[var(--warm-gray)] text-sm italic">No cases</p>
+                    <p className="text-gray-400 text-sm italic">No cases</p>
                   ) : (
                     <>
                       <div className="flex flex-col gap-3">
                         {decided.slice(0, PAGE_SIZE).map((item) => {
                           const isToday = item.decisionDate === today;
-                          const borderCls = isToday ? "border-2 border-[var(--forest)]" : "border border-[var(--tan)] hover:border-[var(--rust)]";
+                          const borderCls = isToday ? "border-2 border-green-500" : "border border-gray-200 hover:border-gray-400";
                           return (
-                            <div key={item.slug} className={`bg-[var(--ivory)] rounded p-4 hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)] ${borderCls}`}>
+                            <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
                               <div className="flex items-center justify-between mb-1">
-                                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)]">{item.sub}</p>
+                                <p className="text-xs text-gray-400">{item.sub}</p>
                                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                                  {isToday && (
-                                    <span
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--forest)] bg-[var(--forest)]/10 text-[var(--forest)]"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
-                                      Decided Today
-                                    </span>
-                                  )}
+                                  {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
                                   {splitSlugs.has(item.slug) && (
-                                    <Link href="/appeals"
-                                      className="px-2 py-0.5 rounded-[3px] border border-[var(--gold)] bg-[var(--gold)]/15 text-[var(--gold)] hover:bg-[var(--gold)]/25 transition-colors"
-                                      style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "10px", textTransform: "uppercase" }}
-                                    >
+                                    <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
                                       Circuit Split
                                     </Link>
                                   )}
                                 </div>
                               </div>
-                              <Link href={item.href}
-                                className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
-                              >
+                              <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                 {item.title}
                               </Link>
-                              <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">
+                              <p className="text-xs text-gray-500 mt-1">
                                 {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
                                 {item.voteSplit ? ` · ${item.voteSplit}` : ""}
                               </p>
                               {item.podcastEpisodeUrl && (
-                                <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer"
-                                  className="mt-1.5 block text-[var(--forest)] hover:underline"
-                                  style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}
-                                >
-                                  Listen on Spotify
+                                <a href={item.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
+                                  Listen on Spotify ↗
                                 </a>
                               )}
                             </div>
@@ -398,10 +329,9 @@ export default function HomePage() {
                       {decided.length > PAGE_SIZE && (
                         <Link
                           href="/docket/decided"
-                          className="mt-4 text-center text-[var(--rust)] hover:underline border border-[var(--tan)] rounded py-2 bg-[var(--ivory)] hover:bg-[var(--cream)] transition-colors"
-                          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "13px" }}
+                          className="mt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                         >
-                          View all {decided.length} cases
+                          View all {decided.length} cases →
                         </Link>
                       )}
                     </>
@@ -424,14 +354,11 @@ export default function HomePage() {
                 .slice(0, 2);
               if (featured.length === 0) return null;
               return (
-                <div id="circuit-splits" className="border-t border-[var(--tan)] mt-10 pt-10">
-                  <h2
-                    className="text-2xl text-[var(--charcoal)] mb-1"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-                  >
+                <div id="circuit-splits" className="border-t border-gray-300 mt-10 pt-10">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-1">
                     Current Circuit Splits
                   </h2>
-                  <p className="text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+                  <p className="text-sm text-gray-500 mb-6">
                     These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -439,10 +366,10 @@ export default function HomePage() {
                       <SplitCard key={s.id} split={s} />
                     ))}
                   </div>
-                  <p className="mt-4 text-[var(--warm-gray)]" style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}>
+                  <p className="mt-4 text-xs text-gray-400">
                     Source: CourtListener &middot; Analysis: Claude AI &middot;{" "}
-                    <a href="/appeals" className="text-[var(--rust)] hover:underline">
-                      See all circuit splits
+                    <a href="/appeals" className="text-blue-600 hover:underline">
+                      See all circuit splits &rarr;
                     </a>
                   </p>
                 </div>
@@ -452,24 +379,21 @@ export default function HomePage() {
           </div>{/* end left col-span-3 */}
 
           {/* Right col: Analysis & Opinions preview */}
-          <div className="lg:col-span-1 flex flex-col lg:border-l lg:border-[var(--tan)] lg:pl-6">
-            <h2
-              className="text-2xl text-[var(--charcoal)] mb-8"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-            >
+          <div className="lg:col-span-1 flex flex-col lg:border-l lg:border-gray-300 lg:pl-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">
               Analysis<br />&amp; Opinions
             </h2>
             {previewArticles.length === 0 ? (
-              <p className="text-[var(--warm-gray)] text-sm italic">No articles yet.</p>
+              <p className="text-gray-400 text-sm italic">No articles yet.</p>
             ) : (
               <>
                 <div className="flex flex-col gap-3">
                   {previewArticles.map((article) => (
                     <div
                       key={article.id}
-                      className="bg-[var(--ivory)] border border-[var(--tan)] rounded p-4 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+                      className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all"
                     >
-                      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mb-1">
+                      <p className="text-xs text-gray-400 mb-1">
                         {article.source}
                         {article.author ? ` · ${article.author}` : ""}
                       </p>
@@ -477,12 +401,11 @@ export default function HomePage() {
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-[var(--charcoal)] leading-snug hover:text-[var(--rust)] transition-colors"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "15px" }}
+                        className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline"
                       >
-                        {article.title}
+                        {article.title} ↗
                       </a>
-                      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }} className="text-[var(--warm-gray)] mt-1">{article.publishedAt}</p>
+                      <p className="text-xs text-gray-500 mt-1">{article.publishedAt}</p>
                       {article.relatedCaseSlugs.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
                           {article.relatedCaseSlugs.map((slug) => {
@@ -492,10 +415,9 @@ export default function HomePage() {
                               <Link
                                 key={slug}
                                 href={`/cases/${slug}`}
-                                className="text-[var(--rust)] hover:underline"
-                                style={{ fontFamily: "'DM Mono', monospace", fontSize: "11px" }}
+                                className="text-xs text-blue-600 hover:underline"
                               >
-                                {title}
+                                {title} →
                               </Link>
                             );
                           })}
@@ -506,10 +428,9 @@ export default function HomePage() {
                 </div>
                 <Link
                   href="/analysis"
-                  className="mt-auto pt-4 text-center text-[var(--rust)] hover:underline border border-[var(--tan)] rounded py-2 bg-[var(--ivory)] hover:bg-[var(--cream)] transition-colors"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "13px" }}
+                  className="mt-auto pt-4 text-center text-sm text-blue-600 hover:underline border border-blue-200 rounded py-2 bg-white hover:bg-blue-50 transition-colors"
                 >
-                  View all analysis
+                  View all analysis →
                 </Link>
               </>
             )}
@@ -519,13 +440,8 @@ export default function HomePage() {
       </section>
 
       <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
-        <h2
-          className="text-2xl text-[var(--charcoal)] mb-2"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-        >
-          Cases by Circuit
-        </h2>
-        <p className="text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
+        <p className="text-sm text-gray-500 mb-6">
           Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
           Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
         </p>
@@ -533,13 +449,8 @@ export default function HomePage() {
       </section>
 
       <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
-        <h2
-          className="text-2xl text-[var(--charcoal)] mb-2"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-        >
-          Court Calendar
-        </h2>
-        <p className="text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
+        <p className="text-sm text-gray-500 mb-6">
           Oral argument sessions and conference dates for the October Term 2025.
           Argument dates link to case pages. Conference dates are when the Justices
           meet privately to discuss pending petitions and argued cases.
@@ -549,13 +460,8 @@ export default function HomePage() {
 
       {justicesData && (
         <section id="justices" className="max-w-7xl mx-auto px-6 pb-12">
-          <h2
-            className="text-2xl text-[var(--charcoal)] mb-2"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-          >
-            Justices
-          </h2>
-          <p className="text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Justices</h2>
+          <p className="text-sm text-gray-500 mb-6">
             Speaking turns and estimated speaking time per justice across all{" "}
             {justicesData.term} term oral arguments, ranked by time on record.
           </p>
@@ -565,13 +471,8 @@ export default function HomePage() {
 
       {lawyersData && (
         <section id="counsel" className="max-w-7xl mx-auto px-6 pb-12">
-          <h2
-            className="text-2xl text-[var(--charcoal)] mb-2"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-          >
-            Counsel
-          </h2>
-          <p className="text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Counsel</h2>
+          <p className="text-sm text-gray-500 mb-6">
             Attorneys with 2 or more cases in the {lawyersData.term} term, ranked by speaking time.
             Click a name to see the cases they argued.
           </p>
@@ -579,22 +480,17 @@ export default function HomePage() {
         </section>
       )}
 
-      <section id="about" className="bg-[var(--paper-white)] border-t border-[var(--tan)] px-6 py-16">
+      <section id="about" className="bg-ft-paper border-t border-[#e8d0b8] px-6 py-16">
         <div className="max-w-3xl mx-auto">
-          <h2
-            className="text-2xl text-[var(--charcoal)] mb-6"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600 }}
-          >
-            About
-          </h2>
-          <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">About</h2>
+          <p className="text-base text-gray-600 leading-relaxed">
             This site tracks upcoming and recent oral arguments before the United States Supreme Court.
             Case information is compiled directly from official Supreme Court records, including transcripts, docket filings, and published opinions.
             Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.
             Click any case to read a plain-English breakdown of the facts, the legal question, and each side&rsquo;s argument.
             The site is updated automatically each day at 5pm ET.
             Built by William Higgins.
-            For comments or suggestions, contact <a href="mailto:william.higgins@sciencespo.fr" className="text-[var(--rust)] hover:underline">william.higgins@sciencespo.fr</a>.
+            For comments or suggestions, contact <a href="mailto:william.higgins@sciencespo.fr" className="text-blue-600 hover:underline">william.higgins@sciencespo.fr</a>.
           </p>
         </div>
       </section>

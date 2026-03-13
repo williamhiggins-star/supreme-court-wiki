@@ -13,22 +13,22 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
   const hasDissents = (p.dissentingOpinions?.length ?? 0) > 0;
 
   return (
-    <div className="bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+    <div className="bg-white rounded-lg border border-gray-200 p-6">
 
       {/* ── Vote split dots ── */}
       {vote && (
         <div className="flex justify-center gap-2 mb-4">
           {Array.from({ length: vote.majority }).map((_, i) => (
-            <div key={`m-${i}`} className="w-5 h-5 rounded-full bg-[var(--forest)] ring-[2px] ring-[var(--forest)]" />
+            <div key={`m-${i}`} className="w-5 h-5 rounded-full bg-emerald-500 ring-[2px] ring-emerald-600" />
           ))}
           {Array.from({ length: vote.dissent }).map((_, i) => (
-            <div key={`d-${i}`} className="w-5 h-5 rounded-full bg-[var(--rust)] ring-[2px] ring-[var(--rust)]" />
+            <div key={`d-${i}`} className="w-5 h-5 rounded-full bg-rose-500 ring-[2px] ring-rose-600" />
           ))}
         </div>
       )}
 
       {/* ── Meta line ── */}
-      <p className="text-center text-[var(--warm-gray)] mb-6" style={{ fontFamily: "'DM Mono', monospace", fontSize: "13px" }}>
+      <p className="text-sm text-gray-400 text-center mb-6">
         {[
           p.voteCount ? `${p.voteCount} decision` : null,
           p.majorityAuthor ? `Opinion by ${p.majorityAuthor}` : null,
@@ -39,30 +39,27 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
       {/* ── Majority opinion ── */}
       {p.holding && (
         <div id="majority-opinion" className="mb-6 scroll-mt-4">
-          <h3
-            className="text-[var(--charcoal)] mb-2"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-          >
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2">
             Majority Opinion
             {p.majorityAuthor && (
-              <span className="normal-case text-[var(--warm-gray)] ml-2" style={{ fontWeight: 400, letterSpacing: "0" }}>
+              <span className="normal-case font-normal text-gray-500 ml-2">
                 — {p.majorityAuthor}
               </span>
             )}
             {hasConcurrences && (
-              <a href="#concurring-opinions" className="normal-case text-[var(--gold)] hover:underline ml-3" style={{ fontSize: "11px", fontWeight: 400 }}>
+              <a href="#concurring-opinions" className="normal-case font-normal text-blue-500 hover:underline text-xs ml-3">
                 concurring ↓
               </a>
             )}
             {hasDissents && (
-              <a href="#dissenting-opinions" className="normal-case text-[var(--rust)] hover:underline ml-3" style={{ fontSize: "11px", fontWeight: 400 }}>
+              <a href="#dissenting-opinions" className="normal-case font-normal text-rose-500 hover:underline text-xs ml-3">
                 dissent ↓
               </a>
             )}
           </h3>
           <div className="space-y-3">
             {p.holding.split("\n\n").map((para, i) => (
-              <p key={i} className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>{para}</p>
+              <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
             ))}
           </div>
         </div>
@@ -71,14 +68,11 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
       {/* ── Concurring opinions ── */}
       {hasConcurrences && (
         <div id="concurring-opinions" className="mb-6 scroll-mt-4">
-          <h3
-            className="text-[var(--charcoal)] mb-2"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-          >
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2">
             Concurring Opinions
           </h3>
-          <div className="pl-4 border-l-[3px] border-[var(--gold)]">
-            <p className="text-[var(--charcoal)] leading-relaxed" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>{p.concurringNote}</p>
+          <div className="pl-4 border-l-2 border-blue-200">
+            <p className="text-sm text-gray-700 leading-relaxed">{p.concurringNote}</p>
           </div>
         </div>
       )}
@@ -86,29 +80,23 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
       {/* ── Dissenting opinions ── */}
       {hasDissents && (
         <div id="dissenting-opinions" className="scroll-mt-4">
-          <h3
-            className="text-[var(--charcoal)] mb-3"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "11px", textTransform: "uppercase", letterSpacing: "0.12em" }}
-          >
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
             Dissenting Opinions
           </h3>
           <div className="space-y-5">
             {p.dissentingOpinions!.map((d) => (
-              <div key={d.author} className="pl-4 border-l-[3px] border-[var(--rust)]">
-                <p
-                  className="text-[var(--charcoal)] mb-1.5"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px" }}
-                >
+              <div key={d.author} className="pl-4 border-l-2 border-rose-300">
+                <p className="text-xs font-semibold text-gray-600 mb-1.5">
                   {d.author}
                   {d.joinedBy.length > 0 && (
-                    <span className="text-[var(--warm-gray)] ml-1.5" style={{ fontWeight: 400 }}>
+                    <span className="font-normal text-gray-400 ml-1.5">
                       joined by {d.joinedBy.join(", ")}
                     </span>
                   )}
                 </p>
-                <p className="text-[var(--charcoal)] leading-relaxed mb-2" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>{d.coreArgument}</p>
+                <p className="text-sm text-gray-700 leading-relaxed mb-2">{d.coreArgument}</p>
                 {d.keyPoints.length > 0 && (
-                  <ul className="space-y-1 text-[var(--charcoal)] list-disc list-inside" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+                  <ul className="space-y-1 text-sm text-gray-600 list-disc list-inside">
                     {d.keyPoints.map((pt, i) => (
                       <li key={i}>{pt}</li>
                     ))}

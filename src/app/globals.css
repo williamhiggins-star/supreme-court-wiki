@@ -1,33 +1,90 @@
 @import "tailwindcss";
 
+/* Cardinal Fruit */
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-Regular-Trial.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-Italic-Trial.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-Medium-Trial.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-MediumItalic-Trial.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-SemiBold-Trial.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-SemiBoldItalic-Trial.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-Bold-Trial.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cardinal Fruit";
+  src: url("/fonts/CardinalFruitWeb-BoldItalic-Trial.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Graphika81 — used only for the site title */
+@font-face {
+  font-family: "Graphika81";
+  src: url("/fonts/Graphika81Web-Regular-Trial.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Graphika81";
+  src: url("/fonts/Graphika81Web-Bold-Trial.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --cream:        #F5F0E8;
-  --ivory:        #FAFAF7;
-  --charcoal:     #1A1A1A;
-  --warm-gray:    #6B6560;
-  --tan:          #C4A882;
-  --rust:         #B85C38;
-  --forest:       #2C4A3E;
-  --gold:         #8B6914;
-  --paper-white:  #FEFCF7;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--cream);
-  --color-foreground: var(--charcoal);
-  --color-cream: #F5F0E8;
-  --color-ivory: #FAFAF7;
-  --color-charcoal: #1A1A1A;
-  --color-warm-gray: #6B6560;
-  --color-tan: #C4A882;
-  --color-rust: #B85C38;
-  --color-forest: #2C4A3E;
-  --color-gold: #8B6914;
-  --color-paper-white: #FEFCF7;
-  --font-sans: "DM Sans", sans-serif;
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-body: "Lora", Georgia, serif;
-  --font-mono: "DM Mono", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Cardinal Fruit", Georgia, serif;
+  --color-ft-pink: #fcd0b1;
+  --color-ft-paper: #fff1e5;
 }
 
 html {
@@ -35,10 +92,8 @@ html {
 }
 
 body {
-  background: var(--cream);
-  color: var(--charcoal);
-  font-family: "Lora", Georgia, serif;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 1.7;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Cardinal Fruit", Georgia, serif;
+  font-weight: 500;
 }

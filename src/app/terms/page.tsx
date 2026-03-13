@@ -5,23 +5,16 @@ export default function TermsIndexPage() {
   const terms = getAllTerms();
 
   return (
-    <main className="min-h-screen bg-[var(--cream)]">
-      <header className="bg-[var(--cream)] border-b border-[var(--tan)]">
+    <main className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <Link
-            href="/"
-            className="text-[var(--warm-gray)] hover:text-[var(--rust)] transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.08em" }}
-          >
-            &larr; Home
+          <Link href="/" className="text-sm text-blue-600 hover:underline">
+            ← Home
           </Link>
-          <h1
-            className="mt-3 text-2xl text-[var(--charcoal)]"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
-          >
+          <h1 className="mt-3 text-2xl font-bold text-gray-900">
             Legal Glossary
           </h1>
-          <p className="mt-1 text-[var(--warm-gray)]" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+          <p className="mt-1 text-gray-500">
             Plain-English definitions of legal terms used in Supreme Court
             arguments
           </p>
@@ -30,7 +23,7 @@ export default function TermsIndexPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-10">
         {terms.length === 0 ? (
-          <p className="text-[var(--warm-gray)] text-center py-16" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+          <p className="text-gray-400 text-center py-16">
             Terms will appear here after processing transcripts.
           </p>
         ) : (
@@ -39,15 +32,10 @@ export default function TermsIndexPage() {
               <Link
                 key={t.slug}
                 href={`/terms/${t.slug}`}
-                className="block bg-[var(--ivory)] rounded-lg border border-[var(--tan)] p-5 hover:border-[var(--rust)] hover:shadow-md transition-all shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
+                className="block bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-400 hover:shadow-sm transition-all"
               >
-                <p
-                  className="text-[var(--charcoal)]"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, fontSize: "16px" }}
-                >
-                  {t.term}
-                </p>
-                <p className="mt-1 text-[var(--charcoal)] line-clamp-2" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "14px" }}>
+                <p className="font-semibold text-gray-900">{t.term}</p>
+                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
                   {t.definition}
                 </p>
               </Link>

@@ -12,23 +12,22 @@ export default function AppellateImpactsPage() {
   const data = getAppellateImpactsData();
 
   return (
-    <main className="min-h-screen bg-[var(--cream)]">
-      <header className="bg-[var(--cream)] pt-10 px-6 pb-6">
+    <main className="min-h-screen bg-ft-paper">
+      <header className="bg-ft-pink pt-10 px-6 pb-6">
         <div className="max-w-5xl mx-auto">
           <Link
             href="/"
-            className="text-[var(--warm-gray)] hover:text-[var(--rust)] transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.08em" }}
+            className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
           >
             &larr; Supreme Court Tracker
           </Link>
           <h1
-            className="mt-4 text-3xl sm:text-4xl font-bold text-[var(--charcoal)] tracking-tight"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            className="mt-4 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight"
+            style={{ fontFamily: "Graphika81, Georgia, serif" }}
           >
             Appellate Impacts
           </h1>
-          <p className="mt-2 text-[var(--warm-gray)] max-w-2xl" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "15px" }}>
+          <p className="mt-2 text-sm text-gray-600 max-w-2xl">
             Recent federal appellate opinions with significant business impact.
             Covering securities, antitrust, labor &amp; employment, intellectual
             property, arbitration, class actions, and bankruptcy. Court badges
@@ -44,12 +43,9 @@ export default function AppellateImpactsPage() {
             generated={data.generated}
           />
         ) : (
-          <p className="text-[var(--warm-gray)] text-sm italic" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+          <p className="text-sm text-gray-400 italic">
             No data yet — run{" "}
-            <code
-              className="bg-[var(--ivory)] px-1 py-0.5 rounded border border-[var(--tan)]"
-              style={{ fontFamily: "'DM Mono', monospace", fontSize: "12px" }}
-            >
+            <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
               npx tsx scripts/fetch-appellate-impacts.ts
             </code>{" "}
             to populate.
