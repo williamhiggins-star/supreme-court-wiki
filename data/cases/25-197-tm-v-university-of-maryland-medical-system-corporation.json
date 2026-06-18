@@ -5,7 +5,7 @@
   "termYear": "2025",
   "argumentDate": "2026-04-20",
   "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-197.html",
-  "docketStatus": "petition",
+  "docketStatus": "decided",
   "backgroundAndFacts": "T.M. filed a medical malpractice action against the University of Maryland Medical System Corporation and related defendants in the United States District Court for the District of Maryland. The case involves allegations of medical negligence in the provision of healthcare services. The district court initially addressed the claims, and the case proceeded through litigation in the lower courts.\n\nThe United States Court of Appeals for the Fourth Circuit issued a decision on June 4, 2025, in case No. 24-1707. T.M. subsequently petitioned for a writ of certiorari on August 15, 2025, raising questions about the legal standards governing institutional medical liability and the scope of negligence claims against healthcare providers. The Supreme Court granted the petition on December 5, 2025, finding the issues sufficiently important for review.",
   "legalQuestion": "What legal standards apply to medical malpractice claims against healthcare institutions, and what are the scope and limits of institutional liability in medical negligence cases?",
   "significance": "This case addresses fundamental questions about how courts should evaluate medical malpractice claims against healthcare institutions and what standards of care and institutional responsibility apply in medical negligence litigation. The Court's decision could significantly impact the liability exposure of hospitals and medical systems, establish or clarify standards for institutional negligence, and potentially affect how medical malpractice claims are litigated across the country. The case has attracted substantial amicus interest from medical professional organizations, civil rights advocates, and legal scholars, indicating its broader implications for healthcare law, institutional accountability, and the civil justice system.",
@@ -75,5 +75,28 @@
     "vicarious-liability",
     "damages"
   ],
-  "processedAt": "2026-02-24T13:02:24.699Z"
+  "processedAt": "2026-02-24T13:02:24.699Z",
+  "decisionDate": "2026-06-18",
+  "outcome": "Opinion filed. See: https://www.supremecourt.gov/opinions/25pdf/25-197_bp7c.pdf",
+  "majorityAuthor": "sotomayor",
+  "concurrenceAuthors": [
+    "thomas"
+  ],
+  "dissentAuthors": [
+    "barrett"
+  ],
+  "petitionerWon": null,
+  "majorityOpinionSummary": "The Supreme Court held that the Rooker-Feldman doctrine bars federal district courts from hearing cases in which state-court losers seek review and rejection of state-court judgments, even when those judgments are still subject to appeal in state court. The case involved T. M., who was involuntarily committed to a psychiatric facility and later entered into a consent order in state court to secure her release. Ten days after the consent order was entered, she filed a federal lawsuit asking the district court to declare the consent order unconstitutional and unenforceable. The Court found this was a classic attempt to have a federal trial court review and overturn a state-court judgment—exactly what Rooker-Feldman prohibits.\n\nThe majority, written by Justice Sotomayor, rejected T. M.'s argument that Rooker-Feldman should apply only when a state-court judgment has become final in the highest state court (the kind of judgment the Supreme Court itself can review under 28 U.S.C. §1257). The Court explained that the doctrine rests on two foundations: first, that asking a federal district court to reverse a state-court judgment is an exercise of appellate jurisdiction, which district courts do not possess; and second, that only the Supreme Court has been given appellate jurisdiction over state courts. Adopting T. M.'s rule, the Court reasoned, would undermine federalism by letting federal trial courts second-guess state-court judgments while state appeals are still ongoing, would produce arbitrary results depending on when a federal suit is filed, and would add new complexity without solving existing confusion about the doctrine. The practical effect is that state-court losers cannot circumvent Rooker-Feldman simply by filing in federal court before their state appeal concludes.",
+  "concurringSummaries": [
+    {
+      "author": "thomas",
+      "summary": "Justice Thomas joined the majority opinion in full but wrote separately to explain why, in his view, the Rooker-Feldman doctrine is correct as an original matter rooted in the Constitution's distinction between original and appellate jurisdiction. He traced the concept of appellate jurisdiction back to before the founding, arguing that asking one court to reverse or revise another court's judgment has always been understood as an exercise of appellate power. He cited Marbury v. Madison and Ex parte Bollman to show that the form of proceeding—whether a writ of error, habeas petition, or bill in equity—does not change the nature of the jurisdiction being invoked; what matters is whether a party is asking a court to correct another court's judgment.\n\nJustice Thomas further explained that Congress has never given federal district courts appellate jurisdiction over state-court judgments. Since the Judiciary Act of 1789, only the Supreme Court has been authorized to review state-court decisions on questions of federal law. The 1875 grant of federal-question jurisdiction to district courts was limited to original jurisdiction and did not include the power to revise state-court judgments. Because district courts possess only original jurisdiction under §1331, they simply cannot act as appellate courts sitting in review of state-court decisions, regardless of the label a party puts on the filing."
+    }
+  ],
+  "dissentSummaries": [
+    {
+      "author": "barrett",
+      "summary": "Justice Barrett, joined by Chief Justice Roberts and Justices Kagan and Gorsuch, dissented on the ground that the Court's 2005 decision in Exxon Mobil confined Rooker-Feldman to cases matching the procedural circumstances of the two original cases—and in both of those cases, the state proceedings had ended before the federal suit was filed. Because T. M.'s state appeal was still pending when she filed in federal court, the dissent argued that Rooker-Feldman should not apply. Seven circuit courts had read Exxon the same way, and Barrett contended they were right to hold the line.\n\nThe dissent also challenged the doctrine's conceptual foundations, arguing that a collateral attack in district court is fundamentally different from an appeal and that Congress never intended §1331 or §1257 to strip district courts of jurisdiction over such suits. Barrett pointed out that existing legal tools—preclusion, abstention doctrines, and the Full Faith and Credit Act—already address the concerns the majority raised about federalism and duplicative litigation. She criticized the majority for reviving a §1331 rationale that Exxon had effectively abandoned, for invoking federalism concerns that are too weak to trigger abstention but apparently strong enough to eliminate jurisdiction entirely, and for making the doctrine harder rather than easier for lower courts to apply. She urged courts to remember the majority's own insistence that Rooker-Feldman is narrow and warned against allowing today's expansion to go any further."
+    }
+  ]
 }
