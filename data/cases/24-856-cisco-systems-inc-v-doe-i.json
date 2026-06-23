@@ -5,7 +5,7 @@
   "termYear": "2025",
   "argumentDate": "2026-04-28",
   "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/24-856.html",
-  "docketStatus": "petition",
+  "docketStatus": "decided",
   "backgroundAndFacts": "Cisco Systems and other technology companies filed suit in federal court against unnamed foreign defendants (referred to as \"Doe\" defendants) for alleged violations of federal law, including claims arising from extraterritorial conduct. The respondents sought to keep their identities concealed pending resolution of jurisdictional questions. The central dispute concerns whether U.S. courts should force disclosure of defendant identities early in litigation, before establishing whether the court has authority to hear the case or can exercise power over the defendants.\n\nThe Ninth Circuit Court of Appeals ruled in July 2023 in favor of early disclosure, reasoning that plaintiffs have a substantial interest in identifying potential defendants and that unnamed defendants should not escape identification challenges. The Ninth Circuit's decision created tension with how other circuits handle such disclosures and raised concerns about protecting foreign nationals from premature legal exposure.",
   "legalQuestion": "Whether courts may compel disclosure of the identities of foreign tortfeasors sued in U.S. courts before the United States has established subject-matter jurisdiction or personal jurisdiction over those defendants.",
   "significance": "This case addresses a fundamental procedural question about the balance between a plaintiff's right to pursue claims against unknown parties and a defendant's right to remain unnamed before a court establishes its jurisdiction. The decision will affect how technology companies, manufacturers, and other U.S. firms can pursue international litigation claims and may impact foreign policy considerations by determining when U.S. courts can require foreign nationals to be identified in litigation. The strong support from business groups and amici on Cisco's side, combined with the Solicitor General's involvement, suggests the Court may be reconsidering federal courts' authority to compel such disclosures in cases involving extraterritorial conduct or foreign defendants. The ruling could significantly reshape discovery and jurisdictional practice in cases involving international parties.",
@@ -90,5 +90,30 @@
     "extraterritorial"
   ],
   "processedAt": "2026-02-24T13:04:47.443Z",
-  "podcastEpisodeUrl": "https://open.spotify.com/episode/4GTQg1JlSZDixyCwf4qwOH"
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/4GTQg1JlSZDixyCwf4qwOH",
+  "decisionDate": "2026-06-23",
+  "outcome": "Opinion filed. See: https://www.supremecourt.gov/opinions/25pdf/24-856_kjfm.pdf",
+  "majorityAuthor": "barrett",
+  "concurrenceAuthors": [
+    "gorsuch",
+    "thomas",
+    "barrett"
+  ],
+  "dissentAuthors": [
+    "sotomayor"
+  ],
+  "petitionerWon": null,
+  "majorityOpinionSummary": "The Supreme Court held that federal courts may not create new causes of action (the legal basis for a lawsuit) under the Alien Tort Statute (ATS) for violations of international law. The ATS, enacted in 1789, gives federal courts jurisdiction over lawsuits by foreign nationals for torts committed in violation of international law. In 2004, the Court's decision in Sosa v. Alvarez-Machain said the ATS was purely a jurisdictional statute but left open a narrow possibility that courts could craft new rights to sue under it. The Court now closed that door entirely, reasoning that creating causes of action is Congress's job, not the judiciary's, and that ATS cases inherently implicate foreign policy—a domain belonging to the political branches. The Court noted that it had never actually created a new ATS cause of action in the two decades since Sosa, and that subsequent legal developments have made it clear that judicially invented rights to sue offend the separation of powers.\n\nThe Court also held that the Torture Victim Protection Act (TVPA), which allows lawsuits against individuals who \"subject\" others to torture, does not extend to aiding-and-abetting liability. Relying on its earlier decision in Central Bank of Denver, the Court reasoned that because Congress knows how to expressly include aiding-and-abetting liability in statutes and chose not to do so in the TVPA, the statute does not cover those who merely assist torturers rather than directly causing the torture. The practical effect of the decision is that Cisco Systems cannot be sued under either the ATS or the TVPA for allegedly helping the Chinese government build surveillance technology used to identify and persecute Falun Gong practitioners. More broadly, the ruling effectively shuts the door to most future human rights lawsuits brought by foreign nationals in U.S. federal courts under the ATS.",
+  "concurringSummaries": [
+    {
+      "author": "jackson",
+      "summary": "Justice Jackson, joined by Justice Kagan, agreed with the majority that the TVPA does not cover aiding-and-abetting liability, but disagreed with the majority's ATS holding and its reasoning about the TVPA. On the ATS, Jackson sided with Justice Sotomayor's dissent, believing that courts should retain the ability to recognize causes of action under the statute as Sosa allowed. On the TVPA, Jackson agreed that the word \"subjects\" does not encompass aiding and abetting, but objected to the majority's heavy reliance on Central Bank as creating a \"magic words\" test. Jackson emphasized that the absence of the words \"aid\" and \"abet\" in the TVPA was only one factor among many, not a dispositive rule requiring Congress to use specific phrases to impose that form of liability."
+    }
+  ],
+  "dissentSummaries": [
+    {
+      "author": "sotomayor",
+      "summary": "Justice Sotomayor, joined in large part by Justices Kagan and Jackson, dissented from both holdings. She argued that the majority effectively overruled the Court's 2004 decision in Sosa v. Alvarez-Machain without even acknowledging it was doing so, and without providing the special justification required to overturn precedent. She contended that Sosa was correctly decided: the First Congress intended the ATS to have immediate practical effect by allowing courts to recognize causes of action rooted in well-established international law norms, and historical evidence—including opinions by Thomas Jefferson and early Attorneys General—confirmed that the ATS was never meant to be limited to only three specific offenses. She criticized the majority for relying on separate opinions by individual Justices that never commanded a majority, and for ignoring that Congress had not amended the ATS or otherwise signaled disagreement with Sosa in the two decades since it was decided.\n\nOn the TVPA, Sotomayor argued that the word \"subjects\" naturally encompasses aiding and abetting, because someone who consciously and culpably participates in torture to help make it succeed has \"subjected\" the victim to that torture. She noted that all parties agreed the TVPA covers command responsibility—holding superior officers liable for subordinates' torture—which requires even less direct involvement than aiding and abetting. She criticized the majority for imposing a \"magic words\" requirement that Congress use the specific phrase \"aiding and abetting\" to impose that form of liability, calling the decision another instance of the Court remaking the law in its preferred image at the expense of victims of horrific human rights abuses."
+    }
+  ]
 }
