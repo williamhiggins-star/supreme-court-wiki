@@ -5,7 +5,7 @@
   "termYear": "2025",
   "argumentDate": "2026-04-27",
   "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/24-1068.html",
-  "docketStatus": "petition",
+  "docketStatus": "decided",
   "backgroundAndFacts": "John L. Durnell brought a failure-to-warn lawsuit against Monsanto Company, alleging that Monsanto's herbicide product failed to adequately warn of health risks. The case centers on whether state tort law allows such claims to proceed when the EPA, the federal agency responsible for regulating pesticides under the Federal Insecticide, Fungicide, and Rodenticide Act (FIFRA), has not mandated the additional warnings that Durnell claims should have been included on the product label.\n\nThe Missouri Court of Appeals, Eastern District, decided the case on February 11, 2025, and the case was subsequently appealed to the Supreme Court. Monsanto petitioned for certiorari, arguing that federal law governing pesticide labeling preempts state-law warning claims. The Supreme Court granted the petition on January 16, 2026, limiting review to the narrow question of FIFRA preemption in the label-warning context.",
   "legalQuestion": "Whether the Federal Insecticide, Fungicide, and Rodenticide Act preempts state law failure-to-warn claims based on allegedly inadequate product labeling when the EPA has not required the specific warning.",
   "significance": "This case addresses a critical intersection between federal regulatory authority and state tort law in the agricultural chemicals industry. A decision favoring Monsanto could significantly limit consumers' ability to bring failure-to-warn lawsuits in state court when federal regulators have approved a product's labeling, potentially shielding manufacturers from liability for allegedly inadequate warnings. Conversely, a decision favoring Durnell would preserve state law remedies and signal that FIFRA does not completely preempt warning-based tort claims. The outcome will affect not only pesticide manufacturers but also the broader landscape of product liability law, particularly for FDA-regulated and EPA-regulated products where state and federal standards may diverge.",
@@ -90,5 +90,28 @@
     "regulatory-approval"
   ],
   "processedAt": "2026-02-24T13:04:16.107Z",
-  "podcastEpisodeUrl": "https://open.spotify.com/episode/3n7EKdfWp8XsvqCRrs3GuF"
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/3n7EKdfWp8XsvqCRrs3GuF",
+  "decisionDate": "2026-06-25",
+  "outcome": "Opinion filed. See: https://www.supremecourt.gov/opinions/25pdf/24-1068_n7ip.pdf",
+  "majorityAuthor": "kavanaugh",
+  "concurrenceAuthors": [
+    "thomas"
+  ],
+  "dissentAuthors": [
+    "jackson"
+  ],
+  "petitionerWon": null,
+  "majorityOpinionSummary": "The Supreme Court held that the Federal Insecticide, Fungicide, and Rodenticide Act (FIFRA) expressly preempts state-law failure-to-warn claims that would require a pesticide manufacturer to add a cancer warning to a product label that the EPA has approved without one. John Durnell sued Monsanto in Missouri state court, alleging that Roundup caused his non-Hodgkin's lymphoma and that Monsanto should have included a cancer warning on the label. A jury awarded him over $1 million. The Court reversed, finding that because the EPA has repeatedly evaluated glyphosate and concluded it is not likely to cause cancer—and has approved Roundup's label without a cancer warning—federal law requires Monsanto to use that EPA-approved label. FIFRA's preemption clause, titled \"Uniformity,\" prohibits states from imposing labeling requirements that are \"in addition to or different from\" those required under the federal statute.\n\nJustice Kavanaugh, writing for a 7-2 majority, explained that EPA's registration process involves a thorough review of a pesticide's label, including whether it contains all necessary safety warnings. Once EPA approves the label, manufacturers are legally required to use it and cannot unilaterally change it without EPA's approval. Because Durnell's tort claim would effectively require Monsanto to add a cancer warning that EPA has determined is unnecessary, the state-law requirement is \"in addition to\" and \"different from\" federal requirements—and is therefore preempted. The Court rejected Durnell's arguments that EPA's registration is merely prima facie evidence of compliance, finding that this statutory provision addresses EPA enforcement actions rather than state tort suits, and that it does not strip EPA's labeling determinations of preemptive force. The Court also relied heavily on its prior decision in Riegel v. Medtronic, which found preemption under the nearly identical preemption clause in the Medical Device Amendments when the FDA had given premarket approval to a device.",
+  "concurringSummaries": [
+    {
+      "author": "thomas",
+      "summary": "Justice Thomas joined the majority opinion in full but wrote separately to raise constitutional concerns about FIFRA. He questioned whether the Act exceeds Congress's power under the Commerce Clause, noting that it regulates not just interstate sales of pesticides but also their purely local use—even a homeowner using Roundup in his own backyard. He also raised nondelegation concerns, arguing that FIFRA grants EPA broad authority to issue regulations carrying criminal penalties, which may amount to an unconstitutional delegation of core legislative power.\n\nJustice Thomas further questioned whether federal agency actions like EPA's regulations and registration decisions can preempt state law under the Supremacy Clause, which makes the \"Constitution,\" \"Laws,\" and \"Treaties\" the supreme law of the land—but does not mention agency actions. He suggested that the modern administrative state creates tensions with the constitutional structure that the Framers would not have envisioned, and noted that broad regulatory schemes like FIFRA often benefit large incumbent companies at the expense of smaller competitors and consumers."
+    }
+  ],
+  "dissentSummaries": [
+    {
+      "author": "jackson",
+      "summary": "Justice Jackson, joined by Justice Gorsuch, dissented, arguing that Durnell's failure-to-warn claim is not preempted because it parallels—rather than adds to or differs from—FIFRA's own key labeling requirement: the prohibition on selling misbranded pesticides. Under FIFRA, a pesticide is misbranded if its label lacks warnings that are \"necessary and adequate to protect health.\" Missouri's failure-to-warn tort imposes essentially the same duty. Because the state-law claim merely duplicates this federal requirement, it does not trigger FIFRA's preemption clause, which blocks only state requirements that go beyond or conflict with federal ones.\n\nJustice Jackson emphasized that FIFRA itself says EPA registration is only \"prima facie evidence\" that a pesticide's label complies with the law, and that registration is not a defense to a misbranding charge. This means, she argued, that EPA's approval of a label does not conclusively establish that the label meets all of FIFRA's requirements—and therefore cannot create an affirmative labeling requirement that preempts state law. She criticized the majority for effectively treating EPA's registration decision as conclusive proof of label adequacy, which she said contradicts the statute's text, the Court's prior decision in Bates v. Dow Agrosciences, and the near-unanimous view of lower courts that had rejected this preemption argument. She concluded that the majority's holding unjustifiably closes the courthouse doors to tort plaintiffs like Durnell."
+    }
+  ]
 }
