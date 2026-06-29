@@ -5,7 +5,7 @@
   "termYear": "2025",
   "argumentDate": "2026-04-27",
   "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-112.html",
-  "docketStatus": "petition",
+  "docketStatus": "decided",
   "backgroundAndFacts": "Okello T. Chatrie was convicted in federal court based in part on evidence obtained through digital surveillance. The Fourth Circuit Court of Appeals upheld his conviction on April 30, 2025, rejecting his challenge to the government's surveillance methods. Chatrie filed a petition for certiorari arguing that the lower courts erred in permitting warrantless or insufficiently justified access to his digital communications and related metadata.\n\nThe Fourth Circuit's decision involved questions about the scope of government investigative authority in the digital age and what constitutional safeguards apply when law enforcement accesses electronic communications. The Supreme Court granted Chatrie's petition on January 16, 2026, but limited review to \"Question 1 presented by the petition,\" suggesting the Court wishes to focus on a specific aspect of the surveillance and warrant doctrine.",
   "legalQuestion": "What is the scope of law enforcement's authority to access digital communications and metadata without a warrant, and what constitutional protections apply?",
   "significance": "This case addresses the intersection of Fourth Amendment privacy protections and modern digital surveillance, an area where courts have struggled to apply traditional warrant doctrine to contemporary technologies. A decision favoring Chatrie could impose stricter warrant requirements on law enforcement's access to digital communications and metadata, potentially affecting numerous ongoing and future investigations. Conversely, a decision favoring the government could affirm broader law enforcement authority in the digital realm. The case has attracted significant amicus attention from privacy advocates, technology companies, and civil liberties organizations, reflecting the broad implications for both individual privacy rights and government investigative capacity.",
@@ -90,5 +90,43 @@
     "certiorari"
   ],
   "processedAt": "2026-02-24T13:03:45.490Z",
-  "podcastEpisodeUrl": "https://open.spotify.com/episode/0ueF9LeXeLdVUKLMFtzHQJ"
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/0ueF9LeXeLdVUKLMFtzHQJ",
+  "decisionDate": "2026-06-29",
+  "outcome": "Opinion filed. See: https://www.supremecourt.gov/opinions/25pdf/25-112_0am4.pdf",
+  "majorityAuthor": "kagan",
+  "concurrenceAuthors": [
+    "jackson",
+    "gorsuch",
+    "kagan",
+    "sotomayor"
+  ],
+  "dissentAuthors": [
+    "alito"
+  ],
+  "petitionerWon": null,
+  "majorityOpinionSummary": "The Supreme Court held that police officers conducted a Fourth Amendment search when they obtained Okello Chatrie's cell-phone location data from Google through a \"geofence warrant.\" After a 2019 bank robbery in Virginia, police drew a virtual perimeter around the crime scene and obtained a warrant requiring Google to turn over Location History data—a service that records a user's cell-phone location every two minutes—for phones in the area around the time of the crime. Through a three-step process of narrowing down anonymous data to identified users, police identified Chatrie as a suspect. The Court ruled that individuals have a reasonable expectation of privacy in their cell-phone location information, building on its 2018 decision in Carpenter v. United States, which reached the same conclusion about cell-site location information (CSLI). The Court found that Location History is even more precise than CSLI, pinpointing location within about 20 meters and recording location roughly 720 times per day, making it an even greater intrusion on privacy.\n\nThe Court rejected two key government arguments. First, it rejected the claim that accessing only a short period (two hours) of location data falls outside the Fourth Amendment, holding that even brief monitoring can reveal deeply private information and that constitutional protection does not depend on how much data the government ultimately obtains. Second, it rejected the argument that the \"third-party doctrine\"—which generally says people lose privacy expectations in information shared with others—should apply, reasoning that users do not truly \"share\" their location data with Google in any meaningful sense, just as Carpenter found for CSLI. The Court emphasized that requiring people to forfeit Fourth Amendment protection every time they use a smartphone app or service would gut privacy protections in the modern era. However, the Court did not resolve whether this particular warrant was valid, sending the case back to the Fourth Circuit to determine whether the warrant satisfied the Fourth Amendment's requirements of probable cause and particularity at each step of the search process.",
+  "concurringSummaries": [
+    {
+      "author": "jackson",
+      "summary": "Justice Jackson, joined by Justice Sotomayor, agreed that a Fourth Amendment search occurred but wrote separately to argue that the Court should have gone further and found that the search violated the Fourth Amendment. She focused on the second and third steps of the warrant process, where officers were authorized to obtain additional location data and then identifying information for selected users. The warrant merely said officers would \"attempt\" to narrow the list without setting any criteria or requiring them to go back to the magistrate for further approval.\n\nJackson argued this meant key portions of the search were conducted without meaningful judicial oversight, giving officers a \"roving commission\" to collect more data at their discretion. She pointed out that when executing the warrant, officers initially sought data on all 19 devices identified in step one and narrowed the list only because Google insisted—not because the warrant required it. Some of the data obtained showed users' movements to sensitive locations like residences, a school, and a hospital. Jackson urged the Fourth Circuit to keep these concerns in mind when evaluating the warrant's constitutionality on remand."
+    },
+    {
+      "author": "gorsuch",
+      "summary": "Justice Gorsuch agreed with the outcome—that a Fourth Amendment search occurred—but would have reached that conclusion through different reasoning. He criticized the Court's continued reliance on the Katz \"reasonable expectation of privacy\" test, which he views as having no basis in the Constitution's text or history and as being impossible to apply consistently. He also criticized the third-party doctrine as indefensible, arguing it implausibly suggests Americans have no reasonable expectation of privacy in records held by banks, doctors, or technology companies.\n\nInstead, Gorsuch would have applied a property-based approach rooted in the Fourth Amendment's text, which protects \"persons, houses, papers, and effects.\" He argued that Chatrie's Location History data qualifies as his personal property—an \"effect\"—because Google's own terms referred to it as the user's information, and Chatrie had the right to review, edit, export, and delete it. Gorsuch also noted that many states treat digital data as personal property under their laws. He argued that even though Google stored the data on its servers, entrusting property to someone else doesn't make it no longer yours, just as giving your keys to a valet doesn't transfer ownership of your car. He suggested the majority's reasoning, while using the Katz framework, implicitly points toward this property-based understanding."
+    },
+    {
+      "author": "kagan",
+      "summary": "Justice Kagan authored the majority opinion and did not file a separate concurrence."
+    },
+    {
+      "author": "sotomayor",
+      "summary": "Justice Sotomayor joined Justice Jackson's concurrence, which argued the Court should have gone further to find the warrant deficient, particularly at steps two and three of the search process where officers had too much discretion and too little judicial oversight."
+    }
+  ],
+  "dissentSummaries": [
+    {
+      "author": "alito",
+      "summary": "Justice Alito, joined in part by Justices Thomas and Barrett, dissented on multiple grounds. First, he argued the Court should never have taken the case because its opinion is effectively advisory—it will not change the outcome for Chatrie. The Fourth Circuit had already held that even if the warrant was deficient, the evidence was admissible under the \"good-faith exception\" to the exclusionary rule (which allows evidence obtained by officers who reasonably relied on a warrant). Since the majority's opinion does nothing to disturb that holding, Alito argued, the decision amounts to a constitutional pronouncement with no practical effect on the case. He also noted that Google has since changed how it stores Location History data, making the specific geofence procedure at issue obsolete.\n\nOn the merits, Alito argued the majority improperly extended Carpenter v. United States far beyond its boundaries. He contended that under longstanding Fourth Amendment principles, compelled production of records held by a third party was never considered a \"search,\" and that Chatrie has no property interest in data that Google collected, owned, and maintained on its own servers. He criticized the majority for treating only two hours of location data as equivalent to the seven days of data at issue in Carpenter, and argued that the majority's reasoning—that any use of smartphone apps and services is protected from the third-party doctrine—effectively eliminates that doctrine entirely. Alito warned the decision would destabilize Fourth Amendment law and create uncertainty for law enforcement, all in service of what he characterized as the Court striking a pose as a champion of digital privacy rather than faithfully applying established legal principles."
+    }
+  ]
 }
