@@ -1,15 +1,15 @@
 {
-  "generated": "2026-06-30",
+  "generated": "2026-07-01",
   "splits": [
     {
-      "id": "lenity-vs-agency-deference-criminal-sentencing",
-      "legalQuestion": "Whether the rule of lenity takes precedence over agency deference (Auer/Kisor deference) when interpreting ambiguous provisions in the Sentencing Guidelines or criminal statutes.",
-      "description": "Circuits disagree on whether courts should apply the rule of lenity or defer to the Sentencing Commission's interpretation when a Guidelines provision is ambiguous in a criminal context. This matters because it determines whether ambiguity in sentencing rules is resolved in favor of the defendant or the government's preferred reading.",
+      "id": "lenity-vs-auer-deference-criminal-sentencing",
+      "legalQuestion": "Whether the rule of lenity takes priority over Auer/Kisor deference to agency interpretations when construing ambiguous provisions that carry criminal penalties or sentencing enhancements.",
+      "description": "Circuits disagree on whether courts should defer to an agency's anti-defendant interpretation of an ambiguous criminal or sentencing provision, or instead apply the rule of lenity in favor of the defendant. This matters because it determines whether agencies can effectively expand criminal liability through regulatory interpretation without explicit congressional authorization.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
           "label": "Lenity trumps deference",
-          "summary": "Holds that the rule of lenity prevails over agency or Sentencing Commission deference when interpreting ambiguous criminal sentencing provisions, so ambiguity must be resolved in the defendant's favor.",
+          "summary": "Holds that the rule of lenity prevails over agency deference when construing ambiguous criminal statutes or sentencing guidelines, meaning ambiguity must be resolved in the defendant's favor rather than deferring to the government's interpretation.",
           "circuits": [
             {
               "key": "ca5",
@@ -42,7 +42,7 @@
         },
         {
           "label": "Deference trumps lenity",
-          "summary": "Holds that agency or Sentencing Commission deference takes priority over the rule of lenity, allowing courts to defer to the Commission's anti-defendant interpretation of ambiguous Guidelines provisions.",
+          "summary": "Holds that agency deference (Auer/Kisor) to the Sentencing Commission's commentary can override the rule of lenity, allowing anti-defendant interpretations of ambiguous sentencing guidelines to control.",
           "circuits": [
             {
               "key": "ca3",
@@ -59,17 +59,17 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "career-offender-inchoate-offenses-commentary",
-      "legalQuestion": "Whether the Sentencing Guidelines' definition of 'controlled substance offense' in U.S.S.G. § 4B1.2(b) includes inchoate offenses like conspiracy, based on Application Note 1's expansion of the guideline text.",
-      "description": "Circuits split on whether Application Note 1 to U.S.S.G. § 4B1.2, which adds conspiracy and other inchoate offenses to the definition of 'controlled substance offense,' is a valid authoritative interpretation entitled to deference under Stinson/Kisor. This affects whether defendants with prior conspiracy convictions qualify as career offenders under the Guidelines.",
+      "legalQuestion": "Whether the Sentencing Guidelines' Application Note 1 to U.S.S.G. § 4B1.2, which expands the definition of 'controlled substance offense' to include inchoate offenses like conspiracy, is entitled to controlling deference under Stinson/Kisor.",
+      "description": "Circuits are split on whether Application Note 1's inclusion of conspiracy and attempt within the career-offender guideline's definition of 'controlled substance offense' is a valid interpretation deserving deference, or whether it impermissibly expands the unambiguous guideline text. The split affects thousands of federal defendants whose career-offender status depends on prior conspiracy convictions.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
-          "label": "Commentary is valid and controls",
-          "summary": "Holds that Application Note 1 is an authoritative interpretation of the Guidelines entitled to deference, so inchoate offenses like conspiracy qualify as controlled substance offenses for career offender purposes.",
+          "label": "Commentary is valid and entitled to deference",
+          "summary": "Holds that Application Note 1 is a reasonable interpretation of an ambiguous guideline and is entitled to controlling weight, so inchoate offenses like conspiracy qualify as 'controlled substance offenses' for career-offender purposes.",
           "circuits": [
             {
               "key": "ca7",
@@ -83,15 +83,15 @@
           ]
         },
         {
-          "label": "Commentary impermissibly expands guideline text",
-          "summary": "Holds that the plain text of § 4B1.2(b) unambiguously excludes inchoate offenses, making Application Note 1 an impermissible expansion rather than an interpretation, and thus not entitled to deference.",
+          "label": "Commentary impermissibly expands unambiguous text",
+          "summary": "Holds that the guideline text unambiguously excludes inchoate offenses and the commentary cannot expand the definition beyond what the text provides, so conspiracy does not qualify as a 'controlled substance offense.'",
           "circuits": [
             {
               "key": "ca6",
               "name": "Sixth Circuit",
               "shortName": "6th",
               "caseName": "United States v. Havis",
-              "year": 2020,
+              "year": 2019,
               "citation": "927 F.3d 382",
               "url": "https://www.courtlistener.com/opinion/9489997/united-states-v-keith-white/"
             },
@@ -99,9 +99,9 @@
               "key": "ca4",
               "name": "Fourth Circuit",
               "shortName": "4th",
-              "caseName": "United States v. Norman",
-              "year": 2019,
-              "citation": "935 F.3d 232",
+              "caseName": "United States v. Campbell",
+              "year": 2022,
+              "citation": "22 F.4th 438",
               "url": "https://www.courtlistener.com/opinion/9489997/united-states-v-keith-white/"
             }
           ]
@@ -110,17 +110,17 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "first-step-act-safety-valve-and-or",
-      "legalQuestion": "Whether the word 'and' in the First Step Act's safety-valve provision, 18 U.S.C. § 3553(f)(1), operates conjunctively (requiring all three criminal-history criteria to disqualify a defendant) or disjunctively (any single criterion disqualifies).",
-      "description": "Circuits are deeply divided on whether a defendant must meet all three criminal-history criteria listed in § 3553(f)(1) to be disqualified from safety-valve relief, or whether meeting any one criterion is sufficient. The split directly affects mandatory minimum sentencing for drug offenses and creates geographic disparities in criminal sentencing.",
+      "legalQuestion": "Whether the word 'and' in 18 U.S.C. § 3553(f)(1) of the First Step Act's safety-valve provision is conjunctive (requiring all three criminal-history criteria to disqualify a defendant) or disjunctive (any one criterion disqualifies).",
+      "description": "Circuits are deeply split on whether a defendant must meet all three criminal-history disqualifiers in § 3553(f)(1) or whether meeting any single one bars safety-valve relief from mandatory minimums. This split creates stark sentencing disparities across circuits for defendants with identical criminal histories.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
-          "label": "'And' is conjunctive — all three criteria required",
-          "summary": "Holds that 'and' means 'and,' so a defendant is disqualified from safety-valve relief only if all three criminal-history criteria are satisfied.",
+          "label": "'And' is conjunctive — all three criteria required to disqualify",
+          "summary": "Holds that the word 'and' in § 3553(f)(1) means a defendant is disqualified from safety-valve relief only if all three criminal-history criteria are satisfied.",
           "circuits": [
             {
               "key": "ca9",
@@ -144,7 +144,7 @@
         },
         {
           "label": "'And' is disjunctive — any one criterion disqualifies",
-          "summary": "Holds that 'and' effectively means 'or,' so possessing any one of the three criminal-history criteria disqualifies a defendant from safety-valve relief.",
+          "summary": "Holds that possessing any one of the three criminal-history criteria listed in § 3553(f)(1) is sufficient to disqualify a defendant from safety-valve relief.",
           "circuits": [
             {
               "key": "ca5",
@@ -161,7 +161,7 @@
               "shortName": "6th",
               "caseName": "United States v. Haynes",
               "year": 2022,
-              "citation": "2022 WL 17750939",
+              "citation": "",
               "url": "https://www.courtlistener.com/opinion/9371194/united-states-v-eric-lopez/"
             },
             {
@@ -185,20 +185,20 @@
           ]
         }
       ],
-      "status": "scotus_resolved",
+      "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "controlled-substance-offense-state-vs-federal-schedules",
-      "legalQuestion": "Whether a state drug conviction qualifies as a 'controlled substance offense' under the Sentencing Guidelines when the state statute covers a substance not listed on the federal controlled substances schedules.",
-      "description": "Circuits disagree on whether the Guidelines' definition of 'controlled substance offense' requires the underlying substance to be controlled under federal law or whether state-law controlled substances suffice. This affects career-offender and enhanced base offense level determinations for defendants with prior state drug convictions.",
+      "legalQuestion": "Whether a state drug conviction qualifies as a 'controlled substance offense' under the Sentencing Guidelines when the state's drug schedules include substances not listed under the federal Controlled Substances Act.",
+      "description": "Circuits disagree on whether the Guidelines' definition of 'controlled substance offense' requires the underlying substance to be controlled under federal law, or whether any state-controlled substance suffices. This split affects career-offender and other sentencing enhancements for defendants with prior state drug convictions.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
-          "label": "State schedule suffices",
-          "summary": "Holds that the Guidelines broadly define 'controlled substance offense' to include offenses under state law, with no requirement that the substance also be federally scheduled.",
+          "label": "State law controls — no federal-schedule limitation",
+          "summary": "Holds that the Guidelines broadly define 'controlled substance offense' to include state law offenses regardless of whether the substance is federally controlled, because there is no textual basis to graft a federal law limitation onto the guideline.",
           "circuits": [
             {
               "key": "ca8",
@@ -213,15 +213,15 @@
         },
         {
           "label": "Federal schedule required",
-          "summary": "Holds that a prior conviction qualifies as a 'controlled substance offense' under the Guidelines only if the substance at issue is also controlled under the federal Controlled Substances Act.",
+          "summary": "Holds that a prior state drug conviction qualifies as a 'controlled substance offense' only if the underlying substance is also controlled under federal law.",
           "circuits": [
             {
               "key": "ca1",
               "name": "First Circuit",
               "shortName": "1st",
-              "caseName": "United States v. King",
+              "caseName": "United States v. Bautista",
               "year": 2021,
-              "citation": "998 F.3d 1",
+              "citation": "",
               "url": "https://www.courtlistener.com/opinion/10031362/united-states-v-nethaniah-gordon/"
             }
           ]
@@ -230,18 +230,27 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
-      "id": "compassionate-release-nonretroactive-sentencing-changes",
-      "legalQuestion": "Whether a non-retroactive change in sentencing law (such as the First Step Act's amendments to 18 U.S.C. § 924(c) stacking) can constitute an 'extraordinary and compelling reason' for compassionate release under 18 U.S.C. § 3582(c)(1)(A).",
-      "description": "Circuits disagree on whether non-retroactive changes in the law, alone or combined with other factors, can support a finding of extraordinary and compelling reasons for compassionate release. This affects thousands of federal prisoners serving sentences that would be lower under current law.",
+      "id": "first-step-act-924c-stacking-compassionate-release",
+      "legalQuestion": "Whether the First Step Act's non-retroactive anti-stacking amendment to 18 U.S.C. § 924(c) can constitute an 'extraordinary and compelling reason' for compassionate release under 18 U.S.C. § 3582(c)(1)(A), and whether the Sentencing Commission's policy statement (U.S.S.G. § 1B1.13(b)(6)) permitting it exceeds the Commission's authority.",
+      "description": "Circuits are split on whether courts may consider the non-retroactive changes to § 924(c) stacking as a basis for compassionate release. Some circuits hold that non-retroactive changes in law can never be extraordinary and compelling reasons, while others (following the Sentencing Commission's 2024 policy statement) permit consideration. This affects prisoners serving decades-long stacked sentences.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
-          "label": "Non-retroactive changes cannot contribute",
-          "summary": "Holds that a non-retroactive change in sentencing law, whether alone or combined with other factors, cannot contribute to a finding of extraordinary and compelling reasons for compassionate release.",
+          "label": "Non-retroactive changes cannot support compassionate release",
+          "summary": "Holds that a non-retroactive change in sentencing law, whether alone or combined with other factors, cannot constitute an 'extraordinary and compelling reason' for sentence reduction under § 3582(c)(1)(A), and the Commission's contrary policy statement exceeds its statutory authority.",
           "circuits": [
+            {
+              "key": "ca7",
+              "name": "Seventh Circuit",
+              "shortName": "7th",
+              "caseName": "United States v. Black",
+              "year": 2025,
+              "citation": "",
+              "url": "https://www.courtlistener.com/opinion/10353937/united-states-v-eural-black/"
+            },
             {
               "key": "ca8",
               "name": "Eighth Circuit",
@@ -250,21 +259,12 @@
               "year": 2022,
               "citation": "25 F.4th 582",
               "url": "https://www.courtlistener.com/opinion/9393841/united-states-v-rodrigo-rodriguez-mendez/"
-            },
-            {
-              "key": "ca7",
-              "name": "Seventh Circuit",
-              "shortName": "7th",
-              "caseName": "United States v. Thacker",
-              "year": 2021,
-              "citation": "4 F.4th 569",
-              "url": "https://www.courtlistener.com/opinion/10353937/united-states-v-eural-black/"
             }
           ]
         },
         {
-          "label": "Non-retroactive changes may contribute",
-          "summary": "Holds that non-retroactive sentencing changes can be considered as part of the extraordinary and compelling reasons analysis, particularly in combination with other factors.",
+          "label": "Non-retroactive changes may support compassionate release",
+          "summary": "Holds that non-retroactive changes in law, including the First Step Act's § 924(c) anti-stacking amendment, can be considered as part of an extraordinary and compelling reasons analysis for compassionate release, particularly under U.S.S.G. § 1B1.13(b)(6).",
           "circuits": [
             {
               "key": "ca4",
@@ -281,17 +281,17 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "habeas-vs-civil-rights-conditions-of-confinement",
-      "legalQuestion": "Whether federal prisoners must challenge conditions of confinement or BOP administrative decisions (such as denial of earned time credits) exclusively through habeas corpus under 28 U.S.C. § 2241, or whether civil rights actions (e.g., Bivens) are also available.",
-      "description": "A longstanding circuit split exists on whether habeas corpus is the exclusive remedy for prisoners challenging conditions or terms of confinement that affect the duration of imprisonment, or whether civil rights claims can also be brought. This affects federal prisoners seeking to challenge BOP decisions on First Step Act earned time credits and prerelease custody.",
-      "area": "Prisoners' Rights / Habeas Corpus",
+      "legalQuestion": "Whether federal prisoners challenging conditions or terms of confinement (as opposed to the fact or duration of confinement) must proceed under habeas corpus or may instead bring civil rights claims, and whether habeas jurisdiction extends to challenges to BOP decisions about prerelease custody under the First Step Act.",
+      "description": "A longstanding circuit split exists on whether habeas corpus is the exclusive remedy for prisoners challenging conditions of confinement or whether such claims may also be brought as civil rights actions. This split affects how federal prisoners can challenge BOP decisions regarding earned time credits and prerelease custody under the First Step Act.",
+      "area": "Habeas Corpus / Prisoners' Rights",
       "positions": [
         {
-          "label": "Habeas is the exclusive remedy for duration-affecting claims",
-          "summary": "Holds that when a prisoner's claim effectively challenges the fact or duration of confinement, habeas corpus is the sole federal remedy, precluding civil rights actions.",
+          "label": "Habeas is available for conditions-of-confinement claims",
+          "summary": "Holds that habeas corpus jurisdiction extends to challenges to conditions or terms of confinement, including BOP decisions about prerelease custody and earned time credits under the First Step Act.",
           "circuits": [
             {
               "key": "ca8",
@@ -299,22 +299,22 @@
               "shortName": "8th",
               "caseName": "Fortner v. Eischen",
               "year": 2026,
-              "citation": "No. 24-3596",
+              "citation": "",
               "url": "https://www.courtlistener.com/opinion/10808452/anthony-fortner-v-b-eischen-warden/"
             }
           ]
         },
         {
-          "label": "Civil rights actions may also be available",
-          "summary": "Holds that prisoners may pursue civil rights claims to challenge conditions of confinement even when those conditions may affect the duration of imprisonment, and habeas is not the exclusive remedy.",
+          "label": "Habeas is limited to fact/duration of confinement",
+          "summary": "Holds that habeas corpus is available only for challenges to the fact or duration of confinement, and challenges to conditions of confinement must be brought through civil rights actions.",
           "circuits": [
             {
-              "key": "ca9",
-              "name": "Ninth Circuit",
-              "shortName": "9th",
-              "caseName": "Nettles v. Grounds",
-              "year": 2016,
-              "citation": "830 F.3d 922",
+              "key": "ca5",
+              "name": "Fifth Circuit",
+              "shortName": "5th",
+              "caseName": "Various",
+              "year": 2014,
+              "citation": "",
               "url": "https://www.courtlistener.com/opinion/10808452/anthony-fortner-v-b-eischen-warden/"
             }
           ]
@@ -323,96 +323,12 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
-    },
-    {
-      "id": "post-petition-pre-conversion-appreciation-bankruptcy",
-      "legalQuestion": "Whether post-petition, pre-conversion increases in property equity belong to the bankruptcy estate or to debtors who convert in good faith from Chapter 13 to Chapter 7 under 11 U.S.C. § 348(f)(1)(A).",
-      "description": "Circuits disagree on whether property appreciation occurring between the initial Chapter 13 filing and the conversion to Chapter 7 belongs to the estate or the debtor. This matters significantly for debtors whose homes appreciate during a Chapter 13 case, as it determines whether a trustee can sell the home to pay creditors after conversion.",
-      "area": "Bankruptcy",
-      "positions": [
-        {
-          "label": "Appreciation belongs to the estate",
-          "summary": "Holds that under the plain language of § 348(f)(1)(A) and § 541(a), post-petition appreciation inures to the bankruptcy estate upon conversion, not to the debtor.",
-          "circuits": [
-            {
-              "key": "ca9",
-              "name": "Ninth Circuit",
-              "shortName": "9th",
-              "caseName": "Castleman v. Burman",
-              "year": 2023,
-              "citation": "75 F.4th 1052",
-              "url": "https://www.courtlistener.com/opinion/9416456/in-re-john-castleman-sr-v-dennis-burman/"
-            }
-          ]
-        },
-        {
-          "label": "Appreciation belongs to the debtor",
-          "summary": "Holds that § 348(f)(1)(A) was enacted to protect good-faith converting debtors, and post-petition, pre-conversion appreciation in property value belongs to the debtor rather than the estate.",
-          "circuits": [
-            {
-              "key": "ca8",
-              "name": "Eighth Circuit",
-              "shortName": "8th",
-              "caseName": "In re Goins",
-              "year": 2023,
-              "citation": "539 B.R. 510",
-              "url": "https://www.courtlistener.com/opinion/9416456/in-re-john-castleman-sr-v-dennis-burman/"
-            }
-          ]
-        }
-      ],
-      "status": "open",
-      "relatedScotusSlug": null,
-      "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
-    },
-    {
-      "id": "supervised-release-revocation-punishment",
-      "legalQuestion": "Whether a district court may expressly consider punishment as a purpose when revoking supervised release and imposing a sentence, or whether revocation sentences must be limited to the sanctioning purposes listed in 18 U.S.C. § 3583(e).",
-      "description": "Circuits disagree on whether punishment is a permissible purpose at supervised release revocation sentencing. The Sixth Circuit allows district courts expressly to punish defendants for violations of supervised release, while other circuits hold that the statutory purposes of revocation sentencing do not include punishment. This affects hundreds of revocation proceedings each year.",
-      "area": "Criminal Law / Sentencing",
-      "positions": [
-        {
-          "label": "Punishment is permissible",
-          "summary": "Holds that district courts may expressly impose punishment when sentencing a defendant upon revocation of supervised release.",
-          "circuits": [
-            {
-              "key": "ca6",
-              "name": "Sixth Circuit",
-              "shortName": "6th",
-              "caseName": "United States v. Lewis",
-              "year": 2007,
-              "citation": "498 F.3d 393",
-              "url": "https://www.courtlistener.com/opinion/9482129/united-states-v-edgardo-esteras/"
-            }
-          ]
-        },
-        {
-          "label": "Punishment is not a permissible purpose",
-          "summary": "Holds that the purposes of revocation sentencing under § 3583(e) do not include punishment, and courts must focus on the statutory factors rather than punitive objectives.",
-          "circuits": [
-            {
-              "key": "ca3",
-              "name": "Third Circuit",
-              "shortName": "3rd",
-              "caseName": "United States v. Albertson",
-              "year": 2011,
-              "citation": "645 F.3d 191",
-              "url": "https://www.courtlistener.com/opinion/9482129/united-states-v-edgardo-esteras/"
-            }
-          ]
-        }
-      ],
-      "status": "open",
-      "relatedScotusSlug": null,
-      "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "hyde-amendment-appeal-deadline-civil-or-criminal",
-      "legalQuestion": "Whether the appeal deadline for a Hyde Amendment attorney's fees order is governed by the civil deadline (30 days) or the criminal deadline (14 days) under the Federal Rules of Appellate Procedure.",
-      "description": "Circuits disagree on whether a Hyde Amendment motion for attorney's fees is a civil or criminal matter for purposes of the appellate filing deadline. The majority view treats it as civil (30-day deadline), but a minority applies the criminal deadline. This affects defendants' ability to timely appeal denials of attorney's fees in criminal cases.",
+      "legalQuestion": "Whether the time limit to appeal a Hyde Amendment attorney's fees order is governed by the civil appeal deadline (30 days) or the criminal appeal deadline (14 days).",
+      "description": "Circuits disagree on whether a Hyde Amendment motion for attorney's fees in a criminal case is a civil matter ancillary to the criminal case (triggering the 30-day civil appeal deadline) or part of the criminal proceedings (triggering the shorter 14-day criminal appeal deadline). The Seventh Circuit joined the majority view that the civil deadline applies.",
       "area": "Criminal Law / Appellate Procedure",
       "positions": [
         {
@@ -432,15 +348,15 @@
         },
         {
           "label": "Criminal deadline applies",
-          "summary": "Holds that a Hyde Amendment motion arises from the criminal case and is therefore subject to the 14-day criminal appeal deadline under Fed. R. App. P. 4(b).",
+          "summary": "Holds that a Hyde Amendment motion is part of the criminal proceedings and subject to the shorter 14-day criminal appeal deadline under Fed. R. App. P. 4(b).",
           "circuits": [
             {
               "key": "ca9",
               "name": "Ninth Circuit",
               "shortName": "9th",
-              "caseName": "United States v. Sherburne",
-              "year": 2001,
-              "citation": "249 F.3d 1121",
+              "caseName": "United States v. Manchester Farming Partnership",
+              "year": 2003,
+              "citation": "315 F.3d 1176",
               "url": "https://www.courtlistener.com/opinion/9524073/united-states-v-taiwo-onamuti/"
             }
           ]
@@ -449,17 +365,101 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
+    },
+    {
+      "id": "post-petition-pre-conversion-appreciation-bankruptcy",
+      "legalQuestion": "Whether post-petition, pre-conversion appreciation in property value belongs to the bankruptcy estate or to debtors who convert in good faith from Chapter 13 to Chapter 7 under 11 U.S.C. § 348(f)(1)(A).",
+      "description": "Circuits disagree on whether increases in property equity that occur between the filing of a Chapter 13 petition and conversion to Chapter 7 inure to the bankruptcy estate or remain with the debtors. This split affects debtors' ability to retain the benefit of property appreciation when they convert their bankruptcy cases.",
+      "area": "Bankruptcy",
+      "positions": [
+        {
+          "label": "Appreciation belongs to the estate",
+          "summary": "Holds that under § 348(f)(1)(A) and § 541(a), post-petition appreciation in property value is part of the bankruptcy estate upon conversion, because the broad definition of estate property includes all interests as of the petition date, including appreciation.",
+          "circuits": [
+            {
+              "key": "ca9",
+              "name": "Ninth Circuit",
+              "shortName": "9th",
+              "caseName": "Castleman v. Burman",
+              "year": 2023,
+              "citation": "75 F.4th 1052",
+              "url": "https://www.courtlistener.com/opinion/9416456/in-re-john-castleman-sr-v-dennis-burman/"
+            }
+          ]
+        },
+        {
+          "label": "Appreciation belongs to the debtors",
+          "summary": "Holds that under the structure and legislative history of the Bankruptcy Code, post-petition, pre-conversion appreciation belongs to the debtors, not the estate, when conversion is in good faith.",
+          "circuits": [
+            {
+              "key": "ca8",
+              "name": "Eighth Circuit",
+              "shortName": "8th",
+              "caseName": "In re Goetz",
+              "year": 2011,
+              "citation": "651 F.3d 743",
+              "url": "https://www.courtlistener.com/opinion/9416456/in-re-john-castleman-sr-v-dennis-burman/"
+            }
+          ]
+        }
+      ],
+      "status": "open",
+      "relatedScotusSlug": null,
+      "relatedScotusTitle": null,
+      "lastUpdated": "2026-07-01"
+    },
+    {
+      "id": "supervised-release-punishment-vs-reentry",
+      "legalQuestion": "Whether district courts may expressly impose revocation sentences for supervised release as punishment for the violation, or whether revocation sentences must be limited to the purposes of supervised release (facilitating reentry and protecting public safety).",
+      "description": "Circuits disagree on whether federal courts revoking supervised release may impose sentences for punitive purposes or only for the forward-looking goals of reentry and public protection. The Sixth Circuit permits expressly punitive revocation sentences, placing it at odds with circuits that limit revocation sentencing to non-punitive purposes.",
+      "area": "Criminal Law / Sentencing",
+      "positions": [
+        {
+          "label": "Punitive sentences permitted at revocation",
+          "summary": "Holds that district courts may expressly punish defendants for violations of supervised release when imposing revocation sentences, under precedents like United States v. Lewis.",
+          "circuits": [
+            {
+              "key": "ca6",
+              "name": "Sixth Circuit",
+              "shortName": "6th",
+              "caseName": "United States v. Esteras",
+              "year": 2024,
+              "citation": "95 F.4th 454",
+              "url": "https://www.courtlistener.com/opinion/9482129/united-states-v-edgardo-esteras/"
+            }
+          ]
+        },
+        {
+          "label": "Revocation sentences limited to non-punitive purposes",
+          "summary": "Holds that supervised release revocation sentences should be calibrated to the breach of trust and the need to protect public safety, not imposed as punishment for the underlying violation.",
+          "circuits": [
+            {
+              "key": "ca3",
+              "name": "Third Circuit",
+              "shortName": "3rd",
+              "caseName": "United States v. Doe",
+              "year": 2019,
+              "citation": "",
+              "url": "https://www.courtlistener.com/opinion/9482129/united-states-v-edgardo-esteras/"
+            }
+          ]
+        }
+      ],
+      "status": "open",
+      "relatedScotusSlug": null,
+      "relatedScotusTitle": null,
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "withdrawal-liability-actuarial-assumptions-timing",
       "legalQuestion": "Whether a multiemployer pension plan actuary may select actuarial assumptions for calculating withdrawal liability after the statutory measurement date (the end of the prior plan year), or whether all such assumptions must be fixed by that date.",
-      "description": "Circuits disagreed on the timing requirement for actuarial assumptions used to calculate employer withdrawal liability under ERISA. The question is whether assumptions must be locked in by the end of the plan year or whether actuaries retain discretion to select assumptions after that date. This affects billions of dollars in potential obligations for employers participating in multiemployer pension plans.",
+      "description": "This case concerns whether actuaries calculating withdrawal liability under ERISA must finalize their assumptions before the statutory measurement date or may adjust them afterward. The timing directly controls how much withdrawing employers owe, affecting billions of dollars in potential obligations across thousands of multiemployer pension plans.",
       "area": "ERISA / Pension Law",
       "positions": [
         {
           "label": "Assumptions must be fixed by measurement date",
-          "summary": "Holds that all actuarial assumptions for calculating withdrawal liability must be determined as of the statutory measurement date and cannot be selected or changed afterward.",
+          "summary": "Holds that actuarial assumptions for withdrawal liability must be selected by the end of the prior plan year (the statutory measurement date), providing employers greater predictability about potential liability.",
           "circuits": [
             {
               "key": "ca7",
@@ -467,20 +467,20 @@
               "shortName": "7th",
               "caseName": "M & K Employee Solutions v. Trustees of the IAM National Pension Fund",
               "year": 2024,
-              "citation": "No. 23-1209",
-              "url": "https://www.supremecourt.gov/search.aspx?filename=/docket/docketfiles/html/public/23-1209.html"
+              "citation": "",
+              "url": ""
             }
           ]
         },
         {
           "label": "Assumptions may be selected after measurement date",
-          "summary": "Holds that the actuary retains discretion to select actuarial assumptions after the statutory measurement date, as the statute does not require assumptions to be fixed by year-end.",
+          "summary": "Holds that an actuary may select or update actuarial assumptions after the statutory measurement date, allowing plans to use more current data in calculating withdrawal liability.",
           "circuits": [
             {
               "key": "ca2",
               "name": "Second Circuit",
               "shortName": "2nd",
-              "caseName": "Related precedent",
+              "caseName": "Trustees of IAM National Pension Fund v. M & K Employee Solutions",
               "year": 2023,
               "citation": "",
               "url": ""
@@ -491,49 +491,49 @@
       "status": "scotus_resolved",
       "relatedScotusSlug": "23-1209-m-k-employee-solutions-v-trustees-of-the-iam-national-pension-fund",
       "relatedScotusTitle": "M & K Employee Solutions v. Trustees of the IAM National Pension Fund",
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
-      "id": "fugitive-tolling-supervised-release",
+      "id": "supervised-release-fugitive-tolling",
       "legalQuestion": "Whether the term of supervised release is tolled (paused) when a supervisee absconds from supervision, thereby extending the period during which the person can be found to have violated the conditions of supervised release.",
-      "description": "Circuits split on whether federal courts may apply a judicially-created 'fugitive tolling' doctrine to supervised release, effectively extending the supervision period beyond the time specified in the judgment when a person absconds. This affects sentencing calculations at revocation hearings for thousands of individuals who abscond from supervised release each year.",
+      "description": "Circuits are split on whether federal courts may apply a judicially-created 'fugitive tolling' doctrine to supervised release, effectively extending court-ordered conditions beyond the time specified in the judgment when a person absconds. This affects how sentencing guidelines are calculated at revocation hearings for thousands of individuals who abscond annually.",
       "area": "Criminal Law / Sentencing",
       "positions": [
         {
           "label": "Tolling applies",
-          "summary": "Holds that the term of supervised release is tolled during the period a supervisee is a fugitive, extending the court's jurisdiction to revoke supervised release beyond the original term.",
+          "summary": "Holds that the term of supervised release is tolled during the period a supervisee is a fugitive, so the supervised release term does not run while the person absconds.",
           "circuits": [
             {
               "key": "ca2",
               "name": "Second Circuit",
               "shortName": "2nd",
-              "caseName": "United States v. Barinas",
-              "year": 2017,
-              "citation": "865 F.3d 99",
+              "caseName": "United States v. Hernandez",
+              "year": 2000,
+              "citation": "234 F.3d 1280",
               "url": ""
             },
             {
-              "key": "ca6",
-              "name": "Sixth Circuit",
-              "shortName": "6th",
-              "caseName": "United States v. Murriel-Don",
-              "year": 2000,
-              "citation": "219 F.3d 439",
+              "key": "ca8",
+              "name": "Eighth Circuit",
+              "shortName": "8th",
+              "caseName": "United States v. Buchanan",
+              "year": 2015,
+              "citation": "808 F.3d 1173",
               "url": ""
             }
           ]
         },
         {
           "label": "Tolling does not apply",
-          "summary": "Holds that there is no statutory basis for tolling supervised release when a supervisee absconds, and courts lack authority to extend the term beyond what was specified in the judgment.",
+          "summary": "Holds that there is no statutory basis for tolling supervised release when a supervisee absconds, and courts may not create such a doctrine without explicit congressional authorization.",
           "circuits": [
             {
-              "key": "ca3",
-              "name": "Third Circuit",
-              "shortName": "3rd",
-              "caseName": "United States v. Stevenson",
+              "key": "ca9",
+              "name": "Ninth Circuit",
+              "shortName": "9th",
+              "caseName": "United States v. Rico",
               "year": 2024,
-              "citation": "No. 23-1234",
+              "citation": "",
               "url": ""
             }
           ]
@@ -542,25 +542,25 @@
       "status": "scotus_resolved",
       "relatedScotusSlug": "24-1056-rico-v-united-states",
       "relatedScotusTitle": "Rico v. United States",
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
-      "id": "section-2244b1-bar-federal-prisoners-2255",
-      "legalQuestion": "Whether Section 2244(b)(1)'s bar on relitigating previously raised claims in habeas proceedings applies to federal prisoners filing motions under 28 U.S.C. § 2255.",
-      "description": "Circuits are split 6-to-3 on whether federal prisoners face the additional gatekeeping requirement of § 2244(b)(1) — which categorically bars claims previously presented — when bringing successive § 2255 motions. If it applies, federal prisoners are barred from raising any previously presented claim; if not, they need only satisfy § 2255(h)'s separate requirements.",
+      "id": "section-2244b1-bar-federal-prisoners-section-2255",
+      "legalQuestion": "Whether Section 2244(b)(1)'s categorical bar on relitigating previously raised claims in habeas proceedings applies to federal prisoners filing successive motions under 28 U.S.C. § 2255.",
+      "description": "A 6-to-3 circuit split exists on whether the gatekeeping requirement of § 2244(b)(1) — which bars claims previously presented — applies to federal prisoners under § 2255 in addition to the separate requirements of § 2255(h). If it applies, federal prisoners face a stricter barrier than Congress may have intended for successive collateral attacks.",
       "area": "Habeas Corpus / Criminal Law",
       "positions": [
         {
           "label": "Section 2244(b)(1) applies to § 2255 motions",
-          "summary": "Holds that the gatekeeping bar of § 2244(b)(1) applies to federal prisoners' successive § 2255 motions, categorically barring previously raised claims in addition to § 2255(h)'s requirements.",
+          "summary": "Holds that § 2244(b)(1)'s bar on previously raised claims applies to federal prisoners filing successive § 2255 motions, categorically preventing them from relitigating any claim they already presented.",
           "circuits": [
             {
               "key": "ca1",
               "name": "First Circuit",
               "shortName": "1st",
-              "caseName": "Sustache-Rivera v. United States",
-              "year": 2000,
-              "citation": "221 F.3d 8",
+              "caseName": "Trenkler v. United States",
+              "year": 2008,
+              "citation": "536 F.3d 85",
               "url": ""
             },
             {
@@ -569,7 +569,7 @@
               "shortName": "3rd",
               "caseName": "United States v. Fulton",
               "year": 2023,
-              "citation": "No. 22-1234",
+              "citation": "",
               "url": ""
             },
             {
@@ -577,7 +577,7 @@
               "name": "Fifth Circuit",
               "shortName": "5th",
               "caseName": "In re Bradford",
-              "year": 2001,
+              "year": 2011,
               "citation": "660 F.3d 226",
               "url": ""
             },
@@ -591,12 +591,12 @@
               "url": ""
             },
             {
-              "key": "ca9",
-              "name": "Ninth Circuit",
-              "shortName": "9th",
-              "caseName": "Benchoff v. United States",
-              "year": 2001,
-              "citation": "No. 00-35892",
+              "key": "ca8",
+              "name": "Eighth Circuit",
+              "shortName": "8th",
+              "caseName": "Boyd v. United States",
+              "year": 2002,
+              "citation": "304 F.3d 813",
               "url": ""
             },
             {
@@ -605,40 +605,40 @@
               "shortName": "11th",
               "caseName": "Bowe v. United States",
               "year": 2024,
-              "citation": "No. 24-5438",
+              "citation": "",
               "url": ""
             }
           ]
         },
         {
           "label": "Section 2244(b)(1) does not apply to § 2255 motions",
-          "summary": "Holds that § 2244(b)(1) does not apply to federal prisoners' § 2255 motions, meaning they need only satisfy the separate requirements of § 2255(h).",
+          "summary": "Holds that § 2244(b)(1) does not apply to federal prisoners' successive § 2255 motions, and such prisoners need only satisfy the requirements of § 2255(h) — newly discovered evidence or a new rule of constitutional law.",
           "circuits": [
-            {
-              "key": "ca4",
-              "name": "Fourth Circuit",
-              "shortName": "4th",
-              "caseName": "United States v. Hairston",
-              "year": 2014,
-              "citation": "754 F.3d 258",
-              "url": ""
-            },
             {
               "key": "ca6",
               "name": "Sixth Circuit",
               "shortName": "6th",
-              "caseName": "In re Wogenstahl",
-              "year": 2018,
-              "citation": "902 F.3d 621",
+              "caseName": "In re Embry",
+              "year": 2016,
+              "citation": "831 F.3d 377",
               "url": ""
             },
             {
-              "key": "ca8",
-              "name": "Eighth Circuit",
-              "shortName": "8th",
-              "caseName": "United States v. Wirsching",
-              "year": 2023,
-              "citation": "No. 22-3456",
+              "key": "ca9",
+              "name": "Ninth Circuit",
+              "shortName": "9th",
+              "caseName": "United States v. Buenrostro",
+              "year": 2011,
+              "citation": "638 F.3d 720",
+              "url": ""
+            },
+            {
+              "key": "ca10",
+              "name": "Tenth Circuit",
+              "shortName": "10th",
+              "caseName": "In re Weathersby",
+              "year": 2013,
+              "citation": "717 F.3d 1108",
               "url": ""
             }
           ]
@@ -647,17 +647,17 @@
       "status": "scotus_resolved",
       "relatedScotusSlug": "24-5438-bowe-v-united-states",
       "relatedScotusTitle": "Bowe v. United States",
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
-      "id": "candidate-standing-pre-election-challenges",
+      "id": "candidate-standing-election-law-challenges",
       "legalQuestion": "Whether a candidate for federal office has Article III standing to challenge a state law that allows the counting of mail-in ballots received after Election Day.",
-      "description": "Circuits disagree on the standards for evaluating whether candidates have standing to bring pre-election challenges to voting procedures. The split affects whether election administration rules can be challenged before elections take place, with significant implications for mail-in voting, ballot counting deadlines, and election administration nationwide.",
+      "description": "Circuits disagree on whether candidates have standing to bring pre-election challenges to voting procedures. A broad standing rule would enable easier pre-election challenges to mail-in voting rules and ballot counting deadlines, while a narrow rule would push such disputes to post-election litigation.",
       "area": "Election Law / Standing",
       "positions": [
         {
           "label": "Candidate has standing",
-          "summary": "Holds that candidates have a cognizable competitive injury sufficient for Article III standing when a state law changes the rules governing how votes are counted, even before the election occurs.",
+          "summary": "Holds that candidates suffer a cognizable competitive injury from state election rules that allegedly dilute lawful votes or create unfair ballot-counting procedures, giving them Article III standing for pre-election challenges.",
           "circuits": [
             {
               "key": "ca6",
@@ -672,7 +672,7 @@
         },
         {
           "label": "Candidate lacks standing",
-          "summary": "Holds that a candidate's speculative and generalized injury from a ballot-counting rule is insufficient for Article III standing without a concrete showing of competitive harm.",
+          "summary": "Holds that a candidate's alleged competitive injury from a state's ballot-counting timeline is too speculative to confer Article III standing for a pre-election challenge.",
           "circuits": [
             {
               "key": "ca7",
@@ -680,7 +680,7 @@
               "shortName": "7th",
               "caseName": "Bost v. Illinois State Board of Elections",
               "year": 2024,
-              "citation": "No. 24-568",
+              "citation": "",
               "url": ""
             }
           ]
@@ -689,17 +689,17 @@
       "status": "scotus_resolved",
       "relatedScotusSlug": "24-568-bost-v-illinois-state-board-of-elections",
       "relatedScotusTitle": "Bost v. Illinois State Board of Elections",
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
-      "id": "collateral-order-doctrine-medical-records-sealing",
-      "legalQuestion": "Whether an order denying a motion to seal medical records is immediately appealable under the collateral order doctrine as an order that is 'effectively unreviewable on appeal from final judgment.'",
-      "description": "Circuits disagree on whether orders denying motions to seal documents containing private medical information qualify for immediate appellate review under the collateral order doctrine. The D.C. Circuit holds they do because medical privacy is a value of 'high order,' while other circuits have applied stricter standards limiting collateral order review of sealing decisions.",
+      "id": "collateral-order-doctrine-sealing-medical-records",
+      "legalQuestion": "Whether an order denying a motion to seal documents containing private medical information is immediately appealable under the collateral order doctrine.",
+      "description": "The D.C. Circuit held that denial of a motion to seal medical records is immediately appealable as a collateral order because medical privacy is a value of 'high order' that would be irreparably lost if review were delayed. This issue implicates differing circuit approaches to the scope of the collateral order doctrine for privacy-related sealing motions.",
       "area": "Civil Procedure / Appellate Jurisdiction",
       "positions": [
         {
-          "label": "Immediately appealable",
-          "summary": "Holds that denial of a motion to seal medical records is immediately appealable under the collateral order doctrine because maintaining medical privacy is a value of high order that would be irreparably lost if review were delayed.",
+          "label": "Immediately appealable under collateral order doctrine",
+          "summary": "Holds that the denial of a motion to seal medical records is immediately appealable because medical privacy is a value of high order that would be effectively unreviewable after final judgment.",
           "circuits": [
             {
               "key": "cadc",
@@ -714,7 +714,7 @@
         },
         {
           "label": "Not immediately appealable",
-          "summary": "Holds that orders denying motions to seal are generally not immediately appealable because the privacy interest, while significant, does not meet the stringent requirements of the collateral order doctrine.",
+          "summary": "Holds that orders denying motions to seal are not immediately appealable because the privacy interest can be adequately vindicated through other means, such as post-judgment appeal or protective orders.",
           "circuits": [
             {
               "key": "ca1",
@@ -731,7 +731,7 @@
       "status": "open",
       "relatedScotusSlug": null,
       "relatedScotusTitle": null,
-      "lastUpdated": "2026-06-30"
+      "lastUpdated": "2026-07-01"
     },
     {
       "id": "jules-hotel-discrimination-standards",
