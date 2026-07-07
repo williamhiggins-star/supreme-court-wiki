@@ -240,7 +240,7 @@ export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit }: Props) 
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-700">
+                      <p className="font-body text-gray-700">
                         {s.legalQuestion.length > 80
                           ? s.legalQuestion.slice(0, 80) + "\u2026"
                           : s.legalQuestion}
@@ -306,7 +306,7 @@ export function CircuitMap({ mapData, casesByCircuit, splitsByCircuit }: Props) 
                       {cases.length === 0 ? (
                         <p className="text-[10px] text-gray-400">&mdash;</p>
                       ) : (
-                        <p className="text-[10px] text-gray-500">
+                        <p className="font-mono text-[10px] text-gray-500">
                           {cases.length} case{cases.length !== 1 ? "s" : ""}
                           {" ("}
                           {cases.filter((c) => c.status === "upcoming").length > 0 &&

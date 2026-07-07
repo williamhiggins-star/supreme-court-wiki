@@ -31,8 +31,8 @@ export default async function PrecedentPage({
             ← Key Precedents
           </Link>
           <div className="mt-3">
-            <h1 className="text-2xl font-bold text-gray-900">{p.name}</h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm text-gray-400">
+            <h1 className="text-2xl font-bold text-gray-900 font-serif">{p.name}</h1>
+            <div className="font-mono flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-sm text-gray-400">
               {p.citation && <span>{p.citation}</span>}
               {p.year && (
                 <>
@@ -43,7 +43,7 @@ export default async function PrecedentPage({
             </div>
           </div>
           {p.legalQuestion && (
-            <p className="mt-3 text-base text-gray-600 leading-relaxed">
+            <p className="font-body mt-3 text-base text-gray-600 leading-relaxed">
               {p.legalQuestion}
             </p>
           )}
@@ -79,11 +79,11 @@ export default async function PrecedentPage({
                         {party.role}
                       </span>
                     </div>
-                    <p className="text-gray-700 leading-relaxed mb-4">
+                    <p className="font-body text-gray-700 leading-relaxed mb-4">
                       {party.coreArgument}
                     </p>
                     {party.supportingPoints.length > 0 && (
-                      <ul className="space-y-1.5 text-sm text-gray-600 list-disc list-inside">
+                      <ul className="font-body space-y-1.5 text-sm text-gray-600 list-disc list-inside">
                         {party.supportingPoints.map((pt, i) => (
                           <li key={i}>{pt}</li>
                         ))}
@@ -97,7 +97,7 @@ export default async function PrecedentPage({
         ) : (
           <>
             <Section title="What the Court Decided">
-              <p className="text-gray-700 leading-relaxed">{p.summary}</p>
+              <p className="font-body text-gray-700 leading-relaxed">{p.summary}</p>
             </Section>
             <div className="bg-amber-50 border border-amber-200 rounded-lg px-5 py-4 text-sm text-amber-800">
               Full entry not yet generated. Run{" "}
@@ -122,10 +122,10 @@ export default async function PrecedentPage({
                     className="block bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-400 hover:shadow-sm transition-all"
                   >
                     <p className="font-semibold text-gray-900">{c.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="font-mono text-xs text-gray-400 mt-0.5">
                       {c.termYear} Term · {c.caseNumber}
                     </p>
-                    <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+                    <p className="font-body text-sm text-gray-600 mt-1.5 leading-relaxed">
                       {ref.reasonCited}
                     </p>
                   </Link>
@@ -175,7 +175,7 @@ function Prose({ text }: { text: string }) {
   return (
     <div className="space-y-3">
       {text.split("\n\n").map((para, i) => (
-        <p key={i} className="text-gray-700 leading-relaxed">
+        <p key={i} className="font-body text-gray-700 leading-relaxed">
           {para}
         </p>
       ))}

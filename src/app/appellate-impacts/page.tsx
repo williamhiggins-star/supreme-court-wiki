@@ -22,12 +22,11 @@ export default function AppellateImpactsPage() {
             &larr; Supreme Court Tracker
           </Link>
           <h1
-            className="mt-4 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight"
-            style={{ fontFamily: "Graphika81, Georgia, serif" }}
+            className="mt-4 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight font-serif"
           >
             Appellate Impacts
           </h1>
-          <p className="mt-2 text-sm text-gray-600 max-w-2xl">
+          <p className="font-body mt-2 text-sm text-gray-600 max-w-2xl">
             Recent federal appellate opinions with significant business impact.
             Covering securities, antitrust, labor &amp; employment, intellectual
             property, arbitration, class actions, and bankruptcy. Court badges
@@ -45,7 +44,7 @@ export default function AppellateImpactsPage() {
         ) : (
           <p className="text-sm text-gray-400 italic">
             No data yet — run{" "}
-            <code className="text-xs bg-gray-100 px-1 py-0.5 rounded">
+            <code className="font-mono text-xs bg-gray-100 px-1 py-0.5 rounded">
               npx tsx scripts/fetch-appellate-impacts.ts
             </code>{" "}
             to populate.

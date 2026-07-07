@@ -133,7 +133,7 @@ export function LawyersSection({ lawyers }: Props) {
 function WinLossSummary({ lawyer }: { lawyer: LawyerStat }) {
   const pending = lawyer.casesArgued - lawyer.wins - lawyer.losses;
   return (
-    <div className="flex items-center gap-4 px-3 py-2 border-b border-gray-100 text-xs font-semibold">
+    <div className="font-mono flex items-center gap-4 px-3 py-2 border-b border-gray-100 text-xs font-semibold">
       <span className="text-emerald-600">Wins: {lawyer.wins}</span>
       <span className="text-rose-600">Losses: {lawyer.losses}</span>
       {pending > 0 && <span className="text-gray-400">Pending: {pending}</span>}
@@ -273,7 +273,7 @@ function LawyerRow({
             <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
               <div className="h-2.5 rounded-full bg-blue-500" style={{ width: `${minutePct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span className="font-mono text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {l.estimatedMinutes.toLocaleString()} min
             </span>
           </div>
@@ -286,7 +286,7 @@ function LawyerRow({
             <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
               <div className="h-2.5 rounded-full bg-amber-400" style={{ width: `${casesPct}%` }}/>
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span className="font-mono text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {l.casesArgued} {l.casesArgued === 1 ? "case" : "cases"}
             </span>
           </div>

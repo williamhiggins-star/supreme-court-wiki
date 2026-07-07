@@ -82,7 +82,7 @@ function JusticeRow({
             <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
               <div className="h-3 rounded-full bg-blue-500" style={{ width: `${minutePct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span className="font-mono text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {j.estimatedMinutes.toLocaleString()} min
             </span>
           </div>
@@ -95,7 +95,7 @@ function JusticeRow({
             <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
               <div className="h-3 rounded-full bg-amber-400" style={{ width: `${questionPct}%` }} />
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span className="font-mono text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {j.questions.toLocaleString()} turns
             </span>
           </div>
@@ -123,7 +123,7 @@ function JusticeRow({
                 </div>
               ) : null}
             </div>
-            <span className="text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
+            <span className="font-mono text-[11px] text-gray-500 whitespace-nowrap w-16 text-right">
               {totalOpinions} opinion{totalOpinions !== 1 ? "s" : ""}
             </span>
           </div>

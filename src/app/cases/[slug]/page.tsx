@@ -44,22 +44,22 @@ export default async function CasePage({
             ← All Cases
           </Link>
           <div className="mt-3">
-            <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+            <span className="font-mono text-xs font-medium text-gray-400 uppercase tracking-wide">
               {c.termYear} Term · {c.caseNumber}
             </span>
-            <h1 className="mt-1 text-2xl font-bold text-gray-900">{c.title}</h1>
-            <p className="mt-2 text-base text-gray-600 leading-relaxed">
+            <h1 className="mt-1 text-2xl font-bold text-gray-900 font-serif">{c.title}</h1>
+            <p className="font-body mt-2 text-base text-gray-600 leading-relaxed">
               {c.legalQuestion}
             </p>
           </div>
           <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">
             {c.docketStatus === "upcoming" ? (
-              <span className="text-blue-600 font-medium">
+              <span className="font-mono text-blue-600 font-medium">
                 Oral argument scheduled for {formatDate(c.argumentDate)} at 10:00 a.m. ET
               </span>
             ) : (
               <>
-                <span>Argued {formatDate(c.argumentDate)}</span>
+                <span className="font-mono">Argued {formatDate(c.argumentDate)}</span>
                 {c.transcriptUrl && (
                   <a
                     href={c.transcriptUrl}
@@ -150,11 +150,11 @@ export default async function CasePage({
                     {party.role}
                   </span>
                 </div>
-                <p className="text-gray-700 leading-relaxed mb-4">
+                <p className="font-body text-gray-700 leading-relaxed mb-4">
                   {party.coreArgument}
                 </p>
                 {party.supportingPoints.length > 0 && (
-                  <ul className="space-y-1.5 text-sm text-gray-600 list-disc list-inside">
+                  <ul className="font-body space-y-1.5 text-sm text-gray-600 list-disc list-inside">
                     {party.supportingPoints.map((pt, i) => (
                       <li key={i}>{pt}</li>
                     ))}
@@ -170,10 +170,10 @@ export default async function CasePage({
                         <p className="text-sm font-medium text-gray-800">
                           {ex.justice}
                         </p>
-                        <p className="text-sm text-gray-600 mt-0.5 italic">
+                        <p className="font-body text-sm text-gray-600 mt-0.5 italic">
                           &ldquo;{ex.question}&rdquo;
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="font-body text-sm text-gray-500 mt-1">
                           {ex.significance}
                         </p>
                       </div>
@@ -201,11 +201,11 @@ export default async function CasePage({
                         {p.caseName}
                       </p>
                       {p.citation && (
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="font-mono text-xs text-gray-400 mt-0.5">
                           {p.citation}
                         </p>
                       )}
-                      <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+                      <p className="font-body text-sm text-gray-600 mt-1.5 leading-relaxed">
                         {p.reasonCited}
                       </p>
                     </div>
@@ -272,7 +272,7 @@ function Prose({ text }: { text: string }) {
   return (
     <div className="space-y-3">
       {text.split("\n\n").map((para, i) => (
-        <p key={i} className="text-gray-700 leading-relaxed">
+        <p key={i} className="font-body text-gray-700 leading-relaxed">
           {para}
         </p>
       ))}
@@ -288,7 +288,7 @@ function CaseArticleEntry({ article }: { article: Article }) {
           {article.source}
         </span>
         {article.author && <span className="font-medium text-gray-600">{article.author}</span>}
-        <span>{article.publishedAt}</span>
+        <span className="font-mono">{article.publishedAt}</span>
       </div>
       <a
         href={article.url}
@@ -298,7 +298,7 @@ function CaseArticleEntry({ article }: { article: Article }) {
       >
         {article.title} ↗
       </a>
-      <p className="text-sm text-gray-600 leading-relaxed">{article.summary}</p>
+      <p className="font-body text-sm text-gray-600 leading-relaxed">{article.summary}</p>
     </div>
   );
 }

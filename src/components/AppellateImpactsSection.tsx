@@ -58,7 +58,7 @@ function ImpactCard({ impact }: { impact: AppellateImpact }) {
         <div className="flex flex-wrap items-start gap-2 mb-2">
           {areaChip(impact.area)}
           {courtBadge(impact.court, impact.url)}
-          <span className="ml-auto text-[11px] text-gray-400 shrink-0">
+          <span className="font-mono ml-auto text-[11px] text-gray-400 shrink-0">
             {formatDate(impact.date)}
           </span>
         </div>
@@ -72,13 +72,13 @@ function ImpactCard({ impact }: { impact: AppellateImpact }) {
           {impact.caseName}
         </a>
         {impact.docketNumber && (
-          <p className="text-[11px] text-gray-400 mb-2">{impact.docketNumber}</p>
+          <p className="font-mono text-[11px] text-gray-400 mb-2">{impact.docketNumber}</p>
         )}
 
-        <p className="text-xs font-medium text-gray-700 leading-snug mb-1.5 italic">
+        <p className="font-body text-xs font-medium text-gray-700 leading-snug mb-1.5 italic">
           {impact.legalQuestion}
         </p>
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="font-body text-xs text-gray-500 leading-relaxed">
           {impact.description}
         </p>
       </div>
@@ -88,7 +88,7 @@ function ImpactCard({ impact }: { impact: AppellateImpact }) {
           <p className="text-xs font-bold uppercase tracking-wide mb-1 text-emerald-700">
             Favorable to Business
           </p>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <p className="font-body text-xs text-gray-600 leading-relaxed">
             {impact.positiveImplications}
           </p>
         </div>
@@ -96,7 +96,7 @@ function ImpactCard({ impact }: { impact: AppellateImpact }) {
           <p className="text-xs font-bold uppercase tracking-wide mb-1 text-rose-700">
             Risk for Business
           </p>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <p className="font-body text-xs text-gray-600 leading-relaxed">
             {impact.negativeImplications}
           </p>
         </div>

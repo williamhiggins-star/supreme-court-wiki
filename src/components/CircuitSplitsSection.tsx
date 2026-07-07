@@ -72,7 +72,7 @@ function PositionColumn({ pos, index }: { pos: CircuitPosition; index: number })
       <p className={`text-xs font-bold uppercase tracking-wide mb-1 ${labelColour}`}>
         {pos.label}
       </p>
-      <p className="text-xs text-gray-600 leading-relaxed mb-3">
+      <p className="font-body text-xs text-gray-600 leading-relaxed mb-3">
         {pos.summary}
       </p>
 
@@ -111,7 +111,7 @@ export function SplitCardEmbed({ split }: { split: CircuitSplit }) {
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       {/* Description only — legalQuestion is already on the case page */}
       <div className="px-4 pt-4 pb-3 border-b border-gray-100">
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="font-body text-xs text-gray-500 leading-relaxed">
           {split.description}
         </p>
       </div>
@@ -141,10 +141,10 @@ export function SplitCard({ split }: { split: CircuitSplit }) {
           </span>
         </div>
 
-        <p className="text-sm font-semibold text-gray-900 leading-snug mb-1.5">
+        <p className="font-body text-sm font-semibold text-gray-900 leading-snug mb-1.5">
           {split.legalQuestion}
         </p>
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="font-body text-xs text-gray-500 leading-relaxed">
           {split.description}
         </p>
       </div>

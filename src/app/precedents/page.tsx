@@ -15,10 +15,10 @@ export default function PrecedentsIndexPage() {
           <Link href="/" className="text-sm text-blue-600 hover:underline">
             ← Home
           </Link>
-          <h1 className="mt-3 text-2xl font-bold text-gray-900">
+          <h1 className="mt-3 text-2xl font-bold text-gray-900 font-serif">
             Key Precedent Cases
           </h1>
-          <p className="mt-1 text-gray-500">
+          <p className="font-body mt-1 text-gray-500">
             Landmark cases cited in Supreme Court oral arguments
           </p>
         </div>
@@ -46,11 +46,11 @@ export default function PrecedentsIndexPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-gray-900">{p.name}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="font-mono text-xs text-gray-400 mt-0.5">
                             {p.citation && `${p.citation} · `}{p.year ?? ""}
                             {p.voteCount && ` · ${p.voteCount}`}
                           </p>
-                          <p className="text-sm text-gray-600 mt-1.5 leading-relaxed line-clamp-2">
+                          <p className="font-body text-sm text-gray-600 mt-1.5 leading-relaxed line-clamp-2">
                             {p.summary}
                           </p>
                         </div>
@@ -83,10 +83,10 @@ export default function PrecedentsIndexPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-gray-900">{p.name}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">
+                          <p className="font-mono text-xs text-gray-400 mt-0.5">
                             {p.citation && `${p.citation} · `}{p.year ?? ""}
                           </p>
-                          <p className="text-sm text-gray-600 mt-1.5 leading-relaxed line-clamp-2">
+                          <p className="font-body text-sm text-gray-600 mt-1.5 leading-relaxed line-clamp-2">
                             {p.summary}
                           </p>
                         </div>

@@ -79,7 +79,7 @@ export function CourtCalendar({ events, today }: Props) {
           >
             ‹
           </button>
-          <span className="text-sm font-semibold text-gray-800">
+          <span className="font-mono text-sm font-semibold text-gray-800">
             {MONTHS[month - 1]} {year}
           </span>
           <button
@@ -129,7 +129,7 @@ export function CourtCalendar({ events, today }: Props) {
                 }`}
               >
                 <span
-                  className={`text-xs block text-right mb-0.5 ${
+                  className={`font-mono text-xs block text-right mb-0.5 ${
                     isToday
                       ? "text-blue-700 font-bold"
                       : "text-gray-400"
@@ -144,7 +144,7 @@ export function CourtCalendar({ events, today }: Props) {
                       href={`/cases/${c.slug}`}
                       className="block text-[10px] leading-tight bg-amber-100 text-amber-800 hover:bg-amber-200 rounded px-1 py-0.5 mb-0.5"
                     >
-                      <span className="font-semibold">{c.caseNumber}</span>
+                      <span className="font-mono font-semibold">{c.caseNumber}</span>
                       <span className="block line-clamp-2">{c.title}</span>
                     </Link>
                   ))
@@ -179,7 +179,7 @@ export function CourtCalendar({ events, today }: Props) {
       {/* Sidebar: month events */}
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500">
+          <h3 className="font-mono text-xs font-bold uppercase tracking-widest text-gray-500">
             {MONTHS[month - 1]} {year}
           </h3>
         </div>
@@ -200,7 +200,7 @@ export function CourtCalendar({ events, today }: Props) {
               if (ev.type === "conference") {
                 return (
                   <li key={i} className="px-4 py-2.5">
-                    <span className="text-xs text-gray-400">{label}</span>
+                    <span className="font-mono text-xs text-gray-400">{label}</span>
                     <p className="text-xs font-medium text-blue-700 mt-0.5">
                       Conference
                     </p>
@@ -214,7 +214,7 @@ export function CourtCalendar({ events, today }: Props) {
                     href={`/cases/${c.slug}`}
                     className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
                   >
-                    <span className="text-xs text-gray-400">
+                    <span className="font-mono text-xs text-gray-400">
                       {label} · {c.caseNumber}
                     </span>
                     <p className="text-xs font-medium text-gray-800 mt-0.5 leading-snug">

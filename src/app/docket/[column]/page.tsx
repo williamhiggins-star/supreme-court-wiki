@@ -77,10 +77,10 @@ export default async function DocketColumnPage({
           <Link href="/" className="text-sm text-blue-600 hover:underline">
             ← Back to Docket
           </Link>
-          <h1 className="mt-3 text-2xl font-bold text-gray-900">
+          <h1 className="mt-3 text-2xl font-bold text-gray-900 font-serif">
             {COLUMN_LABELS[col]}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="font-body mt-1 text-sm text-gray-500">
             {col === "upcoming" && `${upcoming.length} cases scheduled`}
             {col === "argued" && `${argued.length} cases argued, awaiting decision`}
             {col === "decided" && `${decided.length} entries`}
@@ -119,7 +119,7 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
     <div className="space-y-6">
       {[...grouped.entries()].map(([date, dateCases]) => (
         <div key={date}>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+          <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
             {formatDate(date)}
           </h2>
           <div className="flex flex-col gap-3">
@@ -130,7 +130,7 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
                 return (
                   <div key={c.slug} className="bg-white rounded p-4 border-2 border-green-500">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                      <p className="font-mono text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                       <div className="flex items-center gap-1.5 flex-wrap justify-end">
                         <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
                         <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
@@ -159,7 +159,7 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                    <p className="font-mono text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       {isTomorrow && (
                         <span className="text-xs font-semibold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded-full">Tomorrow at 10:00</span>
@@ -193,7 +193,7 @@ function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: S
       {cases.map((c) => (
         <div key={c.slug} className="bg-white border border-gray-200 rounded p-4 hover:border-gray-400 hover:shadow-sm transition-all">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+            <p className="font-mono text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
             {splitSlugs.has(c.slug) && (
               <Link href="/appeals" className="text-xs font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full hover:bg-orange-100 transition-colors">
                 Circuit Split
@@ -203,7 +203,7 @@ function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: S
           <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
             {c.title}
           </Link>
-          <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+          <p className="font-mono text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
           {c.podcastEpisodeUrl && (
             <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
               Listen on Spotify ↗
@@ -227,7 +227,7 @@ function DecidedList({ items, today, splitSlugs }: { items: DecidedItem[]; today
         return (
           <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
             <div className="flex items-center justify-between mb-1">
-              <p className="text-xs text-gray-400">{item.sub}</p>
+              <p className="font-mono text-xs text-gray-400">{item.sub}</p>
               <div className="flex items-center gap-1.5 flex-wrap justify-end">
                 {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
                 {splitSlugs.has(item.slug) && (
@@ -240,7 +240,7 @@ function DecidedList({ items, today, splitSlugs }: { items: DecidedItem[]; today
             <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
               {item.title}
             </Link>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="font-mono text-xs text-gray-500 mt-1">
               {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
               {item.voteSplit ? ` · ${item.voteSplit}` : ""}
             </p>

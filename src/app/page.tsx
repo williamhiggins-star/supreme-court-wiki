@@ -144,7 +144,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-ft-paper">
       <header className="bg-ft-pink pt-10 px-6">
         <h1 className="mx-auto text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight text-center">
-          <span style={{ fontFamily: "Graphika81, Georgia, serif" }}>SCOTUS Dashboard</span>
+          <span className="font-serif">SCOTUS Dashboard</span>
         </h1>
         <NavBar />
       </header>
@@ -178,7 +178,7 @@ export default function HomePage() {
                             return (
                               <div key={c.slug} className="bg-white rounded p-4 border-2 border-green-500">
                                 <div className="flex items-center justify-between mb-1">
-                                  <p className="text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
+                                  <p className="font-mono text-xs text-gray-400">{c.termYear} Term · {c.caseNumber}</p>
                                   <div className="flex items-center gap-1.5 flex-wrap justify-end">
                                     <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Today at 10:00</span>
                                     <a href="https://www.supremecourt.gov/oral_arguments/live.aspx" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors">
@@ -194,7 +194,7 @@ export default function HomePage() {
                                 <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                   {c.title}
                                 </Link>
-                                <p className="text-xs text-gray-500 mt-1">{formatDate(c.argumentDate)}</p>
+                                <p className="font-mono text-xs text-gray-500 mt-1">{formatDate(c.argumentDate)}</p>
                               </div>
                             );
                           }
@@ -263,7 +263,7 @@ export default function HomePage() {
                             <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                               {c.title}
                             </Link>
-                            <p className="text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
+                            <p className="font-mono text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
                             {c.podcastEpisodeUrl && (
                               <a href={c.podcastEpisodeUrl} target="_blank" rel="noopener noreferrer" className="mt-1.5 block text-xs text-green-700 hover:underline">
                                 Listen on Spotify ↗
@@ -300,7 +300,7 @@ export default function HomePage() {
                           return (
                             <div key={item.slug} className={`bg-white rounded p-4 hover:shadow-sm transition-all ${borderCls}`}>
                               <div className="flex items-center justify-between mb-1">
-                                <p className="text-xs text-gray-400">{item.sub}</p>
+                                <p className="font-mono text-xs text-gray-400">{item.sub}</p>
                                 <div className="flex items-center gap-1.5 flex-wrap justify-end">
                                   {isToday && <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">Decided Today</span>}
                                   {splitSlugs.has(item.slug) && (
@@ -313,7 +313,7 @@ export default function HomePage() {
                               <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                                 {item.title}
                               </Link>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="font-mono text-xs text-gray-500 mt-1">
                                 {item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}
                                 {item.voteSplit ? ` · ${item.voteSplit}` : ""}
                               </p>
@@ -358,7 +358,7 @@ export default function HomePage() {
                   <h2 className="text-2xl font-bold text-gray-800 mb-1">
                     Current Circuit Splits
                   </h2>
-                  <p className="text-sm text-gray-500 mb-6">
+                  <p className="font-body text-sm text-gray-500 mb-6">
                     These active circuit splits are currently before the Supreme Court. Cert has been granted and a decision is pending.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -405,7 +405,7 @@ export default function HomePage() {
                       >
                         {article.title} ↗
                       </a>
-                      <p className="text-xs text-gray-500 mt-1">{article.publishedAt}</p>
+                      <p className="font-mono text-xs text-gray-500 mt-1">{article.publishedAt}</p>
                       {article.relatedCaseSlugs.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
                           {article.relatedCaseSlugs.map((slug) => {
@@ -441,7 +441,7 @@ export default function HomePage() {
 
       <section id="circuit-map" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Cases by Circuit</h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="font-body text-sm text-gray-500 mb-6">
           Upcoming and pending-decision cases mapped by the federal appeals court circuit they originated in.
           Hover over a state or badge to see cases. Bold lines show circuit boundaries; thinner lines show state borders.
         </p>
@@ -450,7 +450,7 @@ export default function HomePage() {
 
       <section id="court-calendar" className="max-w-7xl mx-auto px-6 pb-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Court Calendar</h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="font-body text-sm text-gray-500 mb-6">
           Oral argument sessions and conference dates for the October Term 2025.
           Argument dates link to case pages. Conference dates are when the Justices
           meet privately to discuss pending petitions and argued cases.
@@ -461,7 +461,7 @@ export default function HomePage() {
       {justicesData && (
         <section id="justices" className="max-w-7xl mx-auto px-6 pb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Justices</h2>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="font-body text-sm text-gray-500 mb-6">
             Speaking turns and estimated speaking time per justice across all{" "}
             {justicesData.term} term oral arguments, ranked by time on record.
           </p>
@@ -472,7 +472,7 @@ export default function HomePage() {
       {lawyersData && (
         <section id="counsel" className="max-w-7xl mx-auto px-6 pb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Counsel</h2>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="font-body text-sm text-gray-500 mb-6">
             Attorneys with 2 or more cases in the {lawyersData.term} term, ranked by speaking time.
             Click a name to see the cases they argued.
           </p>
@@ -483,7 +483,7 @@ export default function HomePage() {
       <section id="about" className="bg-ft-paper border-t border-[#e8d0b8] px-6 py-16">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">About</h2>
-          <p className="text-base text-gray-600 leading-relaxed">
+          <p className="font-body text-base text-gray-600 leading-relaxed">
             This site tracks upcoming and recent oral arguments before the United States Supreme Court.
             Case information is compiled directly from official Supreme Court records, including transcripts, docket filings, and published opinions.
             Summaries, legal term explanations, and party position analyses are generated using AI and are intended to orient readers and direct further human research and analysis. They should not be treated as legal advice or authoritative legal commentary.

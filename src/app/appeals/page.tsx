@@ -23,12 +23,11 @@ export default function AppealsPage() {
             ← Supreme Court Tracker
           </Link>
           <h1
-            className="mt-3 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight"
-            style={{ fontFamily: "Graphika81, Georgia, serif" }}
+            className="mt-3 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight font-serif"
           >
             Circuit Splits
           </h1>
-          <p className="mt-3 text-sm text-gray-600 max-w-2xl pb-8">
+          <p className="font-body mt-3 text-sm text-gray-600 max-w-2xl pb-8">
             Active disagreements among the federal circuit courts on questions
             of federal law. Where circuits conflict, the Supreme Court often
             steps in to resolve the split. Cases with ★ are already before the

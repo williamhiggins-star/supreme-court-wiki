@@ -11,10 +11,10 @@ export default function TermsIndexPage() {
           <Link href="/" className="text-sm text-blue-600 hover:underline">
             ← Home
           </Link>
-          <h1 className="mt-3 text-2xl font-bold text-gray-900">
+          <h1 className="mt-3 text-2xl font-bold text-gray-900 font-serif">
             Legal Glossary
           </h1>
-          <p className="mt-1 text-gray-500">
+          <p className="font-body mt-1 text-gray-500">
             Plain-English definitions of legal terms used in Supreme Court
             arguments
           </p>
@@ -35,7 +35,7 @@ export default function TermsIndexPage() {
                 className="block bg-white rounded-lg border border-gray-200 p-5 hover:border-blue-400 hover:shadow-sm transition-all"
               >
                 <p className="font-semibold text-gray-900">{t.term}</p>
-                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                <p className="font-body mt-1 text-sm text-gray-600 line-clamp-2">
                   {t.definition}
                 </p>
               </Link>

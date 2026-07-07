@@ -28,7 +28,7 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
       )}
 
       {/* ── Meta line ── */}
-      <p className="text-sm text-gray-400 text-center mb-6">
+      <p className="font-mono text-sm text-gray-400 text-center mb-6">
         {[
           p.voteCount ? `${p.voteCount} decision` : null,
           p.majorityAuthor ? `Opinion by ${p.majorityAuthor}` : null,
@@ -59,7 +59,7 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
           </h3>
           <div className="space-y-3">
             {p.holding.split("\n\n").map((para, i) => (
-              <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
+              <p key={i} className="font-body text-sm text-gray-700 leading-relaxed">{para}</p>
             ))}
           </div>
         </div>
@@ -72,7 +72,7 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
             Concurring Opinions
           </h3>
           <div className="pl-4 border-l-2 border-blue-200">
-            <p className="text-sm text-gray-700 leading-relaxed">{p.concurringNote}</p>
+            <p className="font-body text-sm text-gray-700 leading-relaxed">{p.concurringNote}</p>
           </div>
         </div>
       )}
@@ -94,9 +94,9 @@ export function PrecedentDecisionSection({ p }: { p: PrecedentCase }) {
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-gray-700 leading-relaxed mb-2">{d.coreArgument}</p>
+                <p className="font-body text-sm text-gray-700 leading-relaxed mb-2">{d.coreArgument}</p>
                 {d.keyPoints.length > 0 && (
-                  <ul className="space-y-1 text-sm text-gray-600 list-disc list-inside">
+                  <ul className="font-body space-y-1 text-sm text-gray-600 list-disc list-inside">
                     {d.keyPoints.map((pt, i) => (
                       <li key={i}>{pt}</li>
                     ))}

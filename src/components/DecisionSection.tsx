@@ -133,7 +133,7 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
 
       {/* ── Decision date ── */}
       {c.decisionDate && (
-        <p className="text-sm text-gray-400 text-center mb-6">
+        <p className="font-mono text-sm text-gray-400 text-center mb-6">
           Decided {formatDecisionDate(c.decisionDate)}
         </p>
       )}
@@ -151,7 +151,7 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
           </h3>
           <div className="space-y-3">
             {c.majorityOpinionSummary.split("\n\n").map((para, i) => (
-              <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
+              <p key={i} className="font-body text-sm text-gray-700 leading-relaxed">{para}</p>
             ))}
           </div>
         </div>
@@ -170,7 +170,7 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
                 </p>
                 <div className="space-y-2">
                   {s.summary.split("\n\n").map((para, i) => (
-                    <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
+                    <p key={i} className="font-body text-sm text-gray-700 leading-relaxed">{para}</p>
                   ))}
                 </div>
               </div>
@@ -192,7 +192,7 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
                 </p>
                 <div className="space-y-2">
                   {s.summary.split("\n\n").map((para, i) => (
-                    <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
+                    <p key={i} className="font-body text-sm text-gray-700 leading-relaxed">{para}</p>
                   ))}
                 </div>
               </div>

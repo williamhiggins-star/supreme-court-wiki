@@ -22,7 +22,7 @@ export default async function TermPage({
           <Link href="/terms" className="text-sm text-blue-600 hover:underline">
             ← Legal Glossary
           </Link>
-          <h1 className="mt-3 text-2xl font-bold text-gray-900">{term.term}</h1>
+          <h1 className="mt-3 text-2xl font-bold text-gray-900 font-serif">{term.term}</h1>
         </div>
       </header>
 
@@ -31,7 +31,7 @@ export default async function TermPage({
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
             Definition
           </h2>
-          <p className="text-gray-800 leading-relaxed text-lg">
+          <p className="font-body text-gray-800 leading-relaxed text-lg">
             {term.definition}
           </p>
         </section>
@@ -43,7 +43,7 @@ export default async function TermPage({
             </h2>
             <ul className="space-y-2">
               {term.examples.map((ex, i) => (
-                <li key={i} className="flex gap-2 text-gray-700">
+                <li key={i} className="font-body flex gap-2 text-gray-700">
                   <span className="text-blue-400 mt-0.5">•</span>
                   {ex}
                 </li>
