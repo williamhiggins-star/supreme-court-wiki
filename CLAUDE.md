@@ -6,19 +6,33 @@ This is **scotusdashboard.com**: the public SCOTUS case dashboard and the **inta
 
 DYSTL is a **separate system in a separate repo**. DYSTL consumes a mirror of this dashboard's data and layers *analysis* on top of it (the six-block doctrine model, the DYSTL-voice briefings, the standing assessments). **Analysis never lives here. Intake never moves to DYSTL.**
 
-The data flow is one-directional and additive:
+Data flows out of this repo and never back into it. The daily pipeline both writes to and reads from DYSTL Supabase; the public site does neither.
 
 ```
 scotusdashboard (intake, source of truth)
-        │  daily pipeline emits case + split data
-        ▼
-  outbound sync  ──►  DYSTL Supabase (scotus_* mirror tables)
-                            │
-                            ▼
-                   DYSTL analysis + briefings
+        │
+        ├─ daily pipeline ──► DYSTL Supabase (scotus_* tables)
+        │                       ▲          │
+        │                       └──────────┘
+        │                   pipeline reads doctrines to classify
+        │                   events and write signals/assessments
+        │                   — all results stay in DYSTL
+        │
+        └─ commits data/*.json ──► public site renders (no DB, ever)
+                                            │
+                                            ▼
+                                   DYSTL analysis + briefings
+                                   consume the mirrored data
 ```
 
-Nothing flows back from DYSTL into this repo. This repo does not read DYSTL's Supabase, does not import DYSTL analysis, and does not change how it renders because of DYSTL. The only thing the SCOTUS 2.0 work adds here is an **outbound emit** so DYSTL receives what intake already produces.
+Nothing flows back from DYSTL into **this repo**. The intelligence layer's outputs — doctrine signals, standing assessments, assessment versions — are written to DYSTL's Supabase, never committed here. This repo does not import DYSTL analysis and does not change how it renders because of DYSTL.
+
+**Render and pipeline are separate surfaces, and the Supabase boundary applies to them differently:**
+
+- **(a) The public site never touches DYSTL Supabase.** It renders from flat committed JSON in this repo, with no runtime database dependency of any kind (locked decision 4, unchanged). New Phase D surfaces render from a pipeline-written `data/doctrines.json`, not from a live query.
+- **(b) The daily pipeline may read and write DYSTL Supabase** as part of the intelligence layer — the outbound mirror (A2), the analysis-feed sync (S1), event classification against doctrine indicators (B1), the assessment engine (B2), and embeddings (B4). These are pipeline steps, not render paths, and their reads exist to produce writes that land in DYSTL.
+
+The distinction is the whole rule: **a database read is allowed in the pipeline and forbidden in the render path.** If a change would put a Supabase call anywhere the site's request path can reach it, that is out of scope and must be raised at a gate.
 
 **If a task in this repo would change intake behavior, the daily commit, or how the public site renders, stop and flag it — that is out of scope for SCOTUS 2.0 and must be raised at a gate.**
 
