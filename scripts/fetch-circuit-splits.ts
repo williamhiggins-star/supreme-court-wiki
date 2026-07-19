@@ -11,6 +11,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import Anthropic from "@anthropic-ai/sdk";
+import type {
+  CircuitCaseRef,
+  CircuitPosition,
+  CircuitSplit,
+  CircuitSplitsData,
+} from "../src/types/index.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────
 function loadEnvLocal() {
@@ -242,39 +248,6 @@ function loadPendingScotus(): ScotusContext[] {
 }
 
 // ── Claude analysis ───────────────────────────────────────────────────────────
-
-export interface CircuitCaseRef {
-  key: string;
-  name: string;
-  shortName: string;
-  caseName: string;
-  year: number;
-  citation?: string;
-  url: string;
-}
-
-export interface CircuitPosition {
-  label: string;
-  summary: string;
-  circuits: CircuitCaseRef[];
-}
-
-export interface CircuitSplit {
-  id: string;
-  legalQuestion: string;
-  description: string;
-  area: string;
-  positions: CircuitPosition[];
-  status: "open" | "scotus_pending" | "scotus_resolved";
-  relatedScotusSlug?: string;
-  relatedScotusTitle?: string;
-  lastUpdated: string;
-}
-
-export interface CircuitSplitsData {
-  generated: string;
-  splits: CircuitSplit[];
-}
 
 interface OpinionDoc {
   caseName: string;

@@ -119,3 +119,40 @@ export interface ArticlesData {
   generated: string;
   articles: Article[];
 }
+
+// ── Circuit splits ─────────────────────────────────────────────────────────
+// Canonical definitions. Previously duplicated in src/lib/circuit-splits.ts and
+// scripts/fetch-circuit-splits.ts; both now import from here.
+
+export interface CircuitCaseRef {
+  key: string;
+  name: string;
+  shortName: string;
+  caseName: string;
+  year: number;
+  citation?: string;
+  url: string;
+}
+
+export interface CircuitPosition {
+  label: string;
+  summary: string;
+  circuits: CircuitCaseRef[];
+}
+
+export interface CircuitSplit {
+  id: string;
+  legalQuestion: string;
+  description: string;
+  area: string;
+  positions: CircuitPosition[];
+  status: "open" | "scotus_pending" | "scotus_resolved";
+  relatedScotusSlug?: string | null;
+  relatedScotusTitle?: string | null;
+  lastUpdated: string;
+}
+
+export interface CircuitSplitsData {
+  generated: string;
+  splits: CircuitSplit[];
+}
