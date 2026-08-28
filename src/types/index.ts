@@ -92,12 +92,13 @@ export interface CaseSummary {
   outcome?: string;
   petitionerWon?: boolean | null; // true=petitioner won, false=respondent won, null=unknown
   majorityAuthor?: string;        // justice key e.g. "kagan", or "per_curiam"
+  majorityJoinedBy?: string[];    // justice keys who joined the majority opinion without writing separately
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
-  concurringSummaries?: { author: string; summary: string }[];
-  dissentSummaries?: { author: string; summary: string }[];
+  concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
+  dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
 
   // Metadata
   processedAt: string;

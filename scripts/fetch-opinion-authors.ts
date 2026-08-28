@@ -109,10 +109,25 @@ function extractJusticeName(fragment: string): string | null {
   return null;
 }
 
+interface JoinedOpinion {
+  author: string;
+  joinedBy: string[];
+}
+
 interface OpinionAuthors {
   majorityAuthor: string | null;
+  /** Justices who joined the majority opinion without writing separately —
+   *  from the syllabus's "delivered the opinion of the Court, in which
+   *  X, Y, and Z, JJ., joined" clause. */
+  majorityJoinedBy: string[];
   concurrenceAuthors: string[];
+  /** One entry per concurrence author, with who (if anyone) joined THAT
+   *  specific concurrence. */
+  concurrences: JoinedOpinion[];
   dissentAuthors: string[];
+  /** One entry per dissent author, with who (if anyone) joined THAT
+   *  specific dissent. */
+  dissents: JoinedOpinion[];
 }
 
 /**
@@ -126,6 +141,43 @@ function nameFragmentToKey(raw: string): string | null {
     if (compact.includes(n)) return justiceKey(n);
   }
   return null;
+}
+
+/** Every justice name found anywhere in `raw` (order doesn't matter — this
+ *  feeds a "who joined" set, not an ordered list). */
+function extractJusticeKeysFromJoinText(raw: string): string[] {
+  const compact = raw.replace(/\s+/g, "").toUpperCase();
+  const found: string[] = [];
+  for (const n of JUSTICE_NAMES) {
+    if (compact.includes(n)) found.push(justiceKey(n));
+  }
+  return found;
+}
+
+/**
+ * Scans the text from `matchEnd` up to (not including) the next occurrence
+ * of the word "joined" for justice names — this is how the "in which X, Y,
+ * and Z, JJ., joined" clause is pulled out, without needing a second, more
+ * fragile regex tied to the exact surrounding phrasing.
+ *
+ * Deliberately NOT bounded on "the next period": "C. J." (Chief Justice)
+ * and "J." (Justice) are themselves periods, and appear inside the very
+ * names being scanned for — e.g. "...in which ROBERTS, C. J., and THOMAS,
+ * ALITO, KAVANAUGH, and BARRETT, JJ., joined." would get truncated after
+ * "ROBERTS," by a naive first-period search, silently dropping every other
+ * joiner. If "joined" doesn't appear within `maxLen`, returns [] rather
+ * than guessing — no join clause found is safer than scanning arbitrary
+ * trailing text for justice-name false positives.
+ *
+ * Known limitation: doesn't distinguish full joins from partial ones
+ * ("joined as to Parts I and II") — those still register as a join.
+ */
+function joinersAfter(text: string, matchEnd: number, excludeKey: string | null, maxLen = 500): string[] {
+  const window = text.slice(matchEnd, matchEnd + maxLen);
+  const joinedIdx = window.search(/\bjoined\b/i);
+  if (joinedIdx === -1) return [];
+  const clause = window.slice(0, joinedIdx);
+  return extractJusticeKeysFromJoinText(clause).filter((k) => k !== excludeKey);
 }
 
 /**
@@ -167,39 +219,49 @@ function parseOpinionAuthors(rawText: string): OpinionAuthors {
 
   // ── Majority ──────────────────────────────────────────────────────────────
   let majorityAuthor: string | null = null;
+  let majorityJoinedBy: string[] = [];
 
   // "THOMAS, J., delivered the opinion" OR "ROBERTS, C. J., delivered the opinion"
   const majorityRe = /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*delivered the opinion/gi;
   const majorityMatch = majorityRe.exec(text);
   if (majorityMatch) {
     majorityAuthor = nameFragmentToKey(majorityMatch[1]);
+    majorityJoinedBy = joinersAfter(text, majorityMatch.index + majorityMatch[0].length, majorityAuthor);
   } else if (/\bPER CURIAM\b/.test(text.slice(0, 8000))) {
     majorityAuthor = "per_curiam";
   }
 
   // ── Concurrences ─────────────────────────────────────────────────────────
   const concurrenceAuthors: string[] = [];
+  const concurrences: JoinedOpinion[] = [];
   // "KAVANAUGH, J., filed a concurring opinion"  OR  "...concurred in the judgment"
   const concurrenceRe =
     /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*(?:filed a concurring|concurr)/gi;
   let cm: RegExpExecArray | null;
   while ((cm = concurrenceRe.exec(text)) !== null) {
     const key = nameFragmentToKey(cm[1]);
-    if (key && !concurrenceAuthors.includes(key)) concurrenceAuthors.push(key);
+    if (key && !concurrenceAuthors.includes(key)) {
+      concurrenceAuthors.push(key);
+      concurrences.push({ author: key, joinedBy: joinersAfter(text, cm.index + cm[0].length, key) });
+    }
   }
 
   // ── Dissents ──────────────────────────────────────────────────────────────
   const dissentAuthors: string[] = [];
+  const dissents: JoinedOpinion[] = [];
   // "SOTOMAYOR, J., filed a dissenting opinion"
   const dissentRe =
     /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*filed a dissenting/gi;
   let dm: RegExpExecArray | null;
   while ((dm = dissentRe.exec(text)) !== null) {
     const key = nameFragmentToKey(dm[1]);
-    if (key && !dissentAuthors.includes(key)) dissentAuthors.push(key);
+    if (key && !dissentAuthors.includes(key)) {
+      dissentAuthors.push(key);
+      dissents.push({ author: key, joinedBy: joinersAfter(text, dm.index + dm[0].length, key) });
+    }
   }
 
-  return { majorityAuthor, concurrenceAuthors, dissentAuthors };
+  return { majorityAuthor, majorityJoinedBy, concurrenceAuthors, concurrences, dissentAuthors, dissents };
 }
 
 // ── Opinion summaries via Claude ──────────────────────────────────────────────
@@ -292,9 +354,92 @@ function findCaseFile(caseNumber: string): string | null {
   return match ? path.join(CASES_DIR, match) : null;
 }
 
+/** True once a case's join data has been backfilled (or was already there) —
+ *  used only by --backfill-joins to decide what still needs work. */
+function hasJoinData(c: CaseSummary): boolean {
+  return (
+    c.majorityJoinedBy !== undefined ||
+    (c.concurringSummaries ?? []).some((s) => s.joinedBy !== undefined) ||
+    (c.dissentSummaries ?? []).some((s) => s.joinedBy !== undefined)
+  );
+}
+
+// ── --backfill-joins ─────────────────────────────────────────────────────────
+//
+// Cheap, no-Claude-call backfill for cases that are already fully processed
+// (decided, has summaries) but predate the join-clause parsing added to
+// parseOpinionAuthors(). Reads every already-decided case file directly off
+// disk and re-downloads its opinion PDF from the URL already recorded in
+// `outcome` (every processed case has one) rather than re-scraping and
+// matching against the live slip-opinions listing page — that page only
+// reflects opinions posted in the CURRENT scrape window, so cases decided
+// earlier in the term can silently drop off it. Re-parses with the fixed
+// regex and patches majorityJoinedBy / per-author joinedBy onto the
+// existing file — never touches majorityAuthor, petitionerWon, or
+// re-calls Claude for summaries that are already correct.
+
+function findDecidedCasesNeedingJoins(): Array<{ filePath: string; caseData: CaseSummary; pdfUrl: string }> {
+  const work: Array<{ filePath: string; caseData: CaseSummary; pdfUrl: string }> = [];
+  for (const f of fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"))) {
+    const filePath = path.join(CASES_DIR, f);
+    let caseData: CaseSummary;
+    try {
+      caseData = JSON.parse(fs.readFileSync(filePath, "utf-8")) as CaseSummary;
+    } catch {
+      continue;
+    }
+    const isDecidedWithAuthor =
+      caseData.docketStatus === "decided" && caseData.majorityAuthor && caseData.majorityAuthor !== "unknown";
+    if (!isDecidedWithAuthor || hasJoinData(caseData)) continue;
+
+    const urlMatch = /https?:\/\/\S+?\.pdf/.exec(caseData.outcome ?? "");
+    if (!urlMatch) continue; // no recorded PDF URL to (re-)download from — nothing this pass can do
+    work.push({ filePath, caseData, pdfUrl: urlMatch[0] });
+  }
+  return work;
+}
+
+async function runBackfillJoins(): Promise<void> {
+  const work = findDecidedCasesNeedingJoins();
+  console.log(`Found ${work.length} decided case(s) missing join data.`);
+
+  let updated = 0;
+  for (const { filePath, caseData, pdfUrl } of work) {
+    console.log(`Backfilling joins: ${caseData.caseNumber} — ${caseData.title}`);
+    try {
+      const buf = await downloadPdf(pdfUrl);
+      const text = await extractText(buf);
+      const authors = parseOpinionAuthors(text);
+
+      caseData.majorityJoinedBy = authors.majorityJoinedBy.length ? authors.majorityJoinedBy : undefined;
+      for (const s of caseData.concurringSummaries ?? []) {
+        const match = authors.concurrences.find((c) => c.author === s.author);
+        if (match?.joinedBy.length) s.joinedBy = match.joinedBy;
+      }
+      for (const s of caseData.dissentSummaries ?? []) {
+        const match = authors.dissents.find((d) => d.author === s.author);
+        if (match?.joinedBy.length) s.joinedBy = match.joinedBy;
+      }
+
+      fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
+      console.log(`  ✓ majorityJoinedBy=[${(caseData.majorityJoinedBy ?? []).join(",")}]`);
+      updated++;
+    } catch (err) {
+      console.warn(`  ✗ ${caseData.caseNumber}: ${err}`);
+    }
+  }
+
+  console.log(`\n✓ Updated ${updated} of ${work.length} case(s).`);
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
+  if (process.argv.includes("--backfill-joins")) {
+    await runBackfillJoins();
+    return;
+  }
+
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const shortYear = currentShortTermYear();
   const opinions = await fetchSlipOpinions(shortYear);
@@ -348,24 +493,35 @@ async function main() {
       // Dissent takes priority — remove any justice from concurrences if they also dissented
       const dissentSet = new Set(authors.dissentAuthors);
       const filteredConcurrences = authors.concurrenceAuthors.filter((k) => !dissentSet.has(k));
+      const filteredConcurrenceJoins = authors.concurrences.filter((c) => !dissentSet.has(c.author));
       caseData.concurrenceAuthors = filteredConcurrences.length ? filteredConcurrences : undefined;
       caseData.dissentAuthors = authors.dissentAuthors.length ? authors.dissentAuthors : undefined;
       caseData.petitionerWon = petitionerWon;
+      caseData.majorityJoinedBy = authors.majorityJoinedBy.length ? authors.majorityJoinedBy : undefined;
 
       // Generate opinion summaries via Claude
       const effectiveAuthors: OpinionAuthors = {
         majorityAuthor: caseData.majorityAuthor ?? null,
-        concurrenceAuthors: caseData.concurrenceAuthors ?? [],
+        majorityJoinedBy: authors.majorityJoinedBy,
+        concurrenceAuthors: filteredConcurrences,
+        concurrences: filteredConcurrenceJoins,
         dissentAuthors: caseData.dissentAuthors ?? [],
+        dissents: authors.dissents,
       };
       console.log(`  Generating opinion summaries...`);
       const summaries = await generateOpinionSummaries(client, text, effectiveAuthors, caseData.title);
       caseData.majorityOpinionSummary = summaries.majorityOpinionSummary;
       caseData.concurringSummaries = summaries.concurringSummaries.length
-        ? summaries.concurringSummaries
+        ? summaries.concurringSummaries.map((s) => {
+            const match = effectiveAuthors.concurrences.find((c) => c.author === s.author);
+            return match?.joinedBy.length ? { ...s, joinedBy: match.joinedBy } : s;
+          })
         : undefined;
       caseData.dissentSummaries = summaries.dissentSummaries.length
-        ? summaries.dissentSummaries
+        ? summaries.dissentSummaries.map((s) => {
+            const match = effectiveAuthors.dissents.find((d) => d.author === s.author);
+            return match?.joinedBy.length ? { ...s, joinedBy: match.joinedBy } : s;
+          })
         : undefined;
 
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
