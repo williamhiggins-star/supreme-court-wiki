@@ -89,5 +89,12 @@ insert into public.courts (slug, name, level, circuit_ordinal, state) values
   ('washington-supreme-court', 'Washington Supreme Court', 'state_supreme', null, 'Washington'),
   ('west-virginia-supreme-court-of-appeals', 'Supreme Court of Appeals of West Virginia', 'state_supreme', null, 'West Virginia'),
   ('wisconsin-supreme-court', 'Wisconsin Supreme Court', 'state_supreme', null, 'Wisconsin'),
-  ('wyoming-supreme-court', 'Wyoming Supreme Court', 'state_supreme', null, 'Wyoming')
+  ('wyoming-supreme-court', 'Wyoming Supreme Court', 'state_supreme', null, 'Wyoming'),
+
+  -- Added for the Phase 2 backfill: ybarra-v-spangard (208 P.2d 445) is
+  -- actually a California Court of Appeal decision, not the California
+  -- Supreme Court's later, more famous ruling in the same case (a
+  -- different citation) — see migration 20260828120800_statutes.sql for
+  -- the 'state_appellate' level this row needed added to the schema.
+  ('california-court-of-appeal-second-appellate-district', 'California Court of Appeal, Second Appellate District', 'state_appellate', null, 'California')
 on conflict (slug) do nothing;
