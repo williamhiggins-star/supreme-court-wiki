@@ -284,9 +284,53 @@ async function main() {
   reports.push({ table: "case_terms (count only)", jsonExpected: expectedCaseTerms, dbActual: dbCaseTermsCount, missingFromDb: [], extraInDb: [], fieldMismatches: [], countOnly: true });
 
   printReport(reports);
+  writeGithubStepSummary(reports);
 
   const anyMismatch = reports.some((r) => !isOk(r));
   console.log(anyMismatch ? "Mismatches found — see above. Non-fatal; this is a report, not a gate." : "No mismatches found.");
+}
+
+/**
+ * Appends a markdown version of the report to $GITHUB_STEP_SUMMARY when
+ * running in GitHub Actions, so a mismatch shows up on the workflow run's
+ * summary page without anyone having to open the step's raw logs. No-op
+ * outside CI (the env var is unset locally).
+ */
+function writeGithubStepSummary(reports: TableReport[]): void {
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (!summaryPath) return;
+
+  const clean = reports.filter(isOk).length;
+  const anyMismatch = clean < reports.length;
+
+  const lines: string[] = [];
+  lines.push(`## Parity check ${anyMismatch ? "⚠️ mismatches found" : "✅ clean"}`);
+  lines.push("");
+  lines.push(`${clean} / ${reports.length} tables match exactly. Non-fatal — this report never blocks the run.`);
+  lines.push("");
+  lines.push("| Table | Status | JSON | DB |");
+  lines.push("|---|---|---|---|");
+  for (const r of reports) {
+    lines.push(`| ${r.table} | ${isOk(r) ? "✅" : "⚠️"} | ${r.jsonExpected} | ${r.dbActual} |`);
+  }
+
+  const mismatched = reports.filter((r) => !isOk(r));
+  if (mismatched.length > 0) {
+    lines.push("");
+    lines.push("### Details");
+    for (const r of mismatched) {
+      lines.push("");
+      lines.push(`**${r.table}**`);
+      if (r.missingFromDb.length > 0) lines.push(`- missing from DB (${r.missingFromDb.length}): ${r.missingFromDb.slice(0, 20).join(", ")}${r.missingFromDb.length > 20 ? ", ..." : ""}`);
+      if (r.extraInDb.length > 0) lines.push(`- extra in DB (${r.extraInDb.length}): ${r.extraInDb.slice(0, 20).join(", ")}${r.extraInDb.length > 20 ? ", ..." : ""}`);
+      if (r.fieldMismatches.length > 0) {
+        lines.push(`- field mismatches (${r.fieldMismatches.length}):`);
+        r.fieldMismatches.slice(0, 20).forEach((m) => lines.push(`  - ${m}`));
+      }
+    }
+  }
+
+  fs.appendFileSync(summaryPath, lines.join("\n") + "\n");
 }
 
 main().catch((err) => {
