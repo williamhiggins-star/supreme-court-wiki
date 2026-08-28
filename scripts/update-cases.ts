@@ -28,7 +28,57 @@ import {
   CASES_DIR,
   DATA_DIR,
 } from "./pipeline.js";
-import type { CaseSummary } from "../src/types/index.js";
+import type { CaseSummary, ProcessingResult } from "../src/types/index.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncCase, syncNewTerm, syncNewPrecedent, type IdCache } from "./lib/sd-db/write.js";
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/*.json stays the source of
+// truth the site renders from; this is purely additive and never blocks
+// or fails the JSON writes it follows. Cache loaded once (lazily) and
+// reused across everything this run touches. data/calendar.json is
+// deliberately not synced (decided: stays JSON-only).
+// ---------------------------------------------------------------------------
+
+let dbContext: { creds: SupabaseCredentials; cache: IdCache } | null | undefined;
+
+async function getDbContext(): Promise<{ creds: SupabaseCredentials; cache: IdCache } | null> {
+  if (dbContext !== undefined) return dbContext;
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    dbContext = null;
+    return null;
+  }
+  dbContext = { creds, cache: await loadIdCache(creds) };
+  return dbContext;
+}
+
+async function dualWriteCase(c: CaseSummary): Promise<void> {
+  const ctx = await getDbContext();
+  if (!ctx) return;
+  try {
+    const { warnings } = await syncCase(ctx.creds, ctx.cache, c);
+    warnings.forEach((w) => console.warn(`[sd-db] ${c.slug}: ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal (${c.slug}): ${err instanceof Error ? err.message : err}`);
+  }
+}
+
+/** Syncs a saveResult() output: the case itself, plus any new legal_terms
+ *  / precedent-stub cases it created as a side effect of processing a
+ *  transcript that cited an unfamiliar term or precedent. */
+async function dualWriteResult(result: ProcessingResult): Promise<void> {
+  const ctx = await getDbContext();
+  if (!ctx) return;
+  try {
+    for (const t of result.newTerms) await syncNewTerm(ctx.creds, t);
+    for (const p of result.newPrecedents) await syncNewPrecedent(ctx.creds, ctx.cache, p);
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal (${result.case.slug} new terms/precedents): ${err instanceof Error ? err.message : err}`);
+  }
+  await dualWriteCase(result.case);
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -113,7 +163,7 @@ async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]>
  * docketStatus to "petition" so it appears in the Argued column.
  * This runs every day and requires no API calls.
  */
-function promoteArguedCases(existingSlugs: Set<string>): number {
+async function promoteArguedCases(existingSlugs: Set<string>): Promise<number> {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   let promoted = 0;
@@ -137,6 +187,7 @@ function promoteArguedCases(existingSlugs: Set<string>): number {
     caseData.docketStatus = "petition";
     fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
     console.log(`  ✓ promoted to argued: ${caseData.title} (argued ${caseData.argumentDate})`);
+    await dualWriteCase(caseData);
     promoted++;
   }
 
@@ -192,6 +243,7 @@ async function processNewTranscripts(
 
       const result = buildResult(raw, caseNumber, termYear, transcriptUrl, "petition");
       saveResult(result, console.log);
+      await dualWriteResult(result);
 
       // If this case was previously "upcoming", remove the old stub file
       // (slug may differ if the title was slightly different in the docket page)
@@ -438,6 +490,7 @@ async function processUpcomingCases(
       const docketUrl = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
       const result = buildResult(raw, caseNumber, termYear, docketUrl, "upcoming");
       saveResult(result, console.log);
+      await dualWriteResult(result);
 
       existingSlugs.add(result.case.slug);
       added++;
@@ -500,10 +553,10 @@ async function fetchSlipOpinions(termYear: string): Promise<SlipOpinion[]> {
   return results;
 }
 
-function updateDecidedCases(
+async function updateDecidedCases(
   opinions: SlipOpinion[],
   existingSlugs: Set<string>
-): number {
+): Promise<number> {
   let updated = 0;
 
   for (const { caseNumber, title, opinionUrl } of opinions) {
@@ -527,6 +580,7 @@ function updateDecidedCases(
 
     fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
     console.log(`  ✓ marked decided: ${caseData.title ?? title}`);
+    await dualWriteCase(caseData);
     updated++;
   }
 
@@ -646,6 +700,7 @@ async function fillMissingKeyExchanges(
 
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
       console.log(`  ✓ Key exchanges added for ${caseData.title}`);
+      await dualWriteCase(caseData);
       filled++;
     } catch (err) {
       console.error(`  Error filling key exchanges for ${caseData.title}: ${err}`);
@@ -730,7 +785,7 @@ async function main() {
 
   // Step 1b: Promote argued cases (upcoming → petition, no API needed)
   console.log("\nPromoting argued cases...");
-  const promoted = promoteArguedCases(existingSlugs);
+  const promoted = await promoteArguedCases(existingSlugs);
 
   // Step 1 + 2: New transcripts
   const transcripts = await fetchTranscriptList(termYear);
@@ -751,7 +806,7 @@ async function main() {
 
   // Step 4: Slip opinions
   const opinions = await fetchSlipOpinions(termYear);
-  const decisionsUpdated = updateDecidedCases(opinions, existingSlugs);
+  const decisionsUpdated = await updateDecidedCases(opinions, existingSlugs);
 
   // Step 5: Conference calendar
   await updateCalendar(termYear);

@@ -11,6 +11,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { downloadPdf, extractText, CASES_DIR, DATA_DIR } from "./pipeline.js";
+import { getCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncJusticeStats } from "./lib/sd-db/write.js";
 
 // ── Justice registry ─────────────────────────────────────────────────────────
 
@@ -213,6 +215,29 @@ async function main() {
   justices.slice(0, 5).forEach((j) =>
     console.log(`  ${j.displayName}: ${j.estimatedMinutes} min, ${j.questions} questions`)
   );
+
+  await dualWriteJusticeStats(output);
+}
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/justices.json stays the
+// source of truth the site renders from; this is purely additive and
+// never blocks or fails the JSON write above.
+// ---------------------------------------------------------------------------
+
+async function dualWriteJusticeStats(output: JusticesData): Promise<void> {
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    return;
+  }
+  try {
+    const cache = await loadIdCache(creds);
+    const warnings = await syncJusticeStats(creds, cache, output.term, output.justices);
+    warnings.forEach((w) => console.warn(`[sd-db] ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal: ${err instanceof Error ? err.message : err}`);
+  }
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

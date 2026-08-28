@@ -12,6 +12,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { createHash } from "crypto";
 import Anthropic from "@anthropic-ai/sdk";
+import { getCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncArticles } from "./lib/sd-db/write.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────
 function loadEnvLocal() {
@@ -485,6 +487,31 @@ async function main() {
   fs.writeFileSync(OUT_PATH, JSON.stringify(output, null, 2));
   console.log(`\n✓ Saved ${final.length} articles → ${OUT_PATH}`);
   console.log(`  (${summarised.length} new this run)`);
+
+  await dualWriteArticles(final);
+}
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/articles.json stays the
+// source of truth the site renders from; this is purely additive and
+// never blocks or fails the JSON write above. Syncs the WHOLE current
+// article set (not just this run's new ones) since articles.json is
+// itself a merge — publications/publication_cases mirror it exactly,
+// including pruning articles that aged out of the cutoff window.
+// ---------------------------------------------------------------------------
+
+async function dualWriteArticles(articles: Article[]): Promise<void> {
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    return;
+  }
+  try {
+    const cache = await loadIdCache(creds);
+    await syncArticles(creds, cache, articles);
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal: ${err instanceof Error ? err.message : err}`);
+  }
 }
 
 main().catch((e) => {

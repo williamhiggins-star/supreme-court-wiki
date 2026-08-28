@@ -115,3 +115,19 @@ export async function insert<T = Record<string, unknown>>(
     prefer: "return=representation",
   })) as T[];
 }
+
+/**
+ * DELETE rows matching a PostgREST filter, e.g. `remove(creds, "opinions",
+ * "case_id=eq.<uuid>")`. Used for the daily dual-write's idempotent
+ * replace-on-rerun pattern (tables with no natural unique key — opinions,
+ * key_exchanges, citations, case_terms, case_participations — get their
+ * existing rows for a case deleted and reinserted rather than
+ * accumulating duplicates across repeated runs).
+ */
+export async function remove(
+  creds: SupabaseCredentials,
+  table: string,
+  filter: string,
+): Promise<void> {
+  await request(creds, "DELETE", `${table}?${filter}`, {});
+}

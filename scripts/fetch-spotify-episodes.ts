@@ -7,6 +7,14 @@
  *
  * Run: npx tsx scripts/fetch-spotify-episodes.ts
  * Requires: SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in .env.local (or env)
+ *
+ * No dual-write (Phase 3, SUPABASE_PLAN.md): the SD schema has no
+ * podcast_episode_url column on `cases`, and no other table stores a
+ * per-case podcast link (publications.kind has a 'podcast_episode' value
+ * reserved for a future law-review/podcast fetcher — see the plan's Phase
+ * 6 — but nothing populates it today, and it's not the same relationship
+ * as "this case's own transcript audio"). Confirmed via the schema, not
+ * skipped by omission.
  */
 
 import * as fs from "fs";

@@ -11,6 +11,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import { downloadPdf, extractText, CASES_DIR, DATA_DIR } from "./pipeline.js";
+import { getCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncLawyerStats } from "./lib/sd-db/write.js";
+import type { CaseSummary } from "../src/types/index.js";
 
 // ── Justice filter ────────────────────────────────────────────────────────────
 
@@ -330,6 +333,35 @@ async function main() {
   lawyers.slice(0, 10).forEach((l) =>
     console.log(`  ${l.name}: ${l.estimatedMinutes} min, ${l.casesArgued} case(s)`)
   );
+
+  await dualWriteLawyerStats(output);
+}
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/lawyers.json stays the
+// source of truth the site renders from; this is purely additive and
+// never blocks or fails the JSON write above. Also syncs
+// case_participations (sourced from lawyers.json, per sign-off), matching
+// scripts/backfill-db.ts's approach exactly.
+// ---------------------------------------------------------------------------
+
+async function dualWriteLawyerStats(output: LawyersData): Promise<void> {
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    return;
+  }
+  try {
+    const cases: CaseSummary[] = fs
+      .readdirSync(CASES_DIR)
+      .filter((f) => f.endsWith(".json"))
+      .map((f) => JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), "utf-8")) as CaseSummary);
+    const cache = await loadIdCache(creds);
+    const warnings = await syncLawyerStats(creds, cache, output.term, output.lawyers, cases);
+    warnings.forEach((w) => console.warn(`[sd-db] ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal: ${err instanceof Error ? err.message : err}`);
+  }
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

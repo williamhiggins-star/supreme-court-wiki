@@ -17,6 +17,8 @@ import type {
   CircuitSplit,
   CircuitSplitsData,
 } from "../src/types/index.js";
+import { getCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncCircuitSplits } from "./lib/sd-db/write.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────
 function loadEnvLocal() {
@@ -586,6 +588,30 @@ async function main() {
 
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
   console.log(`\n✓ Saved ${mergedSplits.length} circuit splits (${splits.length} new + ${preserved.length} preserved) → ${outPath}`);
+
+  await dualWriteCircuitSplits(mergedSplits);
+}
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/circuit-splits.json stays
+// the source of truth the site renders from; this is purely additive and
+// never blocks or fails the JSON write above. Syncs the WHOLE current
+// split set (already a merge of new + preserved), same as the JSON file.
+// ---------------------------------------------------------------------------
+
+async function dualWriteCircuitSplits(splits: CircuitSplit[]): Promise<void> {
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    return;
+  }
+  try {
+    const cache = await loadIdCache(creds);
+    const warnings = await syncCircuitSplits(creds, cache, splits);
+    warnings.forEach((w) => console.warn(`[sd-db] ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal: ${err instanceof Error ? err.message : err}`);
+  }
 }
 
 main().catch((e) => {

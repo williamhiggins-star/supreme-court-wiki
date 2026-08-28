@@ -14,6 +14,40 @@ import * as path from "path";
 import Anthropic from "@anthropic-ai/sdk";
 import { downloadPdf, extractText, CASES_DIR } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncCase, type IdCache } from "./lib/sd-db/write.js";
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/cases/*.json stays the
+// source of truth the site renders from; this is purely additive and
+// never blocks or fails the JSON write it follows. Cache loaded once (lazily)
+// and reused across every case this run touches.
+// ---------------------------------------------------------------------------
+
+let dbContext: { creds: SupabaseCredentials; cache: IdCache } | null | undefined;
+
+async function getDbContext(): Promise<{ creds: SupabaseCredentials; cache: IdCache } | null> {
+  if (dbContext !== undefined) return dbContext;
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    dbContext = null;
+    return null;
+  }
+  dbContext = { creds, cache: await loadIdCache(creds) };
+  return dbContext;
+}
+
+async function dualWriteCase(c: CaseSummary): Promise<void> {
+  const ctx = await getDbContext();
+  if (!ctx) return;
+  try {
+    const { warnings } = await syncCase(ctx.creds, ctx.cache, c);
+    warnings.forEach((w) => console.warn(`[sd-db] ${c.slug}: ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal (${c.slug}): ${err instanceof Error ? err.message : err}`);
+  }
+}
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -423,6 +457,7 @@ async function runBackfillJoins(): Promise<void> {
 
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
       console.log(`  ✓ majorityJoinedBy=[${(caseData.majorityJoinedBy ?? []).join(",")}]`);
+      await dualWriteCase(caseData);
       updated++;
     } catch (err) {
       console.warn(`  ✗ ${caseData.caseNumber}: ${err}`);
@@ -531,6 +566,7 @@ async function main() {
         `dissents=[${authors.dissentAuthors.join(",")}] ` +
         `petitionerWon=${petitionerWon} summaries=✓`
       );
+      await dualWriteCase(caseData);
       updated++;
     } catch (err) {
       console.warn(`  ✗ ${caseNumber}: ${err}`);

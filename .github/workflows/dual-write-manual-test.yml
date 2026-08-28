@@ -1,0 +1,115 @@
+name: Dual-Write Manual Test (Phase 3)
+
+# Phase 3 (SUPABASE_PLAN.md): dual-write, not cutover. This is a SEPARATE,
+# manually-triggered workflow — it is not wired into the real 22:00 UTC
+# cron (daily-update.yml). Its purpose is to let the dual-write path be
+# exercised on demand, several times, with a parity-check report each
+# time, before daily-update.yml is ever touched.
+#
+# Runs the exact same pipeline scripts, in the same order, as
+# daily-update.yml — each one still writes data/*.json exactly as it does
+# today; the only difference is each script also writes into the SD
+# Supabase schema now (see scripts/lib/sd-db/). Deliberately does NOT
+# commit/push data/ changes — a manual test run's purpose is to exercise
+# the dual-write path and produce a parity report, not to publish site
+# content on every test trigger. Any data/*.json changes this run
+# produces are discarded with the runner. (Once this graduates into
+# daily-update.yml for real, the commit step comes with it.)
+
+on:
+  workflow_dispatch:
+    inputs:
+      term_year:
+        description: "SCOTUS term year e.g. 2024. Leave blank to auto-detect."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  dual-write-test:
+    name: Run pipeline with dual-write + parity check
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run daily update script (dual-write)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TERM_YEAR: ${{ github.event.inputs.term_year }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/update-cases.ts
+
+      - name: Fetch opinion authors from slip opinions (dual-write)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/fetch-opinion-authors.ts
+
+      - name: Recompute justice speaking stats (dual-write)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/compute-justice-stats.ts
+
+      - name: Recompute counsel speaking stats (dual-write)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/compute-lawyer-stats.ts
+
+      - name: Fetch circuit splits from CourtListener (dual-write)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COURTLISTENER_API_KEY: ${{ secrets.COURTLISTENER_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/fetch-circuit-splits.ts
+
+      - name: Fetch appellate impacts from CourtListener (dual-write)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COURTLISTENER_API_KEY: ${{ secrets.COURTLISTENER_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/fetch-appellate-impacts.ts
+
+      - name: Fetch analysis articles from RSS feeds (dual-write)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/fetch-analysis-articles.ts
+
+      - name: Match Spotify podcast episodes to argued cases
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: npx tsx scripts/fetch-spotify-episodes.ts
+
+      - name: Show data/ diff (not committed — informational only)
+        run: |
+          git status --short data/ || true
+          echo "This run's data/*.json changes are NOT committed (manual test workflow) and are discarded with the runner."
+
+      - name: Parity check
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/parity-check.ts
