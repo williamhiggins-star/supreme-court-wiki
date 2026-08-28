@@ -12,6 +12,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import Anthropic from "@anthropic-ai/sdk";
+import { getCredentials } from "./lib/supabase-sync/env.js";
+import { loadIdCache, syncAppellateImpacts } from "./lib/sd-db/write.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────
 function loadEnvLocal() {
@@ -410,6 +412,32 @@ async function main() {
   const outPath = path.join(DATA_DIR, "appellate-impacts.json");
   fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
   console.log(`\n✓ Saved ${impacts.length} impacts → ${outPath}`);
+
+  await dualWriteAppellateImpacts(impacts);
+}
+
+// ---------------------------------------------------------------------------
+// Dual-write (Phase 3, SUPABASE_PLAN.md) — data/appellate-impacts.json
+// stays the source of truth the site renders from; this is purely
+// additive and never blocks or fails the JSON write above.
+// appellate-impacts.json is a full replace each run (not merged), so the
+// DB mirrors that: syncAppellateImpacts deletes all existing rows and
+// inserts the fresh set.
+// ---------------------------------------------------------------------------
+
+async function dualWriteAppellateImpacts(impacts: AppellateImpact[]): Promise<void> {
+  const creds = getCredentials();
+  if (!creds) {
+    console.log("[sd-db] skipped (no SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)");
+    return;
+  }
+  try {
+    const cache = await loadIdCache(creds);
+    const warnings = await syncAppellateImpacts(creds, cache, impacts);
+    warnings.forEach((w) => console.warn(`[sd-db] ${w}`));
+  } catch (err) {
+    console.warn(`[sd-db] non-fatal: ${err instanceof Error ? err.message : err}`);
+  }
 }
 
 main().catch((e) => {

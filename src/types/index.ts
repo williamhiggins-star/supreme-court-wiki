@@ -31,6 +31,13 @@ export interface PrecedentCase {
   summary: string;
   significance: string;
   topics: string[];
+  // Optional: the deciding court, when it's not the U.S. Supreme Court (a
+  // circuit court of appeals or a state's highest court, cited within a
+  // SCOTUS transcript/opinion as authority). Omitted (not defaulted to a
+  // string) when the precedent is a SCOTUS case, so existing files don't
+  // need to be touched. Also used for genuinely non-case citations (e.g. a
+  // statute) that were miscategorized as a "precedent case" upstream.
+  court?: string;
   // Full wiki fields — present after enrichment script runs
   legalQuestion?: string;
   backgroundAndFacts?: string;
@@ -85,12 +92,13 @@ export interface CaseSummary {
   outcome?: string;
   petitionerWon?: boolean | null; // true=petitioner won, false=respondent won, null=unknown
   majorityAuthor?: string;        // justice key e.g. "kagan", or "per_curiam"
+  majorityJoinedBy?: string[];    // justice keys who joined the majority opinion without writing separately
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
-  concurringSummaries?: { author: string; summary: string }[];
-  dissentSummaries?: { author: string; summary: string }[];
+  concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
+  dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
 
   // Metadata
   processedAt: string;
@@ -118,4 +126,41 @@ export interface Article {
 export interface ArticlesData {
   generated: string;
   articles: Article[];
+}
+
+// ── Circuit splits ─────────────────────────────────────────────────────────
+// Canonical definitions. Previously duplicated in src/lib/circuit-splits.ts and
+// scripts/fetch-circuit-splits.ts; both now import from here.
+
+export interface CircuitCaseRef {
+  key: string;
+  name: string;
+  shortName: string;
+  caseName: string;
+  year: number;
+  citation?: string;
+  url: string;
+}
+
+export interface CircuitPosition {
+  label: string;
+  summary: string;
+  circuits: CircuitCaseRef[];
+}
+
+export interface CircuitSplit {
+  id: string;
+  legalQuestion: string;
+  description: string;
+  area: string;
+  positions: CircuitPosition[];
+  status: "open" | "scotus_pending" | "scotus_resolved";
+  relatedScotusSlug?: string | null;
+  relatedScotusTitle?: string | null;
+  lastUpdated: string;
+}
+
+export interface CircuitSplitsData {
+  generated: string;
+  splits: CircuitSplit[];
 }
