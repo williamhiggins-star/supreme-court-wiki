@@ -31,6 +31,13 @@ export interface PrecedentCase {
   summary: string;
   significance: string;
   topics: string[];
+  // Optional: the deciding court, when it's not the U.S. Supreme Court (a
+  // circuit court of appeals or a state's highest court, cited within a
+  // SCOTUS transcript/opinion as authority). Omitted (not defaulted to a
+  // string) when the precedent is a SCOTUS case, so existing files don't
+  // need to be touched. Also used for genuinely non-case citations (e.g. a
+  // statute) that were miscategorized as a "precedent case" upstream.
+  court?: string;
   // Full wiki fields — present after enrichment script runs
   legalQuestion?: string;
   backgroundAndFacts?: string;
