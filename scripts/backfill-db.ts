@@ -470,6 +470,22 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
     if (!["petition", "upcoming", "argued", "decided", "historic", "stub"].includes(status)) {
       report.flags.push(`Case ${c.slug}: derived status "${status}" not in schema's status enum — needs manual handling.`);
     }
+    // cases_decided_after_argued requires decided_date >= argued_date when
+    // both are set. Found via a real constraint violation on
+    // 25-5146-ahmad-abouammo-v-united-states (argumentDate 2026-03-30,
+    // decisionDate 2026-01-26 — decided before argued, impossible): a
+    // pre-existing data anomaly in data/cases/*.json, out of scope to fix
+    // there directly this pass. decided_date comes from the slip-opinion
+    // scrape (the actual filing date, reliable); argued_date can be a
+    // stale scheduled date from before a case's posture changed (GVR'd,
+    // decided without argument, etc.) — the more likely-wrong of the two.
+    // Dropped rather than failing the whole batch insert.
+    let argued_date = c.argumentDate || null;
+    if (argued_date && c.decisionDate && c.decisionDate < argued_date) {
+      report.flags.push(`Case ${c.slug}: argumentDate (${argued_date}) is AFTER decisionDate (${c.decisionDate}) in the source JSON — impossible, decided_date can't precede argued_date. Dropped argued_date (kept decided_date, the more reliable of the two) rather than fail the insert. Source data needs a look.`);
+      argued_date = null;
+    }
+
     model.cases.set(c.slug, {
       slug: c.slug,
       court_slug: "scotus",
@@ -480,7 +496,7 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
       question_presented: c.legalQuestion,
       background: c.backgroundAndFacts,
       significance: c.significance,
-      argued_date: c.argumentDate || null,
+      argued_date,
       decided_date: c.decisionDate ?? null,
       vote_line: null, // source JSON doesn't store a "6-3" style line for cases (only precedents' voteCount)
       source_urls: [c.transcriptUrl].filter(Boolean),
