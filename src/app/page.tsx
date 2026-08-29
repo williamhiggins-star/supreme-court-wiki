@@ -48,6 +48,8 @@ export type DecidedItem = {
   decisionDate?: string;
   voteSplit?: string;
   podcastEpisodeUrl?: string;
+  majorityAuthor?: string;
+  dissentAuthors: string[];
 };
 
 export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
@@ -65,6 +67,8 @@ export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
       decisionDate: c.decisionDate,
       voteSplit,
       podcastEpisodeUrl: c.podcastEpisodeUrl,
+      majorityAuthor: c.majorityAuthor,
+      dissentAuthors: c.dissentAuthors ?? [],
     };
   });
   items.sort((a, b) => {
