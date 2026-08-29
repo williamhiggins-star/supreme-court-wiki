@@ -368,6 +368,91 @@ check("every one of the 9 justices is placed exactly once in the plurality case 
   assert.equal(new Set(all.map((e) => e.key)).size, 9);
 });
 
+// ── 4. Joiner vs. author labels for concurrence, concur/dissent, and
+// dissent — the same distinction plurality already had (an author earns
+// "X opinion", a joiner-only earns "Joined X opinion"), extended to the
+// other three categories. Before this fix, concurrenceSet/concurDissentSet
+// /dissentSet each conflated authors and joiners into one flat Set, so a
+// justice who only JOINED an opinion got labeled identically to the
+// justice who WROTE it — confirmed on 18 of 60 decided cases for
+// concurrence alone (e.g. Learning Resources v. Trump's Sotomayor: fully
+// joins the majority, then only partially joins Kagan's concurrence —
+// was showing "Concurring opinion" as if she'd authored something), 2 for
+// concur/dissent, and 23 for dissent. This is a label-only fix: side and
+// ring color are unchanged (concur/dissent and dissent membership already
+// took priority over plain majority membership for ring purposes before
+// this fix).
+console.log("\ncomputeDecisionSides() — joiner vs. author labels (concurrence, concur/dissent, dissent)");
+const joinerCase: CaseSummary = {
+  ...caseData,
+  majorityAuthor: "roberts",
+  majorityJoinedBy: ["thomas", "sotomayor", "gorsuch", "jackson"],
+  pluralityAuthor: undefined,
+  pluralityJoinedBy: undefined,
+  concurrenceAuthors: ["kagan"],
+  concurringSummaries: [{ author: "kagan", summary: "x", joinedBy: ["sotomayor"] }],
+  concurDissentAuthors: ["barrett"],
+  concurDissentSummaries: [{ author: "barrett", summary: "x", joinedBy: ["thomas"] }],
+  dissentAuthors: ["kavanaugh"],
+  dissentSummaries: [{ author: "kavanaugh", summary: "x", joinedBy: ["alito"] }],
+};
+const joinerSides = computeDecisionSides(joinerCase);
+function findJoinerEntry(key: string) {
+  return [...joinerSides.winningSide, ...joinerSides.concurDissentSide, ...joinerSides.losingSide].find((e) => e.key === key);
+}
+check("kagan (concurrence AUTHOR) keeps the plain 'Concurring opinion' label", () => {
+  const kagan = findJoinerEntry("kagan");
+  assert.ok(kagan);
+  assert.equal(kagan!.roleLabel, "Concurring opinion");
+  assert.equal(kagan!.ringColor, "ring-emerald-500");
+});
+check("sotomayor (full majority joiner who ONLY joins kagan's concurrence, never authors one) gets 'Joined concurring opinion', not 'Concurring opinion'", () => {
+  const sotomayor = findJoinerEntry("sotomayor");
+  assert.ok(sotomayor);
+  assert.equal(sotomayor!.roleLabel, "Joined concurring opinion");
+  assert.equal(sotomayor!.ringColor, "ring-emerald-500", "ring must stay emerald — this is a label-only fix");
+  assert.equal(sotomayor!.side, "majority");
+});
+check("barrett (concur/dissent AUTHOR) keeps the plain 'Concurring in part, dissenting in part' label", () => {
+  const barrett = findJoinerEntry("barrett");
+  assert.ok(barrett);
+  assert.equal(barrett!.roleLabel, "Concurring in part, dissenting in part");
+  assert.equal(barrett!.ringColor, "ring-amber-500");
+});
+check("thomas (full majority joiner who ONLY joins barrett's concur/dissent) gets 'Joined concurring/dissenting opinion'", () => {
+  const thomas = findJoinerEntry("thomas");
+  assert.ok(thomas);
+  assert.equal(thomas!.roleLabel, "Joined concurring/dissenting opinion");
+  assert.equal(thomas!.side, "concur-dissent");
+  assert.equal(thomas!.ringColor, "ring-amber-500", "concur/dissent membership still outranks plain majority membership for SIDE/ring — only the label changed");
+});
+check("kavanaugh (dissent AUTHOR) keeps the plain 'Dissenting opinion' label", () => {
+  const kavanaugh = findJoinerEntry("kavanaugh");
+  assert.ok(kavanaugh);
+  assert.equal(kavanaugh!.roleLabel, "Dissenting opinion");
+  assert.equal(kavanaugh!.ringColor, "ring-rose-500");
+});
+check("alito (ONLY joins kavanaugh's dissent, never authors one, not a majority joiner either) gets 'Joined dissenting opinion'", () => {
+  const alito = findJoinerEntry("alito");
+  assert.ok(alito);
+  assert.equal(alito!.roleLabel, "Joined dissenting opinion");
+  assert.equal(alito!.ringColor, "ring-rose-500");
+  assert.equal(alito!.side, "dissent");
+});
+check("gorsuch and jackson — plain majority joiners with no opinion tie at all — stay silent, unaffected by the fix", () => {
+  for (const key of ["gorsuch", "jackson"]) {
+    const entry = findJoinerEntry(key);
+    assert.ok(entry, `${key} must appear`);
+    assert.equal(entry!.roleLabel, null, `${key} label`);
+    assert.equal(entry!.ringColor, "ring-emerald-500", `${key} ring`);
+  }
+});
+check("every one of the 9 justices is placed exactly once in the joiner-label case too", () => {
+  const all = [...joinerSides.winningSide, ...joinerSides.concurDissentSide, ...joinerSides.losingSide];
+  assert.equal(all.length, 9);
+  assert.equal(new Set(all.map((e) => e.key)).size, 9);
+});
+
 console.log(`\n${passed} check(s) passed.`);
 if (process.exitCode) {
   console.error("\nFAILED");
