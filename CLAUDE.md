@@ -38,7 +38,7 @@ The distinction is the whole rule: **a database read is allowed in the pipeline 
 
 ## Branch is deploy. Main is always green.
 
-- **Merge to `main` = production deploy.** There is no separate release step. Never merge to `main` without an explicit human gate approval.
+- **Merging to `main` does NOT deploy.** `vercel.json` sets `git.deploymentEnabled: false`, so a merge only updates the committed source — the live site at production only updates after someone runs a manual `vercel --prod` deploy as a separate step (see "Manual acts stay with Will" below). Treat a merge and a deploy as two different gates: never merge to `main` without an explicit human gate approval, and don't assume a merge is live until the manual deploy has actually run.
 - All SCOTUS 2.0 work happens on the run's declared feature branch (Phase A/B: `feat/intelligence-layer`; Phase D: `feat/doctrine-surfaces`). Never commit directly to `main`.
 - `main` must always build and deploy cleanly. If a change can't be proven safe on the branch, it doesn't merge.
 - **Every** task states, in its hand-back, whether any file it touched would alter the daily GitHub Actions run. The orchestrator aggregates these into the merge gate.

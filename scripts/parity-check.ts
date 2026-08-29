@@ -250,14 +250,17 @@ async function main() {
   // ---- dependent tables: count-only comparison (no natural key) ----
   // Expected counts derived the same way write.ts computes them, so this
   // check is consistent with what dual-write actually produces. opinions
-  // gets contributions from BOTH data/cases (majority/concurrence/dissent
-  // authorship) AND enriched data/precedents (majorityAuthor +
-  // dissentingOpinions) — backfill-db.ts writes both; missing the
-  // precedents side here would make every run look like a mismatch.
+  // gets contributions from BOTH data/cases (majority/plurality/
+  // concurrence/concur-dissent/dissent authorship) AND enriched
+  // data/precedents (majorityAuthor + dissentingOpinions) — backfill-db.ts
+  // writes both; missing the precedents side here would make every run
+  // look like a mismatch.
   let expectedOpinions = 0, expectedKeyExchanges = 0, expectedCitations = 0, expectedCaseTerms = 0;
   for (const c of cases) {
     if (c.majorityAuthor) expectedOpinions++;
+    if (c.pluralityAuthor) expectedOpinions++;
     expectedOpinions += (c.concurringSummaries?.length ?? 0) + (c.concurrenceAuthors?.filter((k) => !c.concurringSummaries?.some((s) => s.author === k)).length ?? 0);
+    expectedOpinions += (c.concurDissentSummaries?.length ?? 0) + (c.concurDissentAuthors?.filter((k) => !c.concurDissentSummaries?.some((s) => s.author === k)).length ?? 0);
     expectedOpinions += (c.dissentSummaries?.length ?? 0) + (c.dissentAuthors?.filter((k) => !c.dissentSummaries?.some((s) => s.author === k)).length ?? 0);
     for (const p of c.parties) expectedKeyExchanges += p.keyExchanges?.length ?? 0;
     expectedCitations += c.citedPrecedents.length;

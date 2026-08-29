@@ -149,6 +149,98 @@ edges. Today's stub-creation side effect maps cleanly: when transcript
 processing mentions an unknown precedent, insert a stub row + citation edge
 — FK satisfied, enrichment queued.
 
+### 1.2a `decision_ties` / `decisions` — the `votes` replacement (Phase 6, added post-launch)
+
+`votes` above (`case_id`, `person_id`, `side` — `majority`/`dissent`/
+`recused`) shipped in Phase 1 and is still in the schema, but it can only
+represent a binary win/loss, one row per justice per case. It has no way to
+express: a **plurality** opinion (a majority-sized coalition that isn't a
+full majority) as its own thing distinct from a full majority; a
+**concurring-in-part-dissenting-in-part** justice as distinct from a plain
+dissenter; or whether a justice **authored** the opinion they're tied to
+versus merely **joined** one someone else wrote. `computeDecisionSides`
+(`src/lib/decisionSides.ts`) — the function the site itself renders
+from — already modeled all of this; `votes` just couldn't keep up, which is
+exactly the bug class this session fixed twice on the site side (justices
+mislabeled as opinion authors when they'd only joined) before finally
+replacing the DB's representation to match.
+
+```sql
+decision_ties (                    -- one row per (person, opinion) tie
+  id uuid pk,
+  case_id uuid fk -> cases,
+  person_id uuid fk -> people,
+  opinion_id uuid fk -> opinions,
+  role text check (role in ('author','joiner')),
+  join_scope text default 'full' check (join_scope in ('full','partial')),
+  join_scope_detail text,
+  unique (person_id, opinion_id)
+)
+
+decisions (                        -- one row per (case, person): the resolved side
+  case_id uuid fk -> cases,
+  person_id uuid fk -> people,
+  position text check (position in ('majority','plurality','concurrence',
+                                    'concur_dissent','dissent',
+                                    'recused','did_not_participate')),
+  primary_tie_id uuid fk -> decision_ties,
+  primary key (case_id, person_id)
+)
+```
+
+`decisions.position` is computed by calling `computeDecisionSides` directly
+(via `scripts/lib/sd-db/decisions.ts`, shared by `write.ts` and
+`backfill-db.ts`) rather than reimplementing its priority logic — the
+database and the site read from the same source of truth and can't drift
+apart. `opinions.kind` gained `'concur_dissent'` alongside the
+already-present `'plurality'` to support this (both now get real
+`opinions` rows; previously neither did).
+
+`votes` is **not** deprecated by this — it's left in place, untouched by
+the new write path, until a separate migration removes it once
+`decisions` has had a full production cycle to prove out. `justice_stats`
+also still reads the pre-Phase-6 `concurrences`/`dissents` counts, not
+`decisions` — that's a known follow-up, not done here.
+
+**Two known limitations, both deliberate (confirmed 2026-08-28), not bugs:**
+
+- **`join_scope_detail` has no real data source yet.** `data/cases/*.json`
+  has no structured field for *which Parts* of an opinion a partial joiner
+  signed onto (e.g. "joined Parts I, III, and IV of the dissent") — that
+  detail only exists in free-text opinion summaries today. `join_scope` is
+  always written as `'full'`; the `'partial'` value and
+  `join_scope_detail` column exist for whenever the case JSON gains a
+  structured field for this, but nothing writes them yet. (This gap
+  surfaced concretely during the 2026-08-29 cleanup: a stale `opinions` row
+  for *Hamm v. Smith* — from before this limitation was accepted — showed
+  Kavanaugh and Roberts joining only "Parts I, III, and IV" of Alito's
+  dissent, detail the current schema simply can't carry.)
+- **Recusal isn't tracked.** No `data/cases/*.json` field records that a
+  justice recused. A recused justice today produces no `votes` row and,
+  identically, no `decisions` row — `'recused'`/`'did_not_participate'`
+  exist in the `position` enum for whenever this gets tracked, but nothing
+  writes them yet. In practice this means a justice absent from every
+  authorship/`joinedBy` array on a case silently defaults to `'majority'`
+  in `decisions` (mirroring `computeDecisionSides`'s own "silent default
+  majority joiner" behavior) rather than being correctly marked as
+  non-participating — a pre-existing gap, not introduced by Phase 6.
+
+**`backfill-db.ts` is not safe to re-run.** It's a one-time script by
+design, but nothing enforced that until Phase 6 exposed it: most of its
+tables (`opinions`, `opinion_joins`, `case_participations`,
+`key_exchanges`, `citations`, `statute_citations`, `case_terms`,
+`publication_cases`, `split_positions`, `appellate_impacts`) have no
+natural unique key and are plain-inserted, so a second `--apply` silently
+duplicates every row in them. Re-running it on 2026-08-29 to backfill just
+`decision_ties`/`decisions` also re-inserted 544 opinions, 408
+opinion_joins, 85 case_participations, and 333 key_exchanges on top of the
+original run, requiring a manual production cleanup. `--apply` now refuses
+to run if `opinions` already has any rows (a reliable tracer that the
+backfill has already happened once), with `--force-legacy-rerun` as an
+explicit override for the rare genuinely-intended case. **The lesson for
+next time:** backfilling one new table does not mean re-running this
+script — write a narrow one-off script for that table alone.
+
 ### 1.3 Circuit splits and appellate impacts
 
 ```sql
