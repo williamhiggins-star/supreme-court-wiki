@@ -135,20 +135,12 @@ function justiceKey(name: string): string {
   return name.toLowerCase();
 }
 
-function extractJusticeName(fragment: string): string | null {
-  const up = fragment.toUpperCase();
-  for (const n of JUSTICE_NAMES) {
-    if (up.includes(n)) return justiceKey(n);
-  }
-  return null;
-}
-
-interface JoinedOpinion {
+export interface JoinedOpinion {
   author: string;
   joinedBy: string[];
 }
 
-interface OpinionAuthors {
+export interface OpinionAuthors {
   majorityAuthor: string | null;
   /** Justices who joined the majority opinion without writing separately —
    *  from the syllabus's "delivered the opinion of the Court, in which
@@ -162,19 +154,10 @@ interface OpinionAuthors {
   /** One entry per dissent author, with who (if anyone) joined THAT
    *  specific dissent. */
   dissents: JoinedOpinion[];
-}
-
-/**
- * Normalise a raw name fragment from the PDF (may have spacing artifacts
- * like "K AVANAUGH" or "G ORSUCH") to a justice key.
- */
-function nameFragmentToKey(raw: string): string | null {
-  // Strip all whitespace and compare against known justice names
-  const compact = raw.replace(/\s+/g, "").toUpperCase();
-  for (const n of JUSTICE_NAMES) {
-    if (compact.includes(n)) return justiceKey(n);
-  }
-  return null;
+  /** Justices who filed an opinion concurring in part AND dissenting in
+   *  part — a distinct opinion type, not a plain concurrence or dissent. */
+  concurDissentAuthors: string[];
+  concurDissents: JoinedOpinion[];
 }
 
 /** Every justice name found anywhere in `raw` (order doesn't matter — this
@@ -206,12 +189,72 @@ function extractJusticeKeysFromJoinText(raw: string): string[] {
  * Known limitation: doesn't distinguish full joins from partial ones
  * ("joined as to Parts I and II") — those still register as a join.
  */
-function joinersAfter(text: string, matchEnd: number, excludeKey: string | null, maxLen = 500): string[] {
+function joinersAfter(text: string, matchEnd: number, excludeKeys: string[], maxLen = 500): string[] {
   const window = text.slice(matchEnd, matchEnd + maxLen);
   const joinedIdx = window.search(/\bjoined\b/i);
   if (joinedIdx === -1) return [];
   const clause = window.slice(0, joinedIdx);
-  return extractJusticeKeysFromJoinText(clause).filter((k) => k !== excludeKey);
+  const exclude = new Set(excludeKeys);
+  return extractJusticeKeysFromJoinText(clause).filter((k) => !exclude.has(k));
+}
+
+/**
+ * Justice designator as it appears right before the verb clause: "J.,"
+ * for a single justice, "C. J.," for the Chief Justice, or "JJ.," when
+ * a clause announces MULTIPLE justices together (e.g. "ALITO and
+ * GORSUCH, JJ., filed dissenting opinions." — each filed a SEPARATE
+ * opinion, with no "joined" clause implied). The original regexes only
+ * matched the singular "J."/"C. J." forms, so any justice named only in
+ * a plural "JJ." announcement was silently dropped from every author
+ * list — a solo dissenter (or concurrer) could vanish entirely.
+ */
+const DESIGNATOR = String.raw`(?:C\.\s*J\.|JJ\.|J\.)`;
+
+/**
+ * Finds every justice name in the sentence leading up to `designatorIndex`
+ * (the start of ",\s*DESIGNATOR,"). Bounded to the current sentence (the
+ * text after the nearest preceding ". ") so this can't reach back into a
+ * PRIOR justice's opinion announcement.
+ */
+function subjectsBefore(text: string, designatorIndex: number, maxLookback = 100): string[] {
+  const start = Math.max(0, designatorIndex - maxLookback);
+  let window = text.slice(start, designatorIndex);
+  const lastPeriod = window.lastIndexOf(". ");
+  if (lastPeriod !== -1) window = window.slice(lastPeriod + 2);
+  return extractJusticeKeysFromJoinText(window);
+}
+
+/**
+ * Scans `text` for `,\s*DESIGNATOR,\s*VERB` clauses and returns one
+ * JoinedOpinion per justice named in the subject before the designator.
+ *
+ * When the designator is plural ("JJ.") — multiple justices announced
+ * together as each having filed their OWN opinion — joinedBy is left
+ * empty for all of them: that's what the plural construction means
+ * ("filed dissenting opinions", not "filed a dissenting opinion, in
+ * which ... joined"). Only a singular designator looks for a trailing
+ * "in which ... joined" clause.
+ */
+function scanOpinionClauses(
+  text: string,
+  verbPattern: string,
+  exclude: Set<string>
+): JoinedOpinion[] {
+  const re = new RegExp(String.raw`,\s*(${DESIGNATOR}),\s*(?:${verbPattern})`, "gi");
+  const results: JoinedOpinion[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const isPlural = /^JJ\.$/i.test(m[1]);
+    const subjects = subjectsBefore(text, m.index);
+    for (const key of subjects) {
+      if (exclude.has(key) || results.some((r) => r.author === key)) continue;
+      const joinedBy = isPlural
+        ? []
+        : joinersAfter(text, m.index + m[0].length, [key, ...exclude]);
+      results.push({ author: key, joinedBy });
+    }
+  }
+  return results;
 }
 
 /**
@@ -241,11 +284,14 @@ function detectPetitionerWon(rawText: string): boolean | null {
   return null;
 }
 
-function parseOpinionAuthors(rawText: string): OpinionAuthors {
+export function parseOpinionAuthors(rawText: string): OpinionAuthors {
   // SCOTUS slip-opinion PDFs use the syllabus format:
   //   "THOMAS, J., delivered the opinion of the Court, in which ROBERTS, C. J., ..."
-  //   "SOTOMAYOR , J., filed a dissenting opinion, ..."
+  //   "SOTOMAYOR, J., filed a dissenting opinion, ..."
   //   "KAVANAUGH, J., filed a concurring opinion."
+  //   "KAVANAUGH, J., filed an opinion concurring in part and dissenting in part."
+  //   "ALITO and GORSUCH, JJ., filed dissenting opinions." (each filed a SEPARATE
+  //     opinion — plural "JJ.", no join between them)
   // Justice last names may contain PDF spacing artifacts like "K AVANAUGH".
   //
   // Work on the full text so we don't miss multi-page syllabi.
@@ -255,47 +301,61 @@ function parseOpinionAuthors(rawText: string): OpinionAuthors {
   let majorityAuthor: string | null = null;
   let majorityJoinedBy: string[] = [];
 
-  // "THOMAS, J., delivered the opinion" OR "ROBERTS, C. J., delivered the opinion"
-  const majorityRe = /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*delivered the opinion/gi;
-  const majorityMatch = majorityRe.exec(text);
-  if (majorityMatch) {
-    majorityAuthor = nameFragmentToKey(majorityMatch[1]);
-    majorityJoinedBy = joinersAfter(text, majorityMatch.index + majorityMatch[0].length, majorityAuthor);
+  const majorityMatches = scanOpinionClauses(text, "delivered the opinion", new Set());
+  if (majorityMatches.length) {
+    majorityAuthor = majorityMatches[0].author;
+    majorityJoinedBy = majorityMatches[0].joinedBy;
   } else if (/\bPER CURIAM\b/.test(text.slice(0, 8000))) {
     majorityAuthor = "per_curiam";
   }
+  const majoritySet = majorityAuthor ? new Set([majorityAuthor]) : new Set<string>();
+
+  // ── Concur/dissent (mixed) ───────────────────────────────────────────────
+  // Checked FIRST and most specifically, since it must not be swallowed by
+  // the looser plain-concurrence "concurr" fallback below — a justice who
+  // "filed an opinion concurring in part and dissenting in part" is neither
+  // a pure concurrence nor a pure dissent.
+  const concurDissentMatches = scanOpinionClauses(
+    text,
+    String.raw`filed(?:\s+(?:a|an|the))?\s+opinions?\s+concurring[^.]{0,120}?dissenting`,
+    majoritySet
+  );
+  const concurDissentAuthors = concurDissentMatches.map((m) => m.author);
+  const concurDissentSet = new Set(concurDissentAuthors);
 
   // ── Concurrences ─────────────────────────────────────────────────────────
-  const concurrenceAuthors: string[] = [];
-  const concurrences: JoinedOpinion[] = [];
-  // "KAVANAUGH, J., filed a concurring opinion"  OR  "...concurred in the judgment"
-  const concurrenceRe =
-    /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*(?:filed a concurring|concurr)/gi;
-  let cm: RegExpExecArray | null;
-  while ((cm = concurrenceRe.exec(text)) !== null) {
-    const key = nameFragmentToKey(cm[1]);
-    if (key && !concurrenceAuthors.includes(key)) {
-      concurrenceAuthors.push(key);
-      concurrences.push({ author: key, joinedBy: joinersAfter(text, cm.index + cm[0].length, key) });
-    }
-  }
+  // "KAVANAUGH, J., filed a concurring opinion" / "ALITO and GORSUCH, JJ.,
+  // filed concurring opinions" / "...concurred in the judgment". Excludes
+  // anyone already captured above as a concur/dissent.
+  const concurrences = scanOpinionClauses(
+    text,
+    String.raw`filed(?:\s+(?:a|an|the))?\s+(?:concurring\s+opinions?|opinions?\s+concurring)|concurr`,
+    new Set([...majoritySet, ...concurDissentSet])
+  );
+  const concurrenceAuthors = concurrences.map((m) => m.author);
 
   // ── Dissents ──────────────────────────────────────────────────────────────
-  const dissentAuthors: string[] = [];
-  const dissents: JoinedOpinion[] = [];
-  // "SOTOMAYOR, J., filed a dissenting opinion"
-  const dissentRe =
-    /([A-Z][A-Z\s]{0,20}?),\s*(?:C\.\s*J\.|J\.),\s*filed a dissenting/gi;
-  let dm: RegExpExecArray | null;
-  while ((dm = dissentRe.exec(text)) !== null) {
-    const key = nameFragmentToKey(dm[1]);
-    if (key && !dissentAuthors.includes(key)) {
-      dissentAuthors.push(key);
-      dissents.push({ author: key, joinedBy: joinersAfter(text, dm.index + dm[0].length, key) });
-    }
-  }
+  // "SOTOMAYOR, J., filed a dissenting opinion" / "ALITO and GORSUCH, JJ.,
+  // filed dissenting opinions" (each separately). Excludes concur/dissent
+  // authors, but NOT plain concurrence authors — dissent and concurrence
+  // verb phrases don't overlap, so no cross-exclusion needed there.
+  const dissents = scanOpinionClauses(
+    text,
+    String.raw`filed(?:\s+(?:a|an|the))?\s+(?:dissenting\s+opinions?|opinions?\s+dissenting)`,
+    new Set([...majoritySet, ...concurDissentSet])
+  );
+  const dissentAuthors = dissents.map((m) => m.author);
 
-  return { majorityAuthor, majorityJoinedBy, concurrenceAuthors, concurrences, dissentAuthors, dissents };
+  return {
+    majorityAuthor,
+    majorityJoinedBy,
+    concurrenceAuthors,
+    concurrences,
+    dissentAuthors,
+    dissents,
+    concurDissentAuthors,
+    concurDissents: concurDissentMatches,
+  };
 }
 
 // ── Opinion summaries via Claude ──────────────────────────────────────────────
@@ -304,6 +364,7 @@ interface OpinionSummaries {
   majorityOpinionSummary: string;
   concurringSummaries: { author: string; summary: string }[];
   dissentSummaries: { author: string; summary: string }[];
+  concurDissentSummaries: { author: string; summary: string }[];
 }
 
 async function generateOpinionSummaries(
@@ -319,6 +380,7 @@ async function generateOpinionSummaries(
 
   const concurrenceList = authors.concurrenceAuthors.join(", ") || "none";
   const dissentList = authors.dissentAuthors.join(", ") || "none";
+  const concurDissentList = authors.concurDissentAuthors.join(", ") || "none";
   const majorityLabel = authors.majorityAuthor === "per_curiam"
     ? "per curiam (unsigned)"
     : authors.majorityAuthor ?? "unknown";
@@ -328,6 +390,7 @@ async function generateOpinionSummaries(
 Case: ${caseTitle}
 Majority author: ${majorityLabel}
 Concurrence authors: ${concurrenceList}
+Concur/dissent (concurring in part, dissenting in part) authors: ${concurDissentList}
 Dissent authors: ${dissentList}
 
 Return a JSON object with EXACTLY this structure (no other text):
@@ -336,6 +399,9 @@ Return a JSON object with EXACTLY this structure (no other text):
   "concurringSummaries": [
     { "author": "justice_key_lowercase", "summary": "1–2 paragraphs summarising this justice's concurrence." }
   ],
+  "concurDissentSummaries": [
+    { "author": "justice_key_lowercase", "summary": "1–2 paragraphs summarising this justice's opinion concurring in part and dissenting in part." }
+  ],
   "dissentSummaries": [
     { "author": "justice_key_lowercase", "summary": "1–2 paragraphs summarising this justice's dissent." }
   ]
@@ -343,7 +409,7 @@ Return a JSON object with EXACTLY this structure (no other text):
 
 Rules:
 - Use the exact lowercase justice key (roberts, thomas, alito, sotomayor, kagan, gorsuch, kavanaugh, barrett, jackson, per_curiam) for author fields.
-- Only include entries for justices listed above. If concurrenceList or dissentList is "none", return an empty array.
+- Only include entries for justices listed above. If concurrenceList, concurDissentList, or dissentList is "none", return an empty array for that field.
 - Separate paragraphs with a blank line (\\n\\n).
 - Return only the JSON object.
 
@@ -525,12 +591,23 @@ async function main() {
       if (decisionDate) caseData.decisionDate = decisionDate;
       caseData.outcome = caseData.outcome ?? `Opinion filed. See: ${pdfUrl}`;
       if (authors.majorityAuthor) caseData.majorityAuthor = authors.majorityAuthor;
-      // Dissent takes priority — remove any justice from concurrences if they also dissented
-      const dissentSet = new Set(authors.dissentAuthors);
-      const filteredConcurrences = authors.concurrenceAuthors.filter((k) => !dissentSet.has(k));
-      const filteredConcurrenceJoins = authors.concurrences.filter((c) => !dissentSet.has(c.author));
+      // Concur/dissent takes priority over a plain concurrence or dissent —
+      // parseOpinionAuthors() already excludes concur/dissent authors from
+      // both, this is defense-in-depth against any future caller that
+      // doesn't. A justice can't simultaneously be a full dissenter and a
+      // full concurrer, or either one AND a concur/dissent.
+      const concurDissentSet = new Set(authors.concurDissentAuthors);
+      const dissentSet = new Set(authors.dissentAuthors.filter((k) => !concurDissentSet.has(k)));
+      const filteredConcurrences = authors.concurrenceAuthors.filter(
+        (k) => !dissentSet.has(k) && !concurDissentSet.has(k)
+      );
+      const filteredConcurrenceJoins = authors.concurrences.filter(
+        (c) => !dissentSet.has(c.author) && !concurDissentSet.has(c.author)
+      );
+      const filteredDissents = authors.dissents.filter((d) => !concurDissentSet.has(d.author));
       caseData.concurrenceAuthors = filteredConcurrences.length ? filteredConcurrences : undefined;
-      caseData.dissentAuthors = authors.dissentAuthors.length ? authors.dissentAuthors : undefined;
+      caseData.concurDissentAuthors = authors.concurDissentAuthors.length ? authors.concurDissentAuthors : undefined;
+      caseData.dissentAuthors = filteredDissents.length ? filteredDissents.map((d) => d.author) : undefined;
       caseData.petitionerWon = petitionerWon;
       caseData.majorityJoinedBy = authors.majorityJoinedBy.length ? authors.majorityJoinedBy : undefined;
 
@@ -541,7 +618,9 @@ async function main() {
         concurrenceAuthors: filteredConcurrences,
         concurrences: filteredConcurrenceJoins,
         dissentAuthors: caseData.dissentAuthors ?? [],
-        dissents: authors.dissents,
+        dissents: filteredDissents,
+        concurDissentAuthors: authors.concurDissentAuthors,
+        concurDissents: authors.concurDissents,
       };
       console.log(`  Generating opinion summaries...`);
       const summaries = await generateOpinionSummaries(client, text, effectiveAuthors, caseData.title);
@@ -549,6 +628,12 @@ async function main() {
       caseData.concurringSummaries = summaries.concurringSummaries.length
         ? summaries.concurringSummaries.map((s) => {
             const match = effectiveAuthors.concurrences.find((c) => c.author === s.author);
+            return match?.joinedBy.length ? { ...s, joinedBy: match.joinedBy } : s;
+          })
+        : undefined;
+      caseData.concurDissentSummaries = summaries.concurDissentSummaries.length
+        ? summaries.concurDissentSummaries.map((s) => {
+            const match = effectiveAuthors.concurDissents.find((c) => c.author === s.author);
             return match?.joinedBy.length ? { ...s, joinedBy: match.joinedBy } : s;
           })
         : undefined;
@@ -562,8 +647,9 @@ async function main() {
       fs.writeFileSync(filePath, JSON.stringify(caseData, null, 2));
       console.log(
         `  ✓ majority=${authors.majorityAuthor ?? "unknown"} ` +
-        `concurrences=[${authors.concurrenceAuthors.join(",")}] ` +
-        `dissents=[${authors.dissentAuthors.join(",")}] ` +
+        `concurrences=[${filteredConcurrences.join(",")}] ` +
+        `concurDissents=[${authors.concurDissentAuthors.join(",")}] ` +
+        `dissents=[${(caseData.dissentAuthors ?? []).join(",")}] ` +
         `petitionerWon=${petitionerWon} summaries=✓`
       );
       await dualWriteCase(caseData);
@@ -576,4 +662,10 @@ async function main() {
   console.log(`\n✓ Updated ${updated} cases, skipped ${skipped}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+// Only auto-run when executed directly (`npx tsx scripts/fetch-opinion-authors.ts`),
+// not when imported — parseOpinionAuthors() is imported by the regression
+// test in scripts/test-opinion-classification.ts and must not trigger a
+// live scrape as a side effect of that import.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

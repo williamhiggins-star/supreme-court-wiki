@@ -95,10 +95,16 @@ export interface CaseSummary {
   majorityJoinedBy?: string[];    // justice keys who joined the majority opinion without writing separately
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
+  // Justices who concurred in part AND dissented in part — a distinct
+  // opinion type from a pure concurrence or pure dissent. Kept separate
+  // rather than forced into concurrenceAuthors/dissentAuthors so the UI
+  // can render it (and its ring color) as its own category.
+  concurDissentAuthors?: string[];
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
   concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
   dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
+  concurDissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
 
   // Metadata
   processedAt: string;
