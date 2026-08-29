@@ -28,6 +28,7 @@ import * as path from "path";
 import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { select, upsert, insert } from "./lib/supabase-sync/client.js";
 import { toSlug } from "./pipeline.js";
+import { computeDecisionTiesAndPositions } from "./lib/sd-db/decisions.js";
 import type {
   CaseSummary,
   PrecedentCase,
@@ -367,6 +368,20 @@ interface StatuteCitationRow {
   statute_slug: string;
   context: string | null;
 }
+interface DecisionTieRow {
+  case_slug: string;
+  person_slug: string;
+  opinion_kind: string; // 'majority' | 'plurality' | 'concurrence' | 'concur_dissent' | 'dissent'
+  opinion_author_slug: string; // identifies WHICH opinion of that kind, together with case_slug + opinion_kind
+  role: string; // 'author' | 'joiner'
+  join_scope: string; // always 'full' today — see decisions.ts header
+}
+interface DecisionRow {
+  case_slug: string;
+  person_slug: string;
+  position: string;
+  primary_tie_key: { opinion_kind: string; opinion_author_slug: string } | null;
+}
 
 interface Model {
   people: Map<string, PersonRow>;
@@ -374,6 +389,8 @@ interface Model {
   opinions: OpinionRow[];
   votes: VoteRow[];
   opinionJoins: OpinionJoinRow[];
+  decisionTies: DecisionTieRow[];
+  decisions: DecisionRow[];
   caseParticipations: CaseParticipationRow[];
   keyExchanges: KeyExchangeRow[];
   citations: CitationRow[];
@@ -395,6 +412,8 @@ function newModel(): Model {
     opinions: [],
     votes: [],
     opinionJoins: [],
+    decisionTies: [],
+    decisions: [],
     caseParticipations: [],
     keyExchanges: [],
     citations: [],
@@ -527,6 +546,19 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
       bump(report, "opinions");
     }
 
+    // plurality — new opinions row only; not written to votes/opinion_joins
+    // (those stay exactly as today). decision_ties/decisions below are the
+    // new, richer source for plurality membership.
+    if (c.pluralityAuthor) {
+      const slug = JUSTICE_KEY_TO_SLUG[c.pluralityAuthor];
+      if (!slug) {
+        report.flags.push(`Case ${c.slug}: unrecognized pluralityAuthor key "${c.pluralityAuthor}".`);
+      } else {
+        model.opinions.push({ case_slug: c.slug, kind: "plurality", author_person_slug: slug, summary: c.pluralityOpinionSummary ?? null });
+        bump(report, "opinions");
+      }
+    }
+
     const concurrenceSummaryAuthors = new Set((c.concurringSummaries ?? []).map((s) => s.author));
     for (const s of c.concurringSummaries ?? []) {
       const slug = JUSTICE_KEY_TO_SLUG[s.author];
@@ -550,6 +582,23 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
       model.votes.push({ case_slug: c.slug, person_slug: slug, side: "majority" });
       bump(report, "opinions");
       report.flags.push(`Case ${c.slug}: concurrence author "${key}" has no per-author summary text — modeled as a separate opinion row (see report header note on concurrence/dissent fan-out). No joinedBy data exists for this one either (that's only captured on concurringSummaries entries).`);
+    }
+
+    // concur/dissent — new opinions rows only, same reasoning as plurality
+    // above.
+    const concurDissentSummaryAuthors = new Set((c.concurDissentSummaries ?? []).map((s) => s.author));
+    for (const s of c.concurDissentSummaries ?? []) {
+      const slug = JUSTICE_KEY_TO_SLUG[s.author];
+      if (!slug) { report.flags.push(`Case ${c.slug}: unrecognized concur/dissent author key "${s.author}".`); continue; }
+      model.opinions.push({ case_slug: c.slug, kind: "concur_dissent", author_person_slug: slug, summary: s.summary });
+      bump(report, "opinions");
+    }
+    for (const key of c.concurDissentAuthors ?? []) {
+      if (concurDissentSummaryAuthors.has(key)) continue;
+      const slug = JUSTICE_KEY_TO_SLUG[key];
+      if (!slug) { report.flags.push(`Case ${c.slug}: unrecognized concurDissentAuthors key "${key}".`); continue; }
+      model.opinions.push({ case_slug: c.slug, kind: "concur_dissent", author_person_slug: slug, summary: null });
+      bump(report, "opinions");
     }
 
     const dissentSummaryAuthors = new Set((c.dissentSummaries ?? []).map((s) => s.author));
@@ -576,6 +625,24 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
       bump(report, "opinions");
       report.flags.push(`Case ${c.slug}: dissent author "${key}" has no per-author summary text — modeled as a separate opinion row. No joinedBy data exists for this one either.`);
     }
+
+    // -- decision_ties + decisions -------------------------------------------
+    // Computed via the shared decisions.ts helper, which reuses
+    // computeDecisionSides (src/lib/decisionSides.ts) so this can never
+    // disagree with the site's own rendering. votes above is untouched by
+    // this.
+    {
+      const { ties, decisions } = computeDecisionTiesAndPositions(c, report.flags);
+      for (const t of ties) {
+        model.decisionTies.push({ case_slug: c.slug, person_slug: t.person_slug, opinion_kind: t.opinion_kind, opinion_author_slug: t.opinion_author_slug, role: t.role, join_scope: t.join_scope });
+        bump(report, "decision_ties");
+      }
+      for (const d of decisions) {
+        model.decisions.push({ case_slug: c.slug, person_slug: d.person_slug, position: d.position, primary_tie_key: d.primaryTieKey });
+        bump(report, "decisions");
+      }
+    }
+
     // -- key_exchanges -------------------------------------------------------
     for (const p of c.parties) {
       for (const ex of p.keyExchanges ?? []) {
@@ -993,6 +1060,45 @@ async function applyModel(creds: SupabaseCredentials, model: Model, courtIdBySlu
   }
   log(`votes: +${voteRows.length}`);
 
+  // 6b. decision_ties (Phase 6) — resolves opinion_id via the same
+  // opinionIdByKey built for opinions/opinion_joins above (kind now also
+  // includes plurality/concur_dissent rows pushed in step 4).
+  const decisionTieCandidates = model.decisionTies
+    .map((t) => ({
+      input: t,
+      row: {
+        case_id: caseIdBySlug.get(t.case_slug),
+        person_id: personIdBySlug.get(t.person_slug),
+        opinion_id: opinionIdByKey.get(`${t.case_slug}::${t.opinion_kind}::${t.opinion_author_slug}`),
+        role: t.role,
+        join_scope: t.join_scope,
+      },
+    }))
+    .filter((cand) => cand.row.case_id && cand.row.person_id && cand.row.opinion_id);
+  const decisionTieIdByKey = new Map<string, string>();
+  for (const batch of chunk(decisionTieCandidates, 200)) {
+    const result = await insert<{ id: string }>(creds, "decision_ties", batch.map((cand) => cand.row));
+    batch.forEach((cand, i) => {
+      const key = `${cand.input.case_slug}::${cand.input.person_slug}::${cand.input.opinion_kind}::${cand.input.opinion_author_slug}`;
+      decisionTieIdByKey.set(key, result[i].id);
+    });
+  }
+  log(`decision_ties: +${decisionTieCandidates.length}`);
+
+  // 6c. decisions (Phase 6)
+  const decisionRows = model.decisions
+    .map((d) => ({
+      case_id: caseIdBySlug.get(d.case_slug),
+      person_id: personIdBySlug.get(d.person_slug),
+      position: d.position,
+      primary_tie_id: d.primary_tie_key
+        ? decisionTieIdByKey.get(`${d.case_slug}::${d.person_slug}::${d.primary_tie_key.opinion_kind}::${d.primary_tie_key.opinion_author_slug}`) ?? null
+        : null,
+    }))
+    .filter((r) => r.case_id && r.person_id);
+  await insertAll(creds, "decisions", decisionRows);
+  log(`decisions: +${decisionRows.length}`);
+
   // 7. case_participations
   const caseParticipationRows = model.caseParticipations
     .map((cp) => ({ case_id: caseIdBySlug.get(cp.case_slug), person_id: personIdBySlug.get(cp.person_slug), role: cp.role, party_name: cp.party_name }))
@@ -1088,6 +1194,8 @@ function printReport(model: Model, report: Report, authorRegistry: HistoricAutho
     opinions: model.opinions.length,
     votes: model.votes.length,
     opinion_joins: model.opinionJoins.length,
+    decision_ties: model.decisionTies.length,
+    decisions: model.decisions.length,
     case_participations: model.caseParticipations.length,
     key_exchanges: model.keyExchanges.length,
     citations: model.citations.length,
