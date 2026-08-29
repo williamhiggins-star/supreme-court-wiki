@@ -37,26 +37,38 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
   const majorityAuthor = c.majorityAuthor ?? null;
   const isPerCuriam = majorityAuthor === "per_curiam";
 
-  const concurDissentAuthors = c.concurDissentAuthors ?? [];
-  const concurDissentSet = new Set<string>(concurDissentAuthors);
+  // Each opinion type tracks TWO sets: who authored it (the *Authors
+  // array) and who's tied to it at all (authors plus everyone in a
+  // joinedBy list). A justice can be in the second without being in the
+  // first — they joined without writing their own opinion — and that
+  // distinction matters for the role LABEL (not the ring color): an
+  // author earns "X opinion", a joiner-only earns "Joined X opinion".
+  // Conflating the two meant a justice who only joined, say, a
+  // concurrence got labeled identically to the justice who wrote it —
+  // confirmed on 18 of 60 decided cases for concurrence alone before this
+  // fix, plus 2 for concur/dissent and 23 for dissent.
+  const concurDissentAuthorSet = new Set<string>(c.concurDissentAuthors ?? []);
+  const concurDissentSet = new Set<string>(concurDissentAuthorSet);
   for (const s of c.concurDissentSummaries ?? []) {
     for (const j of s.joinedBy ?? []) concurDissentSet.add(j);
   }
 
-  const dissentSet = new Set<string>(c.dissentAuthors ?? []);
+  const dissentAuthorSet = new Set<string>(c.dissentAuthors ?? []);
+  const dissentSet = new Set<string>(dissentAuthorSet);
   for (const s of c.dissentSummaries ?? []) {
     for (const j of s.joinedBy ?? []) dissentSet.add(j);
   }
   // concur/dissent is the more specific classification — never let a
   // justice be double-counted as a plain dissenter too.
-  for (const k of concurDissentSet) dissentSet.delete(k);
+  for (const k of concurDissentSet) { dissentSet.delete(k); dissentAuthorSet.delete(k); }
 
-  const concurrenceSet = new Set<string>(c.concurrenceAuthors ?? []);
+  const concurrenceAuthorSet = new Set<string>(c.concurrenceAuthors ?? []);
+  const concurrenceSet = new Set<string>(concurrenceAuthorSet);
   for (const s of c.concurringSummaries ?? []) {
     for (const j of s.joinedBy ?? []) concurrenceSet.add(j);
   }
-  for (const k of concurDissentSet) concurrenceSet.delete(k);
-  for (const k of dissentSet) concurrenceSet.delete(k);
+  for (const k of concurDissentSet) { concurrenceSet.delete(k); concurrenceAuthorSet.delete(k); }
+  for (const k of dissentSet) { concurrenceSet.delete(k); concurrenceAuthorSet.delete(k); }
 
   // A majority opinion can split by parts: full majority on some, only a
   // plurality (not enough votes for a majority) on others — same author,
@@ -72,10 +84,20 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
   for (const k of dissentSet) pluralitySet.delete(k);
 
   function buildEntry(key: string): JusticeEntry {
-    const isConcurDissent = concurDissentSet.has(key);
-    const isDissenter = !isConcurDissent && dissentSet.has(key);
+    const isConcurDissentAuthor = concurDissentAuthorSet.has(key);
+    const isConcurDissentJoinerOnly = !isConcurDissentAuthor && concurDissentSet.has(key);
+    const isConcurDissent = isConcurDissentAuthor || isConcurDissentJoinerOnly;
+
+    const isDissentAuthor = !isConcurDissent && dissentAuthorSet.has(key);
+    const isDissentJoinerOnly = !isConcurDissent && !isDissentAuthor && dissentSet.has(key);
+    const isDissenter = isDissentAuthor || isDissentJoinerOnly;
+
     const isMajorityAuthor = !isPerCuriam && majorityAuthor === key;
-    const isConcurring = !isConcurDissent && concurrenceSet.has(key);
+
+    const isConcurringAuthor = !isConcurDissent && concurrenceAuthorSet.has(key);
+    const isConcurringJoinerOnly = !isConcurDissent && !isConcurringAuthor && concurrenceSet.has(key);
+    const isConcurring = isConcurringAuthor || isConcurringJoinerOnly;
+
     const isPluralityAuthorSelf = !isMajorityAuthor && !isConcurDissent && !isConcurring && pluralityAuthor === key;
     const isPluralityMember =
       !isMajorityAuthor && !isConcurDissent && !isConcurring && !isDissenter && !isPluralityAuthorSelf && pluralitySet.has(key);
@@ -96,9 +118,12 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
     let roleLabel: string | null = null;
     let roleHref: string | null = null;
     if (isMajorityAuthor) { roleLabel = "Majority opinion"; roleHref = "#majority-opinion"; }
-    else if (isConcurDissent) { roleLabel = "Concurring in part, dissenting in part"; roleHref = "#concur-dissent-opinions"; }
-    else if (isConcurring) { roleLabel = "Concurring opinion"; roleHref = "#concurring-opinions"; }
-    else if (isDissenter) { roleLabel = "Dissenting opinion"; roleHref = "#dissenting-opinions"; }
+    else if (isConcurDissentAuthor) { roleLabel = "Concurring in part, dissenting in part"; roleHref = "#concur-dissent-opinions"; }
+    else if (isConcurDissentJoinerOnly) { roleLabel = "Joined concurring/dissenting opinion"; roleHref = "#concur-dissent-opinions"; }
+    else if (isConcurringAuthor) { roleLabel = "Concurring opinion"; roleHref = "#concurring-opinions"; }
+    else if (isConcurringJoinerOnly) { roleLabel = "Joined concurring opinion"; roleHref = "#concurring-opinions"; }
+    else if (isDissentAuthor) { roleLabel = "Dissenting opinion"; roleHref = "#dissenting-opinions"; }
+    else if (isDissentJoinerOnly) { roleLabel = "Joined dissenting opinion"; roleHref = "#dissenting-opinions"; }
     else if (isPluralityAuthorSelf) { roleLabel = "Plurality opinion"; roleHref = "#plurality-opinion"; }
     else if (isPluralityMember) { roleLabel = "Joined plurality opinion"; roleHref = "#plurality-opinion"; }
 
