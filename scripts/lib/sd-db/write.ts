@@ -362,7 +362,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   // ---- decision_ties + decisions (Phase 6) — computed via decisions.ts,
   // which reuses computeDecisionSides so this can never disagree with the
   // site's own rendering. votes above is untouched by this. ----
-  const { ties: decisionTies, decisions: decisionRows } = computeDecisionTiesAndPositions(c, warnings);
+  const { ties: decisionTies, decisions: decisionRows } = computeDecisionTiesAndPositions(c, warnings, status === "decided");
 
   const tieCandidates = decisionTies
     .map((t) => ({

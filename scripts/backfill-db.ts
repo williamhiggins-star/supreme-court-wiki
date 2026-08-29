@@ -632,7 +632,7 @@ function buildFromCases(model: Model, report: Report, cases: CaseSummary[], auth
     // disagree with the site's own rendering. votes above is untouched by
     // this.
     {
-      const { ties, decisions } = computeDecisionTiesAndPositions(c, report.flags);
+      const { ties, decisions } = computeDecisionTiesAndPositions(c, report.flags, status === "decided");
       for (const t of ties) {
         model.decisionTies.push({ case_slug: c.slug, person_slug: t.person_slug, opinion_kind: t.opinion_kind, opinion_author_slug: t.opinion_author_slug, role: t.role, join_scope: t.join_scope });
         bump(report, "decision_ties");

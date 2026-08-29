@@ -54,7 +54,17 @@ const ROLE_HREF_TO_POSITION: Record<string, Position> = {
 export function computeDecisionTiesAndPositions(
   c: CaseSummary,
   warnings: string[],
+  isDecided: boolean,
 ): { ties: DecisionTieInput[]; decisions: DecisionInput[] } {
+  // computeDecisionSides assumes a decision exists — its "remaining
+  // justice" pass silently defaults EVERY unclassified justice to the
+  // majority bucket, which is correct once a case is actually decided but
+  // fabricates 9 bogus "majority" rows for a case that's merely argued or
+  // still at the petition stage. Callers pass their own already-computed
+  // deriveStatus() result so this can't drift from how the rest of the
+  // pipeline determines case status.
+  if (!isDecided) return { ties: [], decisions: [] };
+
   const context = c.slug ?? c.title ?? "(unknown case)";
 
   function resolveSlug(key: string, field: string): string | null {
