@@ -8,19 +8,29 @@
  * full set of rows that WOULD be written, and prints a report — no writes.
  * Pass --apply to actually upsert everything.
  *
- * Every slug/name reference that doesn't resolve to a real (existing or
- * newly-created-in-this-run) row gets a stub row instead of being dropped,
- * mirroring how the existing JSON pipeline stubs unknown precedents. Where a
- * source field has no column to land in under the Phase 1 schema, or the
- * mapping requires a non-obvious judgment call, this script does NOT invent
- * a place for it — it tracks the gap and surfaces it in the report instead.
- * See the "SCHEMA GAPS / DESIGN DECISIONS" section printed at the end of the
- * dry-run report for the full list.
+ * *** NOT SAFE TO RE-RUN WITH --apply. ***
+ * Most tables here (people/cases/statutes/legal_terms/publications/
+ * circuit_splits/votes/decision_ties/decisions) are upserted or, for
+ * decision_ties/decisions, a table this script assumes is empty going in —
+ * safe either way. But opinions, opinion_joins, case_participations,
+ * key_exchanges, citations, statute_citations, case_terms, publication_cases,
+ * split_positions, and appellate_impacts have no natural unique key and are
+ * plain-inserted: a second --apply run duplicates every row in them on top
+ * of whatever's already there (citations' composite PK will eventually 409
+ * and abort the run, but only after the others have already silently
+ * duplicated). Confirmed the hard way on 2026-08-29: re-running this to
+ * backfill the new decision_ties/decisions tables also silently re-inserted
+ * 544 opinions, 408 opinion_joins, 85 case_participations, and 333
+ * key_exchanges on top of the original 2026-08-28 run, requiring a manual
+ * cleanup pass. The --apply guard below (checked against the `opinions`
+ * table specifically) exists to make this a hard stop instead of a silent
+ * repeat — if you need to backfill ONE new table, write a narrow one-off
+ * script for that table alone; don't reach for this file a second time.
  *
  * Run:
  *   npx tsx scripts/backfill-db.ts              # dry run (default)
  *   npx tsx scripts/backfill-db.ts --dry-run     # dry run (explicit)
- *   npx tsx scripts/backfill-db.ts --apply       # actually write
+ *   npx tsx scripts/backfill-db.ts --apply       # actually write (see guard above — refuses if already run once)
  */
 
 import * as fs from "fs";
@@ -44,6 +54,7 @@ import type {
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const APPLY = process.argv.includes("--apply");
+const FORCE_RERUN = process.argv.includes("--force-legacy-rerun");
 
 function readJsonDir<T>(dir: string): T[] {
   const full = path.join(DATA_DIR, dir);
@@ -1328,6 +1339,27 @@ async function main() {
   }
   const courtIdBySlug = new Map(existingCourts.map((c) => [c.slug, c.id]));
   const personIdBySlug = new Map(existingPeople.map((p) => [p.slug, p.id]));
+
+  // --apply guard: opinions has no natural unique key and is plain-inserted
+  // (see the file header) — if it already has rows, this has already been
+  // run once, and running it again will duplicate every non-idempotent
+  // table. --force-legacy-rerun overrides this for the rare case that's
+  // genuinely intended (e.g. after a verified, complete manual cleanup).
+  if (APPLY && !FORCE_RERUN) {
+    const existingOpinions = await select<{ id: string }>(creds, "opinions", "?select=id&limit=1");
+    if (existingOpinions.length > 0) {
+      console.error(
+        "\nRefusing to --apply: the opinions table already has rows, which means this " +
+        "one-time backfill has already been run. Re-running it duplicates opinions, " +
+        "opinion_joins, case_participations, key_exchanges, citations, statute_citations, " +
+        "case_terms, publication_cases, split_positions, and appellate_impacts (all " +
+        "plain-inserted, no natural unique key). If you need to backfill just ONE new " +
+        "table, write a narrow one-off script for it instead of reusing this file. If " +
+        "you've confirmed it's safe to re-run in full anyway, pass --force-legacy-rerun.\n"
+      );
+      process.exit(1);
+    }
+  }
 
   const cases = readJsonDir<CaseSummary>("cases");
   const precedents = readJsonDir<PrecedentCase>("precedents");
