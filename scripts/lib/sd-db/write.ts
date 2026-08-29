@@ -44,6 +44,7 @@ import {
   STATUTE_CITATION_RE,
   PRECEDENT_COURT_TEXT_TO_SLUG,
 } from "./constants.js";
+import { computeDecisionTiesAndPositions } from "./decisions.js";
 
 // ---------------------------------------------------------------------------
 // Id cache — courts/people are near-static; cases grow slowly. Loaded once
@@ -188,6 +189,18 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     }
   }
 
+  // plurality — new opinions row only; not written to votes/opinion_joins
+  // (those stay exactly as today). decision_ties/decisions below are the
+  // new, richer source for plurality membership.
+  if (c.pluralityAuthor) {
+    const slug = JUSTICE_KEY_TO_SLUG[c.pluralityAuthor];
+    if (!slug) {
+      warnings.push(`unrecognized pluralityAuthor key "${c.pluralityAuthor}".`);
+    } else {
+      opinions.push({ kind: "plurality", author_person_slug: slug, summary: c.pluralityOpinionSummary ?? null });
+    }
+  }
+
   const concurrenceSummaryAuthors = new Set((c.concurringSummaries ?? []).map((s) => s.author));
   for (const s of c.concurringSummaries ?? []) {
     const slug = JUSTICE_KEY_TO_SLUG[s.author];
@@ -207,6 +220,21 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     if (!slug) { warnings.push(`unrecognized concurrenceAuthors key "${key}".`); continue; }
     opinions.push({ kind: "concurrence", author_person_slug: slug, summary: null });
     votesRaw.push({ person_slug: slug, side: "majority" });
+  }
+
+  // concur/dissent — new opinions rows only, same reasoning as plurality
+  // above.
+  const concurDissentSummaryAuthors = new Set((c.concurDissentSummaries ?? []).map((s) => s.author));
+  for (const s of c.concurDissentSummaries ?? []) {
+    const slug = JUSTICE_KEY_TO_SLUG[s.author];
+    if (!slug) { warnings.push(`unrecognized concur/dissent author key "${s.author}".`); continue; }
+    opinions.push({ kind: "concur_dissent", author_person_slug: slug, summary: s.summary });
+  }
+  for (const key of c.concurDissentAuthors ?? []) {
+    if (concurDissentSummaryAuthors.has(key)) continue;
+    const slug = JUSTICE_KEY_TO_SLUG[key];
+    if (!slug) { warnings.push(`unrecognized concurDissentAuthors key "${key}".`); continue; }
+    opinions.push({ kind: "concur_dissent", author_person_slug: slug, summary: null });
   }
 
   const dissentSummaryAuthors = new Set((c.dissentSummaries ?? []).map((s) => s.author));
@@ -289,12 +317,16 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
 
   // ---- Write: delete old dependent rows for this case, then insert fresh. ----
   await Promise.all([
-    remove(creds, "opinions", `case_id=eq.${caseId}`), // cascades opinion_joins
+    remove(creds, "opinions", `case_id=eq.${caseId}`), // cascades opinion_joins, decision_ties
     remove(creds, "votes", `case_id=eq.${caseId}`),
     remove(creds, "key_exchanges", `case_id=eq.${caseId}`),
     remove(creds, "citations", `citing_case_id=eq.${caseId}`),
     remove(creds, "statute_citations", `citing_case_id=eq.${caseId}`),
     remove(creds, "case_terms", `case_id=eq.${caseId}`),
+    // decisions isn't reached by the opinions cascade for a silent
+    // default-majority row (primary_tie_id null, no opinion to cascade
+    // from) — always delete it explicitly rather than rely on cascade.
+    remove(creds, "decisions", `case_id=eq.${caseId}`),
   ]);
 
   const opinionIdByKey = new Map<string, string>();
@@ -325,6 +357,49 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
       .map((v) => ({ case_id: caseId, person_id: cache.personIdBySlug.get(v.person_slug), side: v.side }))
       .filter((r) => r.person_id);
     await upsert(creds, "votes", voteRows, "case_id,person_id");
+  }
+
+  // ---- decision_ties + decisions (Phase 6) — computed via decisions.ts,
+  // which reuses computeDecisionSides so this can never disagree with the
+  // site's own rendering. votes above is untouched by this. ----
+  const { ties: decisionTies, decisions: decisionRows } = computeDecisionTiesAndPositions(c, warnings);
+
+  const tieCandidates = decisionTies
+    .map((t) => ({
+      input: t,
+      row: {
+        case_id: caseId,
+        person_id: cache.personIdBySlug.get(t.person_slug),
+        opinion_id: opinionIdByKey.get(`${t.opinion_kind}::${t.opinion_author_slug}`),
+        role: t.role,
+        join_scope: t.join_scope,
+      },
+    }))
+    .filter((cand) => cand.row.person_id && cand.row.opinion_id);
+  if (tieCandidates.length < decisionTies.length) {
+    warnings.push(`${decisionTies.length - tieCandidates.length} decision_ties row(s) dropped — unresolved person or opinion.`);
+  }
+
+  const decisionTieIdByKey = new Map<string, string>();
+  if (tieCandidates.length > 0) {
+    const inserted = await insert<{ id: string }>(creds, "decision_ties", tieCandidates.map((cand) => cand.row));
+    tieCandidates.forEach((cand, i) => {
+      decisionTieIdByKey.set(`${cand.input.person_slug}::${cand.input.opinion_kind}::${cand.input.opinion_author_slug}`, inserted[i].id);
+    });
+  }
+
+  if (decisionRows.length > 0) {
+    const rows = decisionRows
+      .map((d) => ({
+        case_id: caseId,
+        person_id: cache.personIdBySlug.get(d.person_slug),
+        position: d.position,
+        primary_tie_id: d.primaryTieKey
+          ? decisionTieIdByKey.get(`${d.person_slug}::${d.primaryTieKey.opinion_kind}::${d.primaryTieKey.opinion_author_slug}`) ?? null
+          : null,
+      }))
+      .filter((r) => r.person_id);
+    if (rows.length > 0) await insert(creds, "decisions", rows);
   }
 
   if (keyExchanges.length > 0) {
