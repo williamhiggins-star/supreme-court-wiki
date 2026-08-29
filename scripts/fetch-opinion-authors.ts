@@ -182,20 +182,53 @@ function extractJusticeKeysFromJoinText(raw: string): string[] {
  * names being scanned for — e.g. "...in which ROBERTS, C. J., and THOMAS,
  * ALITO, KAVANAUGH, and BARRETT, JJ., joined." would get truncated after
  * "ROBERTS," by a naive first-period search, silently dropping every other
- * joiner. If "joined" doesn't appear within `maxLen`, returns [] rather
- * than guessing — no join clause found is safer than scanning arbitrary
- * trailing text for justice-name false positives.
+ * joiner.
+ *
+ * IS bounded on the next opinion announcement's own verb (",\s*DESIGNATOR,\s*
+ * (?:filed|delivered)"), found via the same structured pattern the rest of
+ * this file uses rather than fragile period-scanning — a real syllabus
+ * sentence for a justice with no "joined" clause of their own (e.g. a solo
+ * concur/dissent) is immediately followed by the NEXT justice's
+ * announcement, and without this bound that next sentence's OWN "joined"
+ * clause gets misattributed here. Deliberately keyed on "filed"/"delivered"
+ * specifically (not just any designator) so this does NOT trigger on a
+ * joiner's own "NAME, J., joined" within the CURRENT clause, nor on a
+ * multi-name join list that itself contains "ROBERTS, C. J., and THOMAS,
+ * ..., JJ., joined" — both of those have a designator followed by "joined"
+ * or "and", never by "filed"/"delivered". If "joined" doesn't appear before
+ * either boundary, returns [] — no join clause found is safer than
+ * scanning arbitrary trailing text for justice-name false positives.
+ *
+ * A single opinion can be joined via MORE THAN ONE "in which ... joined"
+ * clause — e.g. "in which SOTOMAYOR, J., joined, and in which KAGAN, J.,
+ * joined as to Parts I and II." Each "in which" segment is scanned
+ * independently (split on "in which", not on the first "joined") so a
+ * second/third partial joiner isn't silently dropped just because an
+ * earlier joiner was already found.
  *
  * Known limitation: doesn't distinguish full joins from partial ones
  * ("joined as to Parts I and II") — those still register as a join.
  */
 function joinersAfter(text: string, matchEnd: number, excludeKeys: string[], maxLen = 500): string[] {
-  const window = text.slice(matchEnd, matchEnd + maxLen);
-  const joinedIdx = window.search(/\bjoined\b/i);
-  if (joinedIdx === -1) return [];
-  const clause = window.slice(0, joinedIdx);
+  let window = text.slice(matchEnd, matchEnd + maxLen);
+  const nextClauseRe = new RegExp(String.raw`,\s*${DESIGNATOR},\s*(?:filed|delivered)\b`, "i");
+  const nextClause = nextClauseRe.exec(window);
+  if (nextClause) window = window.slice(0, nextClause.index);
+  if (!/\bjoined\b/i.test(window)) return [];
+
   const exclude = new Set(excludeKeys);
-  return extractJusticeKeysFromJoinText(clause).filter((k) => !exclude.has(k));
+  const found = new Set<string>();
+  // Text before the first "in which" is the opinion's own verb clause
+  // ("filed a dissenting opinion"), not part of any join list — drop it.
+  const segments = window.split(/\bin which\b/i).slice(1);
+  for (const segment of segments) {
+    const joinedIdx = segment.search(/\bjoined\b/i);
+    if (joinedIdx === -1) continue;
+    for (const key of extractJusticeKeysFromJoinText(segment.slice(0, joinedIdx))) {
+      if (!exclude.has(key)) found.add(key);
+    }
+  }
+  return [...found];
 }
 
 /**
@@ -248,9 +281,18 @@ function scanOpinionClauses(
     const subjects = subjectsBefore(text, m.index);
     for (const key of subjects) {
       if (exclude.has(key) || results.some((r) => r.author === key)) continue;
-      const joinedBy = isPlural
-        ? []
-        : joinersAfter(text, m.index + m[0].length, [key, ...exclude]);
+      // Only exclude the opinion's OWN author from its joiner list — NOT
+      // `exclude` (that set is for keeping, say, a concur/dissent author
+      // from ALSO being misclassified as a plain dissent AUTHOR). A
+      // justice can simultaneously author one opinion and separately join
+      // a DIFFERENT one — e.g. Cisco Systems v. Doe I: Jackson authors her
+      // own concur/dissent, joined by Kagan, AND separately partially
+      // joins Sotomayor's dissent ("in which KAGAN and JACKSON, JJ.,
+      // joined as to Parts I–III and V"). Threading the full author-
+      // classification `exclude` set in here silently dropped Jackson
+      // from Sotomayor's joinedBy just because she'd already been
+      // classified as the concur/dissent's author.
+      const joinedBy = isPlural ? [] : joinersAfter(text, m.index + m[0].length, [key]);
       results.push({ author: key, joinedBy });
     }
   }
@@ -284,6 +326,17 @@ function detectPetitionerWon(rawText: string): boolean | null {
   return null;
 }
 
+/**
+ * Boilerplate the Reporter of Decisions places at the top of every slip
+ * opinion, immediately after the syllabus ends and the actual "Opinion of
+ * the Court" text begins.
+ */
+const OPINION_BODY_START_RE = /NOTICE:\s*This opinion is subject to formal revision/i;
+
+/** Hard cap used only when OPINION_BODY_START_RE isn't found (e.g. an
+ *  unusual format) — real syllabi are well under this. */
+const SYLLABUS_FALLBACK_MAX_CHARS = 20_000;
+
 export function parseOpinionAuthors(rawText: string): OpinionAuthors {
   // SCOTUS slip-opinion PDFs use the syllabus format:
   //   "THOMAS, J., delivered the opinion of the Court, in which ROBERTS, C. J., ..."
@@ -293,9 +346,57 @@ export function parseOpinionAuthors(rawText: string): OpinionAuthors {
   //   "ALITO and GORSUCH, JJ., filed dissenting opinions." (each filed a SEPARATE
   //     opinion — plural "JJ.", no join between them)
   // Justice last names may contain PDF spacing artifacts like "K AVANAUGH".
-  //
-  // Work on the full text so we don't miss multi-page syllabi.
-  const text = rawText.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ");
+  // PDF line-wrap hyphenation: a word broken across a line ("...dissenting
+  // opin-\nion...") must be rejoined BEFORE collapsing newlines to spaces —
+  // otherwise "opin-" + " ion" never matches "\s*opinions?" and the whole
+  // clause (author, joiners, everyone in it) silently vanishes. Keyed on
+  // hyphen immediately followed by a newline (not just any "word- word",
+  // which could be legitimate spacing) so this can't misfire mid-line.
+  const dehyphenated = rawText.replace(/(\w)-\n\s*(\w)/g, "$1$2");
+  // PDF page-break furniture: whenever a sentence happens to span a page
+  // boundary, the extractor splices in "\n\n-- N of M --\n\n<page#> <CASE
+  // NAME>\n<running head>\n" right in the middle of it — e.g. "...filed
+  // a\n\n-- 5 of 83 --\n\n6  TRUMP v. COOK\nSyllabus\ndissenting opinion."
+  // Left in place, this breaks contiguity for any designator/verb pattern
+  // that happens to straddle a page (found via Trump v. Cook: "filed a"
+  // and "dissenting opinion" ended up on opposite sides of a page break).
+  // The marker + page-number/caption line + running-head line are always
+  // exactly this newline-delimited shape, so they can be stripped by
+  // structure without needing to know what the running head says.
+  const depaginated = dehyphenated.replace(/\n\n--\s*\d+\s+of\s+\d+\s*--\n\n\d+[^\n]*\n[^\n]*\n/g, " ");
+  const normalized = depaginated.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ");
+
+  // Scan ONLY the syllabus, not the full multi-page opinion body. The body
+  // of a real opinion is riddled with citations to OTHER cases that use the
+  // exact same "(NAME, J., concurring)" / "(NAME, J., dissenting)" format
+  // as a Bluebook citation parenthetical (e.g. citing United States v.
+  // Vaello Madero as "(THOMAS, J., concurring)") — those aren't statements
+  // about who wrote what in THIS case, but the designator/verb regexes
+  // below can't tell the difference. Scanning the full text (as this
+  // function used to) let such citations inject phantom authors. The
+  // syllabus's own authorship line is a single, clean, self-contained
+  // block right at its end, so bounding the scan there eliminates the
+  // false-positive surface entirely without losing anything real.
+  const bodyStart = OPINION_BODY_START_RE.exec(normalized);
+  const syllabus = bodyStart ? normalized.slice(0, bodyStart.index) : normalized.slice(0, SYLLABUS_FALLBACK_MAX_CHARS);
+
+  // The syllabus ISN'T clean end-to-end either: its own "Held:" discussion
+  // cites other precedents the same Bluebook-parenthetical way — e.g.
+  // citing Christian Legal Society v. Martinez as "(THOMAS, J., concurring
+  // in part and c[oncurring in judgment])", or Hollingsworth v. Perry as
+  // "(per curiam)" — well before the real authorship paragraph. Only the
+  // announcement paragraph itself — from the majority's "delivered the
+  // opinion"/"PER CURIAM" onward — is safe to scan for concurrence/dissent/
+  // concur-dissent designators. "(?<!\()PER CURIAM\b(?!\))" specifically
+  // excludes "per curiam" used as a parenthetical citation descriptor
+  // (always lowercase and wrapped in parens in that role — a real
+  // announcement heading is neither).
+  const announcementRe = new RegExp(String.raw`,\s*${DESIGNATOR},\s*delivered the opinion|(?<!\()PER CURIAM\b(?!\))`, "i");
+  const announcementMatch = announcementRe.exec(syllabus);
+  // Keep a lookback buffer before the match — it starts at the comma right
+  // AFTER the justice's surname (",\s*DESIGNATOR,..."), and subjectsBefore()
+  // needs that name still present to look backward into.
+  const text = announcementMatch ? syllabus.slice(Math.max(0, announcementMatch.index - 100)) : syllabus;
 
   // ── Majority ──────────────────────────────────────────────────────────────
   let majorityAuthor: string | null = null;
@@ -305,7 +406,20 @@ export function parseOpinionAuthors(rawText: string): OpinionAuthors {
   if (majorityMatches.length) {
     majorityAuthor = majorityMatches[0].author;
     majorityJoinedBy = majorityMatches[0].joinedBy;
-  } else if (/\bPER CURIAM\b/.test(text.slice(0, 8000))) {
+    // A unanimous decision is announced as "delivered the opinion for a
+    // unanimous Court" instead of listing each joiner by name — there's no
+    // "in which ... joined" clause at all, so joinersAfter correctly finds
+    // nothing there. Without this, majorityJoinedBy silently comes back
+    // empty for every unanimous case (confirmed against several real slip
+    // opinions during the 2025-term backfill audit).
+    if (/delivered the opinion (?:of|for) (?:a|the) unanimous Court/i.test(text)) {
+      majorityJoinedBy = JUSTICE_NAMES.map(justiceKey).filter((k) => k !== majorityAuthor);
+    }
+  } else if (/(?<!\()\bPER CURIAM\b(?!\))/i.test(text.slice(0, 8000))) {
+    // Case-insensitive: the syllabus renders this as title-case "Per
+    // Curiam" (only the actual opinion body, now excluded by the syllabus
+    // scoping above, uses the all-caps "PER CURIAM." heading). Excludes a
+    // parenthetical citation descriptor for the same reason as above.
     majorityAuthor = "per_curiam";
   }
   const majoritySet = majorityAuthor ? new Set([majorityAuthor]) : new Set<string>();
