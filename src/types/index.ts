@@ -100,8 +100,16 @@ export interface CaseSummary {
   // rather than forced into concurrenceAuthors/dissentAuthors so the UI
   // can render it (and its ring color) as its own category.
   concurDissentAuthors?: string[];
+  // A majority opinion can split by parts: full majority (5+ votes) on
+  // some parts, only a plurality (not enough for a majority) on others —
+  // same author as the majority, typically, but a narrower coalition.
+  // Kept parallel to majorityAuthor/majorityJoinedBy rather than folded
+  // into it, since the two coalitions are genuinely different sizes.
+  pluralityAuthor?: string;
+  pluralityJoinedBy?: string[];
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
+  pluralityOpinionSummary?: string;
   concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
   dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
   concurDissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];

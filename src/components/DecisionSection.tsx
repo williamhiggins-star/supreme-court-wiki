@@ -115,6 +115,24 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
         </div>
       )}
 
+      {c.pluralityOpinionSummary && (
+        <div id="plurality-opinion" className="mb-6 scroll-mt-4">
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2">
+            Plurality Opinion
+            {c.pluralityAuthor && (
+              <span className="normal-case font-normal text-gray-500 ml-2">
+                — Justice {capitalize(c.pluralityAuthor)}
+              </span>
+            )}
+          </h3>
+          <div className="space-y-3">
+            {c.pluralityOpinionSummary.split("\n\n").map((para, i) => (
+              <p key={i} className="font-body text-sm text-gray-700 leading-relaxed">{para}</p>
+            ))}
+          </div>
+        </div>
+      )}
+
       {(c.concurringSummaries?.length ?? 0) > 0 && (
         <div id="concurring-opinions" className="mb-6 scroll-mt-4">
           <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
@@ -182,7 +200,7 @@ export function DecisionSection({ c }: { c: CaseSummary }) {
       )}
 
       {/* Placeholder while summaries are pending */}
-      {!c.majorityOpinionSummary && !(c.concurringSummaries?.length) && !(c.concurDissentSummaries?.length) && !(c.dissentSummaries?.length) && (
+      {!c.majorityOpinionSummary && !c.pluralityOpinionSummary && !(c.concurringSummaries?.length) && !(c.concurDissentSummaries?.length) && !(c.dissentSummaries?.length) && (
         <p className="text-sm text-gray-400 italic text-center pt-2">
           Opinion summaries will appear after the next daily update.
         </p>

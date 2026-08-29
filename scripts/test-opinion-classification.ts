@@ -308,6 +308,66 @@ check("every one of the 9 justices is placed exactly once", () => {
   assert.equal(new Set(all.map((e) => e.key)).size, 9);
 });
 
+// ── 3. Plurality: a majority opinion split by parts (full majority on some,
+// a narrower coalition on others) — modeled on Barrett v. United States
+// (24-5774): Jackson delivers the Court's opinion for Parts I-IV-B (joined
+// by all 8 others) and a separate opinion for Part IV-C joined only by
+// Roberts, Sotomayor, and Kagan — not enough for a majority on that part.
+console.log("\ncomputeDecisionSides() — plurality");
+const pluralityCase: CaseSummary = {
+  ...caseData,
+  majorityAuthor: "jackson",
+  majorityJoinedBy: ["roberts", "thomas", "alito", "sotomayor", "kagan", "gorsuch", "kavanaugh", "barrett"],
+  pluralityAuthor: "jackson",
+  pluralityJoinedBy: ["roberts", "sotomayor", "kagan"],
+  concurrenceAuthors: ["gorsuch"],
+  concurDissentAuthors: undefined,
+  dissentAuthors: undefined,
+  concurringSummaries: undefined,
+  concurDissentSummaries: undefined,
+  dissentSummaries: undefined,
+};
+const pluralitySides = computeDecisionSides(pluralityCase);
+function findPluralityEntry(key: string) {
+  return [...pluralitySides.winningSide, ...pluralitySides.concurDissentSide, ...pluralitySides.losingSide].find((e) => e.key === key);
+}
+check("jackson (majority AND plurality author) shows as plain 'Majority opinion' — authoring the majority is the more senior status", () => {
+  const jackson = findPluralityEntry("jackson");
+  assert.ok(jackson);
+  assert.equal(jackson!.side, "majority");
+  assert.equal(jackson!.roleLabel, "Majority opinion");
+  assert.equal(jackson!.ringColor, "ring-emerald-500");
+});
+check("roberts, sotomayor, and kagan (plurality joiners, nothing more specific) get the teal plurality ring, not plain green", () => {
+  for (const key of ["roberts", "sotomayor", "kagan"]) {
+    const entry = findPluralityEntry(key);
+    assert.ok(entry, `${key} must appear`);
+    assert.equal(entry!.side, "plurality", `${key} side`);
+    assert.equal(entry!.ringColor, "ring-teal-500", `${key} ring`);
+    assert.equal(entry!.roleLabel, "Joined plurality opinion", `${key} label`);
+  }
+});
+check("gorsuch's own concurrence takes priority over plurality — he's not a plurality joiner here anyway", () => {
+  const gorsuch = findPluralityEntry("gorsuch");
+  assert.ok(gorsuch);
+  assert.equal(gorsuch!.side, "majority");
+  assert.equal(gorsuch!.roleLabel, "Concurring opinion");
+});
+check("thomas, alito, kavanaugh, barrett — majority joiners only, not plurality joiners — stay plain silent green", () => {
+  for (const key of ["thomas", "alito", "kavanaugh", "barrett"]) {
+    const entry = findPluralityEntry(key);
+    assert.ok(entry, `${key} must appear`);
+    assert.equal(entry!.side, "majority", `${key} side`);
+    assert.equal(entry!.ringColor, "ring-emerald-500", `${key} ring`);
+    assert.equal(entry!.roleLabel, null, `${key} label`);
+  }
+});
+check("every one of the 9 justices is placed exactly once in the plurality case too", () => {
+  const all = [...pluralitySides.winningSide, ...pluralitySides.concurDissentSide, ...pluralitySides.losingSide];
+  assert.equal(all.length, 9);
+  assert.equal(new Set(all.map((e) => e.key)).size, 9);
+});
+
 console.log(`\n${passed} check(s) passed.`);
 if (process.exitCode) {
   console.error("\nFAILED");

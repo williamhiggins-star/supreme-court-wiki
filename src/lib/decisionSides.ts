@@ -6,7 +6,7 @@ export const JUSTICE_ORDER = [
   "gorsuch", "kavanaugh", "barrett", "jackson",
 ] as const;
 
-export type Side = "majority" | "concur-dissent" | "dissent";
+export type Side = "majority" | "plurality" | "concur-dissent" | "dissent";
 
 export interface JusticeEntry {
   key: string;
@@ -58,15 +58,40 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
   for (const k of concurDissentSet) concurrenceSet.delete(k);
   for (const k of dissentSet) concurrenceSet.delete(k);
 
+  // A majority opinion can split by parts: full majority on some, only a
+  // plurality (not enough votes for a majority) on others — same author,
+  // typically, but a narrower coalition. pluralityAuthor is almost always
+  // majorityAuthor themself (handled as a plain "Majority opinion" below —
+  // authoring the actual majority is their more senior status); the ring
+  // this adds is for justices whose tie to the case is joining that
+  // narrower coalition, distinct from the full majority join.
+  const pluralityAuthor = c.pluralityAuthor ?? null;
+  const pluralitySet = new Set<string>(c.pluralityJoinedBy ?? []);
+  if (pluralityAuthor) pluralitySet.add(pluralityAuthor);
+  for (const k of concurDissentSet) pluralitySet.delete(k);
+  for (const k of dissentSet) pluralitySet.delete(k);
+
   function buildEntry(key: string): JusticeEntry {
     const isConcurDissent = concurDissentSet.has(key);
     const isDissenter = !isConcurDissent && dissentSet.has(key);
     const isMajorityAuthor = !isPerCuriam && majorityAuthor === key;
     const isConcurring = !isConcurDissent && concurrenceSet.has(key);
+    const isPluralityAuthorSelf = !isMajorityAuthor && !isConcurDissent && !isConcurring && pluralityAuthor === key;
+    const isPluralityMember =
+      !isMajorityAuthor && !isConcurDissent && !isConcurring && !isDissenter && !isPluralityAuthorSelf && pluralitySet.has(key);
 
-    const side: Side = isConcurDissent ? "concur-dissent" : isDissenter ? "dissent" : "majority";
+    const side: Side = isConcurDissent
+      ? "concur-dissent"
+      : isDissenter
+        ? "dissent"
+        : isPluralityAuthorSelf || isPluralityMember
+          ? "plurality"
+          : "majority";
     const ringColor =
-      side === "dissent" ? "ring-rose-500" : side === "concur-dissent" ? "ring-amber-500" : "ring-emerald-500";
+      side === "dissent" ? "ring-rose-500"
+        : side === "concur-dissent" ? "ring-amber-500"
+        : side === "plurality" ? "ring-teal-500"
+        : "ring-emerald-500";
 
     let roleLabel: string | null = null;
     let roleHref: string | null = null;
@@ -74,6 +99,8 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
     else if (isConcurDissent) { roleLabel = "Concurring in part, dissenting in part"; roleHref = "#concur-dissent-opinions"; }
     else if (isConcurring) { roleLabel = "Concurring opinion"; roleHref = "#concurring-opinions"; }
     else if (isDissenter) { roleLabel = "Dissenting opinion"; roleHref = "#dissenting-opinions"; }
+    else if (isPluralityAuthorSelf) { roleLabel = "Plurality opinion"; roleHref = "#plurality-opinion"; }
+    else if (isPluralityMember) { roleLabel = "Joined plurality opinion"; roleHref = "#plurality-opinion"; }
 
     return { key, side, ringColor, roleLabel, roleHref };
   }
@@ -81,7 +108,8 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
   // Winning side, in display order:
   //   1. Majority opinion author (unless per curiam)
   //   2. Concurring authors, by seniority
-  //   3. Every remaining justice not placed elsewhere (silent majority joiners), by seniority
+  //   3. Plurality-only members (joined the narrower coalition, nothing more specific), by seniority
+  //   4. Every remaining justice not placed elsewhere (silent majority joiners), by seniority
   const winningSide: JusticeEntry[] = [];
   if (majorityAuthor && !isPerCuriam && !dissentSet.has(majorityAuthor) && !concurDissentSet.has(majorityAuthor)) {
     winningSide.push(buildEntry(majorityAuthor));
@@ -90,7 +118,12 @@ export function computeDecisionSides(c: CaseSummary): DecisionSides {
     if (concurrenceSet.has(k) && k !== majorityAuthor) winningSide.push(buildEntry(k));
   });
   JUSTICE_ORDER.forEach((k) => {
-    if (!dissentSet.has(k) && !concurDissentSet.has(k) && !concurrenceSet.has(k) && k !== majorityAuthor) {
+    if (!dissentSet.has(k) && !concurDissentSet.has(k) && !concurrenceSet.has(k) && k !== majorityAuthor && pluralitySet.has(k)) {
+      winningSide.push(buildEntry(k));
+    }
+  });
+  JUSTICE_ORDER.forEach((k) => {
+    if (!dissentSet.has(k) && !concurDissentSet.has(k) && !concurrenceSet.has(k) && !pluralitySet.has(k) && k !== majorityAuthor) {
       winningSide.push(buildEntry(k));
     }
   });
