@@ -10,7 +10,7 @@
  */
 
 import { db } from "./client";
-import { JUSTICE_KEY_BY_PERSON_SLUG } from "./constants";
+import { JUSTICE_KEY_BY_PERSON_SLUG, currentTermYear } from "./constants";
 import type { JusticeStat } from "@/lib/justices";
 
 // Matches SectionPanels.tsx's ALL_JUSTICES / data/justices.json's
@@ -29,7 +29,7 @@ const JUSTICE_DISPLAY: Record<string, { displayName: string; photo: string }> = 
   jackson: { displayName: "Justice Jackson", photo: "/images/justices/jackson.jpg" },
 };
 
-export async function getJusticeStatsFromDb(term = "2025"): Promise<JusticeStat[]> {
+export async function getJusticeStatsFromDb(term: string = currentTermYear()): Promise<JusticeStat[]> {
   const { data, error } = await db
     .from("justice_stats")
     .select(

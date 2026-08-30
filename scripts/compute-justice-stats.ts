@@ -1,11 +1,14 @@
 /**
  * compute-justice-stats.ts
  *
- * Downloads every 2025-term oral argument transcript PDF, parses each
+ * Downloads every {term}-term oral argument transcript PDF, parses each
  * speaker turn, and aggregates per-justice question counts and word totals.
  * Saves results to data/justices.json.
  *
- * Run:  npx tsx scripts/compute-justice-stats.ts
+ * Run:  npx tsx scripts/compute-justice-stats.ts [term]
+ *       npx tsx scripts/compute-justice-stats.ts 2026
+ *       (defaults to the current term -- see currentTermYear() below --
+ *       so today's behavior is unchanged if no arg is given)
  */
 
 import * as fs from "fs";
@@ -13,6 +16,17 @@ import * as path from "path";
 import { downloadPdf, extractText, CASES_DIR, DATA_DIR } from "./pipeline.js";
 import { getCredentials } from "./lib/supabase-sync/env.js";
 import { loadIdCache, syncJusticeStats } from "./lib/sd-db/write.js";
+
+// A SCOTUS term ("OT{year}") runs October through the following June/July;
+// the term is named for the calendar year it STARTS in. Same reasoning as
+// fetch-opinion-authors.ts's currentShortTermYear(), just returning the
+// full 4-digit year (cases.term / justice_stats.term store "2025", not the
+// 2-digit "25" that function returns).
+function currentTermYear(): string {
+  const now = new Date();
+  const fullYear = now.getMonth() >= 9 ? now.getFullYear() : now.getFullYear() - 1;
+  return String(fullYear);
+}
 
 // ── Justice registry ─────────────────────────────────────────────────────────
 
@@ -131,6 +145,9 @@ export interface JusticesData {
 }
 
 async function main() {
+  const term = process.argv[2] ?? currentTermYear();
+  console.log(`Computing justice stats for term ${term}...`);
+
   const caseFiles = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"));
 
   // Accumulate per-justice stats
@@ -149,8 +166,8 @@ async function main() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const caseData: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, file), "utf-8"));
 
-    // Only process 2025 term cases with actual transcript PDFs
-    if (caseData.termYear !== "2025") { skipped++; continue; }
+    // Only process this term's cases with actual transcript PDFs
+    if (caseData.termYear !== term) { skipped++; continue; }
     const url: string = caseData.transcriptUrl ?? "";
     if (!url.endsWith(".pdf")) { skipped++; continue; }
 
@@ -172,11 +189,11 @@ async function main() {
     }
   }
 
-  // Tally opinion authorship from decided 2025-term case files
+  // Tally opinion authorship from decided case files for this term
   for (const file of caseFiles) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const caseData: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, file), "utf-8"));
-    if (caseData.termYear !== "2025") continue;
+    if (caseData.termYear !== term) continue;
     if (caseData.docketStatus !== "decided") continue;
 
     const { majorityAuthor, concurrenceAuthors = [], dissentAuthors = [] } = caseData;
@@ -201,7 +218,7 @@ async function main() {
   })).sort((a, b) => b.estimatedMinutes - a.estimatedMinutes);
 
   const output: JusticesData = {
-    term: "2025",
+    term,
     generated: new Date().toISOString().split("T")[0],
     justices,
   };

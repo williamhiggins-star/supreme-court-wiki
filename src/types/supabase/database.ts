@@ -3137,6 +3137,7 @@ export type Database = {
           person_id: string | null
           position: string | null
           stored_side: string | null
+          term: string | null
         }
         Relationships: [
           {

@@ -15,7 +15,7 @@
  */
 
 import { db } from "./client";
-import { JUSTICE_KEY_BY_PERSON_SLUG, JUSTICE_DISPLAY_NAME_BY_KEY } from "./constants";
+import { JUSTICE_KEY_BY_PERSON_SLUG, JUSTICE_DISPLAY_NAME_BY_KEY, currentTermYear } from "./constants";
 import type { CaseSummary } from "@/types";
 
 export interface LowerCourtInfo {
@@ -84,8 +84,8 @@ type CaseDetailRow = NonNullable<
   Awaited<ReturnType<typeof fetchOneCaseDetailRow>>["data"]
 >;
 
-async function fetchOneCaseDetailRow(slug: string) {
-  return db.from("cases").select(CASE_DETAIL_SELECT).eq("slug", slug).eq("term", "2025").eq("status", "decided").maybeSingle();
+async function fetchOneCaseDetailRow(slug: string, term: string) {
+  return db.from("cases").select(CASE_DETAIL_SELECT).eq("slug", slug).eq("term", term).eq("status", "decided").maybeSingle();
 }
 
 function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCaseDetail {
@@ -216,7 +216,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     slug: caseRow.slug,
     caseNumber: caseRow.docket_number ?? "",
     title: caseRow.caption,
-    termYear: caseRow.term ?? "2025",
+    termYear: caseRow.term ?? currentTermYear(),
     argumentDate: caseRow.argued_date ?? "",
     transcriptUrl: transcript?.source_url ?? "",
     docketStatus: "decided",
@@ -258,10 +258,12 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
  * Fetch one case's full detail (metadata + opinion structure + decisions +
  * lower court + transcript + Spotify), reshaped into a
  * computeDecisionSides()-compatible object. Returns null if no decided
- * OT2025 case with this slug exists in the DB.
+ * case with this slug exists in the DB for the given term (defaults to
+ * the current term, so callers don't need to know/pass it for today's
+ * cases -- pass one explicitly for a past or future term).
  */
-export async function getCaseDetail(slug: string): Promise<DbCaseDetail | null> {
-  const { data: caseRow, error: caseError } = await fetchOneCaseDetailRow(slug);
+export async function getCaseDetail(slug: string, term: string = currentTermYear()): Promise<DbCaseDetail | null> {
+  const { data: caseRow, error: caseError } = await fetchOneCaseDetailRow(slug, term);
   if (caseError) throw new Error(`getCaseDetail(${slug}): ${caseError.message}`);
   if (!caseRow) return null;
 
@@ -275,16 +277,16 @@ export async function getCaseDetail(slug: string): Promise<DbCaseDetail | null> 
 }
 
 /**
- * Fetch every decided OT2025 case's full detail in 2 bulk queries (not N+1
- * per-case round trips) -- used by scotusdashboard2's page.tsx to build
- * its full case list, including cases with no data/cases/*.json file at
- * all (e.g. Zorn v. Linton).
+ * Fetch every decided case's full detail for one term (defaults to the
+ * current term) in 2 bulk queries (not N+1 per-case round trips) -- used
+ * by scotusdashboard2's page.tsx to build its full case list, including
+ * cases with no data/cases/*.json file at all (e.g. Zorn v. Linton).
  */
-export async function getAllCaseDetails(): Promise<DbCaseDetail[]> {
+export async function getAllCaseDetails(term: string = currentTermYear()): Promise<DbCaseDetail[]> {
   const { data: caseRows, error: caseError } = await db
     .from("cases")
     .select(CASE_DETAIL_SELECT)
-    .eq("term", "2025")
+    .eq("term", term)
     .eq("status", "decided");
   if (caseError) throw new Error(`getAllCaseDetails: ${caseError.message}`);
   if (!caseRows?.length) return [];
@@ -315,14 +317,14 @@ export interface DbCaseListItem {
   decidedDate: string | null;
 }
 
-/** Every decided OT2025 case's slug/caption -- for generateStaticParams and
- *  list views. Does not include the full opinion structure (see
- *  getCaseDetail for that, called per-slug). */
-export async function getAllDecidedCaseSlugs(): Promise<DbCaseListItem[]> {
+/** Every decided case's slug/caption for one term (defaults to the current
+ *  term) -- for generateStaticParams and list views. Does not include the
+ *  full opinion structure (see getCaseDetail for that, called per-slug). */
+export async function getAllDecidedCaseSlugs(term: string = currentTermYear()): Promise<DbCaseListItem[]> {
   const { data, error } = await db
     .from("cases")
     .select("slug, caption, docket_number, decided_date")
-    .eq("term", "2025")
+    .eq("term", term)
     .eq("status", "decided")
     .order("decided_date", { ascending: false });
   if (error) throw new Error(`getAllDecidedCaseSlugs: ${error.message}`);
