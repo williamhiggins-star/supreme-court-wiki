@@ -71,13 +71,13 @@ function currentShortTermYear(): string {
 
 // ── Slip opinions list ────────────────────────────────────────────────────────
 
-interface SlipOpinion {
+export interface SlipOpinion {
   caseNumber: string;
   pdfUrl: string;
   decisionDate?: string; // YYYY-MM-DD
 }
 
-async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
+export async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
   const url = `${SCOTUS_BASE}/opinions/slipopinion/${shortYear}`;
   console.log(`Fetching slip opinions: ${url}`);
   const html = await fetchHtml(url);

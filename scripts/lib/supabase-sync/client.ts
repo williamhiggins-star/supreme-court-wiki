@@ -131,3 +131,19 @@ export async function remove(
 ): Promise<void> {
   await request(creds, "DELETE", `${table}?${filter}`, {});
 }
+
+/**
+ * PATCH rows matching a PostgREST filter, e.g. `update(creds, "opinions",
+ * "id=eq.<uuid>", { word_count: 42 })`. Returns the updated representation.
+ */
+export async function update<T = Record<string, unknown>>(
+  creds: SupabaseCredentials,
+  table: string,
+  filter: string,
+  patch: Record<string, unknown>,
+): Promise<T[]> {
+  return (await request(creds, "PATCH", `${table}?${filter}`, {
+    body: patch,
+    prefer: "return=representation",
+  })) as T[];
+}
