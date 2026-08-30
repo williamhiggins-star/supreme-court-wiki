@@ -416,3 +416,52 @@ Not one of the original 11 rules — added for Phase 2's
 `term_stats_sitting_index` view. Read as: case counts (total and
 decided) per term, grouped by `cases.sitting`. Cases with no `sitting`
 set are excluded, not bucketed into an "unknown" row.
+
+## §14. Opinion word counts (backfilled from slip-opinion PDFs)
+
+`opinions.word_count` is populated by `scripts/backfill-opinion-word-counts.ts`,
+which downloads each decided OT2025 case's slip-opinion PDF, segments it
+into per-opinion text blocks on the Reporter of Decisions' own
+page-1-reset boundary (each new opinion restarts page numbering at 1),
+matches each `opinions` row to its block by author surname (or, for a
+named joiner with no independently-headed text of their own — e.g.
+Jackson joining Sotomayor's B.P.J. concur/dissent — by the "with whom ...
+join(s)" clause), and writes the cleaned word count. Validated by hand
+against Feldman's Stat Pack case-level and per-justice figures before
+being written (9-justice + per curiam averages within ±2% of Feldman's
+own "≈" numbers for 8 of 10; see below for the two exceptions).
+
+**§10a extended to word_count:** when one author has multiple `opinions`
+rows for the same case (the existing majority/plurality fractured-opinion
+pattern), only the highest-priority kind gets a real `word_count` — the
+lower-priority row(s) are written explicitly to `null`, not left to
+whatever the extractor happens to match, since it's the same physical
+text as the row that does carry the count. As of this backfill that's
+exactly 2 rows: Roberts' plurality row in *Learning Resources v. Trump*
+and Jackson's plurality row in *Barrett v. United States*.
+
+**Known unresolved data-integrity issues surfaced by this backfill** (not
+fixed here — read-only investigation only; DB writes need separate
+approval):
+
+- ***District of Columbia v. R.W.*** — Sotomayor has her own `dissent`-kind
+  `opinions` row (id `4931175f-0a9a-4fea-9d70-34fcbaa519f7`), with a
+  `decision_ties` row crediting her as `role='author'`. The real slip
+  opinion contains no such dissent — only a one-line "JUSTICE SOTOMAYOR
+  would deny the petition for a writ of certiorari" notation appended to
+  the per curiam opinion, then Jackson's separate, real, multi-page
+  dissent. Proposed fix (approved by Will, blocked in-session by the
+  permission classifier on the DELETE call — needs a human or a
+  re-approved run to execute): delete that `opinions` row; its
+  `decision_ties` row cascades automatically
+  (`opinions(id) on delete cascade`); leave `decisions.position='dissent'`
+  for Sotomayor as-is, since that's tracked independently and correctly
+  reflects her cert-stage position.
+- ***McCarthy v. Hernandez*** — a `dissent`-kind `opinions` row (id
+  `4c327961-6286-42c9-8c06-3cb5022591e5`) has `author_id = null` and three
+  `decision_ties` rows all with `role='joiner'` (Sotomayor, Jackson, and a
+  third justice) — no author decision_tie at all. The slip opinion is a
+  single per curiam block with no dissenting text anywhere (not even a
+  one-line cert-position notation like R.W. above). Not yet investigated
+  to the same depth as the two rows above (no FK check beyond
+  `decision_ties`, no proposed fix) — flagged here so it isn't lost.
