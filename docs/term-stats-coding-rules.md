@@ -215,6 +215,45 @@ split `concurrence_in_part`/`dissent_in_part` into their own position
 values — that split only matters for this authorship count, which reads
 `opinions.kind` directly, not `decisions.position`.
 
+### §10a. Authorship-count deduplication (Session 7)
+
+A single author can have **multiple `opinions` rows for the same
+`case_id`** — a fractured opinion split into distinct parts commanding
+different coalitions (e.g. majority as to most Parts, plurality-only as
+to one or two others). Confirmed twice in this dataset: Learning
+Resources v. Trump/Roberts and Barrett v. United States/Jackson, both
+`['majority', 'plurality']` for the same author.
+
+For the authorship-**count** stat specifically (the "N total opinions"
+headline, not word-count/decision_ties/voting-alignment, which correctly
+read every row), these must be deduplicated to **one opinion per
+(case_id, author_id)**, bucketed under the higher-authority kind — this
+is how Feldman's own "Opinions Authored by Each Justice" table counts
+them (verified directly against the rendered PDF: both Roberts/Learning
+Resources and Jackson/Barrett appear exactly once, under Majority only,
+in his table).
+
+Priority order for which kind wins when an author has 2+ rows for one case:
+
+- **`majority > plurality`** — **empirically verified**, 2/2 real
+  instances in this dataset (Roberts/Learning Resources,
+  Jackson/Barrett v. United States), both cross-checked directly
+  against Feldman's rendered table.
+- **`per_curiam > concur_dissent > concurrence > concurrence_in_judgment
+  > concurrence_in_part > dissent > dissent_in_part`** — a **provisional
+  best-guess extrapolation only**, not verified against any real case in
+  this dataset (no author currently has 2+ opinion rows in one case
+  exercising any pairing beyond majority/plurality). Treat as a
+  placeholder ordering by rough controlling-authority intuition, not a
+  confirmed fact — revisit and confirm against Feldman's table the next
+  time a case actually exercises it, rather than assuming this order
+  holds.
+
+This is a counting-layer rule only. `opinions`/`decision_ties` rows are
+never merged, deleted, or otherwise touched — the multi-row structure is
+correct and stays intact for every other stat that needs fragment-level
+detail (who joined which specific Part).
+
 ## §11. Vote-side-derivation cross-check
 
 The ask: derive each justice's vote-side purely from `decision_ties` +
