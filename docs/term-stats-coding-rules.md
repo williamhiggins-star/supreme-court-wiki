@@ -563,3 +563,56 @@ was seeded before decision and never corrected). This is a different,
 larger problem than the outcome/PDF mixup (there's no wrong-but-real
 source PDF to blame — it reads as fabricated/hallucinated intake
 content) and needs its own investigation.
+
+## §15. McCarthy v. Hernandez: `decisions` rows missing for cert-notation-affected justices (fixed); D.C. v. R.W. has the same gap (not fixed)
+
+While investigating why `term_stats_ideological_split_rate` read 21.2%
+(14/66) instead of Feldman's own Stat Pack figure of 22.7% (15/66), diffed
+our 14 ideologically-split cases directly against the 15 cases Feldman's
+"Closely Divided Cases" table names for that exact row (confirmed by
+extracting the real PDF text, not a secondhand description) — every name
+matched except one: **McCarthy v. Hernandez**. (Barbara, initially
+suspected, was ruled out directly: Feldman's PDF shows it as its own
+separate 1.5%-row case, never summed into the 22.7% figure at all.)
+
+Root cause: `decisions.position` for McCarthy had only 6 rows, all
+`majority` — Sotomayor, Kagan, and Jackson had **no `decisions` row at
+all** (not a wrong position, an absent one), so `term_stats_case_splits`
+saw `dissent_count=0` and wrongly flagged the case `is_unanimous=true`.
+This also fully explained a second, previously-unexplained discrepancy in
+the Feldman suite: `unanimity_rate` read 45.5% (30/66) instead of the
+expected 43.9% (29/66) — same single missing case, both numbers.
+
+Confirmed this predates §14a's cert-notation-opinion-row deletion (the 6
+remaining rows all carry the *original* session-5/6 backfill timestamp,
+never touched since) — the original backfill populated `decision_ties`
+(3 "joiner" rows tied to the bogus dissent `opinions` row §14a later
+deleted) but never separately populated the corresponding
+`decisions.position` rows for those same 3 justices. Two different
+tables, one populated at backfill time, the other silently skipped.
+
+**Fixed**: inserted 3 `decisions` rows for McCarthy v. Hernandez
+(Sotomayor, Kagan, Jackson, all `position='dissent'`, `primary_tie_id`
+null — matching the case's 6 existing rows' shape). Confirmed both
+`ideological_split_rate` (22.7%, 15/66) and `unanimity_rate` (43.9%,
+29/66) now match Feldman exactly; re-ran the full Feldman suite and
+confirmed every other line shows only the expected +1/+3 shifts from
+these 3 new rows (same verdict as before on every other check — nothing
+else regressed).
+
+**Not fixed — same pattern, different case, logged so it isn't lost**:
+D.C. v. R.W. has the identical gap. Its `decisions` table has only 8
+rows (Jackson's real dissent + 7 majority) — **Sotomayor is missing
+entirely**, same root cause (she was only ever linked via the bogus
+"would deny the petition" `opinions`/`decision_ties` rows §14a deleted,
+never given her own `decisions.position` row). D.C. v. R.W. is not one
+of Feldman's 15 named ideologically-split cases, so this gap doesn't
+affect `ideological_split_rate` or `unanimity_rate` — but it does mean
+Sotomayor is silently undercounted in her own `cases_participated` and
+majority-frequency denominators (`term_stats_majority_frequency`,
+`term_stats_agreement`) for this one case. Deliberately not fixed this
+pass — scoped as its own follow-up: insert one `decisions` row
+(Sotomayor, `position='dissent'`, `primary_tie_id` null) for D.C. v.
+R.W., the same way McCarthy's was fixed above, once someone picks it up.
+Worth checking whether any other of the 11 backfilled-straight-to-DB
+cases have the same silent gap before assuming it's just these two.
