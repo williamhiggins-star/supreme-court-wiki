@@ -61,6 +61,8 @@ const CASE_DETAIL_SELECT = `
   id, slug, caption, docket_number, term, status,
   question_presented, background, significance,
   argued_date, decided_date, vote_line, disposition, updated_at,
+  petitioner_name, petitioner_argument, petitioner_supporting_points,
+  respondent_name, respondent_argument, respondent_supporting_points,
   case_lower_courts ( docket_number, courts ( name, level, circuit_ordinal, state ) ),
   opinions ( id, kind, author_id, summary, full_text, people!opinions_author_id_fkey ( slug ) ),
   oral_argument_transcripts ( transcript_text, source_url ),
@@ -151,6 +153,30 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
   const transcript = caseRow.oral_argument_transcripts ?? null;
   const spotify = caseRow.case_podcast_episodes ?? null;
 
+  // keyExchanges is deliberately left [] for both -- it's per-party in the
+  // JSON shape this mirrors, but public.key_exchanges is per-case with no
+  // party/role linkage (see the 20260901040000 migration's own comment);
+  // not the same granularity, not migrated here.
+  const parties: CaseSummary["parties"] = [];
+  if (caseRow.petitioner_name) {
+    parties.push({
+      party: caseRow.petitioner_name,
+      role: "petitioner",
+      coreArgument: caseRow.petitioner_argument ?? "",
+      supportingPoints: (caseRow.petitioner_supporting_points as string[] | null) ?? [],
+      keyExchanges: [],
+    });
+  }
+  if (caseRow.respondent_name) {
+    parties.push({
+      party: caseRow.respondent_name,
+      role: "respondent",
+      coreArgument: caseRow.respondent_argument ?? "",
+      supportingPoints: (caseRow.respondent_supporting_points as string[] | null) ?? [],
+      keyExchanges: [],
+    });
+  }
+
   const caseSummary: DbCaseDetail = {
     slug: caseRow.slug,
     caseNumber: caseRow.docket_number ?? "",
@@ -162,7 +188,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     backgroundAndFacts: caseRow.background ?? "",
     legalQuestion: caseRow.question_presented ?? "",
     significance: caseRow.significance ?? "",
-    parties: [],
+    parties,
     citedPrecedents: [],
     legalTermsUsed: [],
     majorityAuthor,

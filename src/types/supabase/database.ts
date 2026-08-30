@@ -687,7 +687,13 @@ export type Database = {
           docket_number: string | null
           id: string
           is_stub: boolean
+          petitioner_argument: string | null
+          petitioner_name: string | null
+          petitioner_supporting_points: Json
           question_presented: string | null
+          respondent_argument: string | null
+          respondent_name: string | null
+          respondent_supporting_points: Json
           significance: string | null
           sitting: string | null
           slug: string
@@ -708,7 +714,13 @@ export type Database = {
           docket_number?: string | null
           id?: string
           is_stub?: boolean
+          petitioner_argument?: string | null
+          petitioner_name?: string | null
+          petitioner_supporting_points?: Json
           question_presented?: string | null
+          respondent_argument?: string | null
+          respondent_name?: string | null
+          respondent_supporting_points?: Json
           significance?: string | null
           sitting?: string | null
           slug: string
@@ -729,7 +741,13 @@ export type Database = {
           docket_number?: string | null
           id?: string
           is_stub?: boolean
+          petitioner_argument?: string | null
+          petitioner_name?: string | null
+          petitioner_supporting_points?: Json
           question_presented?: string | null
+          respondent_argument?: string | null
+          respondent_name?: string | null
+          respondent_supporting_points?: Json
           significance?: string | null
           sitting?: string | null
           slug?: string
