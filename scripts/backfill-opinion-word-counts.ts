@@ -239,7 +239,7 @@ function blockJoinedBy(block: string, justiceLastName: string): boolean {
 }
 
 type MatchStatus =
-  | { ok: true; header: string; wordCount: number }
+  | { ok: true; header: string; wordCount: number; fullText: string }
   | { ok: false; reason: string };
 
 function matchOpinionToBlock(
@@ -273,8 +273,8 @@ function matchOpinionToBlock(
   if (!target) {
     return { ok: false, reason: `NO_MATCHING_BLOCK (found headers: ${blocks.map((b) => b.header).join(", ")})` };
   }
-  const { wordCount } = cleanAndCount(target.text);
-  return { ok: true, header: target.header, wordCount };
+  const { cleaned, wordCount } = cleanAndCount(target.text);
+  return { ok: true, header: target.header, wordCount, fullText: cleaned };
 }
 
 // ---------------------------------------------------------------------------
@@ -419,7 +419,7 @@ async function main() {
     console.log();
   }
 
-  const populated: { id: string; slug: string; kind: string; wordCount: number }[] = [];
+  const populated: { id: string; slug: string; kind: string; wordCount: number; fullText: string }[] = [];
   const failed: { id: string; slug: string; kind: string; reason: string }[] = [];
 
   const byCaseId = new Map<string, OpinionRow[]>();
@@ -451,7 +451,7 @@ async function main() {
       const justiceLastName = o.author_id ? lastNameByPersonId.get(o.author_id) ?? null : null;
       const result = matchOpinionToBlock(o.kind, justiceLastName, blocks);
       if (result.ok) {
-        populated.push({ id: o.id, slug: c.slug, kind: o.kind, wordCount: result.wordCount });
+        populated.push({ id: o.id, slug: c.slug, kind: o.kind, wordCount: result.wordCount, fullText: result.fullText });
       } else {
         failed.push({ id: o.id, slug: c.slug, kind: o.kind, reason: result.reason });
       }
@@ -471,19 +471,19 @@ async function main() {
     return;
   }
 
-  console.log("\nWriting word_count...");
+  console.log("\nWriting word_count + full_text...");
   let written = 0;
   for (const p of populated) {
-    await update(creds, "opinions", `id=eq.${p.id}`, { word_count: p.wordCount });
+    await update(creds, "opinions", `id=eq.${p.id}`, { word_count: p.wordCount, full_text: p.fullText });
     written++;
   }
   // §10a-excluded rows are written explicitly to null too, so a rerun is
   // idempotent even if a prior partial run (or manual edit) left a stale
   // non-null value on one of them.
   for (const id of dedupNullIds) {
-    await update(creds, "opinions", `id=eq.${id}`, { word_count: null });
+    await update(creds, "opinions", `id=eq.${id}`, { word_count: null, full_text: null });
   }
-  console.log(`✓ Wrote word_count for ${written} row(s); explicitly nulled ${dedupNullIds.size} §10a-excluded row(s).`);
+  console.log(`✓ Wrote word_count + full_text for ${written} row(s); explicitly nulled ${dedupNullIds.size} §10a-excluded row(s).`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -52,12 +52,12 @@ const USER_AGENT = "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0)";
 
 // ── Fetch transcript list from SCOTUS ────────────────────────────────────────
 
-interface TranscriptEntry {
+export interface TranscriptEntry {
   caseNumber: string;
   transcriptUrl: string;
 }
 
-async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
+export async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
   const url = `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}`;
   const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
@@ -249,7 +249,14 @@ async function main() {
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only auto-run when executed directly (`npx tsx scripts/backfill-key-exchanges.ts`),
+// not when imported -- fetchTranscriptList() is imported by
+// backfill-oral-argument-transcripts.ts and must not trigger this script's
+// own full backfill run (with its Claude calls and data/cases/*.json
+// writes) as a side effect of that import.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
