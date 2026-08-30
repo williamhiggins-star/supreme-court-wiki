@@ -1632,28 +1632,34 @@ export type Database = {
         Row: {
           advocate_id: string | null
           case_id: string
+          context: string | null
           created_at: string
           exchange: string
           id: string
           justice_id: string | null
+          role: string | null
           significance: string | null
         }
         Insert: {
           advocate_id?: string | null
           case_id: string
+          context?: string | null
           created_at?: string
           exchange: string
           id?: string
           justice_id?: string | null
+          role?: string | null
           significance?: string | null
         }
         Update: {
           advocate_id?: string | null
           case_id?: string
+          context?: string | null
           created_at?: string
           exchange?: string
           id?: string
           justice_id?: string | null
+          role?: string | null
           significance?: string | null
         }
         Relationships: [

@@ -15,7 +15,7 @@
  */
 
 import { db } from "./client";
-import { JUSTICE_KEY_BY_PERSON_SLUG } from "./constants";
+import { JUSTICE_KEY_BY_PERSON_SLUG, JUSTICE_DISPLAY_NAME_BY_KEY } from "./constants";
 import type { CaseSummary } from "@/types";
 
 export interface LowerCourtInfo {
@@ -66,7 +66,12 @@ const CASE_DETAIL_SELECT = `
   case_lower_courts ( docket_number, courts ( name, level, circuit_ordinal, state ) ),
   opinions ( id, kind, author_id, summary, full_text, people!opinions_author_id_fkey ( slug ) ),
   oral_argument_transcripts ( transcript_text, source_url ),
-  case_podcast_episodes ( episode_url, match_method, match_confidence )
+  case_podcast_episodes ( episode_url, match_method, match_confidence ),
+  key_exchanges (
+    role, exchange, context, significance,
+    justice:people!key_exchanges_justice_id_fkey ( slug ),
+    advocate:people!key_exchanges_advocate_id_fkey ( full_name )
+  )
 `;
 
 interface DecisionTieRow {
@@ -153,10 +158,40 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
   const transcript = caseRow.oral_argument_transcripts ?? null;
   const spotify = caseRow.case_podcast_episodes ?? null;
 
-  // keyExchanges is deliberately left [] for both -- it's per-party in the
-  // JSON shape this mirrors, but public.key_exchanges is per-case with no
-  // party/role linkage (see the 20260901040000 migration's own comment);
-  // not the same granularity, not migrated here.
+  // key_exchanges.role (backfilled from the same JSON parties[].role match
+  // that produced context) is the party-attribution signal used here --
+  // NOT advocate_id -> case_participations. case_participations coverage
+  // is incomplete (confirmed: 59 of the (case, role) pairs among OT2025
+  // rows have no matching entry at all, including Trump v. Slaughter's
+  // own respondent side), so deriving bucketing from it would silently
+  // drop real exchanges whose party we do actually know. advocate_id is
+  // fetched here (people!key_exchanges_advocate_id_fkey) as best-effort
+  // metadata, but JusticeExchange (src/types/index.ts) has no advocate
+  // field and PartyExchangesPanel never rendered one -- not surfaced in
+  // the UI, since that would be new structure, not a port of the old one.
+  //
+  // The old UI (PartyExchangesPanel, CaseDetailPanels.tsx) has no
+  // "amicus" tab at all -- getCaseMenuItems() only checks
+  // hasPetitioner/hasRespondent, so an amicus party's exchanges were
+  // never visible anywhere even in the JSON-sourced version. Matched
+  // here by simply never building an "amicus" party (petitioner_name/
+  // respondent_name are the only two DB columns for party identity;
+  // amicus key_exchanges rows are read but have nowhere to attach and
+  // are dropped, same as the old site's actual behavior).
+  const exchangesByRole = new Map<string, { justice: string; question: string; context: string; significance: string }[]>();
+  for (const ex of caseRow.key_exchanges ?? []) {
+    if (ex.role !== "petitioner" && ex.role !== "respondent") continue;
+    const justiceDisplayName = JUSTICE_DISPLAY_NAME_BY_KEY[justiceKey(ex.justice?.slug ?? null) ?? ""] ?? "Justice";
+    const list = exchangesByRole.get(ex.role) ?? [];
+    list.push({
+      justice: justiceDisplayName,
+      question: ex.exchange,
+      context: ex.context ?? "",
+      significance: ex.significance ?? "",
+    });
+    exchangesByRole.set(ex.role, list);
+  }
+
   const parties: CaseSummary["parties"] = [];
   if (caseRow.petitioner_name) {
     parties.push({
@@ -164,7 +199,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
       role: "petitioner",
       coreArgument: caseRow.petitioner_argument ?? "",
       supportingPoints: (caseRow.petitioner_supporting_points as string[] | null) ?? [],
-      keyExchanges: [],
+      keyExchanges: exchangesByRole.get("petitioner") ?? [],
     });
   }
   if (caseRow.respondent_name) {
@@ -173,7 +208,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
       role: "respondent",
       coreArgument: caseRow.respondent_argument ?? "",
       supportingPoints: (caseRow.respondent_supporting_points as string[] | null) ?? [],
-      keyExchanges: [],
+      keyExchanges: exchangesByRole.get("respondent") ?? [],
     });
   }
 

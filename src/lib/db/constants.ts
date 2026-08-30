@@ -18,3 +18,19 @@ export const JUSTICE_KEY_BY_PERSON_SLUG: Record<string, string> = {
   "amy-coney-barrett": "barrett",
   "ketanji-brown-jackson": "jackson",
 };
+
+/** "Justice {Surname}" / "Chief Justice Roberts" -- matches the free-text
+ *  strings data/cases/*.json's JusticeExchange.justice already used
+ *  (e.g. key_exchanges' justice_id resolves to a person whose display
+ *  string should read the same way the JSON always did). */
+export const JUSTICE_DISPLAY_NAME_BY_KEY: Record<string, string> = {
+  roberts: "Chief Justice Roberts",
+  thomas: "Justice Thomas",
+  alito: "Justice Alito",
+  sotomayor: "Justice Sotomayor",
+  kagan: "Justice Kagan",
+  gorsuch: "Justice Gorsuch",
+  kavanaugh: "Justice Kavanaugh",
+  barrett: "Justice Barrett",
+  jackson: "Justice Jackson",
+};
