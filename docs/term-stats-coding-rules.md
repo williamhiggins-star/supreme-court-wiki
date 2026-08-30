@@ -440,28 +440,84 @@ text as the row that does carry the count. As of this backfill that's
 exactly 2 rows: Roberts' plurality row in *Learning Resources v. Trump*
 and Jackson's plurality row in *Barrett v. United States*.
 
-**Known unresolved data-integrity issues surfaced by this backfill** (not
-fixed here — read-only investigation only; DB writes need separate
-approval):
+### §14a. Cert-stage "would deny/grant" notations are never an opinions row
 
-- ***District of Columbia v. R.W.*** — Sotomayor has her own `dissent`-kind
-  `opinions` row (id `4931175f-0a9a-4fea-9d70-34fcbaa519f7`), with a
-  `decision_ties` row crediting her as `role='author'`. The real slip
-  opinion contains no such dissent — only a one-line "JUSTICE SOTOMAYOR
-  would deny the petition for a writ of certiorari" notation appended to
-  the per curiam opinion, then Jackson's separate, real, multi-page
-  dissent. Proposed fix (approved by Will, blocked in-session by the
-  permission classifier on the DELETE call — needs a human or a
-  re-approved run to execute): delete that `opinions` row; its
-  `decision_ties` row cascades automatically
-  (`opinions(id) on delete cascade`); leave `decisions.position='dissent'`
-  for Sotomayor as-is, since that's tracked independently and correctly
-  reflects her cert-stage position.
-- ***McCarthy v. Hernandez*** — a `dissent`-kind `opinions` row (id
-  `4c327961-6286-42c9-8c06-3cb5022591e5`) has `author_id = null` and three
-  `decision_ties` rows all with `role='joiner'` (Sotomayor, Jackson, and a
-  third justice) — no author decision_tie at all. The slip opinion is a
-  single per curiam block with no dissenting text anywhere (not even a
-  one-line cert-position notation like R.W. above). Not yet investigated
-  to the same depth as the two rows above (no FK check beyond
-  `decision_ties`, no proposed fix) — flagged here so it isn't lost.
+**General rule:** when a per curiam summary disposition ends with "It is
+so ordered." followed by a line like "JUSTICE X[, JUSTICE Y, and JUSTICE
+Z] would deny [or grant] the petition for a writ of certiorari" — this is
+a **cert-stage voting notation**, not a written opinion. It must never be
+modeled as an `opinions` row of any `kind` (including `dissent`), because
+there is no opinion text behind it to ever populate `word_count` with.
+The named justice(s)' disagreement belongs solely in
+`decisions.position` (already correctly set to `'dissent'` in every case
+found), which is deliberately independent of `opinions`/`decision_ties`
+per design decision §0/#4 above (cert-stage voting is out of scope for
+this schema, tracked at the position layer only, not given its own
+table).
+
+Two live rows matched this exact pattern and were fixed this session
+(both approved; both DELETEs executed successfully, confirmed by
+re-query — the earlier session's report of the first being blocked by
+the permission classifier did not recur on retry):
+
+- ***District of Columbia v. R.W.*** — deleted the spurious Sotomayor
+  `dissent`-kind row (id `4931175f-0a9a-4fea-9d70-34fcbaa519f7`,
+  `decision_ties` role `'author'`). Its `decision_ties` row cascaded
+  automatically. Remaining: the per curiam row and Jackson's real,
+  separate, multi-page dissent — confirmed by direct query.
+- ***McCarthy v. Hernandez*** — deleted the authorless `dissent`-kind row
+  (id `4c327961-6286-42c9-8c06-3cb5022591e5`, `author_id = null`, three
+  `decision_ties` rows all `role='joiner'`: Sotomayor, Kagan, Jackson —
+  text: "JUSTICE SOTOMAYOR, JUSTICE KAGAN, and JUSTICE JACKSON would deny
+  the petition for a writ of certiorari"). Its 3 `decision_ties` rows
+  cascaded. Remaining: exactly the one per curiam row, no dissent —
+  confirmed by direct query.
+
+In both cases `decisions.position='dissent'` was left untouched for the
+named justices, since it's tracked independently and already correct.
+
+A full-text search for `would deny`/`would grant` across all 66 cached
+OT2025 slip opinions found one more real instance of the pattern —
+***Klein v. Martin*** ("JUSTICE JACKSON would deny the petition for a
+writ of certiorari") — but **no fix was needed there**: Klein v. Martin
+has only its one legitimate `per_curiam` row; no spurious `dissent`/
+opinion row was ever created for it, and `decisions.position='dissent'`
+for Jackson is already correct on its own. No other case in the 66
+matched the pattern (the remaining `would deny`/`would grant` hits found
+by the search were ordinary prose — "would deny equal opportunity...",
+"would grant the application..." in a stay-application dissent, etc. —
+not cert-stage notations).
+
+### §14b. Unrelated data bug found via the same search: Abouammo v. United States has the wrong slip opinion
+
+While investigating the Klein v. Martin match, found that
+`data/cases/25-5146-ahmad-abouammo-v-united-states.json`'s `outcome`
+field has pointed to **Klein v. Martin's PDF**
+(`.../25pdf/25-51_4g15.pdf`) since before this session — not a bug this
+session introduced, but one this session's backfill script inherited
+and propagated: it downloaded that URL via the case's own recorded
+`outcome`, got Klein's real per curiam opinion back, and (correctly,
+given the input) computed its word count — which is why Abouammo's
+`opinions.word_count` briefly matched Klein's almost exactly (3808 vs.
+3813 words) before this fix.
+
+This is a **different bug class** from §14a: not a cert-notation
+mis-modeled as an opinion, but a case's `data/cases/*.json` file (and
+whatever was dual-written from it into the `opinions`/`decisions` tables
+at `created_at 2026-08-29T20:05:49` — the same early-session timestamp
+as the original Clark v. Sweeney fabrication) pointing at the wrong
+slip opinion entirely, potentially for `majorityAuthor` and
+`majorityOpinionSummary` too (the JSON file's summary is literally about
+"Charles Brandon Martin" — Klein v. Martin's respondent, not Abouammo's
+case).
+
+**Corrective action taken this session (narrowly scoped to what this
+backfill wrote):** the wrong `word_count` (3808) on Abouammo's `majority`
+opinion row (id `eff3c122-8329-4a9e-b815-dcbbcaddc959`) was reverted to
+`null` — a provably-wrong number is worse than an honest gap — and the
+bad cached PDF text was deleted so a rerun of the backfill script can't
+silently reuse it. **Not fixed:** the underlying wrong `outcome` URL in
+`data/cases/25-5146-ahmad-abouammo-v-united-states.json`, and whatever
+authorship/summary data was built from it — that needs its own
+investigation to find Abouammo v. United States' actual docket PDF, out
+of scope for this pass. Flagged here so it isn't lost.
