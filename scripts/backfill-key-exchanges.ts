@@ -24,6 +24,7 @@ import {
   CASES_DIR,
 } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
+import { currentTermYear } from "./lib/sd-db/constants.js";
 
 // ── Load .env.local ──────────────────────────────────────────────────────────
 
@@ -48,11 +49,6 @@ loadEnvLocal();
 
 const SCOTUS_BASE = "https://www.supremecourt.gov";
 const USER_AGENT = "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0)";
-
-function currentTermYear(): string {
-  const now = new Date();
-  return now.getMonth() >= 9 ? String(now.getFullYear()) : String(now.getFullYear() - 1);
-}
 
 // ── Fetch transcript list from SCOTUS ────────────────────────────────────────
 

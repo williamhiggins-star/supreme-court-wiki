@@ -142,3 +142,17 @@ export const NON_SCOTUS_REPORTER_RE =
 export function derivePrecedentStatus(enriched: boolean): "decided" | "stub" {
   return enriched ? "decided" : "stub";
 }
+
+/**
+ * The SCOTUS term year for "right now" — the term starts in October, so
+ * before October the current term is still last calendar year's.
+ *
+ * Previously duplicated identically in update-cases.ts and
+ * backfill-key-exchanges.ts; consolidated here (Session 5, alongside
+ * derivePrecedentStatus) so a term-boundary fix only has to happen once.
+ * parity-check.ts's decided-case count log line also uses this.
+ */
+export function currentTermYear(): string {
+  const now = new Date();
+  return now.getMonth() >= 9 ? String(now.getFullYear()) : String(now.getFullYear() - 1);
+}

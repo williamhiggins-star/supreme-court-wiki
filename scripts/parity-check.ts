@@ -17,11 +17,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import { select } from "./lib/supabase-sync/client.js";
-import { getCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { toSlug } from "./pipeline.js";
 import {
   JUSTICE_KEY_TO_SLUG,
   STATUTE_CITATION_RE,
+  currentTermYear,
 } from "./lib/sd-db/constants.js";
 import type {
   CaseSummary,
@@ -99,6 +100,130 @@ function diffKeys(jsonKeys: Set<string>, dbKeys: Set<string>): { missing: string
   const missing = [...jsonKeys].filter((k) => !dbKeys.has(k)).sort();
   const extra = [...dbKeys].filter((k) => !jsonKeys.has(k)).sort();
   return { missing, extra };
+}
+
+// ---------------------------------------------------------------------------
+// Self-consistency check: status vs. real disposition signals
+//
+// Session 5's diagnosis: Clark v. Sweeney had real disposition data (an
+// enriched precedent write-up — holding, vote count, majority author)
+// but was stuck at status='historic' because of HOW it was discovered,
+// not what its actual disposition was (fixed in derivePrecedentStatus,
+// lib/sd-db/constants.ts). This check catches that class of bug going
+// forward, from EITHER direction, regardless of which code path causes
+// it — it's a pure DB self-consistency check, no data/*.json involved:
+//
+//   (a) status != 'decided' but the row has real decided-case signals
+//       (a decided_date, a disposition, or a linked majority/per_curiam
+//       opinion) — the exact shape of the bug just fixed.
+//   (b) status = 'decided' but the row has ZERO rows in `decisions` —
+//       this case would silently vanish from every term_stats_* view
+//       (they all join through decisions) despite being marked decided.
+//       Same underlying pattern in the opposite direction: a status
+//       promising more than the linked data actually delivers.
+//
+// cases.disposition doesn't exist in the live schema yet (the term-stats
+// schema migration hasn't been applied there) — probed via the
+// PostgREST OpenAPI root rather than assumed, so this check degrades
+// gracefully today and picks up that signal automatically once the
+// column exists, instead of erroring out either way.
+// ---------------------------------------------------------------------------
+
+interface ConsistencyIssue {
+  slug: string;
+  caption: string;
+  term: string | null;
+  detail: string;
+}
+
+interface DbCaseRow {
+  id: string;
+  slug: string;
+  caption: string;
+  term: string | null;
+  status: string;
+  decided_date: string | null;
+  disposition?: string | null;
+  courts: { level: string } | null;
+}
+
+async function hasDispositionColumn(creds: SupabaseCredentials): Promise<boolean> {
+  try {
+    const res = await fetch(`${creds.url}/rest/v1/`, {
+      headers: { apikey: creds.serviceRoleKey, Authorization: `Bearer ${creds.serviceRoleKey}` },
+    });
+    if (!res.ok) return false;
+    const spec = (await res.json()) as { definitions?: Record<string, { properties?: Record<string, unknown> }> };
+    return Boolean(spec.definitions?.cases?.properties?.disposition);
+  } catch {
+    return false;
+  }
+}
+
+async function checkStatusVsDispositionConsistency(creds: SupabaseCredentials): Promise<{
+  allCases: DbCaseRow[];
+  understatedStatus: ConsistencyIssue[]; // (a)
+  decidedWithNoDecisions: ConsistencyIssue[]; // (b)
+  dispositionColumnAvailable: boolean;
+}> {
+  const dispositionColumnAvailable = await hasDispositionColumn(creds);
+
+  const caseSelect = dispositionColumnAvailable
+    ? "id,slug,caption,term,status,decided_date,disposition,courts(level)"
+    : "id,slug,caption,term,status,decided_date,courts(level)";
+  const allCases = await select<DbCaseRow>(creds, "cases", `?select=${caseSelect}`);
+
+  const [opinionRows, decisionRows] = await Promise.all([
+    select<{ case_id: string; kind: string }>(creds, "opinions", "?select=case_id,kind"),
+    select<{ case_id: string }>(creds, "decisions", "?select=case_id"),
+  ]);
+
+  const decidedOpinionCaseIds = new Set(
+    opinionRows.filter((o) => o.kind === "majority" || o.kind === "per_curiam").map((o) => o.case_id),
+  );
+  const caseIdsWithDecisions = new Set(decisionRows.map((d) => d.case_id));
+
+  const understatedStatus: ConsistencyIssue[] = [];
+  const decidedWithNoDecisions: ConsistencyIssue[] = [];
+
+  for (const c of allCases) {
+    if (c.status !== "decided") {
+      const signals: string[] = [];
+      // "historic" is a fully retired status as of derivePrecedentStatus
+      // (lib/sd-db/constants.ts) — nothing writes it any more, so ANY row
+      // still carrying it is, by construction, exactly this bug's
+      // pre-fix residue (confirmed: every status='historic' row today
+      // also has is_stub=false, i.e. it WAS enriched, real disposition
+      // data). This is the signal that actually catches Clark v. Sweeney
+      // — it has no decided_date (precedent rows never get one) and, via
+      // the thinner daily sync path, no linked opinion either, so
+      // neither of the signals below would have flagged it on their own.
+      if (c.status === "historic") signals.push("status is the retired 'historic' value (pre-fix precedent-path residue)");
+      // Scoped to SCOTUS-level cases only: circuit/lower-court stub rows
+      // (from fetch-appellate-impacts.ts's ensureCircuitCaseStub) legitimately
+      // carry a decided_date while intentionally staying status='stub' —
+      // they were never meant to become full "decided" SCOTUS cases, so
+      // counting their decided_date as a contradiction is a false positive.
+      if (c.courts?.level === "scotus") {
+        if (c.decided_date) signals.push(`decided_date=${c.decided_date}`);
+        if (dispositionColumnAvailable && c.disposition) signals.push(`disposition=${c.disposition}`);
+        if (decidedOpinionCaseIds.has(c.id)) signals.push("has a majority/per_curiam opinion");
+      }
+      if (signals.length > 0) {
+        understatedStatus.push({ slug: c.slug, caption: c.caption, term: c.term, detail: `status=${c.status} but ${signals.join(", ")}` });
+      }
+    } else if (!caseIdsWithDecisions.has(c.id)) {
+      decidedWithNoDecisions.push({ slug: c.slug, caption: c.caption, term: c.term, detail: "status=decided but zero rows in decisions" });
+    }
+  }
+
+  return { allCases, understatedStatus, decidedWithNoDecisions, dispositionColumnAvailable };
+}
+
+function printConsistencyIssues(label: string, issues: ConsistencyIssue[]) {
+  console.log(`-- ${label} ${issues.length === 0 ? "✓ none found" : `✗ ${issues.length} found`} --`);
+  for (const i of issues.slice(0, 20)) console.log(`  ${i.slug} (term ${i.term ?? "?"}): ${i.detail}`);
+  if (issues.length > 20) console.log(`  ... and ${issues.length - 20} more`);
 }
 
 // ---------------------------------------------------------------------------
@@ -287,10 +412,29 @@ async function main() {
   reports.push({ table: "case_terms (count only)", jsonExpected: expectedCaseTerms, dbActual: dbCaseTermsCount, missingFromDb: [], extraInDb: [], fieldMismatches: [], countOnly: true });
 
   printReport(reports);
-  writeGithubStepSummary(reports);
 
-  const anyMismatch = reports.some((r) => !isOk(r));
-  console.log(anyMismatch ? "Mismatches found — see above. Non-fatal; this is a report, not a gate." : "No mismatches found.");
+  // ---- self-consistency: status vs. real disposition signals ----
+  const consistency = await checkStatusVsDispositionConsistency(creds);
+  console.log("\n=================== STATUS/DISPOSITION CONSISTENCY ===================\n");
+  if (!consistency.dispositionColumnAvailable) {
+    console.log("(cases.disposition not present in the live schema yet — that signal skipped; decided_date and linked-opinion signals still checked.)\n");
+  }
+  printConsistencyIssues("cases understating their real disposition (status != 'decided' with decided-case signals)", consistency.understatedStatus);
+  printConsistencyIssues("cases marked decided with zero decisions rows (invisible to term_stats_* views)", consistency.decidedWithNoDecisions);
+  console.log("\n========================================================================\n");
+
+  // ---- visible decided-case count for the current term — a silent
+  // undercount (like the 55-vs-66 OT2025 gap) should be visible from
+  // normal pipeline output, not only discoverable by manually diffing
+  // against an external source. ----
+  const term = currentTermYear();
+  const decidedThisTerm = consistency.allCases.filter((c) => c.term === term && c.status === "decided").length;
+  console.log(`${decidedThisTerm} cases marked decided for term ${term}.`);
+
+  writeGithubStepSummary(reports, consistency, term, decidedThisTerm);
+
+  const anyMismatch = reports.some((r) => !isOk(r)) || consistency.understatedStatus.length > 0 || consistency.decidedWithNoDecisions.length > 0;
+  console.log(anyMismatch ? "\nMismatches found — see above. Non-fatal; this is a report, not a gate." : "\nNo mismatches found.");
 }
 
 /**
@@ -299,7 +443,12 @@ async function main() {
  * summary page without anyone having to open the step's raw logs. No-op
  * outside CI (the env var is unset locally).
  */
-function writeGithubStepSummary(reports: TableReport[]): void {
+function writeGithubStepSummary(
+  reports: TableReport[],
+  consistency: { understatedStatus: ConsistencyIssue[]; decidedWithNoDecisions: ConsistencyIssue[]; dispositionColumnAvailable: boolean },
+  term: string,
+  decidedThisTerm: number,
+): void {
   const summaryPath = process.env.GITHUB_STEP_SUMMARY;
   if (!summaryPath) return;
 
@@ -331,6 +480,24 @@ function writeGithubStepSummary(reports: TableReport[]): void {
         r.fieldMismatches.slice(0, 20).forEach((m) => lines.push(`  - ${m}`));
       }
     }
+  }
+
+  const consistencyClean = consistency.understatedStatus.length === 0 && consistency.decidedWithNoDecisions.length === 0;
+  lines.push("");
+  lines.push(`## Status/disposition consistency ${consistencyClean ? "✅ clean" : "⚠️ issues found"}`);
+  lines.push("");
+  if (!consistency.dispositionColumnAvailable) {
+    lines.push("_cases.disposition not present in the live schema yet — that signal skipped this run._");
+    lines.push("");
+  }
+  lines.push(`**${decidedThisTerm} cases marked decided for term ${term}.**`);
+  if (consistency.understatedStatus.length > 0) {
+    lines.push("");
+    lines.push(`- status understates real disposition (${consistency.understatedStatus.length}): ${consistency.understatedStatus.slice(0, 20).map((i) => i.slug).join(", ")}${consistency.understatedStatus.length > 20 ? ", ..." : ""}`);
+  }
+  if (consistency.decidedWithNoDecisions.length > 0) {
+    lines.push("");
+    lines.push(`- decided with zero decisions rows (${consistency.decidedWithNoDecisions.length}): ${consistency.decidedWithNoDecisions.slice(0, 20).map((i) => i.slug).join(", ")}${consistency.decidedWithNoDecisions.length > 20 ? ", ..." : ""}`);
   }
 
   fs.appendFileSync(summaryPath, lines.join("\n") + "\n");
