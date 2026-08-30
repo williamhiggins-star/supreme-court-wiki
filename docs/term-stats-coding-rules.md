@@ -184,6 +184,71 @@ case dispositions; flagging as a possible future gap rather than building
 per-lower-court disposition now, since the brief listed `disposition` as
 a `cases`-level field.
 
+### §8a. Circuit-scorecard scoping (Session 9)
+
+Verified against Feldman's actual "Circuit Scorecard" table (p.14) and
+Term Index (p.23) for all 66 cases. Three rules his table applies that
+this schema does NOT enforce automatically — a consumer building a
+Feldman-comparable scorecard must apply these itself:
+
+1. **"U.S. Courts of Appeals" only** — Feldman's own description text
+   limits the table to circuit-court-origin cases. `case_lower_courts`
+   rows exist for every case regardless of court type (state supreme,
+   state appellate, federal district, federal appellate), so a
+   Feldman-style scorecard must filter to `courts.level =
+   'federal_appellate'`. Confirmed excluded: Case (Montana Supreme
+   Court), Galette (Pennsylvania Supreme Court), Villarreal (Texas Court
+   of Criminal Appeals), Monsanto (Missouri Court of Appeals, Eastern
+   District), Callais (W.D. Louisiana — a direct three-judge-panel
+   appeal, never touches a circuit court), District of Columbia v. R.W.
+   (D.C. Court of Appeals — the *local* D.C. court, distinct from the
+   federal D.C. Circuit), Doe v. Dynamic Physical Therapy (Louisiana
+   Court of Appeal), Pitts v. Mississippi (Mississippi Supreme Court).
+2. **DIG cases are fully omitted, not counted as "reversed."** Feldman's
+   own footnote: "Decisions that were granted review but subsequently
+   dismissed (as improvidently granted) are omitted." Hamm v. Smith
+   (`disposition = 'dismissed_as_improvidently_granted'`) deliberately
+   has **no** `case_lower_courts` row — that's how it's excluded from
+   scorecard queries cleanly (a query grouping through `case_lower_courts`
+   never sees it), rather than relying on every future query to
+   remember to filter out DIGs by disposition value.
+3. **Trump v. Cook (25A312)** is an emergency-docket stay denial, not a
+   merits disposition — per Feldman's own footnote (3), it's "treated
+   here as having Affirmed CADC." Recorded that way (`disposition =
+   'affirmed'`) to match his convention, not because a stay denial is
+   literally an affirmance.
+
+**Consolidated companions**, per Feldman's footnote (4) — a proceeding
+can span two circuits, each getting its own `case_lower_courts` row
+under the one `cases` row: FCC v. AT&T (primary CA5, docket 25-406) +
+companion CA2, docket 25-567. West Virginia v. B.P.J. (primary CA4,
+docket 24-43) + companion CA9, docket 24-38 (*Little v. Hecox*).
+Learning Resources v. Trump (primary CADC, docket 24-1287) + companion
+CAFED, docket 25-250 (*Trump v. V.O.S. Selections*). Mullin v. Doe
+(primary CA2, docket 25-1083) + companion CADC, docket 25-1084 — note
+this one is *not* a district-court case; an earlier pass mis-sourced its
+primary lower court as S.D.N.Y. from a SCOTUSblog summary that
+conflated where suit was filed with whose judgment SCOTUS reviewed.
+Corrected this session.
+
+**Known near-miss, not force-fixed: CADC.** Every individual CADC entry
+(Learning Resources, Slaughter, IAM Pension Fund, Cook, Exxon, Mullin's
+companion) was checked against a primary source and each is
+individually correct, yet the aggregate reads 6 decided / 3 affirmed / 3
+reversed against Feldman's stated 6/2/4. The likely culprit is Learning
+Resources: its real disposition is genuinely non-binary — SCOTUS
+*affirmed* the Federal Circuit in the consolidated companion (V.O.S.
+Selections) while *vacating the district court* (not the D.C. Circuit)
+on jurisdictional grounds in the Learning Resources docket itself. That
+messiness is exactly the "disposition can't represent a per-part split"
+limitation flagged above, materializing in a case that also happens to
+be the same fractured-opinion case already known from the authorship-
+count dedup (§10a). Rather than guess which entry to flip to force a
+match, this is left as a documented, understood discrepancy — CADC will
+read 6/3/3 against Feldman's 6/2/4 until someone determines the correct
+treatment with more certainty than a Term Index single-letter code can
+provide.
+
 ## §9. Days to decision
 
 Only for argued cases: `decided_date - argued_date`, computed only when

@@ -296,20 +296,55 @@ async function main() {
   const courtBySlug = new Map(courts.map((c) => [c.slug, c]));
   const dispositionByCaseId = new Map(disposCases.map((c) => [c.id, c.disposition]));
   const ca5 = courtBySlug.get("fifth-circuit");
+  // Feldman's own Circuit Scorecard (p.14) has exactly two buckets —
+  // Affirm and Reversed, with Affirm + Reversed always summing to the
+  // decided count. There is no third "vacated" column, so per §8a,
+  // everything that isn't a clean "affirmed" (vacated, vacated_and_remanded,
+  // reversed, reversed_and_remanded, GVR, GRR) buckets into "Reversed" for
+  // this specific comparison — matching his table's own arithmetic, not a
+  // general statement that vacated means reversed everywhere else.
   const ca5Rows = ca5 ? lowerCourts.filter((r) => r.court_id === ca5.id) : [];
   const ca5Decided = ca5Rows.length;
   const ca5Affirmed = ca5Rows.filter((r) => dispositionByCaseId.get(r.case_id) === "affirmed").length;
   const ca5Reversed = ca5Rows.filter((r) => {
     const d = dispositionByCaseId.get(r.case_id);
-    return d === "reversed" || d === "reversed_and_remanded";
+    return d !== null && d !== "affirmed";
   }).length;
   const casesWithLowerCourtData = new Set(lowerCourts.map((r) => r.case_id)).size;
   report(
     "Circuit scorecard: CA5 (decided/affirmed/reversed)", "11 / 3 / 8",
     `${ca5Decided} / ${ca5Affirmed} / ${ca5Reversed}`,
     ca5Decided === 11 && ca5Affirmed === 3 && ca5Reversed === 8 ? "PASS" : "FAIL",
-    `case_lower_courts/disposition populated for only ${casesWithLowerCourtData} of 66 cases (the 11 manually backfilled — 0 of the original 55, since no pipeline change populates these columns); none of those 11 happen to be 5th Circuit`,
+    `case_lower_courts/disposition populated for ${casesWithLowerCourtData} of 66 cases as of Session 9's circuit-scorecard backfill (see docs §8a)`,
   );
+
+  // Full 13-circuit breakdown, per §8a's "U.S. Courts of Appeals only"
+  // scoping (federal_appellate level only — excludes state courts and
+  // federal district courts, which also have case_lower_courts rows now).
+  const FELDMAN_CIRCUITS: Record<string, [number, number, number]> = {
+    "first-circuit": [2, 2, 0], "second-circuit": [9, 3, 6], "third-circuit": [3, 1, 2],
+    "fourth-circuit": [8, 1, 7], "fifth-circuit": [11, 3, 8], "sixth-circuit": [4, 2, 2],
+    "seventh-circuit": [2, 0, 2], "eighth-circuit": [1, 0, 1], "ninth-circuit": [7, 1, 6],
+    "tenth-circuit": [3, 2, 1], "eleventh-circuit": [3, 0, 3], "dc-circuit": [6, 2, 4],
+    "federal-circuit": [2, 1, 1],
+  };
+  const appellateCourts = courts.filter((c) => c.slug in FELDMAN_CIRCUITS);
+  console.log("\n=== Circuit scorecard: all 13 circuits (§8a, federal_appellate only) ===");
+  let circuitsMatching = 0;
+  for (const court of appellateCourts) {
+    const rows = lowerCourts.filter((r) => r.court_id === court.id);
+    const decided = rows.length;
+    const affirmed = rows.filter((r) => dispositionByCaseId.get(r.case_id) === "affirmed").length;
+    const reversed = rows.filter((r) => {
+      const d = dispositionByCaseId.get(r.case_id);
+      return d !== null && d !== "affirmed";
+    }).length;
+    const [ed, ea, er] = FELDMAN_CIRCUITS[court.slug];
+    const ok = decided === ed && affirmed === ea && reversed === er;
+    if (ok) circuitsMatching++;
+    console.log(`  ${court.slug.padEnd(16)} ours=${decided}/${affirmed}/${reversed}  feldman=${ed}/${ea}/${er}  ${ok ? "MATCH" : "known near-miss"}`);
+  }
+  console.log(`${circuitsMatching} / 13 circuits match exactly.\n`);
 
   // --- word count extremes (§ opinion word counts) — opinions.word_count
   // is live but populated nowhere (0 of any opinion, backfilled or
