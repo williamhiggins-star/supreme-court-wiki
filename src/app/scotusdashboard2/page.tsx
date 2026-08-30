@@ -1,10 +1,10 @@
 import { getAllCases } from "@/lib/data";
 import { getDocketStatus, buildDecidedList } from "@/app/page";
-import { getJusticesData } from "@/lib/justices";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
 import { getAllCaseDetails } from "@/lib/db/cases";
+import { getJusticeStatsFromDb } from "@/lib/db/justice-stats";
 import { ScotusDashboard2Client } from "@/components/ScotusDashboard2Client";
 import type { CaseSummary, Article } from "@/types";
 import type { CircuitSplit } from "@/lib/circuit-splits";
@@ -47,8 +47,10 @@ export default async function ScotusDashboard2() {
   // Argued: most recent first — getAllCases() already returns descending, no change needed.
   const decidedItems = buildDecidedList(decidedCases);
 
-  const justicesData = getJusticesData();
-  const justices = justicesData?.justices ?? [];
+  // Speaking time/turns/opinions panel (JusticesSection.tsx) -- now DB-
+  // sourced (justice_stats table) instead of data/justices.json. Same
+  // JusticeStat shape, so JusticesSection needs no changes.
+  const justices = await getJusticeStatsFromDb();
 
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
