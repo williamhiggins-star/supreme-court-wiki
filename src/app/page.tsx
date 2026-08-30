@@ -13,6 +13,7 @@ import { SplitCard } from "@/components/CircuitSplitsSection";
 import { JusticesSection } from "@/components/JusticesSection";
 import { LawyersSection } from "@/components/LawyersSection";
 import { NavBar } from "@/components/NavBar";
+import { computeDecisionSides } from "@/lib/decisionSides";
 import type { CaseSummary } from "@/types";
 
 // Revalidate every hour so "Decided Today" / "Today" badges clear within 24 h of the event day.
@@ -52,12 +53,20 @@ export type DecidedItem = {
   dissentAuthors: string[];
 };
 
-export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
+export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: string | null })[]): DecidedItem[] {
   const items: DecidedItem[] = decidedCases.map((c) => {
-    const dissents = c.dissentAuthors?.length ?? 0;
-    const voteSplit = c.majorityAuthor
-      ? dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`
-      : undefined;
+    // Prefer the DB's own recorded vote line (cases.vote_line) when
+    // present (only ~12/66 cases have it manually researched so far), else
+    // fall back to computeDecisionSides()'s real losingSide count --
+    // NOT dissentAuthors.length, which only counts justices who separately
+    // AUTHORED a dissent and silently undercounts one who joined another's
+    // dissent without writing their own (confirmed on Zorn v. Linton: 1
+    // dissent author but 3 actual dissenting votes -- dissentAuthors.length
+    // alone would compute "8–1" against the real "6–3").
+    const dissents = computeDecisionSides(c).losingSide.length;
+    const fallbackSplit = dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`;
+    const dbSplit = c.voteLine?.endsWith("-0") ? "Unanimous" : c.voteLine?.replace("-", "–");
+    const voteSplit = c.majorityAuthor ? (dbSplit ?? fallbackSplit) : undefined;
     return {
       type: "case" as const,
       slug: c.slug,

@@ -4,6 +4,7 @@ import { getJusticesData } from "@/lib/justices";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
+import { getAllCaseDetails } from "@/lib/db/cases";
 import { ScotusDashboard2Client } from "@/components/ScotusDashboard2Client";
 import type { CaseSummary, Article } from "@/types";
 import type { CircuitSplit } from "@/lib/circuit-splits";
@@ -12,8 +13,19 @@ import type { CircuitSplit } from "@/lib/circuit-splits";
 // stay accurate.
 export const revalidate = 3600;
 
-export default function ScotusDashboard2() {
-  const cases = getAllCases();
+export default async function ScotusDashboard2() {
+  // Decided OT2025 cases now come from Supabase, not data/cases/*.json --
+  // the DB has 66 (backfilled this session, including cases like Zorn v.
+  // Linton that never got a JSON file at all); JSON only has ~55. Every
+  // other status (upcoming/argued) and every other term still reads JSON
+  // as before -- this data layer covers decided OT2025 only.
+  const jsonCases = getAllCases();
+  const dbDecidedCases = await getAllCaseDetails();
+  const dbSlugs = new Set(dbDecidedCases.map((c) => c.slug));
+  const cases: CaseSummary[] = [
+    ...jsonCases.filter((c) => !(c.termYear === "2025" && getDocketStatus(c) === "decided" && dbSlugs.has(c.slug))),
+    ...dbDecidedCases,
+  ];
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
