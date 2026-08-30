@@ -488,36 +488,78 @@ by the search were ordinary prose — "would deny equal opportunity...",
 "would grant the application..." in a stay-application dissent, etc. —
 not cert-stage notations).
 
-### §14b. Unrelated data bug found via the same search: Abouammo v. United States has the wrong slip opinion
+### §14b. Abouammo v. United States had the wrong slip opinion — root cause found and fixed
 
 While investigating the Klein v. Martin match, found that
 `data/cases/25-5146-ahmad-abouammo-v-united-states.json`'s `outcome`
-field has pointed to **Klein v. Martin's PDF**
-(`.../25pdf/25-51_4g15.pdf`) since before this session — not a bug this
-session introduced, but one this session's backfill script inherited
-and propagated: it downloaded that URL via the case's own recorded
-`outcome`, got Klein's real per curiam opinion back, and (correctly,
-given the input) computed its word count — which is why Abouammo's
-`opinions.word_count` briefly matched Klein's almost exactly (3808 vs.
-3813 words) before this fix.
+field had pointed to **Klein v. Martin's PDF**
+(`.../25pdf/25-51_4g15.pdf`) since before this session, which the
+word-count backfill inherited and propagated (Abouammo's `word_count`
+briefly matched Klein's almost exactly — 3808 vs. 3813 — before this
+was caught and reverted to `null`).
 
-This is a **different bug class** from §14a: not a cert-notation
-mis-modeled as an opinion, but a case's `data/cases/*.json` file (and
-whatever was dual-written from it into the `opinions`/`decisions` tables
-at `created_at 2026-08-29T20:05:49` — the same early-session timestamp
-as the original Clark v. Sweeney fabrication) pointing at the wrong
-slip opinion entirely, potentially for `majorityAuthor` and
-`majorityOpinionSummary` too (the JSON file's summary is literally about
-"Charles Brandon Martin" — Klein v. Martin's respondent, not Abouammo's
-case).
+**Root cause, confirmed reproducible:** `findCaseFile()` in
+`fetch-opinion-authors.ts` matched a scraped docket number to a
+`data/cases/*.json` file with a bare `f.startsWith(prefix)`, no boundary
+check. Klein v. Martin's real docket is `25-51`, which has no JSON file
+of its own (one of the session-4 backfilled cases). But
+`"25-5146-ahmad-abouammo-v-united-states.json".startsWith("25-51")` is
+`true` — "5146" happens to start with "51" as digits — and since
+Abouammo's file is the *only* existing file matching that prefix, this
+match was deterministic, not a fluke. Whatever process parsed Klein's
+real slip opinion wrote its authorship/outcome data into Abouammo's file
+instead. **Fixed**: `findCaseFile()` now also requires the character
+right after the matched prefix to be `-` or end-of-string, so a docket
+number can never match as a mere string-prefix of an unrelated longer
+docket.
 
-**Corrective action taken this session (narrowly scoped to what this
-backfill wrote):** the wrong `word_count` (3808) on Abouammo's `majority`
-opinion row (id `eff3c122-8329-4a9e-b815-dcbbcaddc959`) was reverted to
-`null` — a provably-wrong number is worse than an honest gap — and the
-bad cached PDF text was deleted so a rerun of the backfill script can't
-silently reuse it. **Not fixed:** the underlying wrong `outcome` URL in
-`data/cases/25-5146-ahmad-abouammo-v-united-states.json`, and whatever
-authorship/summary data was built from it — that needs its own
-investigation to find Abouammo v. United States' actual docket PDF, out
-of scope for this pass. Flagged here so it isn't lost.
+Checked for other live collisions across the full 66-case set (every
+real docket number tested as a string-prefix of every filename): one
+other latent case exists — `25-5` (Noem v. Al Otro Lado) is also a
+prefix of Abouammo's and Whitton's filenames — but Noem has its own
+correctly-named file, which wins the match ahead of Abouammo's under
+normal alphabetical directory order, so no corruption occurred there.
+**No other case in the 66 was actually affected**; no further re-audit
+needed.
+
+**Full fix applied, DB-first per the site's current dual-write
+architecture** (the DB is the priority since it's what a future
+Supabase-backed read path would serve; the JSON fix is secondary but
+applied too since it was cheap and there's no reason to leave it wrong):
+
+- Found Abouammo's real docket PDF (`.../25pdf/25-5146_new_kifl.pdf`,
+  decided 2026-06-11) via the live SCOTUS slip-opinions listing, and
+  cross-checked it against Feldman's own Term Index (March sitting:
+  Kagan, 9-0, 74d, Reversed, CA9) — exact match. The real case is a
+  §1519 venue question (Twitter/Saudi-official leak investigation), not
+  the fabricated "extraterritorial jurisdiction" framing still sitting
+  in `question_presented`/`background`/`significance` (see below).
+- `cases` row: `decided_date` → `2026-06-11`, `argued_date` →
+  `2026-03-30` (was `null` — a separate, pre-existing gap unrelated to
+  the Klein mixup), `vote_line` → `'9-0'`, `disposition` →
+  `'reversed_and_remanded'` (upgraded from the less-precise `'reversed'`
+  already independently, correctly set by the circuit-scorecard
+  session's own research — not itself Klein-contaminated).
+- `opinions` row (id `eff3c122-8329-4a9e-b815-dcbbcaddc959`): `summary`
+  replaced with real content about the §1519 venue holding;
+  `word_count` recomputed from the real PDF via
+  `backfill-opinion-word-counts.ts` → `2799` (author `f2ed161d` = Kagan
+  and `kind='majority'` were already correct — coincidentally, since the
+  real case also happens to be unanimous and Kagan-authored — as were
+  every `decisions`/`decision_ties` row and `case_lower_courts`, so none
+  of those needed touching).
+- `data/cases/25-5146-ahmad-abouammo-v-united-states.json`: `outcome`,
+  `decisionDate`, `majorityOpinionSummary`, `petitionerWon` corrected to
+  match.
+
+**Still not fixed, flagged separately, not part of this bug**: the
+fabricated pre-argument content — `question_presented`/`background`/
+`significance` (DB) and `legalQuestion`/`backgroundAndFacts`/
+`significance`/`parties`/`citedPrecedents`/`legalTermsUsed` (JSON) —
+describes an "extraterritorial jurisdiction over a foreign national"
+theory that has nothing to do with the real §1519 venue case
+(`processedAt: 2026-02-24`, before the March 30 argument — this content
+was seeded before decision and never corrected). This is a different,
+larger problem than the outcome/PDF mixup (there's no wrong-but-real
+source PDF to blame — it reads as fabricated/hallucinated intake
+content) and needs its own investigation.
