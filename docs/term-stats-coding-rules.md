@@ -27,9 +27,24 @@ cross-check (§11), not at the position layer.
 
 - **majority-side** = `decisions.position` in `('majority', 'plurality',
   'concurrence')`
-- **dissent-side** = `decisions.position` in `('concur_dissent',
-  'dissent')`
+- **dissent-side** = `decisions.position = 'dissent'`
 - **not counted** = `('recused', 'did_not_participate')`
+- **`concur_dissent` has no automatically-derived side.** Session 6 found
+  real cases on both sides of this: in Trump v. Barbara, Feldman's own
+  "Closely Divided Cases" table lists the case as 6-3 with only Thomas,
+  Alito, and Gorsuch dissenting — Kavanaugh's `concur_dissent` opinion is
+  majority-side there. In West Virginia v. B.P.J., Feldman's Voting
+  Alignments grid shows the case as 6-3, not unanimous — Sotomayor,
+  Kagan, and Jackson's `concur_dissent` opinions are dissent-side there.
+  A blanket rule (this doc previously said `concur_dissent` is always
+  dissent-side) gets one of these wrong no matter which way it's set.
+  `decisions.position` must be set to whichever side (`majority` or
+  `dissent`) the opinion substantively lands on for that specific case —
+  a per-case judgment call, not a mechanical function of `opinions.kind`.
+  `opinions.kind` stays `concur_dissent` either way; only the case-level
+  `decisions.position` is case-specific. (Barbara and B.P.J. are now
+  correctly set this way in the live data — see git history for the
+  session that fixed them.)
 
 ## §0. votes vs. decisions — which is canonical
 
@@ -60,13 +75,16 @@ A case is unanimous if no justice's `decisions.position` for that case is
 - A per curiam (`opinions.kind = 'per_curiam'`) with no attached dissent
   opinion: unanimous.
 
-**Open question, not resolved here:** does `concur_dissent` or
-`dissent_in_part` break unanimity? The brief's wording ("no *full*
-dissent") reads as no — only `position = 'dissent'` disqualifies. That is
-what's implemented above. Flag this for confirmation before the next
-phase encodes it in a view: a case where one justice concurs in part and
-dissents in part is arguably not "unanimous" in the ordinary sense, even
-though nobody fully dissented.
+**Resolved (Session 6):** the rule itself doesn't change — only
+`position = 'dissent'` disqualifies — but per §0, `concur_dissent` no
+longer has an automatically-derived side. West Virginia v. B.P.J. is the
+worked example: Feldman's grid shows it as 6-3, not unanimous, so
+Sotomayor/Kagan/Jackson's `concur_dissent` opinions there are set to
+`position = 'dissent'` directly (not left at `concur_dissent`), and the
+unanimity rule above catches it correctly as a result. A case where
+`concur_dissent` is determined to be majority-side (e.g. Trump v.
+Barbara) stays unanimous-eligible under this same literal rule, correctly,
+since none of its concur_dissent authors are dissent-side there.
 
 ## §2. "Would deny" counts as dissent-side
 
@@ -259,3 +277,38 @@ separately as "unverifiable by join data" rather than silently trusting
 `decisions.position` — that's a distinct condition from "verified
 match" and from "verified mismatch," and collapsing it into either would
 misrepresent how much the check actually confirmed.
+
+**Implemented** (Phase 2) as `term_stats_vote_side_cross_check`: a
+`check_status` of `match` / `mismatch` / `unverifiable_no_decision_ties_row`
+per case/justice, exactly as specified above. Not used to overwrite
+`decisions`; surfaced as its own view.
+
+## §12. Per-case voting alignment grid (Phase 2 addition)
+
+Not one of the original 11 rules — added for Phase 2's
+`term_stats_voting_alignment_grid` view. The requested 4 categories are
+a **display** grouping, a different granularity from the majority-
+side/dissent-side split used everywhere else in this document:
+
+- `majority` — full agreement with the result: `decisions.position` in
+  `('majority', 'plurality', 'concurrence')` (the last one covers both
+  plain concurrence and concurrence-in-judgment, since neither is split
+  out at the position layer — §0).
+- `partial_concurrence` — qualified agreement: `position = 'concur_dissent'`.
+- `dissent` — full dissent: `position = 'dissent'`.
+- `did_not_participate` — `position` in `('recused', 'did_not_participate')`.
+
+**Known limitation:** because `concurrence_in_part`/`dissent_in_part`
+aren't split out at the position layer (design decision #3), a
+concurrence-in-part author is stored as plain `'concurrence'` and lands
+in the `majority` bucket here, not `partial_concurrence` — even though
+"concurring in part" reads more like the latter. This is a direct
+consequence of §0's bucket definitions, not a bug in this view; revisit
+if the grid needs that distinction.
+
+## §13. Term index by sitting (Phase 2 addition)
+
+Not one of the original 11 rules — added for Phase 2's
+`term_stats_sitting_index` view. Read as: case counts (total and
+decided) per term, grouped by `cases.sitting`. Cases with no `sitting`
+set are excluded, not bucketed into an "unknown" row.
