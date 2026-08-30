@@ -43,6 +43,7 @@ import {
   SPLIT_STATUS_MAP,
   STATUTE_CITATION_RE,
   PRECEDENT_COURT_TEXT_TO_SLUG,
+  derivePrecedentStatus,
 } from "./constants.js";
 import { computeDecisionTiesAndPositions } from "./decisions.js";
 
@@ -482,7 +483,7 @@ export async function syncNewPrecedent(creds: SupabaseCredentials, cache: IdCach
     docket_number: null,
     caption: p.name,
     term: String(p.year),
-    status: enriched ? "historic" : "stub",
+    status: derivePrecedentStatus(enriched),
     question_presented: p.legalQuestion ?? null,
     background: p.backgroundAndFacts ?? null,
     significance: p.significance,

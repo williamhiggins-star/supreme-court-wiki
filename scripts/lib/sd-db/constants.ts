@@ -111,3 +111,48 @@ export const STATUTE_CITATION_RE = /U\.S\.C\.|C\.F\.R\.|Pub\.?\s*L\./;
  *  not actually a Supreme Court case. */
 export const NON_SCOTUS_REPORTER_RE =
   /\d+\s+(A\.\s?\d?d|N\.E\.\s?\d?d|N\.W\.\s?\d?d|P\.\s?\d?d|S\.E\.\s?\d?d|S\.W\.\s?\d?d|So\.\s?\d?d|Cal\.\s?(Rptr\.|App\.)|F\.\s?\d?d|F\.\s?Supp)/;
+
+/**
+ * Derives cases.status for a precedent-discovered row from the best
+ * available data about its actual disposition — never from HOW the case
+ * was discovered. A data/precedents/*.json entry only becomes "enriched"
+ * (gets a `holding`) once enrich-precedents.ts has generated a full
+ * write-up of what the Court actually decided, including a vote count
+ * and majority author — that write-up existing at all is itself proof
+ * the case was decided, regardless of the fact it was found via another
+ * case's citedPrecedents rather than the argument calendar or the
+ * slip-opinions feed. An unenriched stub carries no disposition data at
+ * all, so "stub" remains the only honest status for it.
+ *
+ * Both write.ts's syncNewPrecedent and backfill-db.ts's buildFromPrecedents
+ * used to map `enriched` to "historic" instead of "decided" — a status
+ * value with no other consumer anywhere in this codebase (nothing reads
+ * cases.status = 'historic'; grep it). It existed only to signal
+ * "discovered via the precedent path," which conflated discovery
+ * mechanism with actual disposition and permanently capped precedent-
+ * discovered cases below "decided" even once their real outcome was
+ * known — e.g. Clark v. Sweeney, an actual OT2025 summary reversal
+ * discovered only because Hamm v. Smith cited it, stuck at "historic"
+ * and invisible to every term-stats query scoped to status='decided'.
+ *
+ * Both call sites must use this shared function, not reimplement the
+ * enriched-check inline — that duplication is exactly how the two sites
+ * drifted into the same bug without either noticing the other existed.
+ */
+export function derivePrecedentStatus(enriched: boolean): "decided" | "stub" {
+  return enriched ? "decided" : "stub";
+}
+
+/**
+ * The SCOTUS term year for "right now" — the term starts in October, so
+ * before October the current term is still last calendar year's.
+ *
+ * Previously duplicated identically in update-cases.ts and
+ * backfill-key-exchanges.ts; consolidated here (Session 5, alongside
+ * derivePrecedentStatus) so a term-boundary fix only has to happen once.
+ * parity-check.ts's decided-case count log line also uses this.
+ */
+export function currentTermYear(): string {
+  const now = new Date();
+  return now.getMonth() >= 9 ? String(now.getFullYear()) : String(now.getFullYear() - 1);
+}

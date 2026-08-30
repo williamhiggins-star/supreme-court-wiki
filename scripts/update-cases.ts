@@ -31,6 +31,7 @@ import {
 import type { CaseSummary, ProcessingResult } from "../src/types/index.js";
 import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { loadIdCache, syncCase, syncNewTerm, syncNewPrecedent, type IdCache } from "./lib/sd-db/write.js";
+import { currentTermYear } from "./lib/sd-db/constants.js";
 
 // ---------------------------------------------------------------------------
 // Dual-write (Phase 3, SUPABASE_PLAN.md) — data/*.json stays the source of
@@ -87,14 +88,6 @@ async function dualWriteResult(result: ProcessingResult): Promise<void> {
 const SCOTUS_BASE = "https://www.supremecourt.gov";
 const USER_AGENT =
   "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0; +https://github.com/supreme-court-wiki)";
-
-function currentTermYear(): string {
-  const now = new Date();
-  // SCOTUS term starts in October; before October, term year = previous year
-  return now.getMonth() >= 9
-    ? String(now.getFullYear())
-    : String(now.getFullYear() - 1);
-}
 
 function shortTermYear(termYear: string): string {
   // "2024" → "24"
