@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import type { CaseSummary, PartyArgument, CitedPrecedent, Article } from "@/types";
 import type { CircuitSplit } from "@/lib/circuit-splits";
+import { computeDecisionSides, JUSTICE_ORDER } from "@/lib/decisionSides";
 
 // The nine sitting justices — matches data/justices.json's key/photo pairing.
 const CASE_PANEL_JUSTICES: Record<string, { displayName: string; photo: string }> = {
@@ -438,7 +439,13 @@ function CaseArticleListPanel({ articles }: { articles: Article[] }) {
   );
 }
 
-function JusticeNameRow({ justiceKey }: { justiceKey: string }) {
+// `detail` renders the specific parts a concur/dissent author concurred or
+// dissented to (e.g. "Parts I-III and V"), in italics next to their name —
+// only when that data exists. It never does today: data/cases/*.json has
+// no structured field for which parts of an opinion a partial join covers
+// (Supabase's decision_ties.join_scope_detail column mirrors this same gap
+// and is always written empty). Never inferred from the prose summaries.
+function JusticeNameRow({ justiceKey, detail }: { justiceKey: string; detail?: string }) {
   const justice = CASE_PANEL_JUSTICES[justiceKey];
   if (!justice) return null;
   return (
@@ -456,6 +463,7 @@ function JusticeNameRow({ justiceKey }: { justiceKey: string }) {
         style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.4 }}
       >
         {justice.displayName}
+        {detail ? <span className="italic text-[#6B6560]"> — {detail}</span> : null}
       </p>
     </div>
   );
@@ -524,12 +532,14 @@ function OpinionActionButtons({
 // covers "Joined By" entries, which aren't opinion authors themselves.
 function OpinionAuthorRow({
   authorKey,
+  partDetail,
   fullTextUrl,
   hasSynopsis,
   isSynopsisSelected,
   onSelectSynopsis,
 }: {
   authorKey: string;
+  partDetail?: string;
   fullTextUrl?: string;
   hasSynopsis?: boolean;
   isSynopsisSelected?: boolean;
@@ -537,7 +547,7 @@ function OpinionAuthorRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <JusticeNameRow justiceKey={authorKey} />
+      <JusticeNameRow justiceKey={authorKey} detail={partDetail} />
       <OpinionActionButtons
         fullTextUrl={fullTextUrl}
         hasSynopsis={hasSynopsis}
@@ -548,14 +558,15 @@ function OpinionAuthorRow({
   );
 }
 
-// One separately-authored opinion (a concurrence or a dissent): its own
-// author, then who joined THAT specific opinion — same "Joined By" pattern
-// the majority uses. The data model doesn't currently record per-opinion
-// joiners, so the "Joined By" row simply doesn't render until that data
-// exists (per-panel convention: never show an empty section).
+// One separately-authored opinion (a concurrence, dissent, or concur/
+// dissent): its own author, then who joined THAT specific opinion without
+// writing their own — sourced from that opinion's summary.joinedBy, per
+// computeDecisionSides's own data model (per-panel convention: never show
+// an empty "Joined By" section).
 function OpinionAuthorBlock({
   authorKey,
   joinedBy,
+  partDetail,
   fullTextUrl,
   hasSynopsis,
   isSynopsisSelected,
@@ -563,6 +574,7 @@ function OpinionAuthorBlock({
 }: {
   authorKey: string;
   joinedBy: string[];
+  partDetail?: string;
   fullTextUrl?: string;
   hasSynopsis?: boolean;
   isSynopsisSelected?: boolean;
@@ -572,6 +584,7 @@ function OpinionAuthorBlock({
     <div className="mb-[0.6em]">
       <OpinionAuthorRow
         authorKey={authorKey}
+        partDetail={partDetail}
         fullTextUrl={fullTextUrl}
         hasSynopsis={hasSynopsis}
         isSynopsisSelected={isSynopsisSelected}
@@ -604,22 +617,71 @@ function DecisionMajorityPanel({
   const author = authorKey ? CASE_PANEL_JUSTICES[authorKey] : undefined;
   const pdfUrl = extractOpinionPdfUrl(caseData.outcome);
 
-  // Same majority convention used elsewhere on the site: every justice
-  // except the recorded dissenters. "Joined By" excludes the majority
-  // author (shown separately above) and anyone who wrote their own
-  // concurrence — those are broken out under "Concurred" instead.
-  const dissentAuthors = caseData.dissentAuthors ?? [];
-  const dissentSet = new Set(dissentAuthors);
-  const concurrenceAuthors = caseData.concurrenceAuthors ?? [];
-  const concurrenceSet = new Set(concurrenceAuthors);
-  const pluralityAuthorKey = caseData.pluralityAuthor;
-  const joinedByMajority = Object.keys(CASE_PANEL_JUSTICES).filter(
-    (key) =>
-      !dissentSet.has(key) &&
-      key !== authorKey &&
-      key !== pluralityAuthorKey &&
-      !concurrenceSet.has(key)
+  // Single source of truth for who's on which side and what their precise
+  // role is — same function the Supabase decisions/decision_ties tables
+  // are computed from (scripts/lib/sd-db/decisions.ts), so this panel and
+  // the database can't drift apart.
+  const sides = computeDecisionSides(caseData);
+
+  // Majority "Joined By": justices computeDecisionSides placed on the
+  // winning side with no more specific role (not the author, not a
+  // concurrence/concur-dissent writer or joiner, not a plurality-only
+  // member) — i.e. silent majority joiners.
+  const joinedByMajority = sides.winningSide
+    .filter((e) => e.roleLabel === null)
+    .map((e) => e.key);
+
+  // "Concurred" holds both pure concurrence authors and concur/dissent
+  // authors (concurring in part, dissenting in part) — per design
+  // decision, concur/dissent doesn't get its own section; it's folded in
+  // here, with its distinguishing detail meant to render as italic text
+  // next to the name (see JusticeNameRow's `detail` prop). Merged in
+  // seniority order since computeDecisionSides keeps the two categories
+  // in separate arrays.
+  const concurringAuthorKeys = new Set(
+    sides.winningSide.filter((e) => e.roleLabel === "Concurring opinion").map((e) => e.key)
   );
+  const concurDissentAuthorKeys = new Set(
+    sides.concurDissentSide
+      .filter((e) => e.roleLabel === "Concurring in part, dissenting in part")
+      .map((e) => e.key)
+  );
+  const concurredAuthorKeys = JUSTICE_ORDER.filter(
+    (key) => concurringAuthorKeys.has(key) || concurDissentAuthorKeys.has(key)
+  );
+
+  // Plurality has two independent parts, because computeDecisionSides
+  // collapses them independently:
+  //  - The AUTHOR row only shows when the plurality author is a genuinely
+  //    separate coalition from the majority author. When they're the same
+  //    justice (the common case — see decisionSides.ts's own comment),
+  //    that person is classified as "Majority opinion" only, with no
+  //    "Plurality opinion" role, and is already shown in Author above —
+  //    repeating them here would be redundant.
+  //  - The JOINED BY list is NOT tied to that collapse: a justice who
+  //    joined only the narrower plurality coalition (not the full
+  //    majority) keeps a distinct "Joined plurality opinion" role even
+  //    when the plurality author is the majority author. Confirmed
+  //    against real data (24-5774-barrett-v-united-states.json), where
+  //    Roberts/Sotomayor/Kagan joined only Jackson's narrower plurality
+  //    coalition while Jackson herself renders as the plain majority
+  //    author — dropping this list because the author row collapsed
+  //    would silently lose those three justices from the panel entirely.
+  const pluralityAuthorKey = caseData.pluralityAuthor;
+  const showPluralityAuthorRow = sides.winningSide.some(
+    (e) => e.key === pluralityAuthorKey && e.roleLabel === "Plurality opinion"
+  );
+  const pluralityJoinedBy = sides.winningSide
+    .filter((e) => e.roleLabel === "Joined plurality opinion")
+    .map((e) => e.key);
+  const showPlurality = showPluralityAuthorRow || pluralityJoinedBy.length > 0;
+
+  // Dissent: pure dissent authors only (concur/dissent authors are routed
+  // into "Concurred" above, per design decision — computeDecisionSides
+  // already keeps them out of losingSide).
+  const dissentAuthorKeys = sides.losingSide
+    .filter((e) => e.roleLabel === "Dissenting opinion")
+    .map((e) => e.key);
 
   return (
     <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="px-6 pb-2 pt-[14px]">
@@ -640,10 +702,10 @@ function DecisionMajorityPanel({
           className="text-[13px] font-normal italic text-[#6B6560]"
           style={{ fontFamily: "'Lora', Georgia, serif" }}
         >
-          {authorKey === "per_curiam" ? "Per Curiam" : "Unknown"}
+          {sides.isPerCuriam ? "Per Curiam" : "Unknown"}
         </p>
       )}
-      {authorKey && authorKey !== "per_curiam" && joinedByMajority.length > 0 && (
+      {authorKey && !sides.isPerCuriam && joinedByMajority.length > 0 && (
         <>
           <JusticeLabel>Joined By</JusticeLabel>
           <div className="flex flex-col gap-[0.4em]">
@@ -653,51 +715,75 @@ function DecisionMajorityPanel({
           </div>
         </>
       )}
-      {concurrenceAuthors.length > 0 && (
+      {concurredAuthorKeys.length > 0 && (
         <>
           <JusticeLabel>Concurred</JusticeLabel>
-          {concurrenceAuthors.map((key) => (
-            <OpinionAuthorBlock
-              key={key}
-              authorKey={key}
-              joinedBy={[]}
-              fullTextUrl={pdfUrl}
-              hasSynopsis={Boolean(
-                caseData.concurringSummaries?.find((s) => s.author === key)?.summary
-              )}
-              isSynopsisSelected={selectionKey === `concurrence:${key}`}
-              onSelectSynopsis={() => onSelectSynopsis(`concurrence:${key}`)}
-            />
-          ))}
+          {concurredAuthorKeys.map((key) => {
+            const isConcurDissent = concurDissentAuthorKeys.has(key);
+            const summary = isConcurDissent
+              ? caseData.concurDissentSummaries?.find((s) => s.author === key)
+              : caseData.concurringSummaries?.find((s) => s.author === key);
+            return (
+              <OpinionAuthorBlock
+                key={key}
+                authorKey={key}
+                joinedBy={summary?.joinedBy ?? []}
+                fullTextUrl={pdfUrl}
+                hasSynopsis={Boolean(summary?.summary)}
+                isSynopsisSelected={
+                  selectionKey === `${isConcurDissent ? "concur-dissent" : "concurrence"}:${key}`
+                }
+                onSelectSynopsis={() =>
+                  onSelectSynopsis(`${isConcurDissent ? "concur-dissent" : "concurrence"}:${key}`)
+                }
+              />
+            );
+          })}
         </>
       )}
-      {pluralityAuthorKey && (
+      {showPlurality && (
         <>
           <p className="mb-[0.5em] mt-[0.75em] text-left font-serif text-[14px] font-bold text-[#6B6560]">
             Plurality
           </p>
-          <JusticeLabel>Author</JusticeLabel>
-          <OpinionAuthorBlock authorKey={pluralityAuthorKey} joinedBy={[]} />
+          {showPluralityAuthorRow && pluralityAuthorKey ? (
+            <>
+              <JusticeLabel>Author</JusticeLabel>
+              <OpinionAuthorBlock authorKey={pluralityAuthorKey} joinedBy={pluralityJoinedBy} />
+            </>
+          ) : (
+            pluralityJoinedBy.length > 0 && (
+              <>
+                <JusticeLabel>Joined By</JusticeLabel>
+                <div className="flex flex-col gap-[0.4em]">
+                  {pluralityJoinedBy.map((key) => (
+                    <JusticeNameRow key={key} justiceKey={key} />
+                  ))}
+                </div>
+              </>
+            )
+          )}
         </>
       )}
-      {dissentAuthors.length > 0 && (
+      {dissentAuthorKeys.length > 0 && (
         <>
           <p className="mb-[0.5em] mt-[0.75em] text-left font-serif text-[14px] font-bold text-[#6B6560]">
             Dissent
           </p>
-          {dissentAuthors.map((key) => (
-            <OpinionAuthorBlock
-              key={key}
-              authorKey={key}
-              joinedBy={[]}
-              fullTextUrl={pdfUrl}
-              hasSynopsis={Boolean(
-                caseData.dissentSummaries?.find((s) => s.author === key)?.summary
-              )}
-              isSynopsisSelected={selectionKey === `dissent:${key}`}
-              onSelectSynopsis={() => onSelectSynopsis(`dissent:${key}`)}
-            />
-          ))}
+          {dissentAuthorKeys.map((key) => {
+            const summary = caseData.dissentSummaries?.find((s) => s.author === key);
+            return (
+              <OpinionAuthorBlock
+                key={key}
+                authorKey={key}
+                joinedBy={summary?.joinedBy ?? []}
+                fullTextUrl={pdfUrl}
+                hasSynopsis={Boolean(summary?.summary)}
+                isSynopsisSelected={selectionKey === `dissent:${key}`}
+                onSelectSynopsis={() => onSelectSynopsis(`dissent:${key}`)}
+              />
+            );
+          })}
         </>
       )}
     </ScrollableRegion>
@@ -727,6 +813,12 @@ function getSynopsisForSelection(
     const summary = caseData.dissentSummaries?.find((s) => s.author === authorKey)?.summary;
     if (!summary) return undefined;
     return { authorKey, roleLabel: "Dissent", text: summary };
+  }
+  if (selectionKey.startsWith("concur-dissent:")) {
+    const authorKey = selectionKey.slice("concur-dissent:".length);
+    const summary = caseData.concurDissentSummaries?.find((s) => s.author === authorKey)?.summary;
+    if (!summary) return undefined;
+    return { authorKey, roleLabel: "Concurring in Part, Dissenting in Part", text: summary };
   }
   return undefined;
 }
