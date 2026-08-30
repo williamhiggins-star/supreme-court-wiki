@@ -73,21 +73,22 @@ async function main() {
   const notFound: CaseRow[] = [];
 
   for (const c of argued) {
+    // Prefer the live listing over cases.source_urls -- it's the freshest
+    // source and catches cases where source_urls holds a now-stale PDF hash
+    // (confirmed for Exxon Mobil/Corporación Cimex and Havana Docks: the
+    // live listing has a different, current hash than the 404ing URL
+    // already recorded there).
+    const liveUrl = c.docket_number ? await resolveTranscriptUrl(c.docket_number) : null;
+    if (liveUrl) {
+      resolved.push({ case: c, url: liveUrl, source: "live_listing" });
+      continue;
+    }
     const existing = transcriptUrlFromSourceUrls(c.source_urls);
     if (existing) {
       resolved.push({ case: c, url: existing, source: "source_urls" });
       continue;
     }
-    if (!c.docket_number) {
-      notFound.push(c);
-      continue;
-    }
-    const url = await resolveTranscriptUrl(c.docket_number);
-    if (url) {
-      resolved.push({ case: c, url, source: "live_listing" });
-    } else {
-      notFound.push(c);
-    }
+    notFound.push(c);
   }
 
   console.log(`Resolved: ${resolved.length} (${resolved.filter((r) => r.source === "source_urls").length} from source_urls, ${resolved.filter((r) => r.source === "live_listing").length} from live listing)`);

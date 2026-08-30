@@ -58,21 +58,33 @@ export interface TranscriptEntry {
 }
 
 export async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
-  const url = `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}`;
+  // NOTE: this is /argument_transcript/ (singular) -- the ASP.NET listing
+  // page that renders every transcript link for the whole term on one page
+  // load (confirmed: 58 links for OT2025 in a single fetch). The old
+  // /argument_transcripts/ (plural) directory-listing URL this used to hit
+  // returns a WAF soft-block (200 status, but an Akamai error page body)
+  // regardless of headers/UA -- confirmed via curl and the WebFetch tool.
+  // This page's markup also uses single-quoted, relative hrefs
+  // (`href='../argument_transcripts/2025/24-1063_5h26.pdf'`), not the
+  // double-quoted absolute form the old regex expected -- so the old
+  // pattern would have matched nothing here even without the WAF issue.
+  const url = `${SCOTUS_BASE}/oral_arguments/argument_transcript/${termYear}`;
   const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
   const html = await res.text();
 
-  const pattern =
-    /href="(\/oral_arguments\/argument_transcripts\/\d{4}\/([^"_/]+)[^"]*\.pdf)"/gi;
+  const pattern = /href='\.\.\/argument_transcripts\/\d{4}\/([^'_/]+)([^']*)\.pdf'/gi;
   const seen = new Set<string>();
   const results: TranscriptEntry[] = [];
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(html)) !== null) {
-    const caseNumber = match[2];
+    const caseNumber = match[1];
     if (seen.has(caseNumber)) continue;
     seen.add(caseNumber);
-    results.push({ caseNumber, transcriptUrl: `${SCOTUS_BASE}${match[1]}` });
+    results.push({
+      caseNumber,
+      transcriptUrl: `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}/${caseNumber}${match[2]}.pdf`,
+    });
   }
   return results;
 }
