@@ -18,7 +18,11 @@ scotusdashboard (intake, source of truth)
         │                   events and write signals/assessments
         │                   — all results stay in DYSTL
         │
-        └─ commits data/*.json ──► public site renders (no DB, ever)
+        └─ commits data/*.json ──► pipeline-only for most of it now (see
+                                    below) ──► the live site (/welcome,
+                                    /dashboard) reads case/opinion/term-stat
+                                    data live from its own "SCOTUS Dashboard"
+                                    Supabase project instead
                                             │
                                             ▼
                                    DYSTL analysis + briefings
@@ -29,14 +33,16 @@ Nothing flows back from DYSTL into **this repo**. The intelligence layer's outpu
 
 **Render and pipeline are separate surfaces, and the Supabase boundary applies to them differently:**
 
-- **(a) The public site never touches DYSTL Supabase.** It renders from flat committed JSON in this repo, with no runtime database dependency of any kind (locked decision 4, unchanged). New Phase D surfaces render from a pipeline-written `data/doctrines.json`, not from a live query.
+- **(a) The public site never touches DYSTL Supabase.** That boundary is unchanged and absolute. It does, however, now touch a *different* Supabase project in its render path — see "Root cutover" below; that's a deliberate, separate exception to the older "no DB in the render path" rule, not a DYSTL boundary violation. New Phase D surfaces render from a pipeline-written `data/doctrines.json`, not from a live query.
 - **(b) The daily pipeline may read and write DYSTL Supabase** as part of the intelligence layer — the outbound mirror (A2), the analysis-feed sync (S1), event classification against doctrine indicators (B1), the assessment engine (B2), and embeddings (B4). These are pipeline steps, not render paths, and their reads exist to produce writes that land in DYSTL.
 
-The distinction is the whole rule: **a database read is allowed in the pipeline and forbidden in the render path.** If a change would put a Supabase call anywhere the site's request path can reach it, that is out of scope and must be raised at a gate.
+The distinction that still matters: **a DYSTL Supabase read is allowed in the pipeline and forbidden in the render path.** If a change would put a *DYSTL* Supabase call anywhere the site's request path can reach it, that is out of scope and must be raised at a gate. (The "SCOTUS Dashboard" Supabase project, below, is a separate exception already granted for the live site's own render path — see "Root cutover.")
 
-**If a task in this repo would change intake behavior, the daily commit, or how the public site renders, stop and flag it — that is out of scope for SCOTUS 2.0 and must be raised at a gate.**
+**If a task in this repo would change intake behavior or the daily commit, stop and flag it — that is out of scope for SCOTUS 2.0 and must be raised at a gate.** Changing how the public site renders is no longer automatically out of scope the way it once was — see "Root cutover" for what's actually live today.
 
-**Exception, explicitly authorized (2026-08-31), scoped narrowly: `scotusdashboard2` on the `ui-redesign` branch.** Everything above describes the DYSTL-mirror relationship and the *original* public site (`main` branch) — neither changes. Separately, a **different** Supabase project ("SCOTUS Dashboard", ref `enwjtgjycthjypeqdgfo` — not DYSTL's project, ref `bclgsfgcdxxfayonynvl`) was built up across many sessions as this repo's own read layer for term statistics (`decisions`, `opinions`, `key_exchanges`, `oral_argument_transcripts`, `case_podcast_episodes`, the `term_stats_*` views — see `docs/term-stats-coding-rules.md` for the full schema/derivation reference). `scotusdashboard2`'s new UI (`src/lib/db/*.ts`) reads this "SCOTUS Dashboard" project **live, in its render path** — case detail, opinion structure, transcripts, Spotify links, key exchanges, and justice/term stats all come from a Supabase query at request time, not from committed JSON. This is a deliberate, explicitly-approved supersession of the "no database in the render path" rule **for this one new UI only** — it does not extend to any other page, does not apply to DYSTL's Supabase, and the original public site (everything under `main`'s existing routes: `/`, `/cases/[slug]`, `/precedents/[slug]`, `/terms/[slug]`, etc.) is unaffected and still renders from committed JSON exactly as before.
+**Root cutover (2026-08-31): the new UI is now the live site, not a side exception.** What used to be described here as a narrowly-scoped `scotusdashboard2` exception on the `ui-redesign` branch has since been merged to `main` and deployed to production — the old JSON-rendered homepage and its whole page tree (`/`, `/cases/[slug]`, `/precedents*`, `/terms*`, `/appeals`, `/appellate-impacts`, `/analysis`, `/docket/[column]`) are **deleted**, not just superseded. The live site today is two routes: `/welcome` (entry carousel) and `/dashboard` (the app itself — root `/` redirects to `/welcome`; `/cases/:slug` and `/docket/:column` redirect into `/dashboard`, everything else 404s). `/dashboard` reads live, in its render path, from a **third** Supabase project — "SCOTUS Dashboard" (ref `enwjtgjycthjypeqdgfo`; **not** DYSTL's project, ref `bclgsfgcdxxfayonynvl`) — built across many sessions as this repo's own read layer for term statistics (`decisions`, `opinions`, `key_exchanges`, `oral_argument_transcripts`, `case_podcast_episodes`, the `term_stats_*` views — see `docs/term-stats-coding-rules.md`). `src/lib/db/*.ts` is the accessor layer for it. This remains scoped to that one Supabase project — DYSTL's Supabase is still never read by the site — but it is no longer scoped to a side branch or an unused route; it **is** the production render path now. See `ARCHITECTURE.md` for the full current route/data map, including which `data/*.json` files are still rendered directly (`calendar.json`, `articles.json`, `circuit-splits.json`) versus pipeline-output-only now (`cases/*.json`, `precedents/*.json`, `terms/*.json`, `justices.json`, `lawyers.json`, `appellate-impacts.json` — still written and read by pipeline/backfill/parity scripts, just no longer rendered anywhere).
+
+**Do not "fix" the undefined `--tan`/`--cream`/etc. CSS custom properties in `src/app/globals.css`.** They're referenced throughout the new UI's components but never defined — that's intentional, confirmed with Will (2026-08-31): the fallback rendering that produces is the actual intended look, and defining them to the brand doc's hex values would restyle the live site, not fix a bug.
 
 ## Branch is deploy. Main is always green.
 
@@ -59,7 +65,7 @@ The exact paths are confirmed at recon and corrected here in the same PR if this
 
 - **The daily pipeline / GitHub Actions workflow** that fetches case data and commits the daily JSON. The SCOTUS 2.0 outbound sync (A2) *adds to* this workflow; it must not change what the workflow already fetches, or the path/format of the daily JSON commit.
 - **The committed daily data files** the public site renders from (the JSON the pipeline writes). Read them; don't restructure them.
-- **The public rendering/routing** of the existing dashboard. SCOTUS 2.0 adds no public pages to this repo in Phase A/B; Phase D adds *new* doctrine/split surfaces as additive routes without altering existing ones.
+- **The public rendering/routing** of the existing dashboard — as of 2026-08-31 that's `/welcome` and `/dashboard` (see "Root cutover" above), not the pre-cutover page tree. SCOTUS 2.0 adds no public pages to this repo in Phase A/B; Phase D adds *new* doctrine/split surfaces as additive routes without altering existing ones.
 - **`main`**, always.
 
 ## The A2 rule (outbound sync into the live cron)

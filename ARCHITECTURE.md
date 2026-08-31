@@ -1,30 +1,39 @@
 # Architecture — Supreme Court Wiki (scotusdashboard.com)
 
-This document maps the codebase as of 2026-08-28 (see the note below for
-one exception added 2026-08-31). The live project is
-`supreme-court-wiki-app/` (a Next.js 16 app). The sibling `supreme-court-wiki/`
-directory is empty (just a `.claude/` folder) and can be ignored.
+This document maps the codebase as of **2026-08-31, post root-cutover**
+(the new UI replaced the legacy JSON-rendered site on the live domain —
+see "The one thing to understand first" below for what that changed).
+The live project is `supreme-court-wiki-app/` (a Next.js 16 app). The
+sibling `supreme-court-wiki/` directory is empty (just a `.claude/`
+folder) and can be ignored.
 
 ## The one thing to understand first
 
 This repo is **scotusdashboard.com**: the public SCOTUS case dashboard and the
 intake system for all SCOTUS case/circuit-split data. A GitHub Actions cron
 job scrapes official sources every day, calls Claude to turn raw legal
-documents into structured JSON, commits that JSON straight into the repo, and
-the Next.js site statically renders from those committed files — **no
-database in the render path, ever, for the original site's routes**. A final,
-non-fatal pipeline step also mirrors the published JSON into a separate
-product's (DYSTL's) Supabase project; that mirror is write-only from here and
-is never read back by this site. See `supreme-court-wiki-app/CLAUDE.md` for
-the full intake/render boundary rules.
+documents into structured JSON, and commits that JSON straight into the
+repo — **that intake pipeline is unchanged and still the source of truth
+for case lifecycle.** A final, non-fatal pipeline step also mirrors the
+published JSON into a separate product's (DYSTL's) Supabase project; that
+mirror is write-only from here and is never read back by this site. See
+`supreme-court-wiki-app/CLAUDE.md` for the full intake/render boundary
+rules.
 
-**One explicitly-approved exception (2026-08-31):** `scotusdashboard2` (the
-`ui-redesign` branch's new UI) reads live from a *third* Supabase project —
-"SCOTUS Dashboard" (ref `enwjtgjycthjypeqdgfo`), separate from both the JSON
-files above and from DYSTL's mirror — for case detail, opinions, term stats,
-transcripts, Spotify links, and key exchanges. This is a deliberate,
-narrowly-scoped supersession of the render-path rule for this one new UI
-only; every other route is unaffected. Full detail in §3 below and in
+**What changed 2026-08-31: the live site itself.** Through 2026-08-28 the
+Next.js site statically rendered everything from the committed
+`data/*.json` files, no database in the render path at all. That's no
+longer true. The legacy page tree (`/`, `/cases/[slug]`, `/precedents*`,
+`/terms*`, `/appeals`, `/appellate-impacts`, `/analysis`,
+`/docket/[column]`) was **deleted outright**, not superseded — that
+functionality (precedents glossary, legal-terms glossary, appellate
+impacts, the full circuit-splits browser) is off the live site entirely.
+In its place, `/welcome` (entry carousel) and `/dashboard` (the app
+itself) are now the whole site; `/dashboard` reads live, in its render
+path, from a *third* Supabase project — "SCOTUS Dashboard" (ref
+`enwjtgjycthjypeqdgfo`), separate from both the `data/*.json` files and
+from DYSTL's mirror — for case detail, opinions, term stats, transcripts,
+Spotify links, and key exchanges. Full detail in §3 and §5 below and in
 `CLAUDE.md`.
 
 ```
@@ -39,7 +48,11 @@ scripts/sync-to-supabase.ts  ──►  DYSTL Supabase (scotus_* / raw_articles 
                                     (outbound mirror only — this site never reads it)
 
 Next.js app (src/app, src/components, src/lib)
-        reads data/*.json off disk at build/request time  →  renders pages
+        /welcome, /dashboard  ──►  read some data/*.json directly
+                                    (calendar, articles, circuit-splits)
+                              ──►  read case/opinion/term-stat data live
+                                    from the "SCOTUS Dashboard" Supabase
+                                    project (src/lib/db/*.ts)
 ```
 
 ---
@@ -80,42 +93,45 @@ lighter-weight calls default to `claude-sonnet-4-6`), overridable via the
 
 ## 3. Where processed data lives
 
-**Primary store: flat JSON files committed to git**, under
-`supreme-court-wiki-app/data/`:
+**Flat JSON files committed to git**, under `supreme-court-wiki-app/data/`.
+Every file below is still written daily by the pipeline (see §4) — that
+part hasn't changed. What changed 2026-08-31 is which of them the *site*
+still reads; the "Rendered?" column reflects that:
 
-| Path | Contents |
-|---|---|
-| `data/cases/*.json` (60 files) | One file per SCOTUS case, keyed by slug. Full `CaseSummary`: docket status (`upcoming`/`petition`/`decided`), parties/arguments/key exchanges, cited precedents, legal terms used, opinion authorship, vote outcome, opinion summaries, podcast link. |
-| `data/terms/*.json` (483 files) | Legal-term glossary entries, one per file, generated as a side effect of case processing. |
-| `data/precedents/*.json` (390 files) | Precedent-case entries — created as lightweight stubs when cited by a case, later enriched by `enrich-precedents.ts` into full standalone entries. |
-| `data/articles.json` | Aggregated, deduped, Claude-summarized news articles (90-day rolling window), each optionally linked to case slugs. |
-| `data/circuit-splits.json` | Structured circuit-split records (positions, circuits, related SCOTUS case). |
-| `data/appellate-impacts.json` | Business-impact circuit opinions, classified by area. |
-| `data/calendar.json` | Conference dates parsed from the SCOTUS case-distribution schedule PDF. |
-| `data/justices.json` | Per-justice speaking-time/question-count stats and opinion-authorship tallies, computed by `compute-justice-stats.ts` from transcripts. |
-| `data/lawyers.json` | Per-counsel speaking-time and win/loss stats, computed by `compute-lawyer-stats.ts`. |
-| `data/us-states-10m.json` | Static TopoJSON basemap (not pipeline-generated) used to render the circuit map. |
+| Path | Contents | Rendered? |
+|---|---|---|
+| `data/cases/*.json` (60 files) | One file per SCOTUS case, keyed by slug. Full `CaseSummary`: docket status, parties/arguments/key exchanges, cited precedents, legal terms used, opinion authorship, vote outcome, opinion summaries, podcast link. | Pipeline-only — `/dashboard` reads case data from Supabase instead (§5). |
+| `data/terms/*.json` (483 files) | Legal-term glossary entries, generated as a side effect of case processing. | Pipeline-only — no live page reads these (the glossary was removed). |
+| `data/precedents/*.json` (390 files) | Precedent-case entries, enriched by `enrich-precedents.ts`. | Pipeline-only — no live page reads these (removed). |
+| `data/articles.json` | Aggregated, deduped, Claude-summarized news articles (90-day rolling window). | **Rendered** — `/dashboard`'s Third Party Analysis section, via `src/lib/articles.ts`. |
+| `data/circuit-splits.json` | Structured circuit-split records. | **Rendered** — used for per-case circuit-split lookups in `/dashboard`, via `src/lib/circuit-splits.ts`. No standalone browser page anymore (removed). |
+| `data/appellate-impacts.json` | Business-impact circuit opinions, classified by area. | Pipeline-only — no live page reads these (removed). |
+| `data/calendar.json` | Conference dates parsed from the SCOTUS case-distribution schedule PDF. | **Rendered** — `/dashboard`'s Court Calendar section, via `src/lib/calendar.ts`. |
+| `data/justices.json` | Per-justice speaking-time/question-count stats and opinion-authorship tallies. | Pipeline-only — `/dashboard` computes justice stats from Supabase's `justice_stats` table instead; only the `JusticeStat` *type* is still imported from `src/lib/justices.ts`. |
+| `data/lawyers.json` | Per-counsel speaking-time and win/loss stats. | Pipeline-only — no live page reads these (removed). |
 
-This is the **only** store the *original* Next.js app pages read at
-build/request time (`src/lib/data.ts` and friends read straight off disk
-with `fs.readFileSync`) — there is no database in the render path for
-`/`, `/cases/[slug]`, `/precedents/[slug]`, `/terms/[slug]`, and every
-other pre-existing route.
+`data/us-states-10m.json` (the circuit-map basemap) was deleted 2026-08-31
+— it had exactly one reader (the legacy circuit map), which was deleted
+with it, and nothing else touched it.
 
-**Exception, `ui-redesign` branch only: `scotusdashboard2` reads live
-from Supabase.** A third store — the "SCOTUS Dashboard" Supabase project
-(ref `enwjtgjycthjypeqdgfo`; **not** DYSTL's project below, and not the
-`data/*.json` files above) — was built across several sessions as this
-repo's own read layer for term statistics: `cases`, `opinions`,
-`decisions`/`decision_ties`, `key_exchanges`, `oral_argument_transcripts`,
-`case_podcast_episodes`, `justice_stats`, and 23 `term_stats_*` views
-(full schema/derivation reference:
-`docs/term-stats-coding-rules.md`).
-`src/lib/db/*.ts` queries this project directly in `scotusdashboard2`'s
-render path (case detail, opinion structure, transcripts, Spotify links,
-key exchanges, term/justice stats) — an explicitly-approved (2026-08-31),
-narrowly-scoped supersession of the "no database in the render path"
-rule for this one new UI. Every other page is unaffected.
+All of the "pipeline-only" files above are still real dependencies —
+`backfill-db.ts`, `parity-check.ts`, and the Supabase sync scripts all
+read them — just not the site itself. Don't delete one because the site
+doesn't render it; check `scripts/` first.
+
+**Live Supabase read, in the render path: the "SCOTUS Dashboard"
+project.** A third store — Supabase project ref `enwjtgjycthjypeqdgfo`
+(**not** DYSTL's project below, and not the `data/*.json` files above) —
+was built across several sessions as this repo's own read layer for term
+statistics: `cases`, `opinions`, `decisions`/`decision_ties`,
+`key_exchanges`, `oral_argument_transcripts`, `case_podcast_episodes`,
+`justice_stats`, and 23 `term_stats_*` views (full schema/derivation
+reference: `docs/term-stats-coding-rules.md`). `src/lib/db/*.ts` queries
+this project directly in `/dashboard`'s render path (case detail, opinion
+structure, transcripts, Spotify links, key exchanges, term/justice
+stats). As of 2026-08-31 this **is** the live site's render path, not a
+side exception on an unused route — see `CLAUDE.md`'s "Root cutover"
+note.
 
 **Secondary store (outbound mirror only): DYSTL Supabase.** After the daily
 JSON commit, `scripts/sync-to-supabase.ts` (wrapped so any failure is
@@ -154,40 +170,64 @@ Single GitHub Actions workflow: `.github/workflows/daily-update.yml`.
 
 ## 5. Frontend map
 
-Next.js 16 App Router, statically rendering from `data/*.json` (via
-`src/lib/*.ts` accessors — thin wrappers around `fs.readFileSync`/JSON.parse,
-one file per data domain: `data.ts` for cases/terms/precedents, plus
-`articles.ts`, `calendar.ts`, `circuit-splits.ts`, `circuits.ts` /
-`circuits-server.ts` for the map, `justices.ts`, `lawyers.ts`,
-`appellate-impacts.ts`).
+Next.js 16 App Router. As of the 2026-08-31 root cutover, the entire site
+is two routes plus three redirects (`next.config.ts`'s `redirects()`) —
+everything else 404s.
 
 **Pages** (`src/app/`):
 
 | Route | Renders |
 |---|---|
-| `/` (`page.tsx`) | Homepage — docket (Upcoming/Argued/Decided columns), featured circuit splits, analysis-article preview sidebar, circuit map, court calendar, justices section, counsel section, about blurb. |
-| `/docket/[column]` | Full paginated list for one docket column (`upcoming`/`argued`/`decided`), linked from the homepage's "View all" buttons. |
-| `/cases/[slug]` | Full case page — background, legal question, per-party arguments/key exchanges, cited precedents, related articles, related circuit split, decision details (via `DecisionSection`). Statically generated (`generateStaticParams`). |
-| `/appeals` | Full circuit-splits index (`CircuitSplitsSection`). |
-| `/appellate-impacts` | Full business-impact opinions index (`AppellateImpactsSection`). |
-| `/analysis` | Full analysis-articles index. |
-| `/precedents` | Precedent-case index. |
-| `/precedents/[slug]` | Full precedent entry (`PrecedentDecisionSection`) — statically generated. |
-| `/terms` | Legal-term glossary index. |
-| `/terms/[slug]` | Single glossary entry — statically generated. |
-| `/api/search-index` (route handler) | JSON API assembling cases + precedents + circuit splits + appellate impacts + justices + lawyers into one search index, consumed client-side by the search modal. |
+| `/` | 307 → `/welcome`. No page component — the bare domain has to land somewhere, and `/welcome` is the intended entry point. |
+| `/welcome` (`welcome/page.tsx`, `ScotusDashboard2LandingClient`) | Entry carousel cycling four panels pulled from the real dashboard (About's image panel, two Alignment panels, one Chief Justice panel). Renders the actual `/dashboard` tree hidden underneath itself the whole time (shared `getScotusDashboard2Data()`, so the two routes can't drift on what data they need) — "Enter" slides the overlay up to reveal it already-rendered, then navigates to `/dashboard`. |
+| `/dashboard` (`dashboard/page.tsx`, `ScotusDashboard2Client` + `SectionPanels`) | The app itself. Sections (About, Docket, Court Calendar, All Cases, Opinions Data, Third Party Analysis) are client-state, not separate routes; case detail is `?case=<slug>` on this same route, opened in-place (`CaseDetailPanels`), not a separate page. |
+| `/cases/:slug` | 307 → `/dashboard?case=:slug`. Carries real traffic — this path was live and likely indexed/bookmarked before the cutover. |
+| `/docket/:column` | 307 → `/dashboard`. No section-deep-link exists yet to land on the right panel specifically. |
 
-**Shared components** (`src/components/`):
+Everything else that used to be a page — `/appeals`, `/appellate-impacts`,
+`/analysis`, `/precedents(/:slug)`, `/terms(/:slug)`, `/api/search-index`
+— is gone, no redirect, 404. That functionality (precedents glossary,
+terms glossary, appellate impacts, the full circuit-splits browser, the
+site search) doesn't exist on the live site; the underlying pipeline data
+still gets written daily (§3) in case it's ever rebuilt into the new UI.
 
-- `NavBar` — top nav, hosts `SearchModal` (client-side fuzzy search over `/api/search-index`).
-- `CourtCalendar` — argument/conference calendar grid.
-- `CircuitMap` — interactive US map (case load + splits by circuit, using the TopoJSON basemap).
-- `CircuitSplitsSection` (+ `SplitCard`, `SplitCardEmbed`) — circuit-split cards, used on both the homepage and `/appeals`.
-- `AppellateImpactsSection` — business-impact opinion list.
-- `JusticesSection` / `LawyersSection` — speaking-time leaderboards with per-person case breakdowns.
-- `DecisionSection` / `PrecedentDecisionSection` — decision/opinion detail blocks used on case and precedent pages respectively.
+**Data layer** (`src/lib/`):
+
+- `src/lib/scotusdashboard2-data.ts` — `getScotusDashboard2Data()`, the
+  single function both `/welcome` and `/dashboard` call for everything
+  they render. Mixes three sources: Supabase (`src/lib/db/*.ts`, for
+  case/opinion/term-stat data), three `data/*.json` files still read
+  directly (`calendar.ts`, `articles.ts`, `circuit-splits.ts`), and pure
+  computation with no I/O of its own (`docket.ts`).
+- `src/lib/docket.ts` — `formatDate`/`getDocketStatus`/`buildDecidedList`/
+  `DecidedItem`. Extracted out of the old homepage's `page.tsx` during the
+  cutover (that file no longer exists) since the new UI's data layer
+  depended on it; these are pure functions over an already-fetched
+  `CaseSummary[]`, no file or DB access themselves.
+- `src/lib/db/*.ts` — the Supabase accessor layer for the "SCOTUS
+  Dashboard" project (§3).
+- `src/lib/justices.ts` — still around for its `JusticeStat` type (the
+  new UI imports the type, not the JSON-reading function); its
+  `getJusticesData()` is dead code post-cutover, left in place rather
+  than trimmed.
+
+**Shared components** (`src/components/`), post-cutover: `SectionPanels`
+(the bulk of `/dashboard`'s six sections), `CaseDetailPanels` +
+`CaseTitleBar` (in-place case view), `BottomTabBar` + `DashboardTitleBar`
+(nav), `LandingCarousel` (the `/welcome` carousel), `CourtCalendar`,
+`ScrollableRegion`. Deleted with the legacy pages: `NavBar`,
+`SearchModal`, `CircuitMap`, `CircuitSplitsSection`,
+`AppellateImpactsSection`, `JusticesSection`, `LawyersSection`,
+`DecisionSection`, `PrecedentDecisionSection`.
+
+**Styling note:** `src/app/globals.css` references CSS custom properties
+(`--tan`, `--cream`, `--charcoal`, etc.) throughout the new UI's
+components that are never actually defined anywhere. That's intentional,
+not a bug to fix — the fallback rendering it produces is the confirmed
+intended look (2026-08-31); defining them to the brand doc's values would
+restyle the live site. See `CLAUDE.md`.
 
 **Data model:** shared TypeScript types live in `src/types/index.ts`
 (`CaseSummary`, `LegalTerm`, `PrecedentCase`, `CircuitSplit`, `Article`, etc.)
 — these are the contract between the pipeline scripts (which write the JSON)
-and the frontend (which reads it).
+and the frontend (which reads what it still reads directly).
