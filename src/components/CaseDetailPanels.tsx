@@ -405,7 +405,7 @@ function CaseArticleEntry({ article }: { article: Article }) {
         href={article.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block text-[13px] font-bold not-italic text-[#1A1A1A] transition-colors hover:text-[#B85C38]"
+        className="block text-[13px] font-bold not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
         style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.4 }}
       >
         {article.title}
@@ -505,7 +505,7 @@ function OpinionActionButtons({
           href={fullTextUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[11px] font-normal uppercase tracking-wider text-[#6B6560] transition-colors hover:text-[#B85C38]"
+          className="text-[11px] font-normal uppercase tracking-wider text-[#6B6560] transition-colors hover:text-[#C43030]"
           style={{ fontFamily: "'Lora', Georgia, serif" }}
         >
           Full Text
@@ -515,10 +515,8 @@ function OpinionActionButtons({
         <button
           type="button"
           onClick={onSelectSynopsis}
-          className={`text-[11px] font-normal uppercase tracking-wider transition-colors hover:text-[#B85C38] ${
-            isSelected ? "text-[#B85C38]" : "text-[#6B6560]"
-          }`}
-          style={{ fontFamily: "'Lora', Georgia, serif" }}
+          className="text-[11px] uppercase tracking-wider text-[#6B6560] transition-colors hover:text-[#C43030]"
+          style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: isSelected ? 700 : 400 }}
         >
           Synopsis
         </button>
@@ -958,7 +956,7 @@ function CaseOverviewPanel({
           href={caseData.podcastEpisodeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[13px] font-normal not-italic text-[#1A1A1A] transition-colors hover:text-[#B85C38]"
+          className="text-[13px] font-normal not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
           style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}
         >
           Listen on Spotify
@@ -989,13 +987,11 @@ function CaseOverviewPanel({
               <button
                 type="button"
                 onClick={() => onSelectItem(item)}
-                className={`text-left text-[13px] not-italic transition-colors hover:text-[#B85C38] ${
-                  selectedItem === item ? "text-[#B85C38]" : "text-[#1A1A1A]"
-                }`}
+                className="text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
                 style={{
                   fontFamily: "'Lora', Georgia, serif",
                   lineHeight: 1.5,
-                  fontWeight: selectedItem === item ? 600 : 400,
+                  fontWeight: selectedItem === item ? 700 : 400,
                 }}
               >
                 {item}

@@ -14,9 +14,9 @@ export const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: "docket", label: "The Docket" },
   { key: "court-calendar", label: "Court Calendar" },
   // "circuit-splits" temporarily hidden from the menu — not removed, just not shown.
-  { key: "justices", label: "Oral Arguments" },
-  { key: "justice-profiles", label: "Justices" },
-  // "opinions" temporarily hidden from the menu — not removed, just not shown.
+  // "justices" (Oral Arguments) temporarily hidden from the menu — not removed, just not shown.
+  // "justice-profiles" (Justices) temporarily hidden from the menu — not removed, just not shown.
+  { key: "opinions", label: "Opinions" },
   // "appellate-impacts" temporarily hidden from the menu — not removed, just not shown.
   { key: "analysis", label: "Third Party Analysis" },
 ];

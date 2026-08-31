@@ -5,6 +5,12 @@ import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
 import { getAllCaseDetails } from "@/lib/db/cases";
 import { getJusticeStatsFromDb } from "@/lib/db/justice-stats";
+import {
+  getOpinionLengthStats,
+  getJusticeAgreementGrid,
+  getOpinionJoinerHighlights,
+  getConcurrenceJoinMatrix,
+} from "@/lib/db/term-stats";
 import { ScotusDashboard2Client } from "@/components/ScotusDashboard2Client";
 import type { CaseSummary, Article } from "@/types";
 import type { CircuitSplit } from "@/lib/circuit-splits";
@@ -52,6 +58,18 @@ export default async function ScotusDashboard2() {
   // JusticeStat shape, so JusticesSection needs no changes.
   const justices = await getJusticeStatsFromDb();
 
+  // Opinions section, "Length" menu item.
+  const opinionLengthStats = await getOpinionLengthStats();
+
+  // Opinions section, "Alignment" menu item.
+  const justiceAgreementGrid = await getJusticeAgreementGrid();
+
+  // Opinions section, "Volume" > "Highlights" menu item.
+  const opinionJoinerHighlights = await getOpinionJoinerHighlights();
+
+  // Opinions section, "Alignment" > "Joiners" menu item.
+  const concurrenceJoinMatrix = await getConcurrenceJoinMatrix();
+
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
 
@@ -85,6 +103,10 @@ export default async function ScotusDashboard2() {
       arguedCases={arguedCases}
       decidedItems={decidedItems}
       justices={justices}
+      opinionLengthStats={opinionLengthStats}
+      justiceAgreementGrid={justiceAgreementGrid}
+      opinionJoinerHighlights={opinionJoinerHighlights}
+      concurrenceJoinMatrix={concurrenceJoinMatrix}
       calendarEvents={calendarEvents}
       scotusblogArticles={scotusblogArticles}
       otherArticles={otherArticles}

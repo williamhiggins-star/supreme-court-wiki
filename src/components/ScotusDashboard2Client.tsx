@@ -13,6 +13,12 @@ import type { DecidedItem } from "@/app/page";
 import type { JusticeStat } from "@/lib/justices";
 import type { CalendarEvent } from "@/lib/calendar";
 import type { CircuitSplit } from "@/lib/circuit-splits";
+import type {
+  OpinionLengthStats,
+  JusticeAgreementPair,
+  OpinionJoinerHighlights,
+  JusticeJoinPair,
+} from "@/lib/db/term-stats";
 
 export function ScotusDashboard2Client({
   cases,
@@ -20,6 +26,10 @@ export function ScotusDashboard2Client({
   arguedCases,
   decidedItems,
   justices,
+  opinionLengthStats,
+  justiceAgreementGrid,
+  opinionJoinerHighlights,
+  concurrenceJoinMatrix,
   calendarEvents,
   scotusblogArticles,
   otherArticles,
@@ -33,6 +43,10 @@ export function ScotusDashboard2Client({
   arguedCases: CaseSummary[];
   decidedItems: DecidedItem[];
   justices: JusticeStat[];
+  opinionLengthStats: OpinionLengthStats;
+  justiceAgreementGrid: JusticeAgreementPair[];
+  opinionJoinerHighlights: OpinionJoinerHighlights;
+  concurrenceJoinMatrix: JusticeJoinPair[];
   calendarEvents: CalendarEvent[];
   scotusblogArticles: Article[];
   otherArticles: Article[];
@@ -74,6 +88,10 @@ export function ScotusDashboard2Client({
             arguedCases={arguedCases}
             decidedItems={decidedItems}
             justices={justices}
+            opinionLengthStats={opinionLengthStats}
+            justiceAgreementGrid={justiceAgreementGrid}
+            opinionJoinerHighlights={opinionJoinerHighlights}
+            concurrenceJoinMatrix={concurrenceJoinMatrix}
             scotusblogArticles={scotusblogArticles}
             otherArticles={otherArticles}
             onSelectCase={setActiveCaseSlug}
