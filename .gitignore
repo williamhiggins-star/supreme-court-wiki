@@ -28,6 +28,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# cached slip-opinion PDF text (scripts/backfill-opinion-word-counts.ts) —
+# re-downloadable, not source data
+/.cache/
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)

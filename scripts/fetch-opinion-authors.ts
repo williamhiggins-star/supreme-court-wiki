@@ -71,13 +71,13 @@ function currentShortTermYear(): string {
 
 // ── Slip opinions list ────────────────────────────────────────────────────────
 
-interface SlipOpinion {
+export interface SlipOpinion {
   caseNumber: string;
   pdfUrl: string;
   decisionDate?: string; // YYYY-MM-DD
 }
 
-async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
+export async function fetchSlipOpinions(shortYear: string): Promise<SlipOpinion[]> {
   const url = `${SCOTUS_BASE}/opinions/slipopinion/${shortYear}`;
   console.log(`Fetching slip opinions: ${url}`);
   const html = await fetchHtml(url);
@@ -564,7 +564,15 @@ function findCaseFile(caseNumber: string): string | null {
   const clean = caseNumber.replace(/new$/i, "").trim();
   const files = fs.readdirSync(CASES_DIR).filter((f) => f.endsWith(".json"));
   const prefix = clean.toLowerCase().replace(/[^a-z0-9]/g, "-");
-  const match = files.find((f) => f.startsWith(prefix));
+  // Require the character right after the matched prefix to be the filename's
+  // own "-" separator (or end of string) -- a bare startsWith() lets one
+  // docket's digits be a literal string-prefix of an unrelated case's docket
+  // (e.g. "25-51".startsWith check against "25-5146-ahmad-abouammo-...json"
+  // matches, because "5146" happens to start with "51") and silently writes
+  // that case's parsed opinion data into the WRONG file. Found via exactly
+  // that: Klein v. Martin (docket 25-51, no JSON file of its own) got matched
+  // to 25-5146-ahmad-abouammo-v-united-states.json instead.
+  const match = files.find((f) => f.startsWith(prefix) && (f.length === prefix.length || f[prefix.length] === "-"));
   return match ? path.join(CASES_DIR, match) : null;
 }
 

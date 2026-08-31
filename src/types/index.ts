@@ -95,6 +95,13 @@ export interface CaseSummary {
   majorityJoinedBy?: string[];    // justice keys who joined the majority opinion without writing separately
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
+  // Ground-truth per-justice side of the decision (public.decisions.position),
+  // DB-sourced cases only. Prefer this over "not in dissentAuthors" for
+  // determining who was actually on the winning side -- dissentAuthors only
+  // lists justices who separately AUTHORED a dissent, silently missing
+  // anyone who joined another's dissent without writing their own.
+  majoritySideJustices?: string[]; // justice keys
+  issueCategory?: { slug: string; label: string } | null; // Feldman's Stat Pack issue classification (DB-sourced cases only)
   // Justices who concurred in part AND dissented in part — a distinct
   // opinion type from a pure concurrence or pure dissent. Kept separate
   // rather than forced into concurrenceAuthors/dissentAuthors so the UI
@@ -109,6 +116,7 @@ export interface CaseSummary {
   pluralityJoinedBy?: string[];
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
+  majorityOpinionFullTextUrl?: string; // link to the combined slip opinion PDF on supremecourt.gov
   pluralityOpinionSummary?: string;
   concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
   dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];

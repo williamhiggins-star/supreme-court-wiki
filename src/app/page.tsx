@@ -13,6 +13,7 @@ import { SplitCard } from "@/components/CircuitSplitsSection";
 import { JusticesSection } from "@/components/JusticesSection";
 import { LawyersSection } from "@/components/LawyersSection";
 import { NavBar } from "@/components/NavBar";
+import { computeDecisionSides } from "@/lib/decisionSides";
 import type { CaseSummary } from "@/types";
 
 // Revalidate every hour so "Decided Today" / "Today" badges clear within 24 h of the event day.
@@ -48,14 +49,41 @@ export type DecidedItem = {
   decisionDate?: string;
   voteSplit?: string;
   podcastEpisodeUrl?: string;
+  majorityAuthor?: string;
+  dissentAuthors: string[];
+  majoritySideJustices: string[];
+  // Author + joiners per separately-written concurring/dissenting opinion.
+  // "Concurring Opinion"/"Dissenting" match on `author` (did this justice
+  // WRITE one), not side membership -- a justice who only joined someone
+  // else's dissent without writing their own doesn't count (that's a
+  // different question, "who was on the losing side," which
+  // majoritySideJustices already answers). "Joined By" then looks up the
+  // matched justice's own entry here for who joined THEIR opinion.
+  concurringSummaries: { author: string; joinedBy: string[] }[];
+  dissentSummaries: { author: string; joinedBy: string[] }[];
+  issueCategory: { slug: string; label: string } | null;
 };
 
-export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
+export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: string | null })[]): DecidedItem[] {
   const items: DecidedItem[] = decidedCases.map((c) => {
-    const dissents = c.dissentAuthors?.length ?? 0;
-    const voteSplit = c.majorityAuthor
-      ? dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`
-      : undefined;
+    // Prefer the DB's own recorded vote line (cases.vote_line) when
+    // present (only ~12/66 cases have it manually researched so far), else
+    // fall back to computeDecisionSides()'s real losingSide count --
+    // NOT dissentAuthors.length, which only counts justices who separately
+    // AUTHORED a dissent and silently undercounts one who joined another's
+    // dissent without writing their own (confirmed on Zorn v. Linton: 1
+    // dissent author but 3 actual dissenting votes -- dissentAuthors.length
+    // alone would compute "8–1" against the real "6–3").
+    const dissents = computeDecisionSides(c).losingSide.length;
+    // A per curiam 9-0 is "Per Curiam," never "Unanimous" -- collapsing
+    // the two loses the (author-less) per curiam signal entirely. Only
+    // matters when the case is actually unanimous; a non-unanimous split
+    // (e.g. "6–3") already reads correctly either way.
+    const isPerCuriam = c.majorityAuthor === "per_curiam";
+    const unanimousLabel = isPerCuriam ? "Per Curiam" : "Unanimous";
+    const fallbackSplit = dissents === 0 ? unanimousLabel : `${9 - dissents}–${dissents}`;
+    const dbSplit = c.voteLine?.endsWith("-0") ? unanimousLabel : c.voteLine?.replace("-", "–");
+    const voteSplit = c.majorityAuthor ? (dbSplit ?? fallbackSplit) : undefined;
     return {
       type: "case" as const,
       slug: c.slug,
@@ -65,6 +93,12 @@ export function buildDecidedList(decidedCases: CaseSummary[]): DecidedItem[] {
       decisionDate: c.decisionDate,
       voteSplit,
       podcastEpisodeUrl: c.podcastEpisodeUrl,
+      majorityAuthor: c.majorityAuthor,
+      dissentAuthors: c.dissentAuthors ?? [],
+      majoritySideJustices: c.majoritySideJustices ?? [],
+      concurringSummaries: (c.concurringSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
+      dissentSummaries: (c.dissentSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
+      issueCategory: c.issueCategory ?? null,
     };
   });
   items.sort((a, b) => {

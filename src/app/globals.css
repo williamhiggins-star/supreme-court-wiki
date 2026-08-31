@@ -82,10 +82,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "DM Sans", sans-serif;
+  --font-sans: "Playfair Display", Georgia, serif;
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-body: "Lora", Georgia, serif;
-  --font-mono: "DM Mono", monospace;
+  --font-body: "Playfair Display", Georgia, serif;
+  --font-mono: "Playfair Display", Georgia, serif;
   --color-ft-pink: #fcd0b1;
   --color-ft-paper: #fff1e5;
 }
@@ -99,4 +99,18 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   font-weight: 500;
+}
+
+/* Hides the native scrollbar so a custom always-visible thumb (rendered by
+   ScrollableRegion) can replace it — macOS overlay scrollbars stay hidden
+   until hover/scroll regardless of any ::-webkit-scrollbar styling, so
+   native scrollbars can't satisfy "always visible" on their own. */
+.hide-native-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.hide-native-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }

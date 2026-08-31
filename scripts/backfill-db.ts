@@ -39,6 +39,7 @@ import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/en
 import { select, upsert, insert } from "./lib/supabase-sync/client.js";
 import { toSlug } from "./pipeline.js";
 import { computeDecisionTiesAndPositions } from "./lib/sd-db/decisions.js";
+import { derivePrecedentStatus } from "./lib/sd-db/constants.js";
 import type {
   CaseSummary,
   PrecedentCase,
@@ -751,7 +752,7 @@ function buildFromPrecedents(model: Model, report: Report, precedents: Precedent
       docket_number: null,
       caption: p.name,
       term: String(p.year),
-      status: enriched ? "historic" : "stub",
+      status: derivePrecedentStatus(enriched),
       question_presented: p.legalQuestion ?? null,
       background: p.backgroundAndFacts ?? null,
       significance: p.significance,
@@ -761,7 +762,7 @@ function buildFromPrecedents(model: Model, report: Report, precedents: Precedent
       source_urls: [],
       is_stub: !enriched,
     });
-    bump(report, enriched ? "cases (from data/precedents, historic)" : "cases (from data/precedents, stub)");
+    bump(report, enriched ? "cases (from data/precedents, decided)" : "cases (from data/precedents, stub)");
 
     if (!enriched) continue; // stubs have no opinion/author data to backfill
 

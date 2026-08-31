@@ -24,6 +24,7 @@ import {
   CASES_DIR,
 } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
+import { currentTermYear } from "./lib/sd-db/constants.js";
 
 // ── Load .env.local ──────────────────────────────────────────────────────────
 
@@ -49,34 +50,41 @@ loadEnvLocal();
 const SCOTUS_BASE = "https://www.supremecourt.gov";
 const USER_AGENT = "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0)";
 
-function currentTermYear(): string {
-  const now = new Date();
-  return now.getMonth() >= 9 ? String(now.getFullYear()) : String(now.getFullYear() - 1);
-}
-
 // ── Fetch transcript list from SCOTUS ────────────────────────────────────────
 
-interface TranscriptEntry {
+export interface TranscriptEntry {
   caseNumber: string;
   transcriptUrl: string;
 }
 
-async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
-  const url = `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}`;
+export async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
+  // NOTE: this is /argument_transcript/ (singular) -- the ASP.NET listing
+  // page that renders every transcript link for the whole term on one page
+  // load (confirmed: 58 links for OT2025 in a single fetch). The old
+  // /argument_transcripts/ (plural) directory-listing URL this used to hit
+  // returns a WAF soft-block (200 status, but an Akamai error page body)
+  // regardless of headers/UA -- confirmed via curl and the WebFetch tool.
+  // This page's markup also uses single-quoted, relative hrefs
+  // (`href='../argument_transcripts/2025/24-1063_5h26.pdf'`), not the
+  // double-quoted absolute form the old regex expected -- so the old
+  // pattern would have matched nothing here even without the WAF issue.
+  const url = `${SCOTUS_BASE}/oral_arguments/argument_transcript/${termYear}`;
   const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
   const html = await res.text();
 
-  const pattern =
-    /href="(\/oral_arguments\/argument_transcripts\/\d{4}\/([^"_/]+)[^"]*\.pdf)"/gi;
+  const pattern = /href='\.\.\/argument_transcripts\/\d{4}\/([^'_/]+)([^']*)\.pdf'/gi;
   const seen = new Set<string>();
   const results: TranscriptEntry[] = [];
   let match: RegExpExecArray | null;
   while ((match = pattern.exec(html)) !== null) {
-    const caseNumber = match[2];
+    const caseNumber = match[1];
     if (seen.has(caseNumber)) continue;
     seen.add(caseNumber);
-    results.push({ caseNumber, transcriptUrl: `${SCOTUS_BASE}${match[1]}` });
+    results.push({
+      caseNumber,
+      transcriptUrl: `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}/${caseNumber}${match[2]}.pdf`,
+    });
   }
   return results;
 }
@@ -253,7 +261,14 @@ async function main() {
   );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only auto-run when executed directly (`npx tsx scripts/backfill-key-exchanges.ts`),
+// not when imported -- fetchTranscriptList() is imported by
+// backfill-oral-argument-transcripts.ts and must not trigger this script's
+// own full backfill run (with its Claude calls and data/cases/*.json
+// writes) as a side effect of that import.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
