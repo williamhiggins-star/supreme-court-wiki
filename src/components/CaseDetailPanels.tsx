@@ -89,7 +89,7 @@ function getCaseMenuItems({
 
 function CaseScaffoldPanel({ index, selectedItem }: { index: number; selectedItem: string | null }) {
   return (
-    <div className="flex h-full min-w-0 items-center justify-center border border-dashed border-[#C4A882]">
+    <div className="flex h-full min-w-0 items-center justify-center">
       <span className="font-mono text-xs uppercase tracking-wider text-[#6B6560]">
         case panel {index}
         {selectedItem ? ` — ${selectedItem}` : ""}

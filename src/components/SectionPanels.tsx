@@ -309,15 +309,17 @@ const OPINIONS_MENU: { label: string; children?: readonly string[] }[] = [
 export const DEFAULT_OPINIONS_ITEM = "Longest";
 
 function OpinionsMenuItemButton({ item, selectedItem, onSelectItem }: { item: string; selectedItem: string | null; onSelectItem: (item: string) => void }) {
+  const isSelected = selectedItem === item;
   return (
     <button
       type="button"
       onClick={() => onSelectItem(item)}
-      className="text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+      className={`text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030] ${isSelected ? "underline" : ""}`}
       style={{
         fontFamily: "'Lora', Georgia, serif",
         lineHeight: 1.5,
-        fontWeight: selectedItem === item ? 700 : 400,
+        // Baseline is 400 weight; selected is 2x the weight (800).
+        fontWeight: isSelected ? 800 : 400,
       }}
     >
       {item}
@@ -391,12 +393,12 @@ function OpinionsMenuPanel({ selectedItem, onSelectItem }: { selectedItem: strin
   const menuByLabel = Object.fromEntries(OPINIONS_MENU.map((m) => [m.label, m]));
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
-      <p className="font-serif text-[20px] font-normal not-italic leading-tight text-[#1A1A1A]">Opinion&apos;s Statistics</p>
-      <p className="mt-[0.4em] text-[13px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
+    <div className="flex h-full min-w-0 flex-col overflow-hidden bg-[#F2EDE3] px-6 pb-2 pt-[14px]">
+      <p className="font-serif text-[20px] font-normal not-italic leading-tight text-[#1A1A1A]">Opinions Data</p>
+      <p className="mt-[0.4em] text-[13px] font-normal italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
         2025-6 Term
       </p>
-      <p className="mb-[0.5em] mt-[16px] text-left font-serif text-[14px] font-bold text-[#6B6560]">Menu</p>
+      <p className="mb-[0.5em] mt-[16px] text-left font-serif text-[14px] font-bold text-[#1A1A1A]">Menu</p>
       {/* Row 1: Length + Alignment side by side. Row 2: Volume alone. Row 3: Justices alone (its own children in two columns, handled by OpinionsMenuEntry). */}
       <div className="flex gap-x-6">
         <OpinionsMenuEntry {...menuByLabel["Length"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
@@ -517,7 +519,7 @@ function OpinionLengthCard({ detail, onSelectCase }: { detail: OpinionLengthDeta
 // detail set.
 function OpinionExtremeOverviewPanel({ title, averageWordCount, overall, majority, concurrence, onSelectCase }: { title: "Longest" | "Shortest"; averageWordCount: number | null; overall: OpinionLengthDetail | null; majority: OpinionLengthDetail | null; concurrence: OpinionLengthDetail | null; onSelectCase: (slug: string) => void }) {
   return (
-    <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden px-6 pb-2 pt-[14px]">
       <div>
         <p className="mb-[0.75em] text-left font-serif text-[14px] font-normal text-[#6B6560]">Average Opinion Length</p>
         <p className="mb-[1.25em] ml-[5px] text-center text-[16px] font-normal not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
@@ -592,7 +594,7 @@ function OpinionExtremeByJusticePanel({ title, data, onSelectCase }: { title: "L
   const maxWordCount = Math.max(1, ...rows.map((r) => r.wordCount));
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">{title} Opinion by Justice</p>
       <div className="min-h-0 flex-1 overflow-hidden">
         {rows.map((r) => (
@@ -782,7 +784,7 @@ function VolumeByJusticePanel({ justices, highlights, onSelectCase }: { justices
   const highlightCases = topCasesAlphabetical(highlightCasesRaw, VOLUME_HIGHLIGHT_CASE_LIMIT[metric]);
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Opinions Authored by Justice</p>
       <div className="mb-[0.5em] flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
         {VOLUME_METRICS.map((m) => (
@@ -945,7 +947,7 @@ function JusticeAgreementPanel({ pairs }: { pairs: JusticeAgreementPair[] }) {
   });
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Alignment (Votes)</p>
       {hover && (
         <span
@@ -1110,7 +1112,7 @@ function ConcurrenceJoinPanel({
   });
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Joiners</p>
       <div className="mb-[0.4em] flex items-center justify-center gap-x-3">
         {JOIN_PANEL_VIEWS.map((v) => (
@@ -1297,7 +1299,7 @@ function JusticeTotalWordsPanel({ totalWords, longest, shortest, justiceSlug, ju
   const shortestDetail = toOpinionLengthDetail(shortest, justiceSlug);
 
   return (
-    <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden px-6 pb-2 pt-[14px]">
       {selfJustice && (
         <div className="flex items-center justify-center gap-[0.5em]">
           <Image src={selfJustice.photo} alt={selfJustice.displayName} width={32} height={32} className="rounded-full object-cover object-top" style={{ width: 32, height: 32 }} />
@@ -1396,7 +1398,7 @@ function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate:
 
   if (!rate) {
     return (
-      <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+      <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
         <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Majority vs. Minority</p>
         <p className="text-[12px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
           No data.
@@ -1409,7 +1411,7 @@ function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate:
     { label: "Minority", pct: rate.minorityPct, color: "#C43030" },
   ];
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Majority vs. Minority</p>
       <div className="flex items-end justify-center gap-x-[40px]" style={{ height: MAJORITY_MINORITY_BAR_CHART_HEIGHT }}>
         {bars.map((b) => (
@@ -1440,7 +1442,7 @@ function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate:
 
 function PlaceholderPanel({ active, index }: { active: SectionKey; index: number }) {
   return (
-    <div className="flex h-full min-w-0 items-center justify-center border border-dashed border-[#C4A882]">
+    <div className="flex h-full min-w-0 items-center justify-center">
       <span className="font-mono text-xs uppercase tracking-wider text-[#6B6560]">
         {active} — panel {index}
       </span>
@@ -1845,7 +1847,7 @@ function VolumeHighlightsPanel({ justices, highlights }: { justices: JusticeStat
   const joinedDissentJustices = highlights.mostJoinedDissents.map((j) => resolveJustice(j.justiceSlug)).filter((j): j is (typeof ALL_JUSTICES)[number] => j !== undefined);
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="grid grid-cols-2 gap-x-4">
           <div className="flex flex-col gap-[0.9em]">
