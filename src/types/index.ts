@@ -95,6 +95,12 @@ export interface CaseSummary {
   majorityJoinedBy?: string[];    // justice keys who joined the majority opinion without writing separately
   concurrenceAuthors?: string[];  // justice keys
   dissentAuthors?: string[];      // justice keys
+  // Ground-truth per-justice side of the decision (public.decisions.position),
+  // DB-sourced cases only. Prefer this over "not in dissentAuthors" for
+  // determining who was actually on the winning side -- dissentAuthors only
+  // lists justices who separately AUTHORED a dissent, silently missing
+  // anyone who joined another's dissent without writing their own.
+  majoritySideJustices?: string[]; // justice keys
   // Justices who concurred in part AND dissented in part — a distinct
   // opinion type from a pure concurrence or pure dissent. Kept separate
   // rather than forced into concurrenceAuthors/dissentAuthors so the UI

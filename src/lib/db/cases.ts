@@ -40,6 +40,16 @@ export interface DbCaseDetail extends CaseSummary {
 export const CONCURRENCE_KINDS = new Set(["concurrence", "concurrence_in_judgment", "concurrence_in_part"]);
 export const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
 
+// public.decisions.position values that put a justice on the winning side
+// of a case -- the ground-truth per-justice-per-case record (one row per
+// participating justice), distinct from (and more complete than) deriving
+// "who dissented" from opinions/decision_ties: that reconstruction only
+// counts justices who separately AUTHORED a dissent, silently missing
+// anyone who joined another justice's dissent without writing their own
+// (confirmed against real data -- see src/app/page.tsx's buildDecidedList
+// comment on the same class of bug for vote-split display).
+const MAJORITY_SIDE_POSITIONS = new Set(["majority", "plurality", "concurrence"]);
+
 // cases.status -> CaseSummary.docketStatus. 'argued' is deliberately
 // omitted -- CaseSummary.docketStatus has no "argued" literal; getDocketStatus()
 // (src/app/page.tsx) already derives "argued" from argumentDate being in
@@ -93,6 +103,11 @@ interface DecisionTieRow {
   people: { slug: string } | null;
 }
 
+interface DecisionRow {
+  position: string;
+  people: { slug: string } | null;
+}
+
 type CaseDetailRow = NonNullable<
   Awaited<ReturnType<typeof fetchOneCaseDetailRow>>["data"]
 >;
@@ -101,7 +116,7 @@ async function fetchOneCaseDetailRow(slug: string, term: string) {
   return db.from("cases").select(CASE_DETAIL_SELECT).eq("slug", slug).eq("term", term).eq("status", "decided").maybeSingle();
 }
 
-function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCaseDetail {
+function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[], decisions: DecisionRow[]): DbCaseDetail {
   const joinersByOpinionId = new Map<string, string[]>();
   for (const t of ties) {
     if (t.role !== "joiner") continue;
@@ -162,6 +177,11 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
       }
     }
   }
+
+  const majoritySideJustices = decisions
+    .filter((d) => MAJORITY_SIDE_POSITIONS.has(d.position))
+    .map((d) => justiceKey(d.people?.slug ?? null))
+    .filter((key): key is string => key !== null);
 
   const lowerCourts: LowerCourtInfo[] = (caseRow.case_lower_courts ?? []).map((c) => ({
     docketNumber: c.docket_number,
@@ -246,6 +266,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     concurrenceAuthors: concurrenceAuthors.length ? concurrenceAuthors : undefined,
     dissentAuthors: dissentAuthors.length ? dissentAuthors : undefined,
     concurDissentAuthors: concurDissentAuthors.length ? concurDissentAuthors : undefined,
+    majoritySideJustices,
     pluralityAuthor,
     pluralityJoinedBy,
     decisionDate: caseRow.decided_date ?? undefined,
@@ -290,7 +311,13 @@ export async function getCaseDetail(slug: string, term: string = currentTermYear
     .eq("case_id", caseRow.id);
   if (tiesError) throw new Error(`getCaseDetail(${slug}) decision_ties: ${tiesError.message}`);
 
-  return buildCaseDetail(caseRow, ties ?? []);
+  const { data: decisions, error: decisionsError } = await db
+    .from("decisions")
+    .select("position, people ( slug )")
+    .eq("case_id", caseRow.id);
+  if (decisionsError) throw new Error(`getCaseDetail(${slug}) decisions: ${decisionsError.message}`);
+
+  return buildCaseDetail(caseRow, ties ?? [], decisions ?? []);
 }
 
 /**
@@ -342,7 +369,23 @@ export async function getAllCasesForTerm(term: string = currentTermYear()): Prom
     tiesByCaseId.set(t.case_id, list);
   }
 
-  return rows.map((caseRow) => buildCaseDetail(caseRow, tiesByCaseId.get(caseRow.id) ?? []));
+  const { data: allDecisions, error: decisionsError } = await db
+    .from("decisions")
+    .select("case_id, position, people ( slug )")
+    .in(
+      "case_id",
+      rows.map((c) => c.id),
+    );
+  if (decisionsError) throw new Error(`getAllCasesForTerm decisions: ${decisionsError.message}`);
+
+  const decisionsByCaseId = new Map<string, DecisionRow[]>();
+  for (const d of allDecisions ?? []) {
+    const list = decisionsByCaseId.get(d.case_id) ?? [];
+    list.push(d);
+    decisionsByCaseId.set(d.case_id, list);
+  }
+
+  return rows.map((caseRow) => buildCaseDetail(caseRow, tiesByCaseId.get(caseRow.id) ?? [], decisionsByCaseId.get(caseRow.id) ?? []));
 }
 
 export interface DbCaseListItem {

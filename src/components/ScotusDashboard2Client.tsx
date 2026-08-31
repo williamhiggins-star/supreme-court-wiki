@@ -70,6 +70,19 @@ export function ScotusDashboard2Client({
   // SectionPanels unmounts whenever a case panel is open -- selecting a
   // case and hitting "back" would otherwise silently reset the filter.
   const [selectedMajorityAuthor, setSelectedMajorityAuthor] = useState<string | null>(null);
+  const [selectedMajorityJustices, setSelectedMajorityJustices] = useState<string[]>([]);
+  const [selectedConcurringJustices, setSelectedConcurringJustices] = useState<string[]>([]);
+  const [selectedConcurringJoinedBy, setSelectedConcurringJoinedBy] = useState<Record<string, string[]>>({});
+  const [selectedDissentingJustices, setSelectedDissentingJustices] = useState<string[]>([]);
+  const [selectedDissentingJoinedBy, setSelectedDissentingJoinedBy] = useState<Record<string, string[]>>({});
+
+  function handleSelectConcurringJoinedBy(justiceKey: string, joiners: string[]) {
+    setSelectedConcurringJoinedBy((prev) => ({ ...prev, [justiceKey]: joiners }));
+  }
+
+  function handleSelectDissentingJoinedBy(justiceKey: string, joiners: string[]) {
+    setSelectedDissentingJoinedBy((prev) => ({ ...prev, [justiceKey]: joiners }));
+  }
 
   function handleSelectSection(key: SectionKey) {
     setActiveCaseSlug(null);
@@ -115,6 +128,16 @@ export function ScotusDashboard2Client({
             tomorrow={tomorrow}
             selectedMajorityAuthor={selectedMajorityAuthor}
             onSelectMajorityAuthor={setSelectedMajorityAuthor}
+            selectedMajorityJustices={selectedMajorityJustices}
+            onSelectMajorityJustices={setSelectedMajorityJustices}
+            selectedConcurringJustices={selectedConcurringJustices}
+            onSelectConcurringJustices={setSelectedConcurringJustices}
+            selectedConcurringJoinedBy={selectedConcurringJoinedBy}
+            onSelectConcurringJoinedByForJustice={handleSelectConcurringJoinedBy}
+            selectedDissentingJustices={selectedDissentingJustices}
+            onSelectDissentingJustices={setSelectedDissentingJustices}
+            selectedDissentingJoinedBy={selectedDissentingJoinedBy}
+            onSelectDissentingJoinedByForJustice={handleSelectDissentingJoinedBy}
           />
         </div>
       )}

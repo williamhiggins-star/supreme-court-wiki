@@ -51,6 +51,16 @@ export type DecidedItem = {
   podcastEpisodeUrl?: string;
   majorityAuthor?: string;
   dissentAuthors: string[];
+  majoritySideJustices: string[];
+  // Author + joiners per separately-written concurring/dissenting opinion.
+  // "Concurring Opinion"/"Dissenting" match on `author` (did this justice
+  // WRITE one), not side membership -- a justice who only joined someone
+  // else's dissent without writing their own doesn't count (that's a
+  // different question, "who was on the losing side," which
+  // majoritySideJustices already answers). "Joined By" then looks up the
+  // matched justice's own entry here for who joined THEIR opinion.
+  concurringSummaries: { author: string; joinedBy: string[] }[];
+  dissentSummaries: { author: string; joinedBy: string[] }[];
 };
 
 export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: string | null })[]): DecidedItem[] {
@@ -84,6 +94,9 @@ export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: strin
       podcastEpisodeUrl: c.podcastEpisodeUrl,
       majorityAuthor: c.majorityAuthor,
       dissentAuthors: c.dissentAuthors ?? [],
+      majoritySideJustices: c.majoritySideJustices ?? [],
+      concurringSummaries: (c.concurringSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
+      dissentSummaries: (c.dissentSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
     };
   });
   items.sort((a, b) => {

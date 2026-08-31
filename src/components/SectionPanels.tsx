@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, useRef, useEffect } from "react";
+import { Fragment, useState, useRef, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { SectionKey } from "@/lib/dashboard2-sections";
@@ -1460,72 +1460,322 @@ function MajorityAuthorFilter({ value, onChange }: { value: string | null; onCha
 
   return (
     <div ref={ref} className="relative w-1/2">
-      <p className="mb-[0.3em] font-serif text-[13px] font-normal not-italic text-[#6B6560]">
-        Majority Author
-      </p>
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-2 bg-[#FAFAF7] px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors"
-        style={{ fontFamily: "'Lora', Georgia, serif" }}
-      >
-        <span className="flex items-center gap-[6px]">
-          {selected && (
-            <Image src={selected.photo} alt={selected.displayName} width={16} height={16} className="rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
-          )}
-          {selected ? selected.displayName : ""}
-        </span>
-        <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
-      </button>
+      <div className="inline-flex w-max max-w-none items-center gap-[6px] whitespace-nowrap">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="inline-flex items-center gap-[6px] border-0 bg-transparent p-0 text-left transition-colors hover:text-[#C43030]"
+        >
+          <span className="font-serif text-[13px] font-normal not-italic text-[#6B6560]">Majority Author</span>
+          <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
+        </button>
+        {selected && (
+          <Image src={selected.photo} alt={selected.displayName} width={16} height={16} className="rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
+        )}
+        {selected && (
+          <span className="text-[13px] not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+            {selected.displayName}
+          </span>
+        )}
+        {selected && (
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            aria-label={`Remove ${selected.displayName}`}
+            className="text-[13px] leading-none text-[#6B6560] transition-colors hover:text-[#C43030]"
+          >
+            ×
+          </button>
+        )}
+      </div>
       {open && (
-        <ul className="absolute left-0 right-0 top-full z-10 mt-[2px] list-none border border-[#C4A882] bg-[#FAFAF7] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                onChange(null);
-                setOpen(false);
-              }}
-              className="block w-full px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
-              style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value === null ? 700 : 400 }}
-            >
-              All Justices
-            </button>
-          </li>
-          {ALL_JUSTICES.map((j) => (
-            <li key={j.key}>
+        <div className="absolute left-0 top-full z-10 mt-[2px] w-[300px] border border-[#C4A882] bg-[#FAFAF7] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <button
+            type="button"
+            onClick={() => {
+              onChange(null);
+              setOpen(false);
+            }}
+            className="block w-full px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value === null ? 700 : 400 }}
+          >
+            All Justices
+          </button>
+          {/* Two columns so all nine justices fit without the list running
+              past the bottom of the (overflow-hidden) panel. The currently
+              selected justice is dropped from the list entirely -- already
+              shown on the trigger line, picking a different one replaces it. */}
+          <div className="grid grid-cols-2">
+            {ALL_JUSTICES.filter((j) => j.key !== value).map((j) => (
               <button
+                key={j.key}
                 type="button"
                 onClick={() => {
                   onChange(j.key);
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-[6px] px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
-                style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value === j.key ? 700 : 400 }}
+                className="flex min-w-0 items-center gap-[6px] px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+                style={{ fontFamily: "'Lora', Georgia, serif" }}
               >
-                <Image src={j.photo} alt={j.displayName} width={16} height={16} className="rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
-                {j.displayName}
+                <Image src={j.photo} alt={j.displayName} width={16} height={16} className="shrink-0 rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
+                <span className="truncate">{j.displayName}</span>
               </button>
-            </li>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Multi-select sibling of MajorityAuthorFilter -- same trigger/list design
+// and click-outside-to-close behavior, but toggles instead of replacing the
+// selection, and the list stays open after a click so more than one justice
+// can be picked in one pass. The first selected justice's portrait/name sit
+// on the trigger's own line same as MajorityAuthorFilter; any further
+// selections spill onto a second line, indented to line up under that
+// first portrait (measured via labelRef, not guessed).
+// Generic multi-select justice filter -- trigger line shows the first
+// selected justice (portrait/name/×), any further selections wrap onto a
+// second line indented to align under that first portrait (measured via
+// labelRef, not guessed). Dropdown is a two-column, 300px-wide list
+// (fits inside the panel's overflow-hidden bounds) of `options` minus
+// whichever are already selected. Backs both the top-level justice
+// filters and each selected justice's own "Joined By" sub-filter, which
+// only offers that one justice's actual co-panelists (`options`), not
+// necessarily all nine.
+function MultiSelectJusticeFilter({
+  label,
+  clearLabel,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  clearLabel: string;
+  options: { key: string; displayName: string; photo: string }[];
+  value: string[];
+  onChange: (keys: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [labelWidth, setLabelWidth] = useState(0);
+
+  const selectedJustices = options.filter((j) => value.includes(j.key));
+  const [firstSelected, ...restSelected] = selectedJustices;
+
+  useLayoutEffect(() => {
+    if (labelRef.current) setLabelWidth(labelRef.current.getBoundingClientRect().width);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [open]);
+
+  function toggle(key: string) {
+    onChange(value.includes(key) ? value.filter((k) => k !== key) : [...value, key]);
+  }
+
+  return (
+    <div ref={ref} className="relative w-1/2">
+      <div className="inline-flex w-max max-w-none items-center gap-[6px] whitespace-nowrap">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="inline-flex items-center gap-[6px] border-0 bg-transparent p-0 text-left transition-colors hover:text-[#C43030]"
+        >
+          <span ref={labelRef} className="inline-flex items-center gap-[6px]">
+            <span className="font-serif text-[13px] font-normal not-italic text-[#6B6560]">{label}</span>
+            <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
+          </span>
+        </button>
+        {firstSelected && (
+          <Image src={firstSelected.photo} alt={firstSelected.displayName} width={16} height={16} className="rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
+        )}
+        {firstSelected && (
+          <span className="text-[13px] not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+            {firstSelected.displayName}
+          </span>
+        )}
+        {firstSelected && (
+          <button
+            type="button"
+            onClick={() => toggle(firstSelected.key)}
+            aria-label={`Remove ${firstSelected.displayName}`}
+            className="text-[13px] leading-none text-[#6B6560] transition-colors hover:text-[#C43030]"
+          >
+            ×
+          </button>
+        )}
+      </div>
+      {restSelected.length > 0 && (
+        <div className="mt-[0.3em] flex flex-wrap items-center gap-x-[14px] gap-y-[0.3em]" style={{ paddingLeft: labelWidth + 6 }}>
+          {restSelected.map((j) => (
+            <span key={j.key} className="inline-flex items-center gap-[6px] whitespace-nowrap">
+              <Image src={j.photo} alt={j.displayName} width={16} height={16} className="rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
+              <span className="text-[13px] not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+                {j.displayName}
+              </span>
+              <button
+                type="button"
+                onClick={() => toggle(j.key)}
+                aria-label={`Remove ${j.displayName}`}
+                className="text-[13px] leading-none text-[#6B6560] transition-colors hover:text-[#C43030]"
+              >
+                ×
+              </button>
+            </span>
           ))}
-        </ul>
+        </div>
+      )}
+      {open && (
+        <div className="absolute left-0 top-full z-10 mt-[2px] w-[300px] border border-[#C4A882] bg-[#FAFAF7] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className="block w-full px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value.length === 0 ? 700 : 400 }}
+          >
+            {clearLabel}
+          </button>
+          {/* Two columns so all nine justices fit without the list running
+              past the bottom of the (overflow-hidden) panel. Already-selected
+              justices drop out of the list -- they're shown on the trigger
+              lines instead; clearLabel is the only way to bring one back. */}
+          <div className="grid grid-cols-2">
+            {options.filter((j) => !value.includes(j.key)).map((j) => (
+              <button
+                key={j.key}
+                type="button"
+                onClick={() => toggle(j.key)}
+                className="flex min-w-0 items-center gap-[6px] px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+                style={{ fontFamily: "'Lora', Georgia, serif" }}
+              >
+                <Image src={j.photo} alt={j.displayName} width={16} height={16} className="shrink-0 rounded-full object-cover object-top" style={{ width: 16, height: 16 }} />
+                <span className="truncate">{j.displayName}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Shared shape for Concurring Opinion / Dissenting: a top-level multi-
+// select of justices, plus one "Joined By" sub-filter PER selected
+// justice (a case can have more than one separately-written concurrence
+// or dissent, each with its own author and joiners -- "Joined By" only
+// makes sense scoped to one specific justice's own opinion, not the
+// side as a whole). Each Joined By offers every justice but that one.
+function OpinionSideFilter({
+  label,
+  selectedJustices,
+  onSelectJustices,
+  selectedJoinedBy,
+  onSelectJoinedByForJustice,
+}: {
+  label: string;
+  selectedJustices: string[];
+  onSelectJustices: (keys: string[]) => void;
+  selectedJoinedBy: Record<string, string[]>;
+  onSelectJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+}) {
+  const selected = ALL_JUSTICES.filter((j) => selectedJustices.includes(j.key));
+  return (
+    <div>
+      <MultiSelectJusticeFilter label={label} clearLabel="All Justices" options={ALL_JUSTICES} value={selectedJustices} onChange={onSelectJustices} />
+      {selected.length > 0 && (
+        <div className="mt-[0.6em] flex flex-col gap-[0.6em] pl-[12px]">
+          {selected.map((j) => (
+            <MultiSelectJusticeFilter
+              key={j.key}
+              label={`Joined By — ${j.displayName}`}
+              clearLabel="Any Justice"
+              options={ALL_JUSTICES.filter((o) => o.key !== j.key)}
+              value={selectedJoinedBy[j.key] ?? []}
+              onChange={(keys) => onSelectJoinedByForJustice(j.key, keys)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
 }
 
 // Same shell as OpinionsMenuPanel (title, term line, header). "Majority
-// Author" is the first of the All Cases filters -- more will join it under
-// the same "Filters" header.
-function AllCasesMenuPanel({ selectedMajorityAuthor, onSelectMajorityAuthor }: { selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void }) {
+// Author"/"Majority Justices" filter by who's on which side of the
+// decision; "Concurring Opinion"/"Dissenting" (each with per-justice
+// "Joined By") filter by who wrote or joined which SPECIFIC opinion.
+function AllCasesMenuPanel({
+  selectedMajorityAuthor,
+  onSelectMajorityAuthor,
+  selectedMajorityJustices,
+  onSelectMajorityJustices,
+  selectedConcurringJustices,
+  onSelectConcurringJustices,
+  selectedConcurringJoinedBy,
+  onSelectConcurringJoinedByForJustice,
+  selectedDissentingJustices,
+  onSelectDissentingJustices,
+  selectedDissentingJoinedBy,
+  onSelectDissentingJoinedByForJustice,
+  caseCount,
+}: {
+  selectedMajorityAuthor: string | null;
+  onSelectMajorityAuthor: (key: string | null) => void;
+  selectedMajorityJustices: string[];
+  onSelectMajorityJustices: (keys: string[]) => void;
+  selectedConcurringJustices: string[];
+  onSelectConcurringJustices: (keys: string[]) => void;
+  selectedConcurringJoinedBy: Record<string, string[]>;
+  onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+  selectedDissentingJustices: string[];
+  onSelectDissentingJustices: (keys: string[]) => void;
+  selectedDissentingJoinedBy: Record<string, string[]>;
+  onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+  caseCount: number;
+}) {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden bg-[#F2EDE3] px-6 pb-2 pt-[14px]">
       <p className="font-serif text-[20px] font-normal not-italic leading-tight text-[#1A1A1A]">All Cases</p>
-      <p className="mt-[0.4em] text-[13px] font-normal italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
-        2025-6 Term
-      </p>
+      <div className="mt-[0.4em] flex items-baseline justify-between gap-2">
+        <p className="text-[13px] font-normal italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
+          2025-6 Term
+        </p>
+        <p className="whitespace-nowrap text-[13px] font-normal italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
+          Cases: {caseCount}
+        </p>
+      </div>
       <p className="mb-[0.5em] mt-[16px] text-left font-serif text-[14px] font-bold text-[#1A1A1A]">Filters</p>
       <MajorityAuthorFilter value={selectedMajorityAuthor} onChange={onSelectMajorityAuthor} />
+      <div className="mt-[0.8em]">
+        <MultiSelectJusticeFilter label="Majority Justices" clearLabel="All Justices" options={ALL_JUSTICES} value={selectedMajorityJustices} onChange={onSelectMajorityJustices} />
+      </div>
+      <div className="mt-[0.8em]">
+        <OpinionSideFilter
+          label="Concurring Opinion"
+          selectedJustices={selectedConcurringJustices}
+          onSelectJustices={onSelectConcurringJustices}
+          selectedJoinedBy={selectedConcurringJoinedBy}
+          onSelectJoinedByForJustice={onSelectConcurringJoinedByForJustice}
+        />
+      </div>
+      <div className="mt-[0.8em]">
+        <OpinionSideFilter
+          label="Dissenting"
+          selectedJustices={selectedDissentingJustices}
+          onSelectJustices={onSelectDissentingJustices}
+          selectedJoinedBy={selectedDissentingJoinedBy}
+          onSelectJoinedByForJustice={onSelectDissentingJoinedByForJustice}
+        />
+      </div>
     </div>
   );
 }
@@ -1854,18 +2104,68 @@ function DocketDecidedPanel({ items, today, onSelectCase }: { items: DecidedItem
 // in place via ScrollableRegion -- the same always-visible-thumb scrollbar
 // case panels use, since native scrollbars stay hidden on macOS overlay
 // scrollbars.
-function AllCasesListPanel({ items, today, onSelectCase, selectedMajorityAuthor }: { items: DecidedItem[]; today: string; onSelectCase: (slug: string) => void; selectedMajorityAuthor: string | null }) {
-  const filteredItems = selectedMajorityAuthor ? items.filter((item) => item.majorityAuthor === selectedMajorityAuthor) : items;
+// Matches any ONE of the selected justices' majority-side membership, not
+// all of them together. Lifted up to SectionPanels so AllCasesMenuPanel's
+// case count and AllCasesListPanel's own list are always counting the
+// exact same set, never two separately-filtered lists drifting apart.
+// Matches if ANY selected justice is on the given side (sideJustices) for
+// this case AND, when that specific justice also has a "Joined By" filter
+// set, their OWN authored opinion (found in `summaries`) was joined by ANY
+// of the selected joiners. A selected justice with no joined-by filter set
+// needs only to be on that side -- no further constraint.
+// Matches on AUTHORSHIP (did the selected justice write this opinion),
+// not side membership -- a justice who only joined someone else's
+// concurrence/dissent without writing their own doesn't count here (that's
+// majoritySideJustices' question, "who was on the losing side," a
+// different one). Keeping this authorship-only is also what makes "Joined
+// By" always meaningful: every justice this can match already has an
+// entry in `summaries` for it to look joiners up in.
+function matchesOpinionSide(
+  summaries: { author: string; joinedBy: string[] }[],
+  selectedJustices: string[],
+  selectedJoinedBy: Record<string, string[]>,
+): boolean {
+  if (selectedJustices.length === 0) return true;
+  return selectedJustices.some((key) => {
+    const authored = summaries.find((s) => s.author === key);
+    if (!authored) return false;
+    const joinedByFilter = selectedJoinedBy[key];
+    if (!joinedByFilter || joinedByFilter.length === 0) return true;
+    return joinedByFilter.some((j) => authored.joinedBy.includes(j));
+  });
+}
+
+function filterAllCasesItems(
+  items: DecidedItem[],
+  selectedMajorityAuthor: string | null,
+  selectedMajorityJustices: string[],
+  selectedConcurringJustices: string[],
+  selectedConcurringJoinedBy: Record<string, string[]>,
+  selectedDissentingJustices: string[],
+  selectedDissentingJoinedBy: Record<string, string[]>,
+): DecidedItem[] {
+  return items
+    .filter((item) => !selectedMajorityAuthor || item.majorityAuthor === selectedMajorityAuthor)
+    // Ground-truth per-justice side from public.decisions (majoritySideJustices),
+    // not "not in dissentAuthors" -- dissentAuthors only lists justices who
+    // separately AUTHORED a dissent, silently missing anyone who joined
+    // another's dissent without writing their own.
+    .filter((item) => selectedMajorityJustices.length === 0 || selectedMajorityJustices.some((key) => item.majoritySideJustices.includes(key)))
+    .filter((item) => matchesOpinionSide(item.concurringSummaries, selectedConcurringJustices, selectedConcurringJoinedBy))
+    .filter((item) => matchesOpinionSide(item.dissentSummaries, selectedDissentingJustices, selectedDissentingJoinedBy));
+}
+
+function AllCasesListPanel({ items, today, onSelectCase }: { items: DecidedItem[]; today: string; onSelectCase: (slug: string) => void }) {
   return (
     <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="px-6 pb-2 pt-[14px]">
       <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">All Cases</p>
-      {filteredItems.length === 0 ? (
+      {items.length === 0 ? (
         <p className="text-center text-[13px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.7 }}>
           No cases.
         </p>
       ) : (
         <div className="grid grid-cols-[2fr_1fr] gap-x-3 gap-y-[1em]">
-          {filteredItems.map((item) => {
+          {items.map((item) => {
             const isToday = item.decisionDate === today;
             const caseNumber = item.sub.split(" · ")[1] ?? item.sub;
             return (
@@ -2068,7 +2368,7 @@ function AboutRightPanel() {
   );
 }
 
-export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow, selectedMajorityAuthor, onSelectMajorityAuthor }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string; selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void }) {
+export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow, selectedMajorityAuthor, onSelectMajorityAuthor, selectedMajorityJustices, onSelectMajorityJustices, selectedConcurringJustices, onSelectConcurringJustices, selectedConcurringJoinedBy, onSelectConcurringJoinedByForJustice, selectedDissentingJustices, onSelectDissentingJustices, selectedDissentingJoinedBy, onSelectDissentingJoinedByForJustice }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string; selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void; selectedMajorityJustices: string[]; onSelectMajorityJustices: (keys: string[]) => void; selectedConcurringJustices: string[]; onSelectConcurringJustices: (keys: string[]) => void; selectedConcurringJoinedBy: Record<string, string[]>; onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedDissentingJustices: string[]; onSelectDissentingJustices: (keys: string[]) => void; selectedDissentingJoinedBy: Record<string, string[]>; onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void }) {
   const [selectedOpinionsItem, setSelectedOpinionsItem] = useState<string | null>(DEFAULT_OPINIONS_ITEM);
   // "Justices" submenu items are each justice's own displayName (see
   // OPINIONS_MENU) -- resolve the selected one back to a justice/slug so
@@ -2076,11 +2376,34 @@ export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems
   const selectedJustice = ALL_JUSTICES.find((j) => j.displayName === selectedOpinionsItem) ?? null;
   const selectedJusticeSlug = selectedJustice ? PERSON_SLUG_BY_JUSTICE_KEY[selectedJustice.key] : null;
   const maxTotalOpinions = Math.max(1, ...justices.map((j) => j.majorityOpinions + j.concurrences + j.dissents));
+  const allCasesFilteredItems = filterAllCasesItems(
+    decidedItems,
+    selectedMajorityAuthor,
+    selectedMajorityJustices,
+    selectedConcurringJustices,
+    selectedConcurringJoinedBy,
+    selectedDissentingJustices,
+    selectedDissentingJoinedBy,
+  );
 
   return (
     <>
-      {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} /> : active === "all-cases" ? <AllCasesMenuPanel selectedMajorityAuthor={selectedMajorityAuthor} onSelectMajorityAuthor={onSelectMajorityAuthor} /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : selectedJusticeSlug ? <JusticeTotalWordsPanel totalWords={totalWordsByJustice[selectedJusticeSlug] ?? 0} longest={opinionLengthStats.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} shortest={opinionLengthStats.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} justiceSlug={selectedJusticeSlug} justice={justices.find((j) => j.key === selectedJustice?.key) ?? null} maxTotal={maxTotalOpinions} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={decidedItems} today={today} onSelectCase={onSelectCase} selectedMajorityAuthor={selectedMajorityAuthor} /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} /> : active === "all-cases" ? <AllCasesMenuPanel
+                selectedMajorityAuthor={selectedMajorityAuthor}
+                onSelectMajorityAuthor={onSelectMajorityAuthor}
+                selectedMajorityJustices={selectedMajorityJustices}
+                onSelectMajorityJustices={onSelectMajorityJustices}
+                selectedConcurringJustices={selectedConcurringJustices}
+                onSelectConcurringJustices={onSelectConcurringJustices}
+                selectedConcurringJoinedBy={selectedConcurringJoinedBy}
+                onSelectConcurringJoinedByForJustice={onSelectConcurringJoinedByForJustice}
+                selectedDissentingJustices={selectedDissentingJustices}
+                onSelectDissentingJustices={onSelectDissentingJustices}
+                selectedDissentingJoinedBy={selectedDissentingJoinedBy}
+                onSelectDissentingJoinedByForJustice={onSelectDissentingJoinedByForJustice}
+                caseCount={allCasesFilteredItems.length}
+              /> : <PlaceholderPanel active={active} index={1} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : selectedJusticeSlug ? <JusticeTotalWordsPanel totalWords={totalWordsByJustice[selectedJusticeSlug] ?? 0} longest={opinionLengthStats.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} shortest={opinionLengthStats.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} justiceSlug={selectedJusticeSlug} justice={justices.find((j) => j.key === selectedJustice?.key) ?? null} maxTotal={maxTotalOpinions} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} />}
       {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeByJusticePanel title="Longest" data={opinionLengthStats.longestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeByJusticePanel title="Shortest" data={opinionLengthStats.shortestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <VolumeByJusticePanel justices={justices} highlights={opinionJoinerHighlights} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Concurrences and Dissents" ? <OpinionsVolumeHighlightsImagePanel /> : selectedOpinionsItem === "All Votes" ? <OpinionsAlignmentImagePanel /> : selectedOpinionsItem === "Joiners" ? <JoinersImagePanel /> : selectedJusticeSlug ? <MajorityMinorityBarChart rate={majorityMinorityRateByJustice[selectedJusticeSlug] ?? null} agreementPairs={justiceAgreementGrid} justiceSlug={selectedJusticeSlug} /> : <PlaceholderPanel active={active} index={3} /> : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} /> : active === "all-cases" ? <AllCasesImagePanel /> : <PlaceholderPanel active={active} index={3} />}
     </>
   );
