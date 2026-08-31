@@ -162,6 +162,13 @@ export type Database = {
             foreignKeyName: "amicus_briefs_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "amicus_briefs_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -290,6 +297,13 @@ export type Database = {
             foreignKeyName: "appellate_impacts_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "appellate_impacts_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -365,6 +379,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "case_lower_courts_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -476,6 +497,13 @@ export type Database = {
             foreignKeyName: "case_participations_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "case_participations_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -577,6 +605,13 @@ export type Database = {
             foreignKeyName: "case_podcast_episodes_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: true
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "case_podcast_episodes_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -649,6 +684,13 @@ export type Database = {
             foreignKeyName: "case_terms_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "case_terms_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -687,6 +729,7 @@ export type Database = {
           docket_number: string | null
           id: string
           is_stub: boolean
+          issue_category_id: string | null
           petitioner_argument: string | null
           petitioner_name: string | null
           petitioner_supporting_points: Json
@@ -714,6 +757,7 @@ export type Database = {
           docket_number?: string | null
           id?: string
           is_stub?: boolean
+          issue_category_id?: string | null
           petitioner_argument?: string | null
           petitioner_name?: string | null
           petitioner_supporting_points?: Json
@@ -741,6 +785,7 @@ export type Database = {
           docket_number?: string | null
           id?: string
           is_stub?: boolean
+          issue_category_id?: string | null
           petitioner_argument?: string | null
           petitioner_name?: string | null
           petitioner_supporting_points?: Json
@@ -778,6 +823,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "term_stats_circuit_scorecard_detail"
             referencedColumns: ["court_id"]
+          },
+          {
+            foreignKeyName: "cases_issue_category_id_fkey"
+            columns: ["issue_category_id"]
+            isOneToOne: false
+            referencedRelation: "issue_categories"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -843,6 +895,13 @@ export type Database = {
             columns: ["scotus_case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "circuit_splits_scotus_case_id_fkey"
+            columns: ["scotus_case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -930,6 +989,13 @@ export type Database = {
             foreignKeyName: "citations_cited_case_id_fkey"
             columns: ["cited_case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "citations_cited_case_id_fkey"
+            columns: ["cited_case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -980,6 +1046,13 @@ export type Database = {
             columns: ["citing_case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "citations_citing_case_id_fkey"
+            columns: ["citing_case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -1109,6 +1182,13 @@ export type Database = {
             foreignKeyName: "decision_ties_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "decision_ties_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -1212,6 +1292,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "decisions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -1324,6 +1411,13 @@ export type Database = {
             columns: ["triggered_by_case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "dossier_events_triggered_by_case_id_fkey"
+            columns: ["triggered_by_case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -1454,6 +1548,27 @@ export type Database = {
           started_at?: string
           stats?: Json
           status?: string
+        }
+        Relationships: []
+      }
+      issue_categories: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          slug?: string
         }
         Relationships: []
       }
@@ -1716,6 +1831,13 @@ export type Database = {
             foreignKeyName: "key_exchanges_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "key_exchanges_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -1965,6 +2087,13 @@ export type Database = {
             foreignKeyName: "opinions_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "opinions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -2046,6 +2175,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: true
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "oral_argument_transcripts_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: true
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -2157,6 +2293,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "pattern_breaks_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -2275,6 +2418,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "publication_cases_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -2485,6 +2635,13 @@ export type Database = {
             foreignKeyName: "split_positions_case_id_fkey"
             columns: ["case_id"]
             isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "split_positions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
             referencedRelation: "term_stats_days_to_decision"
             referencedColumns: ["case_id"]
           },
@@ -2564,6 +2721,13 @@ export type Database = {
             columns: ["citing_case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "statute_citations_citing_case_id_fkey"
+            columns: ["citing_case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -2679,6 +2843,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "votes_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -2828,6 +2999,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "decisions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {
@@ -3181,6 +3359,13 @@ export type Database = {
             columns: ["case_id"]
             isOneToOne: false
             referencedRelation: "term_stats_closely_divided_cases"
+            referencedColumns: ["case_id"]
+          },
+          {
+            foreignKeyName: "decisions_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "term_stats_companion_cases"
             referencedColumns: ["case_id"]
           },
           {

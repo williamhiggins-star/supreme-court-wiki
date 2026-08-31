@@ -101,6 +101,7 @@ export interface CaseSummary {
   // lists justices who separately AUTHORED a dissent, silently missing
   // anyone who joined another's dissent without writing their own.
   majoritySideJustices?: string[]; // justice keys
+  issueCategory?: { slug: string; label: string } | null; // Feldman's Stat Pack issue classification (DB-sourced cases only)
   // Justices who concurred in part AND dissented in part — a distinct
   // opinion type from a pure concurrence or pure dissent. Kept separate
   // rather than forced into concurrenceAuthors/dissentAuthors so the UI

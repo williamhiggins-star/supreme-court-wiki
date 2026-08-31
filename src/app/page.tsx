@@ -61,6 +61,7 @@ export type DecidedItem = {
   // matched justice's own entry here for who joined THEIR opinion.
   concurringSummaries: { author: string; joinedBy: string[] }[];
   dissentSummaries: { author: string; joinedBy: string[] }[];
+  issueCategory: { slug: string; label: string } | null;
 };
 
 export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: string | null })[]): DecidedItem[] {
@@ -97,6 +98,7 @@ export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: strin
       majoritySideJustices: c.majoritySideJustices ?? [],
       concurringSummaries: (c.concurringSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
       dissentSummaries: (c.dissentSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
+      issueCategory: c.issueCategory ?? null,
     };
   });
   items.sort((a, b) => {

@@ -2,7 +2,7 @@ import { getDocketStatus, buildDecidedList } from "@/app/page";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
-import { getAllCasesForTerm } from "@/lib/db/cases";
+import { getAllCasesForTerm, getIssueCategories } from "@/lib/db/cases";
 import { getJusticeStatsFromDb } from "@/lib/db/justice-stats";
 import {
   getOpinionLengthStats,
@@ -61,6 +61,10 @@ export default async function ScotusDashboard2({
   arguedCases.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate));
   const decidedItems = buildDecidedList(decidedCases);
 
+  // All Cases, "Issue" filter's dropdown options (Feldman's Stat Pack
+  // classification, backfilled for OT2025 decided cases).
+  const issueCategories = await getIssueCategories();
+
   // Speaking time/turns/opinions panel (JusticesSection.tsx) -- now DB-
   // sourced (justice_stats table) instead of data/justices.json. Same
   // JusticeStat shape, so JusticesSection needs no changes.
@@ -116,6 +120,7 @@ export default async function ScotusDashboard2({
       upcomingCases={upcomingCases}
       arguedCases={arguedCases}
       decidedItems={decidedItems}
+      issueCategories={issueCategories}
       justices={justices}
       opinionLengthStats={opinionLengthStats}
       justiceAgreementGrid={justiceAgreementGrid}

@@ -1528,6 +1528,96 @@ function MajorityAuthorFilter({ value, onChange }: { value: string | null; onCha
   );
 }
 
+// Single-select, same trigger/dropdown design as MajorityAuthorFilter, just
+// text-only (no justice portrait) and a much longer options list (38 Stat
+// Pack issue categories vs. 9 justices) -- a single column at this width
+// runs to 38 rows, likely taller than the (overflow-hidden, unscrolled)
+// filters panel can show without clipping past the bottom edge.
+function IssueFilter({ options, value, onChange }: { options: { slug: string; label: string }[]; value: string | null; onChange: (slug: string | null) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = value ? options.find((o) => o.slug === value) : undefined;
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative w-1/2">
+      <div className="inline-flex w-max max-w-none items-center gap-[6px] whitespace-nowrap">
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          className="inline-flex items-center gap-[6px] border-0 bg-transparent p-0 text-left transition-colors hover:text-[#C43030]"
+        >
+          <span className="font-serif text-[13px] font-normal not-italic text-[#6B6560]">Issue</span>
+          <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
+        </button>
+        {selected && (
+          <span className="text-[13px] not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+            {selected.label}
+          </span>
+        )}
+        {selected && (
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            aria-label={`Remove ${selected.label}`}
+            className="text-[13px] leading-none text-[#6B6560] transition-colors hover:text-[#C43030]"
+          >
+            ×
+          </button>
+        )}
+      </div>
+      {open && (
+        <div className="absolute left-0 top-full z-10 mt-[2px] w-[300px] border border-[#C4A882] bg-[#FAFAF7] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+          <button
+            type="button"
+            onClick={() => {
+              onChange(null);
+              setOpen(false);
+            }}
+            className="block w-full px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value === null ? 700 : 400 }}
+          >
+            All Issues
+          </button>
+          {/* Capped height + scroll -- 38 options in 2 columns runs to 19
+              rows, taller than the filters panel (overflow-hidden, no
+              scroll of its own) can show without clipping past its bottom
+              edge. "All Issues" stays outside the scroll area, always
+              reachable without scrolling first. */}
+          <ScrollableRegion outerClassName="" innerClassName="" innerStyle={{ maxHeight: 140 }}>
+            <div className="grid grid-cols-2">
+              {options
+                .filter((o) => o.slug !== value)
+                .map((o) => (
+                  <button
+                    key={o.slug}
+                    type="button"
+                    onClick={() => {
+                      onChange(o.slug);
+                      setOpen(false);
+                    }}
+                    className="flex min-w-0 items-center px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+                    style={{ fontFamily: "'Lora', Georgia, serif" }}
+                  >
+                    <span className="truncate">{o.label}</span>
+                  </button>
+                ))}
+            </div>
+          </ScrollableRegion>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Multi-select sibling of MajorityAuthorFilter -- same trigger/list design
 // and click-outside-to-close behavior, but toggles instead of replacing the
 // selection, and the list stays open after a click so more than one justice
@@ -1726,6 +1816,9 @@ function AllCasesMenuPanel({
   onSelectDissentingJustices,
   selectedDissentingJoinedBy,
   onSelectDissentingJoinedByForJustice,
+  issueCategories,
+  selectedIssue,
+  onSelectIssue,
   caseCount,
 }: {
   selectedMajorityAuthor: string | null;
@@ -1740,6 +1833,9 @@ function AllCasesMenuPanel({
   onSelectDissentingJustices: (keys: string[]) => void;
   selectedDissentingJoinedBy: Record<string, string[]>;
   onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+  issueCategories: { slug: string; label: string }[];
+  selectedIssue: string | null;
+  onSelectIssue: (slug: string | null) => void;
   caseCount: number;
 }) {
   return (
@@ -1775,6 +1871,9 @@ function AllCasesMenuPanel({
           selectedJoinedBy={selectedDissentingJoinedBy}
           onSelectJoinedByForJustice={onSelectDissentingJoinedByForJustice}
         />
+      </div>
+      <div className="mt-[0.8em]">
+        <IssueFilter options={issueCategories} value={selectedIssue} onChange={onSelectIssue} />
       </div>
     </div>
   );
@@ -2143,6 +2242,7 @@ function filterAllCasesItems(
   selectedConcurringJoinedBy: Record<string, string[]>,
   selectedDissentingJustices: string[],
   selectedDissentingJoinedBy: Record<string, string[]>,
+  selectedIssue: string | null,
 ): DecidedItem[] {
   return items
     .filter((item) => !selectedMajorityAuthor || item.majorityAuthor === selectedMajorityAuthor)
@@ -2152,7 +2252,8 @@ function filterAllCasesItems(
     // another's dissent without writing their own.
     .filter((item) => selectedMajorityJustices.length === 0 || selectedMajorityJustices.some((key) => item.majoritySideJustices.includes(key)))
     .filter((item) => matchesOpinionSide(item.concurringSummaries, selectedConcurringJustices, selectedConcurringJoinedBy))
-    .filter((item) => matchesOpinionSide(item.dissentSummaries, selectedDissentingJustices, selectedDissentingJoinedBy));
+    .filter((item) => matchesOpinionSide(item.dissentSummaries, selectedDissentingJustices, selectedDissentingJoinedBy))
+    .filter((item) => !selectedIssue || item.issueCategory?.slug === selectedIssue);
 }
 
 function AllCasesListPanel({ items, today, onSelectCase }: { items: DecidedItem[]; today: string; onSelectCase: (slug: string) => void }) {
@@ -2368,7 +2469,7 @@ function AboutRightPanel() {
   );
 }
 
-export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow, selectedMajorityAuthor, onSelectMajorityAuthor, selectedMajorityJustices, onSelectMajorityJustices, selectedConcurringJustices, onSelectConcurringJustices, selectedConcurringJoinedBy, onSelectConcurringJoinedByForJustice, selectedDissentingJustices, onSelectDissentingJustices, selectedDissentingJoinedBy, onSelectDissentingJoinedByForJustice }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string; selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void; selectedMajorityJustices: string[]; onSelectMajorityJustices: (keys: string[]) => void; selectedConcurringJustices: string[]; onSelectConcurringJustices: (keys: string[]) => void; selectedConcurringJoinedBy: Record<string, string[]>; onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedDissentingJustices: string[]; onSelectDissentingJustices: (keys: string[]) => void; selectedDissentingJoinedBy: Record<string, string[]>; onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void }) {
+export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, issueCategories, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow, selectedMajorityAuthor, onSelectMajorityAuthor, selectedMajorityJustices, onSelectMajorityJustices, selectedConcurringJustices, onSelectConcurringJustices, selectedConcurringJoinedBy, onSelectConcurringJoinedByForJustice, selectedDissentingJustices, onSelectDissentingJustices, selectedDissentingJoinedBy, onSelectDissentingJoinedByForJustice, selectedIssue, onSelectIssue }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; issueCategories: { slug: string; label: string }[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string; selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void; selectedMajorityJustices: string[]; onSelectMajorityJustices: (keys: string[]) => void; selectedConcurringJustices: string[]; onSelectConcurringJustices: (keys: string[]) => void; selectedConcurringJoinedBy: Record<string, string[]>; onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedDissentingJustices: string[]; onSelectDissentingJustices: (keys: string[]) => void; selectedDissentingJoinedBy: Record<string, string[]>; onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedIssue: string | null; onSelectIssue: (slug: string | null) => void }) {
   const [selectedOpinionsItem, setSelectedOpinionsItem] = useState<string | null>(DEFAULT_OPINIONS_ITEM);
   // "Justices" submenu items are each justice's own displayName (see
   // OPINIONS_MENU) -- resolve the selected one back to a justice/slug so
@@ -2384,6 +2485,7 @@ export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems
     selectedConcurringJoinedBy,
     selectedDissentingJustices,
     selectedDissentingJoinedBy,
+    selectedIssue,
   );
 
   return (
@@ -2401,6 +2503,9 @@ export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems
                 onSelectDissentingJustices={onSelectDissentingJustices}
                 selectedDissentingJoinedBy={selectedDissentingJoinedBy}
                 onSelectDissentingJoinedByForJustice={onSelectDissentingJoinedByForJustice}
+                issueCategories={issueCategories}
+                selectedIssue={selectedIssue}
+                onSelectIssue={onSelectIssue}
                 caseCount={allCasesFilteredItems.length}
               /> : <PlaceholderPanel active={active} index={1} />}
       {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : selectedJusticeSlug ? <JusticeTotalWordsPanel totalWords={totalWordsByJustice[selectedJusticeSlug] ?? 0} longest={opinionLengthStats.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} shortest={opinionLengthStats.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} justiceSlug={selectedJusticeSlug} justice={justices.find((j) => j.key === selectedJustice?.key) ?? null} maxTotal={maxTotalOpinions} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} />}

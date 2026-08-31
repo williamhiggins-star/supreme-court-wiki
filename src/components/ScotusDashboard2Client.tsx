@@ -10,6 +10,7 @@ import { CaseTitleBar } from "@/components/CaseTitleBar";
 import { DEFAULT_SECTION, type SectionKey } from "@/lib/dashboard2-sections";
 import type { CaseSummary, Article } from "@/types";
 import type { DecidedItem } from "@/app/page";
+import type { IssueCategoryRef } from "@/lib/db/cases";
 import type { JusticeStat } from "@/lib/justices";
 import type { CalendarEvent } from "@/lib/calendar";
 import type { CircuitSplit } from "@/lib/circuit-splits";
@@ -27,6 +28,7 @@ export function ScotusDashboard2Client({
   upcomingCases,
   arguedCases,
   decidedItems,
+  issueCategories,
   justices,
   opinionLengthStats,
   justiceAgreementGrid,
@@ -48,6 +50,7 @@ export function ScotusDashboard2Client({
   upcomingCases: CaseSummary[];
   arguedCases: CaseSummary[];
   decidedItems: DecidedItem[];
+  issueCategories: IssueCategoryRef[];
   justices: JusticeStat[];
   opinionLengthStats: OpinionLengthStats;
   justiceAgreementGrid: JusticeAgreementPair[];
@@ -75,6 +78,7 @@ export function ScotusDashboard2Client({
   const [selectedConcurringJoinedBy, setSelectedConcurringJoinedBy] = useState<Record<string, string[]>>({});
   const [selectedDissentingJustices, setSelectedDissentingJustices] = useState<string[]>([]);
   const [selectedDissentingJoinedBy, setSelectedDissentingJoinedBy] = useState<Record<string, string[]>>({});
+  const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
 
   function handleSelectConcurringJoinedBy(justiceKey: string, joiners: string[]) {
     setSelectedConcurringJoinedBy((prev) => ({ ...prev, [justiceKey]: joiners }));
@@ -113,6 +117,7 @@ export function ScotusDashboard2Client({
             upcomingCases={upcomingCases}
             arguedCases={arguedCases}
             decidedItems={decidedItems}
+            issueCategories={issueCategories}
             justices={justices}
             opinionLengthStats={opinionLengthStats}
             justiceAgreementGrid={justiceAgreementGrid}
@@ -138,6 +143,8 @@ export function ScotusDashboard2Client({
             onSelectDissentingJustices={setSelectedDissentingJustices}
             selectedDissentingJoinedBy={selectedDissentingJoinedBy}
             onSelectDissentingJoinedByForJustice={handleSelectDissentingJoinedBy}
+            selectedIssue={selectedIssue}
+            onSelectIssue={setSelectedIssue}
           />
         </div>
       )}

@@ -26,9 +26,15 @@ export interface LowerCourtInfo {
   state: string | null;
 }
 
+export interface IssueCategoryRef {
+  slug: string;
+  label: string;
+}
+
 export interface DbCaseDetail extends CaseSummary {
   disposition: string | null;
   voteLine: string | null;
+  issueCategory: IssueCategoryRef | null;
   lowerCourts: LowerCourtInfo[];
   fullTextByOpinionId: Record<string, string>;
   transcriptText: string | null;
@@ -87,6 +93,7 @@ const CASE_DETAIL_SELECT = `
   petitioner_name, petitioner_argument, petitioner_supporting_points,
   respondent_name, respondent_argument, respondent_supporting_points,
   case_lower_courts ( docket_number, courts ( name, level, circuit_ordinal, state ) ),
+  issue_category:issue_categories ( slug, label ),
   opinions ( id, kind, author_id, summary, full_text, full_text_url, people!opinions_author_id_fkey ( slug ) ),
   oral_argument_transcripts ( transcript_text, source_url ),
   case_podcast_episodes ( episode_url, match_method, match_confidence ),
@@ -281,6 +288,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[], decisio
 
     disposition: caseRow.disposition,
     voteLine: caseRow.vote_line,
+    issueCategory: caseRow.issue_category,
     lowerCourts,
     fullTextByOpinionId,
     transcriptText: transcript?.transcript_text ?? null,
@@ -412,4 +420,14 @@ export async function getAllDecidedCaseSlugs(term: string = currentTermYear()): 
     docketNumber: c.docket_number,
     decidedDate: c.decided_date,
   }));
+}
+
+/** Every issue category (Feldman's Stat Pack classification, backfilled
+ *  for OT2025 decided cases), alphabetical by label -- for populating the
+ *  "Issue" filter's dropdown. Not term-scoped: the lookup table itself
+ *  isn't, and there's no per-term reason to filter it. */
+export async function getIssueCategories(): Promise<IssueCategoryRef[]> {
+  const { data, error } = await db.from("issue_categories").select("slug, label").order("label");
+  if (error) throw new Error(`getIssueCategories: ${error.message}`);
+  return data ?? [];
 }
