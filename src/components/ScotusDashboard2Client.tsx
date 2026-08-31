@@ -66,6 +66,10 @@ export function ScotusDashboard2Client({
 }) {
   const [active, setActive] = useState<SectionKey>(DEFAULT_SECTION);
   const [activeCaseSlug, setActiveCaseSlug] = useState<string | null>(initialCaseSlug);
+  // Lifted above SectionPanels (rather than local state there) because
+  // SectionPanels unmounts whenever a case panel is open -- selecting a
+  // case and hitting "back" would otherwise silently reset the filter.
+  const [selectedMajorityAuthor, setSelectedMajorityAuthor] = useState<string | null>(null);
 
   function handleSelectSection(key: SectionKey) {
     setActiveCaseSlug(null);
@@ -109,6 +113,8 @@ export function ScotusDashboard2Client({
             onSelectCase={setActiveCaseSlug}
             today={today}
             tomorrow={tomorrow}
+            selectedMajorityAuthor={selectedMajorityAuthor}
+            onSelectMajorityAuthor={setSelectedMajorityAuthor}
           />
         </div>
       )}

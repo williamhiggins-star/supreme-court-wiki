@@ -37,8 +37,8 @@ export interface DbCaseDetail extends CaseSummary {
   spotifyMatchConfidence: number | null;
 }
 
-const CONCURRENCE_KINDS = new Set(["concurrence", "concurrence_in_judgment", "concurrence_in_part"]);
-const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
+export const CONCURRENCE_KINDS = new Set(["concurrence", "concurrence_in_judgment", "concurrence_in_part"]);
+export const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
 
 // cases.status -> CaseSummary.docketStatus. 'argued' is deliberately
 // omitted -- CaseSummary.docketStatus has no "argued" literal; getDocketStatus()
