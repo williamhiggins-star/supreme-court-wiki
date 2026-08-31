@@ -104,6 +104,12 @@ export interface JusticeOpinionExtreme {
   caseCaption: string;
   wordCount: number;
   kind: string;
+  // Added for the Opinions section's "Justices" per-justice panels (which
+  // need the opinion's joiners, not just its length) -- the "Longest/
+  // Shortest Opinion by Justice" bar chart these fields were originally
+  // added alongside ignores them.
+  opinionId: string;
+  joinerSlugs: string[];
 }
 
 export interface OpinionLengthStats {
@@ -201,9 +207,27 @@ export async function getOpinionLengthStats(term: string = currentTermYear()): P
     shortestConcurrence: extremeMatching("shortest", CONCURRENCE_KINDS),
   };
 
-  const opinionIds = Object.values(picks)
-    .filter((r): r is NonNullable<typeof r> => r !== null)
-    .map((r) => r.opinion_id);
+  function byAuthorExtreme(mode: "longest" | "shortest"): Map<string, (typeof rows)[number]> {
+    const byAuthor = new Map<string, (typeof rows)[number]>();
+    for (const r of rows) {
+      const slug = r.people?.slug;
+      if (!slug) continue;
+      const existing = byAuthor.get(slug);
+      const better =
+        !existing || (mode === "longest" ? r.word_count > existing.word_count : r.word_count < existing.word_count);
+      if (better) byAuthor.set(slug, r);
+    }
+    return byAuthor;
+  }
+  const longestByAuthor = byAuthorExtreme("longest");
+  const shortestByAuthor = byAuthorExtreme("shortest");
+
+  const opinionIds = [
+    ...Object.values(picks)
+      .filter((r): r is NonNullable<typeof r> => r !== null)
+      .map((r) => r.opinion_id),
+    ...[...longestByAuthor.values(), ...shortestByAuthor.values()].map((r) => r.opinion_id),
+  ];
   const joinersByOpinion = await getJoinerSlugsByOpinionIds(opinionIds);
 
   function toDetail(row: (typeof rows)[number] | null): OpinionLengthDetail | null {
@@ -219,16 +243,7 @@ export async function getOpinionLengthStats(term: string = currentTermYear()): P
     };
   }
 
-  function perAuthorExtreme(mode: "longest" | "shortest"): JusticeOpinionExtreme[] {
-    const byAuthor = new Map<string, (typeof rows)[number]>();
-    for (const r of rows) {
-      const slug = r.people?.slug;
-      if (!slug) continue;
-      const existing = byAuthor.get(slug);
-      const better =
-        !existing || (mode === "longest" ? r.word_count > existing.word_count : r.word_count < existing.word_count);
-      if (better) byAuthor.set(slug, r);
-    }
+  function toJusticeExtremeList(byAuthor: Map<string, (typeof rows)[number]>): JusticeOpinionExtreme[] {
     return [...byAuthor.entries()]
       .map(([justiceSlug, r]) => ({
         justiceSlug,
@@ -236,6 +251,8 @@ export async function getOpinionLengthStats(term: string = currentTermYear()): P
         caseCaption: r.caption,
         wordCount: r.word_count,
         kind: r.kind,
+        opinionId: r.opinion_id,
+        joinerSlugs: joinersByOpinion.get(r.opinion_id) ?? [],
       }))
       .sort((a, b) => b.wordCount - a.wordCount);
   }
@@ -249,9 +266,69 @@ export async function getOpinionLengthStats(term: string = currentTermYear()): P
     shortestOverall: toDetail(picks.shortestOverall),
     shortestMajority: toDetail(picks.shortestMajority),
     shortestConcurrence: toDetail(picks.shortestConcurrence),
-    longestByJustice: perAuthorExtreme("longest"),
-    shortestByJustice: perAuthorExtreme("shortest"),
+    longestByJustice: toJusticeExtremeList(longestByAuthor),
+    shortestByJustice: toJusticeExtremeList(shortestByAuthor),
   };
+}
+
+/**
+ * Opinions section, "Justices" menu item: total word count across every
+ * opinion (any kind) each justice authored this term, keyed by slug. Reuses
+ * the same term_stats_opinion_word_count_extremes rows getOpinionLengthStats
+ * reads (one row per opinion, with its author's slug and word_count) and
+ * just sums by author instead of picking longest/shortest.
+ */
+export async function getTotalWordsByJustice(term: string = currentTermYear()): Promise<Record<string, number>> {
+  const { data, error } = await db
+    .from("term_stats_opinion_word_count_extremes")
+    .select("word_count, people!opinions_author_id_fkey ( slug )")
+    .eq("term", term);
+  if (error) throw new Error(`getTotalWordsByJustice: ${error.message}`);
+
+  const totals: Record<string, number> = {};
+  for (const r of data ?? []) {
+    const slug = r.people?.slug;
+    if (!slug || r.word_count == null) continue;
+    totals[slug] = (totals[slug] ?? 0) + r.word_count;
+  }
+  return totals;
+}
+
+export interface JusticeMajorityMinorityRate {
+  casesParticipated: number;
+  majorityCases: number;
+  majorityPct: number;
+  minorityPct: number;
+}
+
+/**
+ * Opinions section, "Justices" menu item: how often each justice ended up
+ * on the majority side vs. the minority (dissenting) side this term, keyed
+ * by slug. Reads term_stats_majority_frequency (§7's per-justice side
+ * count/majority_pct, all cases -- see that view's denominator caveat:
+ * recusal isn't tracked yet, so cases_participated over-counts until that
+ * pipeline gap is fixed). minorityPct is just 100 - majorityPct since a
+ * case has exactly two sides.
+ */
+export async function getMajorityMinorityRateByJustice(term: string = currentTermYear()): Promise<Record<string, JusticeMajorityMinorityRate>> {
+  const { data, error } = await db
+    .from("term_stats_majority_frequency")
+    .select("cases_participated, majority_cases, majority_pct, people ( slug )")
+    .eq("term", term);
+  if (error) throw new Error(`getMajorityMinorityRateByJustice: ${error.message}`);
+
+  const result: Record<string, JusticeMajorityMinorityRate> = {};
+  for (const r of data ?? []) {
+    const slug = r.people?.slug;
+    if (!slug || r.cases_participated == null || r.majority_cases == null || r.majority_pct == null) continue;
+    result[slug] = {
+      casesParticipated: r.cases_participated,
+      majorityCases: r.majority_cases,
+      majorityPct: r.majority_pct,
+      minorityPct: Math.round((100 - r.majority_pct) * 10) / 10,
+    };
+  }
+  return result;
 }
 
 export interface JusticeAgreementPair {

@@ -8,7 +8,7 @@ import type { CaseSummary, Article } from "@/types";
 import type { DecidedItem } from "@/app/page";
 import type { JusticeStat } from "@/lib/justices";
 import { JUSTICE_KEY_BY_PERSON_SLUG } from "@/lib/db/constants";
-import type { OpinionLengthStats, OpinionLengthDetail, JusticeOpinionExtreme, JusticeAgreementPair, OpinionJoinerHighlights, JusticeCaseRef, CasesByCategoryAndJustice, JusticeJoinData } from "@/lib/db/term-stats";
+import type { OpinionLengthStats, OpinionLengthDetail, JusticeOpinionExtreme, JusticeAgreementPair, OpinionJoinerHighlights, JusticeCaseRef, CasesByCategoryAndJustice, JusticeJoinData, JusticeMajorityMinorityRate } from "@/lib/db/term-stats";
 
 const DOCKET_PAGE_SIZE = 4;
 const ARTICLE_PAGE_SIZE = 6;
@@ -1267,6 +1267,177 @@ function ConcurrenceJoinPanel({
   );
 }
 
+// Opinions section, "Justices" menu item, panel 2: total word count across
+// every opinion (any kind) the selected justice authored this term. Being
+// built out for Chief Justice Roberts first as the template for the other
+// eight justices.
+// A justice's longest or shortest opinion this term: heading, then each
+// value (word count, case, type, joiners) on its own indented line.
+// Reuses the Length section's own OpinionLengthCard for the Longest/Shortest
+// blocks below, so this panel matches that panel's fonts and layout exactly
+// rather than a bespoke restyling of the same data. JusticeOpinionExtreme
+// doesn't carry authorSlug (it's implicitly this justice), so it's filled
+// in here to match OpinionLengthDetail's shape.
+function toOpinionLengthDetail(extreme: JusticeOpinionExtreme | null, justiceSlug: string): OpinionLengthDetail | null {
+  if (!extreme) return null;
+  return {
+    opinionId: extreme.opinionId,
+    caseSlug: extreme.caseSlug,
+    caseCaption: extreme.caseCaption,
+    wordCount: extreme.wordCount,
+    kind: extreme.kind,
+    authorSlug: justiceSlug,
+    joinerSlugs: extreme.joinerSlugs,
+  };
+}
+
+function JusticeTotalWordsPanel({ totalWords, longest, shortest, justiceSlug, justice, maxTotal, onSelectCase }: { totalWords: number; longest: JusticeOpinionExtreme | null; shortest: JusticeOpinionExtreme | null; justiceSlug: string; justice: JusticeStat | null; maxTotal: number; onSelectCase: (slug: string) => void }) {
+  const selfJustice = resolveJustice(justiceSlug) ?? null;
+  const longestDetail = toOpinionLengthDetail(longest, justiceSlug);
+  const shortestDetail = toOpinionLengthDetail(shortest, justiceSlug);
+
+  return (
+    <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+      {selfJustice && (
+        <div className="flex items-center justify-center gap-[0.5em]">
+          <Image src={selfJustice.photo} alt={selfJustice.displayName} width={32} height={32} className="rounded-full object-cover object-top" style={{ width: 32, height: 32 }} />
+          <p className="text-center font-serif text-[20px] font-normal not-italic text-[#1A1A1A]">{selfJustice.displayName}</p>
+        </div>
+      )}
+      <div>
+        <p className="mb-[0.5em] text-left font-serif text-[14px] font-normal text-[#6B6560]">Total Words Written</p>
+        <p className="ml-[5px] text-[13px] font-normal not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.4 }}>
+          {totalWords.toLocaleString()} words
+        </p>
+      </div>
+      <div className="-mt-[5px]">
+        <p className="mb-[0.5em] text-left font-serif text-[14px] font-normal text-[#6B6560]">
+          Longest Opinion{longestDetail ? ` (${opinionKindLabel(longestDetail.kind)})` : ""}
+        </p>
+        <OpinionLengthCard detail={longestDetail} onSelectCase={onSelectCase} />
+      </div>
+      <div>
+        <p className="mb-[0.5em] text-left font-serif text-[14px] font-normal text-[#6B6560]">
+          Shortest Opinion{shortestDetail ? ` (${opinionKindLabel(shortestDetail.kind)})` : ""}
+        </p>
+        <OpinionLengthCard detail={shortestDetail} onSelectCase={onSelectCase} />
+      </div>
+      {justice && (
+        <div>
+          <p className="mb-[0.5em] text-left font-serif text-[14px] font-normal text-[#6B6560]">Opinions Written</p>
+          <VolumeByJusticeRow justice={justice} maxTotal={maxTotal} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Original size 220px/48px, scaled to 2/3 (147px/32px), then back up 1/4 (184px/40px).
+const MAJORITY_MINORITY_BAR_CHART_HEIGHT = 184;
+
+// Opinions section, "Justices" menu item, panel 3: a two-bar vertical chart
+// -- % of this term's cases the justice sided with the majority vs. the
+// minority (dissenting side). Same majority=forest/dissent=rust color
+// convention as VolumeByJusticeRow's opinion-type segments. Fixed chart
+// height (not stretched to fill the panel), matching the Joiners heatmap's
+// "stays compact, doesn't scale up" precedent.
+// Like AlignmentExtremeColumn (JusticeAgreementPanel), but this panel is
+// already about one fixed justice, so only the OTHER justice in the pair
+// needs a portrait -- not both.
+// A justice's portrait with their name centered below it (as opposed to
+// JusticeChip's side-by-side portrait+name).
+function JusticePortraitStack({ justice }: { justice: (typeof ALL_JUSTICES)[number] }) {
+  return (
+    <div className="flex w-[64px] flex-col items-center gap-[0.3em]">
+      <Image src={justice.photo} alt={justice.displayName} width={28} height={28} className="rounded-full object-cover object-top" style={{ width: 28, height: 28 }} />
+      <p className="text-center text-[9px] font-normal not-italic leading-tight text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+        {justice.displayName}
+      </p>
+    </div>
+  );
+}
+
+// Title, then [self portrait] arrow n% arrow [other portrait] -- arrows
+// point inward (toward n%) for "Votes with Most", outward (away from n%,
+// toward each justice) for "Votes Different Than Most".
+function VotesComparisonRow({ title, pct, self, other, arrowsPointInward }: { title: string; pct: number | null; self: (typeof ALL_JUSTICES)[number] | null; other: (typeof ALL_JUSTICES)[number] | null; arrowsPointInward: boolean }) {
+  const leftArrow = arrowsPointInward ? "→" : "←";
+  const rightArrow = arrowsPointInward ? "←" : "→";
+  return (
+    <div className="flex flex-col items-center text-center">
+      <p className="mb-[0.5em] font-serif text-[14px] font-normal text-[#6B6560]">{title}</p>
+      {self && other && pct != null ? (
+        <div className="flex items-center justify-center gap-x-[6px]">
+          <JusticePortraitStack justice={self} />
+          <span className="text-[14px] not-italic text-[#6B6560]">{leftArrow}</span>
+          <span className="font-serif text-[16px] font-normal not-italic text-[#1A1A1A]">{Math.round(pct)}%</span>
+          <span className="text-[14px] not-italic text-[#6B6560]">{rightArrow}</span>
+          <JusticePortraitStack justice={other} />
+        </div>
+      ) : (
+        <p className="text-[12px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+          No data.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate: JusticeMajorityMinorityRate | null; agreementPairs: JusticeAgreementPair[]; justiceSlug: string }) {
+  const selfJustice = resolveJustice(justiceSlug) ?? null;
+  const relevantPairs = agreementPairs.filter((p) => p.justiceSlug1 === justiceSlug || p.justiceSlug2 === justiceSlug);
+  const mostAlignedPair = relevantPairs.reduce<JusticeAgreementPair | null>((best, p) => (!best || p.agreementPct > best.agreementPct ? p : best), null);
+  const leastAlignedPair = relevantPairs.reduce<JusticeAgreementPair | null>((best, p) => (!best || p.agreementPct < best.agreementPct ? p : best), null);
+  function otherJustice(pair: JusticeAgreementPair | null) {
+    if (!pair) return null;
+    const otherSlug = pair.justiceSlug1 === justiceSlug ? pair.justiceSlug2 : pair.justiceSlug1;
+    return resolveJustice(otherSlug) ?? null;
+  }
+
+  if (!rate) {
+    return (
+      <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+        <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Majority vs. Minority</p>
+        <p className="text-[12px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+          No data.
+        </p>
+      </div>
+    );
+  }
+  const bars = [
+    { label: "Majority", pct: rate.majorityPct, color: "#2C4A3E" },
+    { label: "Minority", pct: rate.minorityPct, color: "#C43030" },
+  ];
+  return (
+    <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
+      <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Majority vs. Minority</p>
+      <div className="flex items-end justify-center gap-x-[40px]" style={{ height: MAJORITY_MINORITY_BAR_CHART_HEIGHT }}>
+        {bars.map((b) => (
+          <div key={b.label} className="flex flex-col items-center">
+            <span className="mb-[0.5em] font-serif text-[11px] font-normal not-italic text-[#1A1A1A]">
+              {b.pct}%
+            </span>
+            <div
+              className="w-[40px] rounded-t-sm"
+              style={{ height: (b.pct / 100) * (MAJORITY_MINORITY_BAR_CHART_HEIGHT - 34), backgroundColor: b.color }}
+            />
+            <span className="mt-[0.5em] whitespace-nowrap text-[9px] font-normal uppercase tracking-wider not-italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+              {b.label}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-[0.75em] text-center text-[9px] font-normal not-italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
+        {rate.majorityCases} of {rate.casesParticipated} cases in the majority
+      </p>
+      <div className="mt-[1em] flex flex-col gap-[1em]">
+        <VotesComparisonRow title="Votes with Most" pct={mostAlignedPair?.agreementPct ?? null} self={selfJustice} other={otherJustice(mostAlignedPair)} arrowsPointInward={true} />
+        <VotesComparisonRow title="Votes Different Than Most" pct={leastAlignedPair ? 100 - leastAlignedPair.agreementPct : null} self={selfJustice} other={otherJustice(leastAlignedPair)} arrowsPointInward={false} />
+      </div>
+    </div>
+  );
+}
+
 function PlaceholderPanel({ active, index }: { active: SectionKey; index: number }) {
   return (
     <div className="flex h-full min-w-0 items-center justify-center border border-dashed border-[#C4A882]">
@@ -1727,14 +1898,20 @@ function AboutRightPanel() {
   );
 }
 
-export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string }) {
+export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string }) {
   const [selectedOpinionsItem, setSelectedOpinionsItem] = useState<string | null>(DEFAULT_OPINIONS_ITEM);
+  // "Justices" submenu items are each justice's own displayName (see
+  // OPINIONS_MENU) -- resolve the selected one back to a justice/slug so
+  // panels 2 and 3 below can be generic across all nine justices.
+  const selectedJustice = ALL_JUSTICES.find((j) => j.displayName === selectedOpinionsItem) ?? null;
+  const selectedJusticeSlug = selectedJustice ? PERSON_SLUG_BY_JUSTICE_KEY[selectedJustice.key] : null;
+  const maxTotalOpinions = Math.max(1, ...justices.map((j) => j.majorityOpinions + j.concurrences + j.dissents));
 
   return (
     <>
       {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : <PlaceholderPanel active={active} index={2} />}
-      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeByJusticePanel title="Longest" data={opinionLengthStats.longestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeByJusticePanel title="Shortest" data={opinionLengthStats.shortestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <VolumeByJusticePanel justices={justices} highlights={opinionJoinerHighlights} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Concurrences and Dissents" ? <OpinionsVolumeHighlightsImagePanel /> : selectedOpinionsItem === "All Votes" ? <OpinionsAlignmentImagePanel /> : selectedOpinionsItem === "Joiners" ? <JoinersImagePanel /> : <PlaceholderPanel active={active} index={3} /> : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} /> : <PlaceholderPanel active={active} index={3} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : selectedJusticeSlug ? <JusticeTotalWordsPanel totalWords={totalWordsByJustice[selectedJusticeSlug] ?? 0} longest={opinionLengthStats.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} shortest={opinionLengthStats.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} justiceSlug={selectedJusticeSlug} justice={justices.find((j) => j.key === selectedJustice?.key) ?? null} maxTotal={maxTotalOpinions} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeByJusticePanel title="Longest" data={opinionLengthStats.longestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeByJusticePanel title="Shortest" data={opinionLengthStats.shortestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <VolumeByJusticePanel justices={justices} highlights={opinionJoinerHighlights} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Concurrences and Dissents" ? <OpinionsVolumeHighlightsImagePanel /> : selectedOpinionsItem === "All Votes" ? <OpinionsAlignmentImagePanel /> : selectedOpinionsItem === "Joiners" ? <JoinersImagePanel /> : selectedJusticeSlug ? <MajorityMinorityBarChart rate={majorityMinorityRateByJustice[selectedJusticeSlug] ?? null} agreementPairs={justiceAgreementGrid} justiceSlug={selectedJusticeSlug} /> : <PlaceholderPanel active={active} index={3} /> : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} /> : <PlaceholderPanel active={active} index={3} />}
     </>
   );
 }

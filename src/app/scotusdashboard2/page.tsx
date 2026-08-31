@@ -11,6 +11,8 @@ import {
   getOpinionJoinerHighlights,
   getConcurrenceJoinMatrix,
   getDissentJoinMatrix,
+  getTotalWordsByJustice,
+  getMajorityMinorityRateByJustice,
 } from "@/lib/db/term-stats";
 import { ScotusDashboard2Client } from "@/components/ScotusDashboard2Client";
 import type { CaseSummary, Article } from "@/types";
@@ -72,6 +74,10 @@ export default async function ScotusDashboard2() {
   const concurrenceJoinMatrix = await getConcurrenceJoinMatrix();
   const dissentJoinMatrix = await getDissentJoinMatrix();
 
+  // Opinions section, "Justices" menu item.
+  const totalWordsByJustice = await getTotalWordsByJustice();
+  const majorityMinorityRateByJustice = await getMajorityMinorityRateByJustice();
+
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
 
@@ -110,6 +116,8 @@ export default async function ScotusDashboard2() {
       opinionJoinerHighlights={opinionJoinerHighlights}
       concurrenceJoinMatrix={concurrenceJoinMatrix}
       dissentJoinMatrix={dissentJoinMatrix}
+      totalWordsByJustice={totalWordsByJustice}
+      majorityMinorityRateByJustice={majorityMinorityRateByJustice}
       calendarEvents={calendarEvents}
       scotusblogArticles={scotusblogArticles}
       otherArticles={otherArticles}
