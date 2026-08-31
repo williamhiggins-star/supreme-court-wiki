@@ -97,8 +97,22 @@ export function ScotusDashboard2Client({
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-white">
+      {/* Mobile-only, always visible regardless of section/case -- desktop
+          gets the same text via DashboardTitleBar in the footer instead,
+          unchanged. */}
+      <div className="flex shrink-0 items-center justify-center border-b border-[var(--tan)] py-3 md:hidden">
+        <span className="font-serif text-[20px] font-normal italic text-[#1A1A1A]">SCOTUS Dashboard</span>
+      </div>
+      {/* Mobile rows: minmax(65vh, auto), not a bare 65vh -- individual
+          panels clip their own overflow (overflow-hidden, no scroll of
+          their own on mobile), so a hard-capped row height was cutting
+          off any panel whose content actually needs more than 65vh. The
+          minimum still gives h-full inside each panel a real height to
+          resolve against; the auto max lets a row grow past it instead
+          of clipping. Desktop (md:auto-rows-auto) is unaffected either
+          way -- it's a single row of 3 columns, not multiple rows. */}
       {activeCase ? (
-        <div className="mx-auto grid w-full min-h-0 max-w-[1600px] flex-1 grid-cols-1 gap-y-8 overflow-hidden px-6 pb-6 pt-8 md:grid-cols-3 md:gap-x-12 md:gap-y-0 md:px-[100px] md:pb-[57px] md:pt-6">
+        <div className="mx-auto grid w-full min-h-0 max-w-[1600px] flex-1 grid-cols-1 auto-rows-[minmax(65vh,auto)] gap-y-8 overflow-y-auto px-6 pb-6 pt-8 md:grid-cols-3 md:auto-rows-auto md:gap-x-12 md:gap-y-0 md:overflow-hidden md:px-[100px] md:pb-[57px] md:pt-6">
           <CaseDetailPanels
             key={activeCase.slug}
             caseData={activeCase}
@@ -111,7 +125,7 @@ export function ScotusDashboard2Client({
           <CourtCalendar events={calendarEvents} today={today} />
         </div>
       ) : (
-        <div className="mx-auto grid w-full min-h-0 max-w-[1600px] flex-1 grid-cols-1 gap-y-8 overflow-hidden px-6 pb-6 pt-8 md:grid-cols-3 md:gap-x-12 md:gap-y-0 md:px-[100px] md:pb-[57px] md:pt-6">
+        <div className="mx-auto grid w-full min-h-0 max-w-[1600px] flex-1 grid-cols-1 auto-rows-[minmax(65vh,auto)] gap-y-8 overflow-y-auto px-6 pb-6 pt-8 md:grid-cols-3 md:auto-rows-auto md:gap-x-12 md:gap-y-0 md:overflow-hidden md:px-[100px] md:pb-[57px] md:pt-6">
           <SectionPanels
             active={active}
             upcomingCases={upcomingCases}

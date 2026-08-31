@@ -10,7 +10,11 @@ export function DashboardTitleBar({
   onSelect: (key: SectionKey) => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-1">
+    // Mobile: hidden here entirely -- "SCOTUS Dashboard" lives in the
+    // always-visible top bar instead (see ScotusDashboard2Client), and
+    // "About" folds into BottomTabBar's mobile dropdown, so this whole
+    // title+About unit has no separate role to play on mobile.
+    <div className="hidden flex-col items-center justify-center gap-1 md:flex">
       <span className="font-serif text-[28px] font-normal italic text-[#1A1A1A]">
         SCOTUS Dashboard
       </span>
