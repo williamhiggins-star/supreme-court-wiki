@@ -4,6 +4,7 @@ export type SectionKey =
   | "court-calendar"
   | "circuit-splits"
   | "justices"
+  | "justice-profiles"
   | "opinions"
   | "appellate-impacts"
   | "analysis";
@@ -14,6 +15,7 @@ export const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: "court-calendar", label: "Court Calendar" },
   // "circuit-splits" temporarily hidden from the menu — not removed, just not shown.
   { key: "justices", label: "Oral Arguments" },
+  { key: "justice-profiles", label: "Justices" },
   // "opinions" temporarily hidden from the menu — not removed, just not shown.
   // "appellate-impacts" temporarily hidden from the menu — not removed, just not shown.
   { key: "analysis", label: "Third Party Analysis" },
