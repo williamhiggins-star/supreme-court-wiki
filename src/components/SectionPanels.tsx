@@ -136,7 +136,7 @@ function JusticePortraitGroup({ majorityAuthor, dissentAuthors }: { majorityAuth
       )}
       <div>
         <p className="mb-0.5 text-[9px] font-normal uppercase tracking-wider not-italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif" }}>
-          {dissent.length === 0 ? "Unanimous" : "Majority"}
+          {majorityAuthor === "per_curiam" ? "Per Curiam" : dissent.length === 0 ? "Unanimous" : "Majority"}
         </p>
         <div className="flex flex-wrap gap-1">
           {majority.map((j) => (
@@ -1120,7 +1120,7 @@ function ConcurrenceJoinPanel({
             key={v}
             type="button"
             onClick={() => setView(v)}
-            className="text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            className={`text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030] ${view === v ? "underline" : ""}`}
             style={{
               fontFamily: "'Lora', Georgia, serif",
               fontWeight: view === v ? 700 : 400,
@@ -1136,7 +1136,7 @@ function ConcurrenceJoinPanel({
             key={m}
             type="button"
             onClick={() => setMode(m)}
-            className="text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            className={`text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030] ${mode === m ? "underline" : ""}`}
             style={{
               fontFamily: "'Lora', Georgia, serif",
               fontWeight: mode === m ? 700 : 400,

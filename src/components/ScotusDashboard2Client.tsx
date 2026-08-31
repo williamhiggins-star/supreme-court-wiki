@@ -23,6 +23,7 @@ import type {
 
 export function ScotusDashboard2Client({
   cases,
+  initialCaseSlug,
   upcomingCases,
   arguedCases,
   decidedItems,
@@ -43,6 +44,7 @@ export function ScotusDashboard2Client({
   tomorrow,
 }: {
   cases: CaseSummary[];
+  initialCaseSlug: string | null;
   upcomingCases: CaseSummary[];
   arguedCases: CaseSummary[];
   decidedItems: DecidedItem[];
@@ -63,7 +65,7 @@ export function ScotusDashboard2Client({
   tomorrow: string;
 }) {
   const [active, setActive] = useState<SectionKey>(DEFAULT_SECTION);
-  const [activeCaseSlug, setActiveCaseSlug] = useState<string | null>(null);
+  const [activeCaseSlug, setActiveCaseSlug] = useState<string | null>(initialCaseSlug);
 
   function handleSelectSection(key: SectionKey) {
     setActiveCaseSlug(null);

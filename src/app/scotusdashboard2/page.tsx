@@ -1,9 +1,8 @@
-import { getAllCases } from "@/lib/data";
 import { getDocketStatus, buildDecidedList } from "@/app/page";
 import { getCalendarJson, buildCalendarEvents } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
-import { getAllCaseDetails } from "@/lib/db/cases";
+import { getAllCasesForTerm } from "@/lib/db/cases";
 import { getJusticeStatsFromDb } from "@/lib/db/justice-stats";
 import {
   getOpinionLengthStats,
@@ -22,19 +21,23 @@ import type { CircuitSplit } from "@/lib/circuit-splits";
 // stay accurate.
 export const revalidate = 3600;
 
-export default async function ScotusDashboard2() {
-  // Decided OT2025 cases now come from Supabase, not data/cases/*.json --
-  // the DB has 66 (backfilled this session, including cases like Zorn v.
-  // Linton that never got a JSON file at all); JSON only has ~55. Every
-  // other status (upcoming/argued) and every other term still reads JSON
-  // as before -- this data layer covers decided OT2025 only.
-  const jsonCases = getAllCases();
-  const dbDecidedCases = await getAllCaseDetails();
-  const dbSlugs = new Set(dbDecidedCases.map((c) => c.slug));
-  const cases: CaseSummary[] = [
-    ...jsonCases.filter((c) => !(c.termYear === "2025" && getDocketStatus(c) === "decided" && dbSlugs.has(c.slug))),
-    ...dbDecidedCases,
-  ];
+export default async function ScotusDashboard2({
+  searchParams,
+}: {
+  searchParams: Promise<{ case?: string }>;
+}) {
+  // ?case=<slug> deep-links straight into a case's detail view on load --
+  // this is the only case-detail URL that resolves DB-only cases (no
+  // data/cases/*.json file), which /cases/[slug] can't. See
+  // ScotusDashboard2Client's initialCaseSlug prop and /docket/[column]'s
+  // case links.
+  const { case: initialCaseSlug } = await searchParams;
+
+  // Docket data is DB-only, scoped to term 2025 -- no more JSON fallback
+  // for upcoming/argued, and no more merge/dedup logic. Companion-docket
+  // cases (e.g. Little v. Hecox, consolidated into West Virginia v.
+  // B.P.J.) are excluded by getAllCasesForTerm itself.
+  const cases: CaseSummary[] = await getAllCasesForTerm("2025");
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -53,7 +56,9 @@ export default async function ScotusDashboard2() {
   }
   // Soonest first, same as the homepage.
   upcomingCases.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
-  // Argued: most recent first — getAllCases() already returns descending, no change needed.
+  // Most recently argued first (no longer relying on getAllCases()'s
+  // incidental JSON file order now that this is DB-sourced).
+  arguedCases.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate));
   const decidedItems = buildDecidedList(decidedCases);
 
   // Speaking time/turns/opinions panel (JusticesSection.tsx) -- now DB-
@@ -107,6 +112,7 @@ export default async function ScotusDashboard2() {
   return (
     <ScotusDashboard2Client
       cases={cases}
+      initialCaseSlug={initialCaseSlug ?? null}
       upcomingCases={upcomingCases}
       arguedCases={arguedCases}
       decidedItems={decidedItems}

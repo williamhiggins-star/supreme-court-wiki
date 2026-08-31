@@ -40,6 +40,19 @@ export interface DbCaseDetail extends CaseSummary {
 const CONCURRENCE_KINDS = new Set(["concurrence", "concurrence_in_judgment", "concurrence_in_part"]);
 const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
 
+// cases.status -> CaseSummary.docketStatus. 'argued' is deliberately
+// omitted -- CaseSummary.docketStatus has no "argued" literal; getDocketStatus()
+// (src/app/page.tsx) already derives "argued" from argumentDate being in
+// the past whenever docketStatus isn't set to something more specific,
+// the same way it's always worked for JSON-sourced cases. 'historic'/
+// 'stub' rows are precedent-citation stubs, not real docket entries --
+// never reach this function (filtered out by getAllCasesForTerm below).
+const DOCKET_STATUS_BY_DB_STATUS: Record<string, CaseSummary["docketStatus"]> = {
+  decided: "decided",
+  petition: "petition",
+  upcoming: "upcoming",
+};
+
 function justiceKey(personSlug: string | null): string | null {
   return personSlug ? (JUSTICE_KEY_BY_PERSON_SLUG[personSlug] ?? null) : null;
 }
@@ -219,7 +232,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     termYear: caseRow.term ?? currentTermYear(),
     argumentDate: caseRow.argued_date ?? "",
     transcriptUrl: transcript?.source_url ?? "",
-    docketStatus: "decided",
+    docketStatus: DOCKET_STATUS_BY_DB_STATUS[caseRow.status],
     backgroundAndFacts: caseRow.background ?? "",
     legalQuestion: caseRow.question_presented ?? "",
     significance: caseRow.significance ?? "",
@@ -277,28 +290,46 @@ export async function getCaseDetail(slug: string, term: string = currentTermYear
 }
 
 /**
- * Fetch every decided case's full detail for one term (defaults to the
- * current term) in 2 bulk queries (not N+1 per-case round trips) -- used
- * by scotusdashboard2's page.tsx to build its full case list, including
- * cases with no data/cases/*.json file at all (e.g. Zorn v. Linton).
+ * Fetch every docket-relevant case (petition/upcoming/argued/decided --
+ * NOT the historic/stub precedent-citation stub rows) for one term, in 2
+ * bulk queries (not N+1 per-case round trips). This is the sole source
+ * for scotusdashboard2's Docket panels and /docket/[column] -- no more
+ * JSON fallback; includes cases with no data/cases/*.json file at all
+ * (e.g. Zorn v. Linton).
+ *
+ * Companion-docket cases (a consolidated case's non-primary docket --
+ * e.g. Little v. Hecox, folded into West Virginia v. B.P.J.'s
+ * case_lower_courts per coding-rules.md §8) are excluded via
+ * term_stats_companion_cases: their own case_id carries real content
+ * (commentary, key exchanges, citations) but no opinions/decisions of
+ * its own, so listing it separately alongside its primary case would
+ * both double-count it and render as an empty, decision-less entry.
  */
-export async function getAllCaseDetails(term: string = currentTermYear()): Promise<DbCaseDetail[]> {
+export async function getAllCasesForTerm(term: string = currentTermYear()): Promise<DbCaseDetail[]> {
+  const { data: companionRows, error: companionError } = await db
+    .from("term_stats_companion_cases")
+    .select("case_id")
+    .eq("term", term);
+  if (companionError) throw new Error(`getAllCasesForTerm companions: ${companionError.message}`);
+  const companionIds = new Set((companionRows ?? []).map((r) => r.case_id));
+
   const { data: caseRows, error: caseError } = await db
     .from("cases")
     .select(CASE_DETAIL_SELECT)
     .eq("term", term)
-    .eq("status", "decided");
-  if (caseError) throw new Error(`getAllCaseDetails: ${caseError.message}`);
-  if (!caseRows?.length) return [];
+    .in("status", ["petition", "upcoming", "argued", "decided"]);
+  if (caseError) throw new Error(`getAllCasesForTerm: ${caseError.message}`);
+  const rows = (caseRows ?? []).filter((c) => !companionIds.has(c.id));
+  if (!rows.length) return [];
 
   const { data: allTies, error: tiesError } = await db
     .from("decision_ties")
     .select("case_id, opinion_id, role, people ( slug )")
     .in(
       "case_id",
-      caseRows.map((c) => c.id),
+      rows.map((c) => c.id),
     );
-  if (tiesError) throw new Error(`getAllCaseDetails decision_ties: ${tiesError.message}`);
+  if (tiesError) throw new Error(`getAllCasesForTerm decision_ties: ${tiesError.message}`);
 
   const tiesByCaseId = new Map<string, DecisionTieRow[]>();
   for (const t of allTies ?? []) {
@@ -307,7 +338,7 @@ export async function getAllCaseDetails(term: string = currentTermYear()): Promi
     tiesByCaseId.set(t.case_id, list);
   }
 
-  return caseRows.map((caseRow) => buildCaseDetail(caseRow, tiesByCaseId.get(caseRow.id) ?? []));
+  return rows.map((caseRow) => buildCaseDetail(caseRow, tiesByCaseId.get(caseRow.id) ?? []));
 }
 
 export interface DbCaseListItem {

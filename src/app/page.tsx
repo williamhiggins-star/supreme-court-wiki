@@ -64,8 +64,14 @@ export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: strin
     // dissent author but 3 actual dissenting votes -- dissentAuthors.length
     // alone would compute "8–1" against the real "6–3").
     const dissents = computeDecisionSides(c).losingSide.length;
-    const fallbackSplit = dissents === 0 ? "Unanimous" : `${9 - dissents}–${dissents}`;
-    const dbSplit = c.voteLine?.endsWith("-0") ? "Unanimous" : c.voteLine?.replace("-", "–");
+    // A per curiam 9-0 is "Per Curiam," never "Unanimous" -- collapsing
+    // the two loses the (author-less) per curiam signal entirely. Only
+    // matters when the case is actually unanimous; a non-unanimous split
+    // (e.g. "6–3") already reads correctly either way.
+    const isPerCuriam = c.majorityAuthor === "per_curiam";
+    const unanimousLabel = isPerCuriam ? "Per Curiam" : "Unanimous";
+    const fallbackSplit = dissents === 0 ? unanimousLabel : `${9 - dissents}–${dissents}`;
+    const dbSplit = c.voteLine?.endsWith("-0") ? unanimousLabel : c.voteLine?.replace("-", "–");
     const voteSplit = c.majorityAuthor ? (dbSplit ?? fallbackSplit) : undefined;
     return {
       type: "case" as const,

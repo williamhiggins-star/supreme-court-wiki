@@ -754,3 +754,96 @@ OT2026 data without a code change.
    OT2026 cases exist and have JSON files / DB rows to read from — none
    of that happens automatically, these are all still one-shot scripts
    that need to be invoked, same as they were for OT2025.
+
+## §17. scotusdashboard2 Docket panels moved to DB-only, term-scoped; Little v. Hecox consolidation; companion-case exclusion
+
+**Docket panels are now DB-only.** `scotusdashboard2/page.tsx` and
+`/docket/[column]` no longer read `data/cases/*.json` at all (no more
+JSON+DB merge/dedup) — both now call the new `getAllCasesForTerm(term)`
+(`src/lib/db/cases.ts`), scoped to `term = '2025'`, which generalizes
+the old `getAllCaseDetails()` (status='decided' only) to every
+docket-relevant status (`petition`, `upcoming`, `argued`, `decided`;
+`historic`/`stub` precedent-citation stub rows are excluded — they were
+never real docket entries). Upcoming/Argued/Decided bucketing is
+unchanged (`getDocketStatus()`, `src/app/page.tsx`) — it already worked
+correctly against DB-shaped `CaseSummary` objects with no changes
+needed, since it keys off `docketStatus === "decided"` plus a date
+fallback, and never actually required the `outcome` JSON-only field for
+this case.
+
+**Little v. Hecox (24-38) consolidation, fixed.** Per §8, Hecox is
+already correctly linked to West Virginia v. B.P.J. (24-43) via a
+`case_lower_courts` row (`case_id` = B.P.J.'s, `docket_number` =
+'24-38') — the established consolidated-companion model, no new schema
+field needed. But Hecox's own `cases` row had been left behind at
+`status='petition'`, `decided_date=null` — a genuine leftover from
+before consolidation, and (checked) the *only* one of the four
+documented companions (§8) with a stray standalone row; FCC v. AT&T's
+CA2 companion, Learning Resources' CAFED companion, and Mullin v. Doe's
+CADC companion have none. Deleting it was considered and rejected: 27
+rows of real content hang off Hecox's own `case_id` via `ON DELETE
+CASCADE` FKs (10 `publication_cases`, 10 `case_terms`, 9
+`key_exchanges`) plus 1 `circuit_splits.scotus_case_id` reference (`ON
+DELETE SET NULL`, survives either way) — deleting the row would destroy
+that content. Fixed instead with a plain `UPDATE` (`status='decided'`,
+`decided_date='2026-06-30'`, `disposition='reversed'` — confirmed
+against Stat Pack Circuit Scorecard note 4: 24-38 CA9 Reverse —
+`vote_line='6-3'`), and no `opinions`/`decision_ties`/`decisions` rows
+for Hecox's `case_id` — that content stays entirely on B.P.J.'s
+`case_id`, which is what keeps `opinions`/`decisions`-driven views
+(`unanimity_rate`, `ideological_split_rate`, `majority_frequency`,
+`agreement`, word-count views — all inner-joined through
+`opinions`/`decisions`, confirmed) completely unaffected: still 66
+decided cases, 166 raw `opinions` rows, 43.9%/29 unanimous, 22.7%/15
+ideologically split. Also fixed in the same pass: B.P.J.'s own
+`vote_line` was null; set to '6-3'. And the `circuit_splits` row this
+consolidation resolves (`transgender-athlete-equal-protection-as-
+applied`, pointing at Hecox's `case_id`) was still `status='cert_
+granted'`; moved to `'resolved'`.
+
+All three of the above (Hecox's own row, B.P.J.'s `vote_line`, and this
+`circuit_splits` row) were applied to the live database on 2026-09-01,
+confirmed by re-querying each row after the update.
+
+**New: `term_stats_companion_cases`** (migration
+`20260901080000_companion_case_exclusion.sql`) — the one place this
+"don't double-count a companion docket" rule is defined, so both the
+app and the stats layer read the same answer instead of two
+independent implementations drifting apart. A case is a companion if
+its own `docket_number` shows up as a *different* case's
+`case_lower_courts.docket_number` row. Two consumers:
+1. `getAllCasesForTerm()` excludes companion case_ids from what it
+   returns — this is what keeps the Decided panel at 66 (not 67) once
+   Hecox is marked decided.
+2. `term_stats_days_to_decision` — the *only* term_stats view that
+   reads straight from `cases WHERE status='decided'` with no join to
+   `opinions`/`decisions` (every other decided-case view is protected
+   from a companion case's zero opinions/decisions rows by its own
+   inner join) — recreated with the same exclusion, or Hecox would have
+   silently added a 67th row duplicating B.P.J.'s days-to-decision
+   value. `term_stats_sitting_index` needed no equivalent fix: it
+   already filters `WHERE sitting IS NOT NULL`, and Hecox's `sitting`
+   column is untouched (still null).
+
+**Docket-list per curiam label, fixed.** `JusticePortraitGroup`
+(`src/components/SectionPanels.tsx`, the compact portrait view in the
+Decided panel) labeled every zero-dissent case "Unanimous," collapsing
+per curiam into unanimous the way §15's investigation raised as a
+concern — now checks `majorityAuthor === "per_curiam"` first and labels
+those "Per Curiam" instead. This is presentation only; it never
+affected `is_unanimous` in the database, which was always computed from
+`decisions.position` independent of authorship (a per curiam can be
+unanimous or not — McCarthy v. Hernandez and Klein v. Martin are both
+per curiam *and* non-unanimous, correctly modeled as such throughout).
+
+**Not fixed — logged, out of scope for this pass.** Four OT2024 cases
+(Free Speech Coalition v. Paxton [23-1122], United States v. Skrmetti
+[23-477], Garland v. VanDerStok [23-852], TikTok, Inc. v. Garland
+[24-656]) exist in Supabase with `status='argued'`, even though all
+four were actually decided by the real Court in 2025. This predates the
+OT2025 work this session covers and needs its own backfill pass (real
+decision dates/dispositions/opinions for OT2024) before these four can
+correctly show as decided anywhere. Scoping the Docket panels to
+`term='2025'` makes them simply not appear in scotusdashboard2 at all
+(neither correctly-decided nor incorrectly-argued) rather than showing
+wrong — the accurate state until someone picks up the OT2024 backfill.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllCases } from "@/lib/data";
+import { getAllCasesForTerm } from "@/lib/db/cases";
 import { getCircuitSplitsData } from "@/lib/circuit-splits";
 import {
   formatDate,
@@ -39,7 +39,9 @@ export default async function DocketColumnPage({
   if (!["upcoming", "argued", "decided"].includes(column)) notFound();
   const col = column as Column;
 
-  const cases = getAllCases();
+  // DB-only, scoped to term 2025 -- see src/app/scotusdashboard2/page.tsx
+  // for the same accessor and rationale.
+  const cases = await getAllCasesForTerm("2025");
 
   const splitsData = getCircuitSplitsData();
   const splitSlugs = new Set(
@@ -66,7 +68,7 @@ export default async function DocketColumnPage({
   }
 
   upcoming.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
-  // argued is already descending from getAllCases()
+  argued.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate));
 
   const decided = buildDecidedList(decidedCases);
 
@@ -143,7 +145,7 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
                         )}
                       </div>
                     </div>
-                    <Link href={`/cases/${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                    <Link href={`/scotusdashboard2?case=${c.slug}`} className="text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                       {c.title}
                     </Link>
                   </div>
@@ -171,7 +173,7 @@ function UpcomingList({ cases, today, tomorrow, splitSlugs }: { cases: CaseSumma
                       )}
                     </div>
                   </div>
-                  <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+                  <Link href={`/scotusdashboard2?case=${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
                     {c.title}
                   </Link>
                 </div>
@@ -200,7 +202,7 @@ function ArguedList({ cases, splitSlugs }: { cases: CaseSummary[]; splitSlugs: S
               </Link>
             )}
           </div>
-          <Link href={`/cases/${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+          <Link href={`/scotusdashboard2?case=${c.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
             {c.title}
           </Link>
           <p className="font-mono text-xs text-gray-500 mt-1">Argued {formatDate(c.argumentDate)}</p>
@@ -237,7 +239,11 @@ function DecidedList({ items, today, splitSlugs }: { items: DecidedItem[]; today
                 )}
               </div>
             </div>
-            <Link href={item.href} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
+            {/* item.href is buildDecidedList()'s /cases/[slug] target, correct
+                for the original homepage but not for this DB-only, term-2025
+                view -- every case here needs the scotusdashboard2 deep link
+                instead, which resolves DB-only cases /cases/[slug] can't. */}
+            <Link href={`/scotusdashboard2?case=${item.slug}`} className="block text-sm font-semibold text-gray-900 leading-snug hover:text-blue-700 hover:underline">
               {item.title}
             </Link>
             <p className="font-mono text-xs text-gray-500 mt-1">

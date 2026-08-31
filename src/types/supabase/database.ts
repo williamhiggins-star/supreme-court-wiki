@@ -2922,6 +2922,14 @@ export type Database = {
         }
         Relationships: []
       }
+      term_stats_companion_cases: {
+        Row: {
+          case_id: string | null
+          docket_number: string | null
+          term: string | null
+        }
+        Relationships: []
+      }
       term_stats_days_to_decision: {
         Row: {
           argued_date: string | null
