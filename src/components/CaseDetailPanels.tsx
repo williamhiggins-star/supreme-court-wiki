@@ -683,9 +683,20 @@ function DecisionMajorityPanel({
 
   return (
     <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="px-6 pb-2 pt-[14px]">
-      <p className="mb-[0.5em] text-left font-serif text-[14px] font-bold text-[#6B6560]">
-        Majority
-      </p>
+      <div className="mb-[0.5em] flex items-center justify-between gap-3">
+        <p className="text-left font-serif text-[14px] font-bold text-[#6B6560]">Majority</p>
+        {caseData.majorityOpinionFullTextUrl && (
+          <a
+            href={caseData.majorityOpinionFullTextUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-normal uppercase tracking-wider text-[#6B6560] transition-colors hover:text-[#C43030]"
+            style={{ fontFamily: "'Lora', Georgia, serif" }}
+          >
+            Full Text
+          </a>
+        )}
+      </div>
       <JusticeLabel>Author</JusticeLabel>
       {author ? (
         <OpinionAuthorRow
@@ -1020,9 +1031,12 @@ export function CaseDetailPanels({
     hasCircuitSplit: Boolean(split),
     hasArticles: caseArticles.length > 0,
   });
-  const defaultItem = menuItems.includes("Background & Facts")
-    ? "Background & Facts"
-    : menuItems[0] ?? null;
+  const defaultItem =
+    getCaseDocketStatus(caseData) === "decided" && menuItems.includes("Decisions & Opinions")
+      ? "Decisions & Opinions"
+      : menuItems.includes("Background & Facts")
+        ? "Background & Facts"
+        : menuItems[0] ?? null;
   const [selectedItem, setSelectedItem] = useState<string | null>(defaultItem);
 
   const selectedParty =

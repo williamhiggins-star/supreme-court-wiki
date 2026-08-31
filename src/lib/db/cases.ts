@@ -77,7 +77,7 @@ const CASE_DETAIL_SELECT = `
   petitioner_name, petitioner_argument, petitioner_supporting_points,
   respondent_name, respondent_argument, respondent_supporting_points,
   case_lower_courts ( docket_number, courts ( name, level, circuit_ordinal, state ) ),
-  opinions ( id, kind, author_id, summary, full_text, people!opinions_author_id_fkey ( slug ) ),
+  opinions ( id, kind, author_id, summary, full_text, full_text_url, people!opinions_author_id_fkey ( slug ) ),
   oral_argument_transcripts ( transcript_text, source_url ),
   case_podcast_episodes ( episode_url, match_method, match_confidence ),
   key_exchanges (
@@ -117,6 +117,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
 
   let majorityAuthor: string | undefined;
   let majorityOpinionSummary: string | undefined;
+  let majorityOpinionFullTextUrl: string | undefined;
   let pluralityAuthor: string | undefined;
   let pluralityJoinedBy: string[] | undefined;
   let pluralityOpinionSummary: string | undefined;
@@ -135,9 +136,11 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     if (o.kind === "majority") {
       majorityAuthor = author ?? undefined;
       majorityOpinionSummary = o.summary ?? undefined;
+      majorityOpinionFullTextUrl = o.full_text_url ?? undefined;
     } else if (o.kind === "per_curiam") {
       majorityAuthor = "per_curiam";
       majorityOpinionSummary = o.summary ?? undefined;
+      majorityOpinionFullTextUrl = o.full_text_url ?? undefined;
     } else if (o.kind === "plurality") {
       pluralityAuthor = author ?? undefined;
       pluralityJoinedBy = joinedBy;
@@ -247,6 +250,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[]): DbCase
     pluralityJoinedBy,
     decisionDate: caseRow.decided_date ?? undefined,
     majorityOpinionSummary,
+    majorityOpinionFullTextUrl,
     pluralityOpinionSummary,
     concurringSummaries: concurringSummaries.length ? concurringSummaries : undefined,
     dissentSummaries: dissentSummaries.length ? dissentSummaries : undefined,

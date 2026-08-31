@@ -109,6 +109,7 @@ export interface CaseSummary {
   pluralityJoinedBy?: string[];
   decisionDate?: string;          // YYYY-MM-DD when the opinion was issued
   majorityOpinionSummary?: string;
+  majorityOpinionFullTextUrl?: string; // link to the combined slip opinion PDF on supremecourt.gov
   pluralityOpinionSummary?: string;
   concurringSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
   dissentSummaries?: { author: string; summary: string; joinedBy?: string[] }[];
