@@ -1,4 +1,4 @@
-import { getDocketStatus, buildDecidedList, type DecidedItem } from "@/app/page";
+import { getDocketStatus, buildDecidedList, type DecidedItem } from "@/lib/docket";
 import { getCalendarJson, buildCalendarEvents, type CalendarEvent } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData, type CircuitSplit } from "@/lib/circuit-splits";

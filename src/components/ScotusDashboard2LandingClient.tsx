@@ -15,7 +15,7 @@ const EXIT_TRANSITION_MS = 2200;
 
 // True reveal, not a sequenced slide-then-load: the real dashboard is
 // rendered right here, underneath this page's own overlay, using the
-// exact same data /scotusdashboard2 itself fetches (getScotusDashboard2Data,
+// exact same data /dashboard itself fetches (getScotusDashboard2Data,
 // shared so the two routes can't drift on what the dashboard needs). The
 // overlay (mobile top bar, carousel, footer) sits on top with its own
 // opaque background; sliding it up on "Enter" reveals the dashboard
@@ -27,16 +27,16 @@ export function ScotusDashboard2LandingClient({ data }: { data: ScotusDashboard2
   const router = useRouter();
 
   // Still worth prefetching -- once the URL actually swaps to
-  // /scotusdashboard2, this makes that swap (which by then is invisible
+  // /dashboard, this makes that swap (which by then is invisible
   // either way, since identical content is already on screen) resolve
   // from cache rather than triggering its own fresh fetch.
   useEffect(() => {
-    router.prefetch("/scotusdashboard2");
+    router.prefetch("/dashboard");
   }, [router]);
 
   function handleEnter() {
     setIsExiting(true);
-    setTimeout(() => router.push("/scotusdashboard2"), EXIT_TRANSITION_MS);
+    setTimeout(() => router.push("/dashboard"), EXIT_TRANSITION_MS);
   }
 
   return (

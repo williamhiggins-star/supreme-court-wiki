@@ -77,7 +77,7 @@ export function LandingCarousel({
   }, [transitionsEnabled]);
 
   function handleSelectCase(slug: string) {
-    router.push(`/scotusdashboard2?case=${slug}`);
+    router.push(`/dashboard?case=${slug}`);
   }
 
   // Same computation the real "Chief Justice Roberts" selection in

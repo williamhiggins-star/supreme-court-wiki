@@ -9,7 +9,7 @@ import { CaseDetailPanels } from "@/components/CaseDetailPanels";
 import { CaseTitleBar } from "@/components/CaseTitleBar";
 import { DEFAULT_SECTION, type SectionKey } from "@/lib/dashboard2-sections";
 import type { CaseSummary, Article } from "@/types";
-import type { DecidedItem } from "@/app/page";
+import type { DecidedItem } from "@/lib/docket";
 import type { IssueCategoryRef } from "@/lib/db/cases";
 import type { JusticeStat } from "@/lib/justices";
 import type { CalendarEvent } from "@/lib/calendar";
@@ -143,6 +143,7 @@ export function ScotusDashboard2Client({
             scotusblogArticles={scotusblogArticles}
             otherArticles={otherArticles}
             onSelectCase={setActiveCaseSlug}
+            onNavigateSection={handleSelectSection}
             today={today}
             tomorrow={tomorrow}
             selectedMajorityAuthor={selectedMajorityAuthor}
