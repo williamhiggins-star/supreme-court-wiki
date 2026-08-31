@@ -1,9 +1,34 @@
 # Term stats — coding rules
 
+> **Session status (as of 2026-08-31, for a fresh chat/session to read
+> first — 30 seconds, not a changelog):** The term-stats read layer is
+> **live and working**. All 23 `term_stats_*` views exist, are validated
+> against Feldman's real Stat Pack (`scripts/term-stats-feldman-check.ts`
+> — 12/13 circuits, opinion counts, and both stats fixed this session all
+> match exactly; a handful of percentages are "close" within normal
+> rounding noise against Feldman's own "≈" figures), and are confirmed
+> multi-term-safe (no hardcoded term anywhere, in the SQL or in
+> `src/lib/db/`). `scotusdashboard2` (the `ui-redesign` branch) reads all
+> of this **live from Supabase**, not JSON, for case detail, opinions,
+> transcripts, Spotify links, key exchanges, and justice stats — see
+> `CLAUDE.md`/`ARCHITECTURE.md` for the now-superseded-for-this-UI
+> render-path rule. **Deferred, not broken:** a same-pattern
+> `decisions`-table gap in D.C. v. R.W. (§15, low-impact, one case); the
+> DC-Circuit circuit-scorecard near-miss (§8, long-accepted); the
+> Kavanaugh/Barbara concur_dissent cross-check exception (§11, expected);
+> `opinions.full_text_url` still unpopulated (0/168, `full_text` itself
+> *is* populated at 164/168 — a different column, not the same gap).
+> **Single most important thing to do before OT2026 starts:** add the new
+> term's roster to `justice_term_blocs` (currently OT2025 only) — without
+> it, every ideological-split view will silently return empty for the new
+> term the same way they did for OT2025 before this session's fix. Full
+> detail in §16 at the end of this doc.
+
 Precise derivation rules for computing the SCOTUSblog term Stat Pack from
-this schema. Written against the schema as of
-`20260830100000_term_stats_schema.sql`. No parser or view code exists yet —
-this document defines what a future computation layer must implement.
+this schema. Originally written against the schema as of
+`20260830100000_term_stats_schema.sql`, before the views existed; the read
+layer these rules define has since been built (see §16) — this document
+now doubles as the historical derivation spec AND the as-built reference.
 
 Two layers, kept separate throughout (see migration comment for why):
 
@@ -387,6 +412,19 @@ misrepresent how much the check actually confirmed.
 per case/justice, exactly as specified above. Not used to overwrite
 `decisions`; surfaced as its own view.
 
+**The one live `mismatch` today, expected and understood, not a bug**:
+Kavanaugh / Trump v. Barbara — `stored_side = majority`,
+`derived_side = dissent`. His opinion there is `kind = 'concur_dissent'`,
+which this cross-check's `has_dissent_tie` bucket always treats as
+dissent-side (per its fixed kind-list above); but `decisions.position`
+correctly records him as `majority` for vote-count purposes, matching
+the case's real 6-3 tally (concur_dissent counted with the winning side
+for a simple majority/dissent count — see the Trump v. Barbara
+`voteSplit` discussion in the UI data-layer commits). Both values are
+right for what they each measure; the cross-check surfaces the tension
+between "kind of opinion filed" and "which side of the count you're on"
+by design, not as an error to resolve.
+
 ## §12. Per-case voting alignment grid (Phase 2 addition)
 
 Not one of the original 11 rules — added for Phase 2's
@@ -616,3 +654,103 @@ pass — scoped as its own follow-up: insert one `decisions` row
 R.W., the same way McCarthy's was fixed above, once someone picks it up.
 Worth checking whether any other of the 11 backfilled-straight-to-DB
 cases have the same silent gap before assuming it's just these two.
+
+## §16. Session status and pre-OT2026 checklist (2026-08-31)
+
+### The 23 `term_stats_*` views
+
+All 23 exist (`supabase/migrations/20260831090000_term_stats_views.sql`),
+validated against Feldman's real Stat Pack PDF via
+`scripts/term-stats-feldman-check.ts` (case-level ground truth, not just
+percentages): circuit scorecard 12/13 circuits exact match (§8's CADC
+near-miss the one exception), Thomas/Jackson/Roberts opinion-authorship
+counts exact, `ideological_split_rate` and `unanimity_rate` now exact
+(22.7%/15 and 43.9%/29, fixed this session — see §15), CA5 word-count/
+case-metadata spot-checks exact. The remaining "CLOSE" (not exact) lines
+— majority frequency, pairwise agreement, days-to-decision — are
+rounding noise against Feldman's own "≈"/whole-percent figures, not
+open bugs; none has moved since first checked.
+
+**Confirmed multi-term-safe**: read the full view SQL file directly —
+zero hardcoded term literals anywhere; every view carries or groups by
+`term`, and where a view joins `justice_term_blocs` it joins dynamically
+on `jtb.term = <the row's own term>`, not a fixed value. Also fixed this
+session: `src/lib/db/{cases,term-stats,justice-stats}.ts` (the TypeScript
+accessors the app actually calls) now default every `term` parameter to
+`currentTermYear()` (`src/lib/db/constants.ts`, same Oct-1-cutover rule
+`compute-justice-stats.ts` and `fetch-opinion-authors.ts` already use) —
+previously these had `"2025"` hardcoded and would not have served
+OT2026 data without a code change.
+
+### Known open items, current status
+
+- **D.C. v. R.W.'s missing `decisions` row (Sotomayor)** — documented
+  §15, **not fixed**. Same root cause as McCarthy's now-fixed gap (a
+  justice linked only via the bogus cert-notation `opinions`/
+  `decision_ties` rows §14a deleted, never given her own
+  `decisions.position` row). Doesn't affect `ideological_split_rate`/
+  `unanimity_rate` (D.C. v. R.W. isn't one of Feldman's 15 named split
+  cases) — does undercount Sotomayor's own `cases_participated` and
+  agreement/majority-frequency denominators for this one case. Fix is a
+  one-row insert, same pattern as §15's McCarthy fix, whenever picked up.
+- **Whether any of the other 11 DB-only-backfilled cases share this
+  gap** — **not yet checked**. Only McCarthy and D.C. v. R.W. have been
+  examined (both, because both had a cert-notation `opinions` row this
+  session investigated for an unrelated reason). Clark v. Sweeney,
+  Margolin, Whitton, Doe v. Dynamic PT, Pitts, Zorn, Klein, Mullin v.
+  Doe, Enbridge have not been individually checked for a justice with a
+  `decision_ties` row but no matching `decisions` row. Worth a quick
+  audit query (`decision_ties` person/case pairs with no corresponding
+  `decisions` row) before assuming the gap is isolated to these two.
+- **DC-Circuit circuit-scorecard near-miss (6/3/3 vs. Feldman's 6/2/4)**
+  — documented in §8, **accepted as an understood, unresolved
+  discrepancy**, not a bug to chase further absent new information
+  (Learning Resources' non-binary disposition is the identified likely
+  cause; every individual CADC case entry was independently verified
+  correct).
+- **Vote-side cross-check's one live mismatch (Kavanaugh/Barbara)** —
+  documented in §11, **expected, not a bug**: `opinions.kind =
+  'concur_dissent'` always derives to dissent-side in this cross-check's
+  fixed logic, while `decisions.position = 'majority'` correctly counts
+  him with the winning side for the case's real 6-3 tally. Both right,
+  measuring different things.
+- **`opinions.full_text_url`** — checked directly this session (not
+  assumed): still **0/168 populated**, unrelated to `opinions.full_text`
+  (the actual cleaned opinion text), which *is* populated at 164/168
+  (§14). `full_text_url` was meant to hold the source slip-opinion PDF
+  URL per opinion and has never been written by any script, including
+  `backfill-opinion-word-counts.ts` (which resolves and downloads from a
+  PDF URL but never persists it back to this column). Open; low
+  priority unless something starts consuming it (the "Full Text"
+  external-link button in `CaseDetailPanels.tsx` reads `cases.outcome`,
+  not this column, and isn't populated for DB-sourced cases either —
+  flagged separately in the Part D UI-wiring commits).
+
+### Before OT2026 starts
+
+1. **`justice_term_blocs` needs the new term's roster added.** It
+   currently has exactly 9 rows, all `term = '2025'`. Every
+   ideological-split view (`term_stats_ideological_splits`,
+   `term_stats_ideological_split_rate`, `term_stats_vote_split_
+   distribution`'s split-case-count column) joins this table on
+   `jtb.term = <case's term>` — with no OT2026 rows, those views will
+   silently return empty/zero for OT2026 cases the exact same way they
+   did for OT2025 before this session's fix, with no error to signal it.
+   This is a manual-data step (bloc assignment isn't derivable from the
+   schema), same as the original OT2025 backfill this session did.
+2. **The term-parameterized functions need to actually be called with
+   `"2026"` once that term is current** — or, more precisely, confirm
+   they don't need to be: every default in `src/lib/db/*.ts` and
+   `compute-justice-stats.ts` is `currentTermYear()`, which recomputes
+   from `Date.now()` on every call/module load using the same
+   Oct-1-cutover rule as `fetch-opinion-authors.ts`'s
+   `currentShortTermYear()`. In practice this means **no code change is
+   needed** for the default (calling) behavior to pick up OT2026
+   automatically once the calendar turns — the switch is automatic, not
+   manual. What *does* still need a human/deliberate step: (a) item 1
+   above (`justice_term_blocs` data), and (b) actually running
+   `compute-justice-stats.ts`, the transcript/Spotify/word-count/
+   key-exchange backfill scripts, etc. against OT2026 case data once
+   OT2026 cases exist and have JSON files / DB rows to read from — none
+   of that happens automatically, these are all still one-shot scripts
+   that need to be invoked, same as they were for OT2025.

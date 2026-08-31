@@ -1,6 +1,7 @@
 # Architecture — Supreme Court Wiki (scotusdashboard.com)
 
-This document maps the codebase as of 2026-08-28. The live project is
+This document maps the codebase as of 2026-08-28 (see the note below for
+one exception added 2026-08-31). The live project is
 `supreme-court-wiki-app/` (a Next.js 16 app). The sibling `supreme-court-wiki/`
 directory is empty (just a `.claude/` folder) and can be ignored.
 
@@ -11,11 +12,20 @@ intake system for all SCOTUS case/circuit-split data. A GitHub Actions cron
 job scrapes official sources every day, calls Claude to turn raw legal
 documents into structured JSON, commits that JSON straight into the repo, and
 the Next.js site statically renders from those committed files — **no
-database in the render path, ever**. A final, non-fatal pipeline step also
-mirrors the published JSON into a separate product's (DYSTL's) Supabase
-project; that mirror is write-only from here and is never read back by this
-site. See `supreme-court-wiki-app/CLAUDE.md` for the full intake/render
-boundary rules.
+database in the render path, ever, for the original site's routes**. A final,
+non-fatal pipeline step also mirrors the published JSON into a separate
+product's (DYSTL's) Supabase project; that mirror is write-only from here and
+is never read back by this site. See `supreme-court-wiki-app/CLAUDE.md` for
+the full intake/render boundary rules.
+
+**One explicitly-approved exception (2026-08-31):** `scotusdashboard2` (the
+`ui-redesign` branch's new UI) reads live from a *third* Supabase project —
+"SCOTUS Dashboard" (ref `enwjtgjycthjypeqdgfo`), separate from both the JSON
+files above and from DYSTL's mirror — for case detail, opinions, term stats,
+transcripts, Spotify links, and key exchanges. This is a deliberate,
+narrowly-scoped supersession of the render-path rule for this one new UI
+only; every other route is unaffected. Full detail in §3 below and in
+`CLAUDE.md`.
 
 ```
 GitHub Actions cron (22:00 UTC daily)
@@ -86,9 +96,26 @@ lighter-weight calls default to `claude-sonnet-4-6`), overridable via the
 | `data/lawyers.json` | Per-counsel speaking-time and win/loss stats, computed by `compute-lawyer-stats.ts`. |
 | `data/us-states-10m.json` | Static TopoJSON basemap (not pipeline-generated) used to render the circuit map. |
 
-This is the **only** store the Next.js app reads at build/request time
-(`src/lib/data.ts` and friends read straight off disk with `fs.readFileSync`)
-— there is no database in the render path.
+This is the **only** store the *original* Next.js app pages read at
+build/request time (`src/lib/data.ts` and friends read straight off disk
+with `fs.readFileSync`) — there is no database in the render path for
+`/`, `/cases/[slug]`, `/precedents/[slug]`, `/terms/[slug]`, and every
+other pre-existing route.
+
+**Exception, `ui-redesign` branch only: `scotusdashboard2` reads live
+from Supabase.** A third store — the "SCOTUS Dashboard" Supabase project
+(ref `enwjtgjycthjypeqdgfo`; **not** DYSTL's project below, and not the
+`data/*.json` files above) — was built across several sessions as this
+repo's own read layer for term statistics: `cases`, `opinions`,
+`decisions`/`decision_ties`, `key_exchanges`, `oral_argument_transcripts`,
+`case_podcast_episodes`, `justice_stats`, and 23 `term_stats_*` views
+(full schema/derivation reference:
+`docs/term-stats-coding-rules.md`).
+`src/lib/db/*.ts` queries this project directly in `scotusdashboard2`'s
+render path (case detail, opinion structure, transcripts, Spotify links,
+key exchanges, term/justice stats) — an explicitly-approved (2026-08-31),
+narrowly-scoped supersession of the "no database in the render path"
+rule for this one new UI. Every other page is unaffected.
 
 **Secondary store (outbound mirror only): DYSTL Supabase.** After the daily
 JSON commit, `scripts/sync-to-supabase.ts` (wrapped so any failure is
