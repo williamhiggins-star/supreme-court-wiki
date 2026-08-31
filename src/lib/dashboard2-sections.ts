@@ -23,4 +23,4 @@ export const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: "analysis", label: "Third Party Analysis" },
 ];
 
-export const DEFAULT_SECTION: SectionKey = "about";
+export const DEFAULT_SECTION: SectionKey = "all-cases";

@@ -5,9 +5,11 @@ import type { SectionKey } from "@/lib/dashboard2-sections";
 export function DashboardTitleBar({
   active,
   onSelect,
+  label = "About",
 }: {
   active: SectionKey;
   onSelect: (key: SectionKey) => void;
+  label?: string;
 }) {
   return (
     // Mobile: hidden here entirely -- "SCOTUS Dashboard" lives in the
@@ -25,7 +27,7 @@ export function DashboardTitleBar({
           active === "about" ? "font-bold" : "font-normal"
         }`}
       >
-        About
+        {label}
       </button>
     </div>
   );

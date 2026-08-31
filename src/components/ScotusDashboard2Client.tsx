@@ -100,7 +100,7 @@ export function ScotusDashboard2Client({
       {/* Mobile-only, always visible regardless of section/case -- desktop
           gets the same text via DashboardTitleBar in the footer instead,
           unchanged. */}
-      <div className="flex shrink-0 items-center justify-center border-b border-[var(--tan)] py-3 md:hidden">
+      <div className="flex shrink-0 items-center justify-center py-3 md:hidden">
         <span className="font-serif text-[20px] font-normal italic text-[#1A1A1A]">SCOTUS Dashboard</span>
       </div>
       {/* Mobile rows: minmax(65vh, auto), not a bare 65vh -- individual

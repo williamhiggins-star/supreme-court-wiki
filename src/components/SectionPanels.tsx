@@ -913,7 +913,7 @@ function AlignmentExtremeColumn({ title, justices, pct }: { title: string; justi
   );
 }
 
-function JusticeAgreementPanel({ pairs }: { pairs: JusticeAgreementPair[] }) {
+export function JusticeAgreementPanel({ pairs }: { pairs: JusticeAgreementPair[] }) {
   const pctByPair = new Map<string, number>();
   for (const p of pairs) {
     const j1 = resolveJustice(p.justiceSlug1);
@@ -1294,7 +1294,7 @@ function toOpinionLengthDetail(extreme: JusticeOpinionExtreme | null, justiceSlu
   };
 }
 
-function JusticeTotalWordsPanel({ totalWords, longest, shortest, justiceSlug, justice, maxTotal, onSelectCase }: { totalWords: number; longest: JusticeOpinionExtreme | null; shortest: JusticeOpinionExtreme | null; justiceSlug: string; justice: JusticeStat | null; maxTotal: number; onSelectCase: (slug: string) => void }) {
+export function JusticeTotalWordsPanel({ totalWords, longest, shortest, justiceSlug, justice, maxTotal, onSelectCase }: { totalWords: number; longest: JusticeOpinionExtreme | null; shortest: JusticeOpinionExtreme | null; justiceSlug: string; justice: JusticeStat | null; maxTotal: number; onSelectCase: (slug: string) => void }) {
   const selfJustice = resolveJustice(justiceSlug) ?? null;
   const longestDetail = toOpinionLengthDetail(longest, justiceSlug);
   const shortestDetail = toOpinionLengthDetail(shortest, justiceSlug);
@@ -2004,7 +2004,7 @@ function AboutLeftPanel() {
   );
 }
 
-function AboutMiddlePanel() {
+export function AboutMiddlePanel() {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-6 pt-[19px]">
       <p className="mb-[1.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Welcome to SCOTUS Dashboard</p>
@@ -2445,7 +2445,7 @@ function OpinionsVolumeHighlightsImagePanel() {
   );
 }
 
-function OpinionsAlignmentImagePanel() {
+export function OpinionsAlignmentImagePanel() {
   return (
     <div className="relative h-full min-w-0 overflow-hidden">
       <Image src="/images/opinions-section/opinions-alignment.webp" alt="Opinions Alignment" fill className="object-cover object-top" />
@@ -2461,7 +2461,7 @@ function JoinersImagePanel() {
   );
 }
 
-function AboutRightPanel() {
+export function AboutRightPanel() {
   return (
     <div className="relative h-full min-w-0 overflow-hidden">
       <Image src="/images/about/for-about-scotus-dashboard.webp" alt="For About SCOTUS Dashboard" fill className="object-cover object-top" />
