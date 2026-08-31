@@ -17,7 +17,7 @@ import type {
   OpinionLengthStats,
   JusticeAgreementPair,
   OpinionJoinerHighlights,
-  JusticeJoinPair,
+  JusticeJoinData,
 } from "@/lib/db/term-stats";
 
 export function ScotusDashboard2Client({
@@ -30,6 +30,7 @@ export function ScotusDashboard2Client({
   justiceAgreementGrid,
   opinionJoinerHighlights,
   concurrenceJoinMatrix,
+  dissentJoinMatrix,
   calendarEvents,
   scotusblogArticles,
   otherArticles,
@@ -46,7 +47,8 @@ export function ScotusDashboard2Client({
   opinionLengthStats: OpinionLengthStats;
   justiceAgreementGrid: JusticeAgreementPair[];
   opinionJoinerHighlights: OpinionJoinerHighlights;
-  concurrenceJoinMatrix: JusticeJoinPair[];
+  concurrenceJoinMatrix: JusticeJoinData;
+  dissentJoinMatrix: JusticeJoinData;
   calendarEvents: CalendarEvent[];
   scotusblogArticles: Article[];
   otherArticles: Article[];
@@ -92,6 +94,7 @@ export function ScotusDashboard2Client({
             justiceAgreementGrid={justiceAgreementGrid}
             opinionJoinerHighlights={opinionJoinerHighlights}
             concurrenceJoinMatrix={concurrenceJoinMatrix}
+            dissentJoinMatrix={dissentJoinMatrix}
             scotusblogArticles={scotusblogArticles}
             otherArticles={otherArticles}
             onSelectCase={setActiveCaseSlug}

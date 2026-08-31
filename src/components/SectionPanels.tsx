@@ -8,7 +8,7 @@ import type { CaseSummary, Article } from "@/types";
 import type { DecidedItem } from "@/app/page";
 import type { JusticeStat } from "@/lib/justices";
 import { JUSTICE_KEY_BY_PERSON_SLUG } from "@/lib/db/constants";
-import type { OpinionLengthStats, OpinionLengthDetail, JusticeOpinionExtreme, JusticeAgreementPair, OpinionJoinerHighlights, JusticeCaseRef, CasesByCategoryAndJustice, JusticeJoinPair } from "@/lib/db/term-stats";
+import type { OpinionLengthStats, OpinionLengthDetail, JusticeOpinionExtreme, JusticeAgreementPair, OpinionJoinerHighlights, JusticeCaseRef, CasesByCategoryAndJustice, JusticeJoinData } from "@/lib/db/term-stats";
 
 const DOCKET_PAGE_SIZE = 4;
 const ARTICLE_PAGE_SIZE = 6;
@@ -304,6 +304,7 @@ const OPINIONS_MENU: { label: string; children?: readonly string[] }[] = [
   { label: "Length", children: ["Longest", "Shortest"] },
   { label: "Volume", children: ["All", "Concurrences and Dissents"] },
   { label: "Alignment", children: ["All Votes", "Joiners"] },
+  { label: "Justices", children: ALL_JUSTICES.map((j) => j.displayName) },
 ];
 export const DEFAULT_OPINIONS_ITEM = "Longest";
 
@@ -324,7 +325,71 @@ function OpinionsMenuItemButton({ item, selectedItem, onSelectItem }: { item: st
   );
 }
 
+// One top-level Opinions-menu entry (label + its children). "Justices" gets
+// its children split into two sub-columns with a portrait next to each
+// justice; every other entry's children are a single plain column.
+function OpinionsMenuEntry({ label, children, selectedItem, onSelectItem }: { label: string; children?: readonly string[]; selectedItem: string | null; onSelectItem: (item: string) => void }) {
+  return (
+    <div className="mb-[0.4em]">
+      {children ? (
+        <button
+          type="button"
+          onClick={() => onSelectItem(children[0])}
+          className="text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+          style={{
+            fontFamily: "'Lora', Georgia, serif",
+            lineHeight: 1.5,
+            fontWeight: 400,
+          }}
+        >
+          {label}
+        </button>
+      ) : (
+        <OpinionsMenuItemButton item={label} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+      )}
+      {children && label === "Justices" ? (
+        <div className="flex gap-x-4 pl-[12px]">
+          {[children.slice(0, Math.ceil(children.length / 2)), children.slice(Math.ceil(children.length / 2))].map((col, i) => (
+            <ul key={i} className="list-none">
+              {col.map((child) => {
+                const justice = ALL_JUSTICES.find((j) => j.displayName === child);
+                return (
+                  <li key={child} className="mt-[0.3em] flex items-center gap-x-[6px]">
+                    {justice && (
+                      <Image
+                        src={justice.photo}
+                        alt={justice.displayName}
+                        width={16}
+                        height={16}
+                        className="rounded-full object-cover object-top"
+                        style={{ width: 16, height: 16 }}
+                      />
+                    )}
+                    <OpinionsMenuItemButton item={child} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+                  </li>
+                );
+              })}
+            </ul>
+          ))}
+        </div>
+      ) : (
+        children && (
+          <ul className="list-none pl-[12px]">
+            {children.map((child) => (
+              <li key={child} className="mt-[0.3em]">
+                <OpinionsMenuItemButton item={child} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+    </div>
+  );
+}
+
 function OpinionsMenuPanel({ selectedItem, onSelectItem }: { selectedItem: string | null; onSelectItem: (item: string) => void }) {
+  const menuByLabel = Object.fromEntries(OPINIONS_MENU.map((m) => [m.label, m]));
+
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
       <p className="font-serif text-[20px] font-normal not-italic leading-tight text-[#1A1A1A]">Opinion&apos;s Statistics</p>
@@ -332,37 +397,13 @@ function OpinionsMenuPanel({ selectedItem, onSelectItem }: { selectedItem: strin
         2025-6 Term
       </p>
       <p className="mb-[0.5em] mt-[16px] text-left font-serif text-[14px] font-bold text-[#6B6560]">Menu</p>
-      <ul className="list-none">
-        {OPINIONS_MENU.map(({ label, children }) => (
-          <li key={label} className="mb-[0.4em]">
-            {children ? (
-              <button
-                type="button"
-                onClick={() => onSelectItem(children[0])}
-                className="text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
-                style={{
-                  fontFamily: "'Lora', Georgia, serif",
-                  lineHeight: 1.5,
-                  fontWeight: 400,
-                }}
-              >
-                {label}
-              </button>
-            ) : (
-              <OpinionsMenuItemButton item={label} selectedItem={selectedItem} onSelectItem={onSelectItem} />
-            )}
-            {children && (
-              <ul className="list-none pl-[12px]">
-                {children.map((child) => (
-                  <li key={child} className="mt-[0.3em]">
-                    <OpinionsMenuItemButton item={child} selectedItem={selectedItem} onSelectItem={onSelectItem} />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
+      {/* Row 1: Length + Alignment side by side. Row 2: Volume alone. Row 3: Justices alone (its own children in two columns, handled by OpinionsMenuEntry). */}
+      <div className="flex gap-x-6">
+        <OpinionsMenuEntry {...menuByLabel["Length"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+        <OpinionsMenuEntry {...menuByLabel["Alignment"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+      </div>
+      <OpinionsMenuEntry {...menuByLabel["Volume"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+      <OpinionsMenuEntry {...menuByLabel["Justices"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
     </div>
   );
 }
@@ -1014,15 +1055,49 @@ function joinShareColor(pct: number): string {
   return mixHex("#FAFAF7", "#2C4A3E", Math.max(0, Math.min(1, pct / 100)));
 }
 
-function ConcurrenceJoinPanel({ pairs, justices }: { pairs: JusticeJoinPair[]; justices: JusticeStat[] }) {
+// Same sequential single-hue treatment as joinShareColor, but rust instead
+// of forest, so the Dissent toggle reads visually distinct from Concurrences.
+function dissentJoinShareColor(pct: number): string {
+  return mixHex("#FAFAF7", "#C43030", Math.max(0, Math.min(1, pct / 100)));
+}
+
+const JOIN_PANEL_VIEWS = ["Concurrences", "Dissent"] as const;
+type JoinPanelView = (typeof JOIN_PANEL_VIEWS)[number];
+
+const JOIN_PANEL_MODES = ["Absolute", "Percentage"] as const;
+type JoinPanelMode = (typeof JOIN_PANEL_MODES)[number];
+
+function ConcurrenceJoinPanel({
+  concurrenceData,
+  dissentData,
+}: {
+  concurrenceData: JusticeJoinData;
+  dissentData: JusticeJoinData;
+}) {
+  const [view, setView] = useState<JoinPanelView>("Concurrences");
+  const [mode, setMode] = useState<JoinPanelMode>("Percentage");
+  const activeData = view === "Concurrences" ? concurrenceData : dissentData;
   const countByPair = new Map<string, number>();
-  for (const p of pairs) {
+  for (const p of activeData.pairs) {
     const author = resolveJustice(p.authorSlug);
     const joiner = resolveJustice(p.joinerSlug);
     if (!author || !joiner) continue;
     countByPair.set(`${author.key}|${joiner.key}`, p.count);
   }
-  const concurrencesAuthoredByKey = new Map(justices.map((j) => [j.key, j.concurrences]));
+  // Live-computed from the same opinion rows as the join counts above
+  // (see getOpinionJoinData), not justice_stats.concurrences/dissents --
+  // that table can drift out of sync with the opinions table and produce
+  // a >100% join share.
+  const authoredByKey = new Map(
+    Object.entries(activeData.authoredCountBySlug)
+      .map(([slug, count]) => [resolveJustice(slug)?.key, count] as const)
+      .filter((entry): entry is [string, number] => !!entry[0]),
+  );
+  const cellColor = view === "Concurrences" ? joinShareColor : dissentJoinShareColor;
+  const opinionNoun = view === "Concurrences" ? "concurrences" : "dissents";
+  // Absolute mode reuses the same sequential color scale, normalized against
+  // the highest join count in the current view instead of a 0-100% share.
+  const maxCount = Math.max(1, ...activeData.pairs.map((p) => p.count));
   const [hover, setHover] = useState<{
     x: number;
     y: number;
@@ -1036,7 +1111,39 @@ function ConcurrenceJoinPanel({ pairs, justices }: { pairs: JusticeJoinPair[]; j
 
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dashed border-[#C4A882] px-6 pb-2 pt-[14px]">
-      <p className="mb-[10px] text-center font-serif text-[14px] font-normal text-[#6B6560]">Joined a Concurrence</p>
+      <p className="mb-[0.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Joiners</p>
+      <div className="mb-[0.4em] flex items-center justify-center gap-x-3">
+        {JOIN_PANEL_VIEWS.map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setView(v)}
+            className="text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            style={{
+              fontFamily: "'Lora', Georgia, serif",
+              fontWeight: view === v ? 700 : 400,
+            }}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
+      <div className="mb-[10px] flex items-center justify-center gap-x-3">
+        {JOIN_PANEL_MODES.map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMode(m)}
+            className="text-[10px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+            style={{
+              fontFamily: "'Lora', Georgia, serif",
+              fontWeight: mode === m ? 700 : 400,
+            }}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
       {hover && (
         <span
           className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-[#1A1A1A] px-2 py-1 text-[10px] text-white"
@@ -1078,7 +1185,7 @@ function ConcurrenceJoinPanel({ pairs, justices }: { pairs: JusticeJoinPair[]; j
               }}
             >
               {ALL_JUSTICES.map((rowJustice) => {
-                const authored = concurrencesAuthoredByKey.get(rowJustice.key) ?? 0;
+                const authored = authoredByKey.get(rowJustice.key) ?? 0;
                 return (
                   <Fragment key={rowJustice.key}>
                     <div className="flex items-center justify-center">
@@ -1101,11 +1208,17 @@ function ConcurrenceJoinPanel({ pairs, justices }: { pairs: JusticeJoinPair[]; j
                       }
                       const count = countByPair.get(`${rowJustice.key}|${colJustice.key}`) ?? 0;
                       const pct = authored > 0 ? (count / authored) * 100 : 0;
+                      const colorPct = mode === "Percentage" ? pct : (count / maxCount) * 100;
+                      const cellText = mode === "Percentage" ? `${Math.round(pct)}%` : `${count}`;
+                      const title =
+                        mode === "Percentage"
+                          ? `${colJustice.displayName} joined ${Math.round(pct)}% of ${rowJustice.displayName}'s ${opinionNoun} (${count} of ${authored})`
+                          : `${colJustice.displayName} joined ${count} of ${rowJustice.displayName}'s ${authored} ${opinionNoun}`;
                       return (
-                        <div key={colJustice.key} className="flex items-center justify-center rounded-sm" style={{ backgroundColor: joinShareColor(pct) }} title={`${colJustice.displayName} joined ${Math.round(pct)}% of ${rowJustice.displayName}'s concurrences (${count} of ${authored})`}>
+                        <div key={colJustice.key} className="flex items-center justify-center rounded-sm" style={{ backgroundColor: cellColor(colorPct) }} title={title}>
                           {count > 0 && (
                             <span className="rounded bg-[#FAFAF7] px-[4px] py-[2px] text-[9px] font-normal not-italic text-[#1A1A1A]" style={{ fontFamily: "'DM Mono', monospace" }}>
-                              {Math.round(pct)}%
+                              {cellText}
                             </span>
                           )}
                         </div>
@@ -1614,13 +1727,13 @@ function AboutRightPanel() {
   );
 }
 
-export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinPair[]; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string }) {
+export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, scotusblogArticles, otherArticles, onSelectCase, today, tomorrow }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; today: string; tomorrow: string }) {
   const [selectedOpinionsItem, setSelectedOpinionsItem] = useState<string | null>(DEFAULT_OPINIONS_ITEM);
 
   return (
     <>
       {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel pairs={concurrenceJoinMatrix} justices={justices} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : <PlaceholderPanel active={active} index={2} />}
       {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeByJusticePanel title="Longest" data={opinionLengthStats.longestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeByJusticePanel title="Shortest" data={opinionLengthStats.shortestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <VolumeByJusticePanel justices={justices} highlights={opinionJoinerHighlights} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Concurrences and Dissents" ? <OpinionsVolumeHighlightsImagePanel /> : selectedOpinionsItem === "All Votes" ? <OpinionsAlignmentImagePanel /> : selectedOpinionsItem === "Joiners" ? <JoinersImagePanel /> : <PlaceholderPanel active={active} index={3} /> : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} /> : <PlaceholderPanel active={active} index={3} />}
     </>
   );

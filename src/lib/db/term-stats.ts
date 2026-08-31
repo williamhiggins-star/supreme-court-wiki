@@ -479,45 +479,61 @@ export interface JusticeJoinPair {
   count: number;
 }
 
+export interface JusticeJoinData {
+  pairs: JusticeJoinPair[];
+  // Live count of opinions (of the relevant kind) each justice authored
+  // this term, keyed by slug -- computed from the same opinion rows as
+  // `pairs` (not justice_stats.concurrences/dissents, which can drift out
+  // of sync with the opinions table and produce a >100% join share).
+  authoredCountBySlug: Record<string, number>;
+}
+
 /**
- * Opinions section, "Alignment" > "Joiners" menu item: for every concurrence
- * this term, who joined whom -- authorSlug is the concurrence's author,
- * joinerSlug is a justice who joined it, count is how many of that
- * author's concurrences this term that joiner joined. Directional (author
- * x joiner is not symmetric the way pairwise agreement is), so this is a
- * flat list of pairs rather than the triangular shape getJusticeAgreementGrid
- * uses -- the UI builds a full 9x9 grid from it, author rows x joiner
- * columns, self-pairs excluded (a justice can't join their own opinion).
+ * Shared by getConcurrenceJoinMatrix and getDissentJoinMatrix: for every
+ * opinion of the given kinds this term, who joined whom -- authorSlug is
+ * the opinion's author, joinerSlug is a justice who joined it, count is how
+ * many of that author's opinions (of these kinds) this term that joiner
+ * joined. Directional (author x joiner is not symmetric the way pairwise
+ * agreement is), so this is a flat list of pairs rather than the triangular
+ * shape getJusticeAgreementGrid uses -- the UI builds a full 9x9 grid from
+ * it, author rows x joiner columns, self-pairs excluded (a justice can't
+ * join their own opinion).
  */
-export async function getConcurrenceJoinMatrix(term: string = currentTermYear()): Promise<JusticeJoinPair[]> {
+async function getOpinionJoinData(kinds: readonly string[], term: string): Promise<JusticeJoinData> {
   const { data: caseRows, error: caseError } = await db
     .from("cases")
     .select("id")
     .eq("term", term)
     .eq("status", "decided");
-  if (caseError) throw new Error(`getConcurrenceJoinMatrix cases: ${caseError.message}`);
+  if (caseError) throw new Error(`getOpinionJoinData cases: ${caseError.message}`);
   const caseIds = (caseRows ?? []).map((c) => c.id);
-  if (caseIds.length === 0) return [];
+  if (caseIds.length === 0) return { pairs: [], authoredCountBySlug: {} };
 
   const { data: opinionRows, error: opinionError } = await db
     .from("opinions")
     .select("id, kind, people!opinions_author_id_fkey ( slug )")
     .in("case_id", caseIds);
-  if (opinionError) throw new Error(`getConcurrenceJoinMatrix opinions: ${opinionError.message}`);
+  if (opinionError) throw new Error(`getOpinionJoinData opinions: ${opinionError.message}`);
 
-  const concurrenceOpinions = (opinionRows ?? []).filter((o) => CONCURRENCE_KINDS.includes(o.kind));
-  const opinionIds = concurrenceOpinions.map((o) => o.id);
-  if (opinionIds.length === 0) return [];
+  const matchingOpinions = (opinionRows ?? []).filter((o) => kinds.includes(o.kind));
+  const authoredCountBySlug: Record<string, number> = {};
+  for (const o of matchingOpinions) {
+    const slug = o.people?.slug;
+    if (!slug) continue;
+    authoredCountBySlug[slug] = (authoredCountBySlug[slug] ?? 0) + 1;
+  }
+  const opinionIds = matchingOpinions.map((o) => o.id);
+  if (opinionIds.length === 0) return { pairs: [], authoredCountBySlug };
 
   const { data: tieRows, error: tieError } = await db
     .from("decision_ties")
     .select("opinion_id, people ( slug )")
     .in("opinion_id", opinionIds)
     .eq("role", "joiner");
-  if (tieError) throw new Error(`getConcurrenceJoinMatrix decision_ties: ${tieError.message}`);
+  if (tieError) throw new Error(`getOpinionJoinData decision_ties: ${tieError.message}`);
 
   const authorSlugByOpinionId = new Map(
-    concurrenceOpinions.map((o) => [o.id, o.people?.slug]).filter((entry): entry is [string, string] => !!entry[1]),
+    matchingOpinions.map((o) => [o.id, o.people?.slug]).filter((entry): entry is [string, string] => !!entry[1]),
   );
 
   const counts = new Map<string, number>();
@@ -529,8 +545,19 @@ export async function getConcurrenceJoinMatrix(term: string = currentTermYear())
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
-  return [...counts.entries()].map(([key, count]) => {
+  const pairs = [...counts.entries()].map(([key, count]) => {
     const [authorSlug, joinerSlug] = key.split("|");
     return { authorSlug, joinerSlug, count };
   });
+  return { pairs, authoredCountBySlug };
+}
+
+// Opinions section, "Alignment" > "Joiners" menu item, "Concurrences" toggle.
+export async function getConcurrenceJoinMatrix(term: string = currentTermYear()): Promise<JusticeJoinData> {
+  return getOpinionJoinData(CONCURRENCE_KINDS, term);
+}
+
+// Opinions section, "Alignment" > "Joiners" menu item, "Dissent" toggle.
+export async function getDissentJoinMatrix(term: string = currentTermYear()): Promise<JusticeJoinData> {
+  return getOpinionJoinData(DISSENT_KINDS, term);
 }
