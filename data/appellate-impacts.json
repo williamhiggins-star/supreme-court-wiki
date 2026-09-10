@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09",
+  "generated": "2026-09-10",
   "impacts": [
     {
       "id": "dental-monitoring-v-align-technology",
@@ -9,12 +9,12 @@
       "courtKey": "cafc",
       "date": "2026-08-10",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the PTAB's Penumbra framework—which holds that Dynamic Drinkware's written description analysis does not apply to prior art determinations under AIA § 102(d)(2)—is correct, and whether a reference patent receives the filing date of an earlier provisional application based solely on ministerial requirements rather than a full written description analysis.",
-      "description": "The Federal Circuit vacated the PTAB's final written decision finding claims of the '409 patent unpatentable as obvious, remanding for reconsideration of whether a key prior art reference (Carrier) qualified as prior art under AIA § 102(d)(2). The court addressed the critical question of how to determine the effective date of a reference patent that claims priority from a provisional application. This decision has significant implications for inter partes review proceedings and the standards for establishing prior art dates.",
-      "positiveImplications": "Patent owners benefit from a potentially more rigorous standard for establishing prior art dates of reference patents claiming provisional application priority, making it harder for IPR petitioners to use references whose provisional applications may not fully support the relied-upon subject matter.",
-      "negativeImplications": "Companies challenging patents in IPR proceedings may face greater difficulty qualifying certain references as prior art if stricter written description requirements apply to provisional application priority claims under AIA § 102(d)(2).",
+      "legalQuestion": "Whether the PTAB's Penumbra framework—which holds that Dynamic Drinkware's written description analysis does not apply to prior art determinations under AIA § 102(d)(2)—is correct, or whether a reference patent can only claim an earlier provisional filing date if at least one claim is supported by the provisional's written description.",
+      "description": "The Federal Circuit vacated the PTAB's decision finding Dental Monitoring's patent claims obvious, remanding for reconsideration of whether the Carrier reference qualified as prior art under AIA § 102(d)(2). The court addressed the critical question of how to determine the effective date of a prior art reference patent that claims priority from a provisional application under the AIA. This decision has significant implications for patent validity challenges in IPR proceedings, as it may narrow the universe of available prior art by requiring more rigorous written description analysis for provisional filing date entitlement.",
+      "positiveImplications": "Patent holders benefit from potentially stricter standards for establishing prior art dates based on provisional applications, making it harder for petitioners to use references with early provisional dates to invalidate patents in IPR proceedings.",
+      "negativeImplications": "Companies challenging patents in IPR proceedings may face greater difficulty establishing that reference patents qualify as prior art as of their provisional filing dates, potentially limiting the prior art available for invalidity challenges.",
       "url": "https://www.courtlistener.com/opinion/10943771/dental-monitoring-sas-v-align-technology-inc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "4dd-holdings-v-united-states",
@@ -24,12 +24,12 @@
       "courtKey": "cafc",
       "date": "2026-07-16",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the government's copyright infringement damages should be assessed via a hypothetical negotiation rather than deferring to the terms of an existing license agreement, and what constitutes permissible use of the 'book of wisdom' doctrine in assessing such damages.",
-      "description": "The Federal Circuit affirmed the trial court's decision to use a hypothetical negotiation to assess copyright infringement damages for the government's unauthorized copying of TETRA® software, but vacated in part because the trial court adopted a legally impermissible view of the 'book of wisdom' and assessed non-compensatory damages against the government. The case establishes important principles for calculating copyright damages in government software licensing disputes.",
-      "positiveImplications": "Software companies and copyright holders benefit from the court's affirmation that a hypothetical negotiation framework can be used to assess damages even when an existing license agreement exists, potentially yielding higher damage awards than contract-based calculations.",
-      "negativeImplications": "The court's limitation on the 'book of wisdom' doctrine and prohibition on non-compensatory damages constrains copyright holders' ability to seek inflated damages based on post-infringement developments.",
+      "legalQuestion": "Whether a trial court must defer to an existing license agreement's terms when assessing copyright infringement damages, and what constitutes a legally permissible use of the 'book of wisdom' doctrine in calculating damages against the government.",
+      "description": "The Federal Circuit affirmed the trial court's decision to use a hypothetical negotiation rather than existing license terms for copyright damages, but vacated in part because the trial court adopted a legally impermissible view of the book of wisdom and assessed non-compensatory damages against the government. The case involved the government's unauthorized copying of TETRA® software beyond the scope of its license. This decision clarifies the methodology for calculating copyright damages in government infringement cases.",
+      "positiveImplications": "Software companies and copyright holders benefit from the court's endorsement of the hypothetical negotiation framework for damages, which may yield higher damages than strict adherence to existing license terms in some cases.",
+      "negativeImplications": "The court's rejection of certain book-of-wisdom evidence and non-compensatory damages limits the potential recovery for copyright holders, requiring more careful damages modeling.",
       "url": "https://www.courtlistener.com/opinion/10932022/4dd-holdings-llc-v-united-states/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "kelly-v-united-states",
@@ -39,27 +39,12 @@
       "courtKey": "cafc",
       "date": "2026-07-17",
       "area": "Securities",
-      "legalQuestion": "Whether the statute of limitations in 28 U.S.C. § 2501 for claims against the United States in the Court of Federal Claims is subject to American Pipe tolling, and whether California Public Employees' Retirement System v. ANZ Securities, Inc. implicitly overruled the Federal Circuit's prior decision in Bright v. United States on this issue.",
-      "description": "The Federal Circuit held that the six-year statute of limitations in 28 U.S.C. § 2501 is not subject to American Pipe class action tolling. The court recognized that ANZ Securities implicitly overruled the portion of its prior Bright decision that had applied American Pipe tolling to § 2501. The case arose from banking entities that lost assets during the 2008 financial crisis and alleged breach of contract and unconstitutional takings related to government-sponsored enterprise preferred shares.",
-      "positiveImplications": "The government benefits from a firm limitations period that cannot be extended through class action tolling, providing greater certainty and protection against stale claims in Court of Federal Claims litigation.",
-      "negativeImplications": "Banks, financial institutions, and other businesses that rely on class action tolling to preserve individual claims against the government in the Court of Federal Claims will lose that protection, requiring earlier and more proactive individual filings to preserve their rights.",
+      "legalQuestion": "Whether the six-year statute of limitations in 28 U.S.C. § 2501 for claims against the United States in the Court of Federal Claims is subject to American Pipe tolling based on a prior class action.",
+      "description": "The Federal Circuit held that § 2501's statute of limitations is not subject to American Pipe tolling, affirming dismissal of breach of contract and Fifth Amendment takings claims brought by a bank holding company and its subsidiaries arising from the 2008 financial crisis. The court recognized that its prior decision in Bright v. United States was implicitly overruled by the Supreme Court's decision in California Public Employees' Retirement System v. ANZ Securities, Inc. This ruling significantly limits the ability of putative class members to rely on class action filings to toll limitations periods for claims against the federal government.",
+      "positiveImplications": "None significant.",
+      "negativeImplications": "Financial institutions and businesses with claims against the federal government cannot rely on American Pipe tolling to extend the § 2501 limitations period, requiring them to file individual claims within the six-year window regardless of pending class actions.",
       "url": "https://www.courtlistener.com/opinion/10932356/kelly-v-united-states/",
-      "lastUpdated": "2026-09-09"
-    },
-    {
-      "id": "ironburg-inventions-v-valve-corporation",
-      "caseName": "Ironburg Inventions Ltd. v. Valve Corporation",
-      "docketNumber": "No. 2024-2088",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-06-18",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court properly applied IPR estoppel under 35 U.S.C. § 315(e)(2) to bar Valve from asserting invalidity grounds not included in its original IPR petition, and what evidentiary standards and safeguards against hindsight bias apply to the 'reasonably could have raised' estoppel analysis.",
-      "description": "The Federal Circuit reversed the district court's application of IPR estoppel, finding insufficient evidence to estop one invalidity ground and inadequate consideration of hindsight bias for the other. The court clarified the evidentiary standards for determining whether a prior art reference 'reasonably could have been raised' in an earlier IPR petition, emphasizing the need to guard against hindsight in the estoppel analysis.",
-      "positiveImplications": "Companies defending against patent infringement benefit from a higher bar for IPR estoppel, preserving their ability to raise invalidity defenses in district court even after participating in IPR proceedings.",
-      "negativeImplications": "Patent holders face a more limited ability to invoke IPR estoppel to preclude invalidity challenges in district court, potentially increasing the cost and complexity of patent enforcement litigation.",
-      "url": "https://www.courtlistener.com/opinion/10877005/ironburg-inventions-ltd-v-valve-corporation/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "constellation-designs-v-lg-electronics",
@@ -69,12 +54,27 @@
       "courtKey": "cafc",
       "date": "2026-08-31",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether patent claims directed to non-uniform constellations for digital communication systems are patent-eligible under 35 U.S.C. § 101, and whether the district court properly denied judgment as a matter of law on infringement and damages.",
-      "description": "The Federal Circuit vacated the district court's summary judgment of patent eligibility for certain claims of the '761 and '700 patents while affirming eligibility for claims of the '509 and '922 patents, and affirmed the infringement and damages verdicts. The case involves patents covering non-uniform constellation designs used in digital broadcast communication systems, with implications for the ATSC 3.0 television broadcast standard. The court's split eligibility determination provides guidance on the Alice/Mayo framework as applied to communication technology patents.",
-      "positiveImplications": "Technology companies implementing communication standards benefit from the court's affirmance of eligibility for certain implementation-focused claims, and the affirmance of the damages methodology supports patent holders' ability to recover for standards-essential patent infringement.",
-      "negativeImplications": "Patent holders with claims that more broadly recite mathematical relationships without tying them to specific technological implementations face increased eligibility risk, as the court vacated eligibility for the more abstractly claimed patents.",
+      "legalQuestion": "Whether patents directed to non-uniform constellations for digital communication systems are eligible for patenting under 35 U.S.C. § 101, and whether the district court properly denied judgment as a matter of law on infringement and damages.",
+      "description": "The Federal Circuit vacated summary judgment of patent eligibility for certain asserted patent claims while affirming eligibility for others, and affirmed the denial of JMOL on non-infringement and damages in a case involving communication technology patents used in television broadcasting. The court's split treatment of eligibility across related patents provides important guidance on how § 101 analysis applies to patents incorporating mathematical concepts into practical communication systems. The case involved a jury verdict against LG for willful infringement.",
+      "positiveImplications": "Technology companies holding patents that apply mathematical concepts to practical communication systems receive clarity that some such claims may satisfy § 101, and the affirmance of the damages verdict and expert testimony supports robust damages recovery.",
+      "negativeImplications": "The partial vacatur on eligibility creates uncertainty for patent holders in the communications technology space, as closely related claims may receive different § 101 treatment depending on how they are drafted.",
       "url": "https://www.courtlistener.com/opinion/10962877/constellation-designs-llc-v-lg-electronics-inc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
+    },
+    {
+      "id": "ironburg-inventions-v-valve-corporation",
+      "caseName": "Ironburg Inventions Ltd. v. Valve Corporation",
+      "docketNumber": "No. 2024-2088",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-06-18",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether the district court properly applied IPR estoppel under 35 U.S.C. § 315(e)(2) to bar Valve from asserting invalidity grounds that were not included in its IPR petition, and what evidentiary standard applies to determine whether a ground 'reasonably could have been raised' during the IPR.",
+      "description": "The Federal Circuit reversed the district court's application of IPR estoppel against Valve, finding insufficient evidence to estop one invalidity ground and inadequate accounting for hindsight bias in estopping another. The decision clarifies the standards for applying § 315(e)(2) estoppel in district court litigation following IPR proceedings. This ruling is significant for patent litigation strategy as it narrows the circumstances under which defendants are barred from raising invalidity defenses after IPR.",
+      "positiveImplications": "Accused infringers benefit from a more protective standard against IPR estoppel, preserving their ability to raise invalidity defenses in district court that were not included in prior IPR petitions, provided they were not reasonably discoverable.",
+      "negativeImplications": "Patent holders face a higher burden when seeking to estop defendants from asserting invalidity grounds post-IPR, potentially prolonging litigation and increasing defense options available to accused infringers.",
+      "url": "https://www.courtlistener.com/opinion/10877005/ironburg-inventions-ltd-v-valve-corporation/",
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "enanta-pharmaceuticals-v-pfizer",
@@ -84,12 +84,12 @@
       "courtKey": "cafc",
       "date": "2026-06-23",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether a change from 'C2-C12-alkyl' in a provisional patent application to 'C1-C12-alkyl' in the non-provisional application constituted an obvious typographical error that preserved the patent's priority date, or whether it constituted new matter that broke the priority chain and exposed the patent to anticipation by Pfizer's intervening public disclosure of nirmatrelvir (Paxlovid).",
-      "description": "The Federal Circuit affirmed summary judgment of invalidity, holding that the '953 patent's claims were anticipated because the change from C2 to C1 in the alkyl group definition was not an obvious typographical error. This broke the priority chain to the earlier provisional application, allowing Pfizer's intervening disclosure of nirmatrelvir to serve as prior art. The decision effectively ended Enanta's infringement claims against Pfizer's blockbuster COVID-19 treatment Paxlovid.",
-      "positiveImplications": "Pharmaceutical companies like Pfizer that make public disclosures of drug compounds benefit from strict application of priority date rules, protecting them from later-filed patent claims that attempt to capture their compounds through broadened provisional application support.",
-      "negativeImplications": "Patent applicants face heightened risk that even seemingly minor discrepancies between provisional and non-provisional applications will break the priority chain, potentially exposing their patents to intervening prior art and invalidation. This underscores the critical importance of meticulous drafting of provisional applications.",
+      "legalQuestion": "Whether a change from 'C2-C12-alkyl' in a provisional application to 'C1-C12-alkyl' in the non-provisional patent constituted correction of an obvious typographical error entitling the patent to the provisional's priority date, or whether the change added new matter breaking the priority chain.",
+      "description": "The Federal Circuit affirmed summary judgment of invalidity, holding that Enanta's patent could not claim priority from its provisional application because the change from C2 to C1 in a chemical substituent definition was not an obvious typographical error. Without priority, Pfizer's intervening public disclosure of nirmatrelvir (the active ingredient in Paxlovid®) anticipated the patent claims. This decision has major implications for pharmaceutical patent prosecution, underscoring the critical importance of precision in provisional applications.",
+      "positiveImplications": "Generic drug manufacturers and competitors like Pfizer benefit from strict enforcement of priority chain requirements, making it harder for patent holders to retroactively claim broad coverage based on imprecise provisional filings.",
+      "negativeImplications": "Pharmaceutical and biotech companies face heightened risk that even minor discrepancies between provisional and non-provisional applications will break the priority chain, potentially exposing patents to intervening prior art and invalidation.",
       "url": "https://www.courtlistener.com/opinion/10878465/enanta-pharmaceuticals-inc-v-pfizer-inc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "t-mobile-v-kaifi",
@@ -99,27 +99,12 @@
       "courtKey": "cafc",
       "date": "2026-08-28",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the Federal Circuit has appellate jurisdiction over a dispute concerning the interpretation of a patent litigation settlement agreement phrase 'survives the EPR,' or whether the case involves only state contract law issues that should be heard by the regional circuit.",
-      "description": "The Federal Circuit held it lacked subject-matter jurisdiction over a contract interpretation dispute arising from a patent litigation settlement agreement and transferred the case to the Fifth Circuit. The dispute centered on whether T-Mobile owed an additional payment under the settlement because asserted patent claims were confirmed patentable without amendment in an ex parte reexamination. The court found the dispute was fundamentally about state contract law, not patent law.",
-      "positiveImplications": "This clarifies jurisdictional boundaries, ensuring that settlement agreement disputes are heard in courts applying the governing state contract law rather than being channeled through the Federal Circuit's patent-focused lens.",
-      "negativeImplications": "Companies involved in patent settlement disputes face potential jurisdictional uncertainty and the burden of transfer when their disputes are recharacterized as contract rather than patent matters, potentially delaying resolution and increasing costs.",
+      "legalQuestion": "Whether the Federal Circuit has subject-matter jurisdiction over a dispute concerning interpretation of the settlement agreement phrase 'survives the EPR,' or whether this is a state law contract interpretation issue within the jurisdiction of the regional circuit.",
+      "description": "The Federal Circuit held it lacked jurisdiction over a dispute about whether patent claims 'survived' an ex parte reexamination for purposes of a settlement payment obligation, finding the case turned on state law contract interpretation rather than a substantial patent law question. The court transferred the case to the Fifth Circuit. This decision clarifies jurisdictional boundaries for post-settlement patent disputes and has practical implications for how parties draft settlement agreements involving pending PTO proceedings.",
+      "positiveImplications": "Companies can benefit from clearer jurisdictional rules when drafting patent settlement agreements, and the decision may favor parties seeking to litigate contract disputes in regional circuits with potentially different substantive standards.",
+      "negativeImplications": "Patent licensees and licensors face uncertainty about which court will interpret settlement terms tied to PTO proceedings, potentially complicating litigation strategy and forum selection.",
       "url": "https://www.courtlistener.com/opinion/10961022/t-mobile-us-inc-v-kaifi-llc/",
-      "lastUpdated": "2026-09-09"
-    },
-    {
-      "id": "range-of-motion-products-v-armaid",
-      "caseName": "Range of Motion Products, LLC v. Armaid Company Inc.",
-      "docketNumber": "No. 2023-2427",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-08-11",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether the Federal Circuit's design patent infringement framework under Egyptian Goddess improperly focuses on differences rather than overall similarity, and whether claim construction involving functionality determinations in design patents presents factual questions that should be decided by a jury.",
-      "description": "The Federal Circuit denied en banc rehearing in a design patent infringement case, with significant internal disagreement. The concurrence defended the existing Egyptian Goddess framework for assessing design patent infringement, while the dissent argued the framework improperly shifts focus to dissimilarity and allows courts to resolve infringement at summary judgment without adequate consideration of prior art and functionality issues that should go to a jury.",
-      "positiveImplications": "Accused infringers benefit from the preserved ability to obtain summary judgment of non-infringement in design patent cases where the designs are sufficiently distinct, maintaining an efficient defense tool.",
-      "negativeImplications": "Design patent holders face continued risk that courts will grant summary judgment of non-infringement based on perceived differences between designs, potentially without full consideration of prior art or jury resolution of factual disputes about functionality.",
-      "url": "https://www.courtlistener.com/opinion/10944778/range-of-motion-products-llc-v-armaid-company-inc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "board-of-regents-ut-v-boston-scientific",
@@ -129,12 +114,12 @@
       "courtKey": "cafc",
       "date": "2026-07-27",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether Boston Scientific was entitled to judgment as a matter of law of invalidity for anticipation and non-infringement of UT's patent directed to drug-releasing biodegradable fiber implants used in drug-eluting coronary stent systems.",
-      "description": "The Federal Circuit reversed the jury verdict in favor of UT, holding that Boston Scientific was entitled to judgment as a matter of law on both invalidity for anticipation and non-infringement. The decision overturned a damages award in a patent case involving drug-eluting coronary stent systems, a major medical device product line. The court found that the prior art anticipated the asserted claims and that BSC's products did not infringe.",
-      "positiveImplications": "Medical device manufacturers like Boston Scientific benefit from a rigorous application of JMOL standards that can overturn unfavorable jury verdicts, and the decision removes potential ongoing royalty obligations for established product lines.",
-      "negativeImplications": "Patent holders, particularly universities and research institutions, face the risk that appellate courts will reverse jury verdicts on both validity and infringement grounds simultaneously, eliminating damages awards even after successful trials.",
+      "legalQuestion": "Whether Boston Scientific was entitled to judgment as a matter of law of invalidity for anticipation and non-infringement of a patent directed to drug-releasing biodegradable fiber implants used in coronary stents.",
+      "description": "The Federal Circuit reversed a jury verdict finding infringement of UT's patent covering drug-releasing biodegradable fiber implants, holding that BSC was entitled to JMOL of both invalidity for anticipation and non-infringement. The decision overturned a jury's findings on liability and willfulness in a case involving BSC's drug-eluting coronary stent systems. This ruling is significant for the medical device industry, narrowing the scope of patent protection for drug-eluting stent technology.",
+      "positiveImplications": "Medical device manufacturers like BSC benefit from the reversal, which removes patent liability for widely used coronary stent technology and demonstrates the Federal Circuit's willingness to overturn jury verdicts on sufficiency-of-evidence grounds.",
+      "negativeImplications": "Patent holders, particularly universities and research institutions licensing medical device patents, face risk that jury verdicts may be overturned on JMOL even after prevailing at trial, reducing litigation leverage.",
       "url": "https://www.courtlistener.com/opinion/10935249/board-of-regents-of-the-university-of-texas-v-boston-scientific-corp/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "otsuka-v-hetero-labs",
@@ -144,42 +129,12 @@
       "courtKey": "cafc",
       "date": "2026-07-01",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court properly construed the claim terms 'dextromethorphan' and 'quinidine' in the weight-to-weight ratio limitation of the patent covering Nuedexta, and whether the court erred in waiving the Rule 65(c) bond requirement for a preliminary injunction pending appeal.",
-      "description": "The Federal Circuit affirmed the district court's preliminary injunction preventing Hetero from launching a generic competitor to Nuedexta (used for treating pseudobulbar affect) but vacated the waiver of the Rule 65(c) bond requirement pending appeal. The decision, which included a partial dissent, addresses claim construction for pharmaceutical composition patents and reinforces the requirement that courts set a bond to protect enjoined parties from potential harm.",
-      "positiveImplications": "Branded pharmaceutical companies benefit from the affirmance of the preliminary injunction framework and the claim construction that protects their market exclusivity against generic competitors during the patent term.",
-      "negativeImplications": "Generic drug manufacturers face injunctions that can delay market entry, and the court's requirement that bonds be posted pending appeal provides some financial protection but does not prevent the delay itself.",
+      "legalQuestion": "Whether the district court properly construed the claim terms 'dextromethorphan' and 'quinidine' in the weight-to-weight ratio limitation, and whether the court permissibly waived the Rule 65(c) bond requirement pending appeal when granting a preliminary injunction against a generic drug launch.",
+      "description": "The Federal Circuit affirmed a preliminary injunction preventing Hetero from launching a generic competitor to Nuedexta but vacated the district court's waiver of the Rule 65(c) bond requirement. The court's claim construction affirmed that the weight-to-weight ratio refers to the salt forms of the drugs. The decision addresses the important practical issue of bond requirements in Hatch-Waxman preliminary injunctions and sets boundaries on when courts may waive bonding obligations.",
+      "positiveImplications": "Brand pharmaceutical companies benefit from the affirmed preliminary injunction framework and favorable claim construction, supporting their ability to block generic entry prior to patent expiration.",
+      "negativeImplications": "Generic pharmaceutical companies face continued barriers to market entry, though the vacatur of the bond waiver provides some protection by requiring brand companies to post security for potential wrongful injunction damages.",
       "url": "https://www.courtlistener.com/opinion/10883424/otsuka-america-pharmaceutical-inc-v-hetero-labs-limited/",
-      "lastUpdated": "2026-09-09"
-    },
-    {
-      "id": "vdpp-v-volkswagen",
-      "caseName": "VDPP, LLC v. Volkswagen Group of America, Inc.",
-      "docketNumber": "No. 2024-2226",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-08-19",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court abused its discretion in dismissing a patent infringement complaint without granting leave to amend, in awarding attorney fees under 35 U.S.C. § 285, and in sanctioning plaintiff's counsel under 28 U.S.C. § 1927 and the court's inherent power.",
-      "description": "The Federal Circuit affirmed the dismissal of VDPP's patent infringement complaint against Volkswagen without leave to amend, the award of $207,543.60 in attorney fees as an exceptional case under § 285, and the sanctions against plaintiff's counsel. The court found that VDPP had implicitly waived its right to amend and that the proposed amended complaint was futile. This case sends a strong signal about the consequences of filing meritless patent infringement suits.",
-      "positiveImplications": "Businesses accused of patent infringement benefit from robust fee-shifting and sanctions tools that deter frivolous patent litigation, including the ability to recover attorney fees and hold opposing counsel personally liable.",
-      "negativeImplications": "Patent assertion entities and their counsel face significant financial risk from attorney fee awards and personal sanctions when courts deem their infringement claims to be meritless, potentially chilling borderline but legitimate patent enforcement efforts.",
-      "url": "https://www.courtlistener.com/opinion/10953454/vdpp-llc-v-volkswagen-group-of-america-inc/",
-      "lastUpdated": "2026-09-09"
-    },
-    {
-      "id": "aml-ip-v-bath-body-works",
-      "caseName": "AML IP, LLC v. Bath & Body Works Direct, Inc.",
-      "docketNumber": "No. 2025-1280",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-08-28",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether a district court may rule on a Rule 12(b)(6) patent eligibility challenge after already dismissing the case for improper venue under Rule 12(b)(3), and whether such an additional ruling on the merits is proper when venue is found lacking.",
-      "description": "The Federal Circuit affirmed the district court's dismissal on both improper venue and patent ineligibility grounds for an e-commerce patent. AML argued that after dismissing for improper venue, the court should not have also addressed eligibility. The court held the dual dismissal was permissible, finding the '979 patent's claims directed to e-commerce methods using a 'bridge computer' were patent-ineligible under § 101. The case also noted that co-defendant Big Lots' bankruptcy triggered an automatic stay.",
-      "positiveImplications": "Retailers and e-commerce companies benefit from the ability to obtain dismissals on multiple grounds simultaneously, including both venue and patent eligibility, providing broader preclusive effect against future assertions of the same patent.",
-      "negativeImplications": "Patent holders asserting e-commerce and software patents face the risk of adverse eligibility rulings even in cases where venue is improper, potentially establishing unfavorable precedent that undermines the patent's enforceability in other jurisdictions.",
-      "url": "https://www.courtlistener.com/opinion/10960932/aml-ip-llc-v-bath-body-works-direct-inc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "tracktime-v-amazon",
@@ -189,12 +144,27 @@
       "courtKey": "cafc",
       "date": "2026-07-02",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether 'executable program code' limitations in software patent claims should be treated as means-plus-function terms under 35 U.S.C. § 112(f) in light of the Federal Circuit's intervening precedent in Dyfan, LLC v. Target Corp., and whether a prior art reference anticipated the asserted patent claims.",
-      "description": "The Federal Circuit vacated the district court's indefiniteness ruling on the '978 patent's claims involving 'executable program code' limitations and remanded for reconsideration under the Dyfan framework, while affirming the judgment of invalidity for anticipation on the '638 patent's claim 9. The decision clarifies how courts should analyze whether software claim terms invoke § 112(f) means-plus-function treatment, which can determine whether such claims survive indefiniteness challenges.",
-      "positiveImplications": "Software patent holders benefit from a more nuanced analysis of whether 'executable program code' terms trigger means-plus-function treatment, potentially saving claims from indefiniteness invalidation under the Dyfan framework.",
-      "negativeImplications": "Technology companies defending against software patent claims face continued uncertainty about the scope of means-plus-function treatment, requiring case-by-case analysis that increases litigation costs and unpredictability.",
+      "legalQuestion": "Whether 'executable program code' limitations in software patent claims should be treated as means-plus-function terms under 35 U.S.C. § 112(f), applying the framework set forth in Dyfan, LLC v. Target Corp.",
+      "description": "The Federal Circuit vacated the district court's indefiniteness ruling regarding patent claims reciting 'executable program code configured to' perform certain functions, holding that the claims require further analysis under the court's intervening Dyfan precedent to determine whether § 112(f) applies. The court affirmed the invalidity judgment on a separate patent claim for anticipation. This decision has broad implications for software patent claiming, as many software patents use similar 'code configured to' language.",
+      "positiveImplications": "Software patent holders may benefit from a more nuanced analysis of whether their claims invoke § 112(f), potentially saving claims from indefiniteness that were previously treated as means-plus-function terms.",
+      "negativeImplications": "Technology companies accused of infringement face uncertainty as courts reassess which software claim formulations trigger § 112(f), potentially reviving previously invalidated patent claims.",
       "url": "https://www.courtlistener.com/opinion/10883811/tracktime-llc-v-amazoncom-services-llc/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
+    },
+    {
+      "id": "vdpp-v-volkswagen",
+      "caseName": "VDPP, LLC v. Volkswagen Group of America, Inc.",
+      "docketNumber": "No. 2024-2226",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-08-19",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether a district court may award attorney fees under 35 U.S.C. § 285 and impose sanctions under 28 U.S.C. § 1927 against a plaintiff and its counsel for filing a frivolous patent infringement complaint.",
+      "description": "The Federal Circuit affirmed the district court's dismissal of a patent infringement complaint without leave to amend, the award of $207,543.60 in attorney fees to Volkswagen under § 285, and sanctions against plaintiff's counsel. The court found the complaint was insufficiently pleaded and the proposed amended complaint was futile. This decision reinforces the consequences for filing inadequately supported patent infringement lawsuits and serves as a warning to patent assertion entities and their counsel.",
+      "positiveImplications": "Defendants in patent cases benefit from robust fee-shifting and sanctions enforcement, deterring poorly supported patent infringement lawsuits and reducing litigation costs from frivolous claims.",
+      "negativeImplications": "Patent holders and their counsel face significant financial risk from fee awards and sanctions if complaints are deemed insufficiently supported, potentially chilling legitimate but novel infringement theories.",
+      "url": "https://www.courtlistener.com/opinion/10953454/vdpp-llc-v-volkswagen-group-of-america-inc/",
+      "lastUpdated": "2026-09-10"
     },
     {
       "id": "archroma-v-commerce",
@@ -204,12 +174,57 @@
       "courtKey": "cafc",
       "date": "2026-08-07",
       "area": "Antitrust",
-      "legalQuestion": "Whether Commerce's regulatory 15-day deadline for domestic interested parties to indicate intent to participate in a sunset review of an antidumping duty order conflicts with the Tariff Act's statutory framework governing such reviews.",
-      "description": "The Federal Circuit reversed the Court of International Trade's decision that had declared Commerce's 15-day filing deadline regulation void. The court held that the statute is silent on the deadline for domestic interested parties to submit their intent to participate in sunset reviews, and Commerce's regulatory deadline was a permissible exercise of the agency's delegated authority and the product of reasoned decisionmaking. This preserves Commerce's ability to efficiently administer sunset reviews of antidumping duty orders.",
-      "positiveImplications": "Domestic manufacturers protected by antidumping duty orders benefit from clear, enforceable procedural deadlines that ensure orderly administration of sunset reviews, and the decision upholds Commerce's regulatory authority over trade enforcement procedures.",
-      "negativeImplications": "Domestic interested parties who miss the 15-day deadline face the risk of having antidumping duty orders revoked without their participation, as Commerce's regulatory framework now has appellate approval for strict procedural requirements.",
+      "legalQuestion": "Whether Commerce's regulatory 15-day deadline for domestic interested parties to indicate intent to participate in antidumping duty sunset reviews conflicts with the governing statute, which is silent on filing deadlines.",
+      "description": "The Federal Circuit reversed the Court of International Trade, holding that Commerce's regulation requiring domestic interested parties to indicate participation within 15 days of a sunset review initiation notice is a permissible exercise of delegated authority, not in conflict with the Tariff Act. The statute is silent on participation deadlines, and Commerce's rule was the product of reasoned decisionmaking. This decision preserves Commerce's procedural framework for sunset reviews of antidumping duty orders, which directly affects international trade competition.",
+      "positiveImplications": "Foreign manufacturers and importers benefit from clear procedural rules that may result in revocation of antidumping duties if domestic producers fail to timely indicate participation in sunset reviews.",
+      "negativeImplications": "Domestic producers face strict 15-day deadlines to preserve antidumping duty protections, with failure to comply potentially resulting in revocation of protective orders regardless of the merits.",
       "url": "https://www.courtlistener.com/opinion/10942107/archroma-us-inc-v-commerce/",
-      "lastUpdated": "2026-09-09"
+      "lastUpdated": "2026-09-10"
+    },
+    {
+      "id": "exelixis-v-msn-laboratories",
+      "caseName": "Exelixis, Inc. v. MSN Laboratories Private Ltd.",
+      "docketNumber": "No. 2025-1236",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-08-31",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether asserted claims of patents covering crystalline cabozantinib (L)-malate salts, pharmaceutical formulations, and methods of treating cancer satisfy the written description requirement of 35 U.S.C. § 112(a).",
+      "description": "The Federal Circuit affirmed that the asserted claims of Exelixis's patents covering Cabometyx® (cabozantinib) have adequate written description, rejecting MSN's invalidity challenge. The patents cover crystalline salt forms, formulations, and treatment methods for kidney, liver, and thyroid cancer. This decision is commercially significant as it preserves patent protection for a major oncology drug through 2030 and provides guidance on written description standards for pharmaceutical polymorph patents.",
+      "positiveImplications": "Pharmaceutical innovators benefit from affirmation that polymorph and salt-form patents with adequate specification disclosure satisfy written description, protecting revenue streams for branded oncology drugs.",
+      "negativeImplications": "Generic pharmaceutical companies face continued barriers to launching competing versions of cabozantinib, as the patent protection is upheld through 2030.",
+      "url": "https://www.courtlistener.com/opinion/10962857/exelixis-inc-v-msn-laboratories-private-ltd/",
+      "lastUpdated": "2026-09-10"
+    },
+    {
+      "id": "range-of-motion-v-armaid",
+      "caseName": "Range of Motion Products, LLC v. Armaid Company Inc.",
+      "docketNumber": "No. 2023-2427",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-08-11",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether en banc review is warranted to reconsider the Egyptian Goddess framework for design patent infringement, including whether the ordinary observer test improperly focuses on differences rather than overall similarity, and whether functionality determinations in design patent claim construction are factual questions for the jury.",
+      "description": "The Federal Circuit denied rehearing en banc on a design patent infringement case, with a concurrence defending the Egyptian Goddess framework and a dissent arguing that the current test improperly focuses on dissimilarity and that functionality in design patent claim construction should be decided by juries. The divided court signals ongoing tension in design patent law but preserves the existing framework for summary judgment disposition of design patent cases based on visual differences.",
+      "positiveImplications": "Accused infringers benefit from the preservation of a framework that permits resolution of design patent cases at summary judgment when designs are sufficiently distinct, reducing litigation costs.",
+      "negativeImplications": "Design patent holders face continued risk that courts may resolve infringement at summary judgment by focusing on differences, and the denial of en banc review leaves unresolved questions about the role of juries in functionality determinations.",
+      "url": "https://www.courtlistener.com/opinion/10944778/range-of-motion-products-llc-v-armaid-company-inc/",
+      "lastUpdated": "2026-09-10"
+    },
+    {
+      "id": "aml-ip-v-bath-body-works",
+      "caseName": "AML IP, LLC v. Bath & Body Works Direct, Inc.",
+      "docketNumber": "No. 2025-1280",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-08-28",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether a district court may reach the merits of a patent eligibility challenge under 35 U.S.C. § 101 and dismiss under Rule 12(b)(6) after already concluding that venue is improper and dismissing under Rule 12(b)(3).",
+      "description": "The Federal Circuit affirmed a district court's dual dismissal of a patent infringement case on both improper venue and patent ineligibility grounds, holding that the court did not err by addressing the § 101 merits after finding venue improper. The patent related to e-commerce methods using a 'bridge computer.' This decision establishes that district courts may issue alternative holdings on patent eligibility even when venue is independently dispositive, potentially creating issue preclusion effects in subsequent litigation.",
+      "positiveImplications": "Accused infringers benefit from the ability to obtain merits-based rulings on patent eligibility even when venue is dispositive, potentially precluding reassertion of invalid patents in other forums.",
+      "negativeImplications": "Patent holders risk adverse eligibility rulings with potential preclusive effect even when cases are dismissed for improper venue, reducing their ability to refile in a more favorable forum without the eligibility issue following them.",
+      "url": "https://www.courtlistener.com/opinion/10960932/aml-ip-llc-v-bath-body-works-direct-inc/",
+      "lastUpdated": "2026-09-10"
     }
   ]
 }
