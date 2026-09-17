@@ -2,7 +2,7 @@
 
 import { useState, useRef, useLayoutEffect, type RefObject, type ReactNode } from "react";
 import Image from "next/image";
-import type { CaseSummary, PartyArgument, CitedPrecedent, Article } from "@/types";
+import type { CaseSummary, PartyArgument, CitedPrecedent, Article, DocketEntry, DocketDocumentType } from "@/types";
 import type { CircuitSplit } from "@/lib/circuit-splits";
 import { computeDecisionSides, JUSTICE_ORDER } from "@/lib/decisionSides";
 import { ScrollableRegion } from "@/components/ScrollableRegion";
@@ -67,6 +67,7 @@ function getCaseMenuItems({
   const hasPetitioner = caseData.parties.some((p) => p.role === "petitioner");
   const hasRespondent = caseData.parties.some((p) => p.role === "respondent");
   const hasPrecedents = caseData.citedPrecedents.length > 0;
+  const hasDocketEntries = Boolean(caseData.docketEntries?.length);
 
   return [
     hasDecision && "Decisions & Opinions",
@@ -77,6 +78,7 @@ function getCaseMenuItems({
     hasRespondent && "Respondent",
     hasPrecedents && "Precedent Cases Cited",
     // "Legal Terminology" temporarily hidden from the menu — not removed, just not shown.
+    hasDocketEntries && "Proceedings & Documents",
     hasArticles && "Third Party Analysis",
   ].filter((item): item is string => Boolean(item));
 }
@@ -939,6 +941,157 @@ function CaseOverviewPanel({
   );
 }
 
+// Group labels + a fixed display order -- not alphabetical, roughly the
+// order a case actually moves through them (cert stage, then merits,
+// amicus, motions/orders threaded throughout, record last since it's
+// requested/received only close to argument). Entries within each group
+// stay in their original chronological (sortOrder) order.
+const DOCKET_DOCUMENT_TYPE_LABELS: Record<DocketDocumentType, string> = {
+  petition_response: "Petition-Stage Filings",
+  merits_brief: "Merits Briefs",
+  amicus_brief: "Amicus Briefs",
+  motion: "Motions",
+  order_scheduling: "Orders & Scheduling",
+  record: "Record",
+  other: "Other",
+};
+const DOCKET_DOCUMENT_TYPE_ORDER: DocketDocumentType[] = [
+  "petition_response",
+  "merits_brief",
+  "amicus_brief",
+  "motion",
+  "order_scheduling",
+  "record",
+  "other",
+];
+
+interface DocketProceedingsGroup {
+  type: DocketDocumentType;
+  items: DocketEntry[];
+}
+
+// Panel 2: the category menu -- same selected/unselected button styling as
+// CaseOverviewPanel's top-level menu above, just a plain vertical list
+// instead of a 2-column grid (this panel is narrower).
+function DocketProceedingsMenuPanel({
+  groups,
+  selectedType,
+  onSelectType,
+}: {
+  groups: DocketProceedingsGroup[];
+  selectedType: DocketDocumentType | null;
+  onSelectType: (type: DocketDocumentType) => void;
+}) {
+  return (
+    <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="px-6 pb-2 pt-[14px]">
+      <p className="mb-[0.5em] text-left font-serif text-[14px] font-bold text-[#6B6560]">
+        Proceedings &amp; Documents
+      </p>
+      <ul className="list-none">
+        {groups.map((group) => (
+          <li key={group.type} className="mt-[0.6em]">
+            <button
+              type="button"
+              onClick={() => onSelectType(group.type)}
+              className="text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
+              style={{
+                fontFamily: "'Lora', Georgia, serif",
+                lineHeight: 1.5,
+                fontWeight: selectedType === group.type ? 700 : 400,
+              }}
+            >
+              {DOCKET_DOCUMENT_TYPE_LABELS[group.type]}{" "}
+              <span className="font-mono text-[11px] font-normal text-[#6B6560]">{group.items.length}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </ScrollableRegion>
+  );
+}
+
+// Panel 3: the selected category's entries -- date, description, and its
+// document links.
+function DocketProceedingsListPanel({
+  type,
+  items,
+}: {
+  type: DocketDocumentType | null;
+  items: DocketEntry[];
+}) {
+  return (
+    <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="px-6 pb-2 pt-[14px]">
+      <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">
+        {type ? DOCKET_DOCUMENT_TYPE_LABELS[type] : "Proceedings & Documents"}
+      </p>
+      {items.length === 0 ? (
+        <p
+          className="text-center text-[13px] font-normal italic text-[#6B6560]"
+          style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.7 }}
+        >
+          No entries.
+        </p>
+      ) : (
+        <div className="flex flex-col gap-[0.9em]">
+          {items.map((entry, i) => (
+            <div key={i}>
+              <p
+                className="text-[11px] font-normal not-italic text-[#6B6560]"
+                style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}
+              >
+                {formatDate(entry.date)}
+              </p>
+              <p
+                className="text-[13px] font-normal not-italic text-[#1A1A1A]"
+                style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}
+              >
+                {entry.description}
+              </p>
+              {entry.documents.length > 0 && (
+                <p className="mt-[0.3em] flex flex-wrap gap-x-3 gap-y-1">
+                  {entry.documents.map((doc, j) => (
+                    <a
+                      key={j}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-normal not-italic text-[#1A1A1A] underline transition-colors hover:text-[#C43030]"
+                      style={{ fontFamily: "'Lora', Georgia, serif" }}
+                    >
+                      {doc.label} ↗
+                    </a>
+                  ))}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </ScrollableRegion>
+  );
+}
+
+// Holds which document-type category is showing in panel 3 -- defaults to
+// the first non-empty group in DOCKET_DOCUMENT_TYPE_ORDER. Same two-level
+// menu-then-detail shape as DecisionOpinionsLayout above (panel 2 selects,
+// panel 3 shows), kept as its own state here rather than lifted to
+// CaseDetailPanels since nothing else needs it.
+function DocketProceedingsLayout({ entries }: { entries: DocketEntry[] }) {
+  const groups: DocketProceedingsGroup[] = DOCKET_DOCUMENT_TYPE_ORDER.map((type) => ({
+    type,
+    items: entries.filter((e) => e.documentType === type),
+  })).filter((g) => g.items.length > 0);
+  const [selectedType, setSelectedType] = useState<DocketDocumentType | null>(groups[0]?.type ?? null);
+  const selectedGroup = groups.find((g) => g.type === selectedType) ?? null;
+
+  return (
+    <>
+      <DocketProceedingsMenuPanel groups={groups} selectedType={selectedType} onSelectType={setSelectedType} />
+      <DocketProceedingsListPanel type={selectedGroup?.type ?? null} items={selectedGroup?.items ?? []} />
+    </>
+  );
+}
+
 export function CaseDetailPanels({
   caseData,
   circuitSplitsBySlug,
@@ -1011,6 +1164,8 @@ export function CaseDetailPanels({
         </>
       ) : selectedItem === "Decisions & Opinions" ? (
         <DecisionOpinionsLayout caseData={caseData} />
+      ) : selectedItem === "Proceedings & Documents" ? (
+        <DocketProceedingsLayout entries={caseData.docketEntries ?? []} />
       ) : (
         <>
           <CaseScaffoldPanel index={2} selectedItem={selectedItem} />

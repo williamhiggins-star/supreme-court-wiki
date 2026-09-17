@@ -16,7 +16,7 @@
 
 import { db } from "./client";
 import { JUSTICE_KEY_BY_PERSON_SLUG, JUSTICE_DISPLAY_NAME_BY_KEY, currentTermYear } from "./constants";
-import type { CaseSummary } from "@/types";
+import type { CaseSummary, DocketEntry, DocketDocumentType } from "@/types";
 
 export interface LowerCourtInfo {
   docketNumber: string | null;
@@ -101,7 +101,8 @@ const CASE_DETAIL_SELECT = `
     role, exchange, context, significance,
     justice:people!key_exchanges_justice_id_fkey ( slug ),
     advocate:people!key_exchanges_advocate_id_fkey ( full_name )
-  )
+  ),
+  docket_entries ( entry_date, description, document_type, sort_order, documents )
 `;
 
 interface DecisionTieRow {
@@ -201,6 +202,18 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[], decisio
   const transcript = caseRow.oral_argument_transcripts ?? null;
   const spotify = caseRow.case_podcast_episodes ?? null;
 
+  // Sorted client-side rather than trusting embed order -- sort_order (page
+  // order, not entry_date) is the stable tiebreaker for same-day entries.
+  const docketEntries: DocketEntry[] = (caseRow.docket_entries ?? [])
+    .slice()
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((e) => ({
+      date: e.entry_date,
+      description: e.description,
+      documentType: e.document_type as DocketDocumentType,
+      documents: (e.documents as { label: string; url: string }[] | null) ?? [],
+    }));
+
   // key_exchanges.role (backfilled from the same JSON parties[].role match
   // that produced context) is the party-attribution signal used here --
   // NOT advocate_id -> case_participations. case_participations coverage
@@ -285,6 +298,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[], decisio
     concurDissentSummaries: concurDissentSummaries.length ? concurDissentSummaries : undefined,
     processedAt: caseRow.updated_at,
     podcastEpisodeUrl: spotify?.episode_url ?? undefined,
+    docketEntries: docketEntries.length ? docketEntries : undefined,
 
     disposition: caseRow.disposition,
     voteLine: caseRow.vote_line,

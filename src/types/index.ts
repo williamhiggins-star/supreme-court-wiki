@@ -125,6 +125,28 @@ export interface CaseSummary {
   // Metadata
   processedAt: string;
   podcastEpisodeUrl?: string;
+
+  // Docket "Proceedings and Orders" -- DB-sourced cases only (pilot: 25-170
+  // only, not wired into the daily pipeline yet). Pre-sorted chronologically
+  // (sortOrder/page order, not just entryDate -- same-day entries need a
+  // stable tiebreaker).
+  docketEntries?: DocketEntry[];
+}
+
+export type DocketDocumentType =
+  | "petition_response"
+  | "merits_brief"
+  | "amicus_brief"
+  | "motion"
+  | "order_scheduling"
+  | "record"
+  | "other";
+
+export interface DocketEntry {
+  date: string; // YYYY-MM-DD
+  description: string;
+  documentType: DocketDocumentType;
+  documents: { label: string; url: string }[];
 }
 
 export interface ProcessingResult {

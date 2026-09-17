@@ -1345,6 +1345,50 @@ export type Database = {
           },
         ]
       }
+      docket_entries: {
+        Row: {
+          case_id: string
+          created_at: string
+          description: string
+          document_type: string
+          documents: Json
+          entry_date: string
+          id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          description: string
+          document_type: string
+          documents?: Json
+          entry_date: string
+          id?: string
+          sort_order: number
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          description?: string
+          document_type?: string
+          documents?: Json
+          entry_date?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "docket_entries_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dossier_events: {
         Row: {
           action: string
