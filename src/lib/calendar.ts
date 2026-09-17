@@ -15,9 +15,10 @@ export interface CalendarEvent {
 }
 
 interface CalendarJson {
-  term: string;
-  generated: string;
-  conferences: string[];
+  // Keyed by term year ("2025", "2026", ...) -- updateCalendar() merges
+  // its term's conference dates into this map rather than overwriting
+  // the file, so an OT2026 pipeline run doesn't erase OT2025's dates.
+  terms: Record<string, { generated: string; conferences: string[] }>;
 }
 
 export function getCalendarJson(): CalendarJson | null {
@@ -50,8 +51,13 @@ export function buildCalendarEvents(
     events.push({ date, type: "argument", cases: casesOnDate });
   }
 
-  // Add conference dates
-  for (const date of calendarJson?.conferences ?? []) {
+  // Add conference dates -- merged across every term on file (deduped),
+  // same "show every tracked term, not just one" rule as the docket.
+  const conferenceDates = new Set<string>();
+  for (const termData of Object.values(calendarJson?.terms ?? {})) {
+    for (const date of termData.conferences) conferenceDates.add(date);
+  }
+  for (const date of conferenceDates) {
     events.push({ date, type: "conference" });
   }
 

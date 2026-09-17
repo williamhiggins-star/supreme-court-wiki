@@ -246,7 +246,8 @@ function loadCases(): CaseContext[] {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const d: any = JSON.parse(fs.readFileSync(path.join(CASES_DIR, f), "utf-8"));
-      if (d.termYear !== "2025") continue;
+      // Bump this by hand each October when a new term starts.
+      if (!["2025", "2026"].includes(d.termYear)) continue;
       results.push({ slug: d.slug, title: d.title, termYear: d.termYear });
     } catch { /* skip */ }
   }

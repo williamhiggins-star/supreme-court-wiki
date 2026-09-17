@@ -274,73 +274,120 @@ interface UpcomingCase {
 }
 
 async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
-  const url = `${SCOTUS_BASE}/oral_arguments/argument_calendars.aspx`;
-  console.log(`\nFetching argument calendar: ${url}`);
+  // The old argument_calendars.aspx (plural) URL now 302s to
+  // /errors/PageNotFound.aspx -- confirmed by hand 2026-09-17. SCOTUS
+  // moved this page to calendarsandlists.aspx and restructured it to
+  // link out to monthly PDF calendars (MonthlyArgumentCal<Month><Year>.pdf)
+  // instead of listing cases inline in the HTML, so this now downloads
+  // and parses those PDFs the same way updateCalendar() below already
+  // parses the case-distribution-schedule PDF.
+  const listUrl = `${SCOTUS_BASE}/oral_arguments/calendarsandlists.aspx`;
+  console.log(`\nFetching argument calendar list: ${listUrl}`);
 
-  let html: string;
+  let listHtml: string;
   try {
-    html = await fetchHtml(url);
+    listHtml = await fetchHtml(listUrl);
   } catch (err) {
-    console.warn(`  Could not fetch argument calendar: ${err}`);
+    console.warn(`  Could not fetch argument calendar list: ${err}`);
     return [];
   }
 
-  const results: UpcomingCase[] = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // The SCOTUS argument calendar contains table rows like:
-  // <td>January 13, 2025</td>
-  // followed by case numbers and names.
-  // We extract date + case-number pairs.
-  //
-  // Pattern: find date cells then look for case numbers in nearby cells.
-  const datePattern =
-    /(\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4})\b/g;
-  const caseNumPattern = /\b(\d{2}-\d{3,4})\b/g;
+  // calendarsandlists.aspx links every session back to 2023, so filter to
+  // near-term ones before downloading anything. Filenames don't always
+  // match their own session's actual start date -- confirmed
+  // MonthlyArgumentCalDecember2026.pdf's session actually opens November
+  // 30 -- so keep a file if its NOMINAL month is the previous calendar
+  // month or later, a one-month buffer that comfortably covers that kind
+  // of slip either direction without pulling the whole multi-year archive.
+  const pdfLinkPattern =
+    /argument_calendars\/MonthlyArgumentCal([A-Za-z]+)(\d{4})\.pdf/g;
+  const cutoff = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const pdfUrls = new Set<string>();
+  let linkMatch: RegExpExecArray | null;
+  while ((linkMatch = pdfLinkPattern.exec(listHtml)) !== null) {
+    const month = MONTH_MAP[linkMatch[1].toUpperCase()];
+    const year = Number(linkMatch[2]);
+    if (!month) continue;
+    const nominalStart = new Date(year, month - 1, 1);
+    if (nominalStart < cutoff) continue;
+    pdfUrls.add(`${SCOTUS_BASE}/oral_arguments/${linkMatch[0]}`);
+  }
+  console.log(`  ${pdfUrls.size} monthly calendar(s) in range: ${[...pdfUrls].map((u) => u.split("/").pop()).join(", ")}`);
 
-  // Split HTML into rough "date sections" and extract case numbers from each
-  const sections = html.split(datePattern);
-  // sections: [pre, dateStr, content, dateStr, content, ...]
+  const results: UpcomingCase[] = [];
+  // "Monday, October 5" -- session PDFs group entries by weekday across
+  // the whole two-week session (all Mondays, then all Tuesdays, ...), not
+  // chronologically, so each heading's own date has to be parsed and
+  // combined with the term-year header rather than assumed in order.
+  const dateHeadingPattern =
+    /((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),\s+([A-Za-z]+)\s+(\d{1,2}))/g;
+  const caseNumPattern = /\b(\d{2}-\d{1,5})\b/g;
 
-  for (let i = 1; i < sections.length; i += 2) {
-    const dateStr = sections[i];
-    const content = sections[i + 1] ?? "";
-
-    // Parse date
-    const parsed = new Date(dateStr);
-    if (isNaN(parsed.getTime())) continue;
-    if (parsed < today) continue; // only future arguments
-
-    const argDateISO = parsed.toISOString().split("T")[0];
-    const termYear =
-      parsed.getMonth() >= 9
-        ? String(parsed.getFullYear())
-        : String(parsed.getFullYear() - 1);
-
-    // Extract case numbers from the next section (until the next date)
-    const nextDateIdx = content.search(
-      /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/
-    );
-    const segment = nextDateIdx > 0 ? content.slice(0, nextDateIdx) : content;
-
-    let match: RegExpExecArray | null;
-    caseNumPattern.lastIndex = 0;
-    while ((match = caseNumPattern.exec(segment)) !== null) {
-      const caseNumber = match[1];
-      // Extract a rough title: look for text near the case number
-      const vicinity = segment.slice(
-        Math.max(0, match.index - 100),
-        match.index + 200
-      );
-      // Strip HTML tags
-      const plainText = vicinity.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-      // Try to extract "v." pattern
-      const titleMatch = plainText.match(/([A-Z][^.]+v\.[^,\n]+)/);
-      const title = titleMatch ? titleMatch[1].trim() : caseNumber;
-
-      results.push({ caseNumber, title, argumentDate: argDateISO, termYear });
+  for (const pdfUrl of pdfUrls) {
+    const beforeCount = results.length;
+    let text: string;
+    try {
+      const buf = await downloadPdf(pdfUrl);
+      text = await extractText(buf);
+    } catch (err) {
+      console.warn(`  Could not fetch/parse ${pdfUrl}: ${err}`);
+      continue;
     }
+
+    // "OCTOBER TERM 2026" header -- the term SCOTUS itself assigns this
+    // session to, more reliable than re-deriving it from a body date.
+    const termMatch = text.match(/OCTOBER TERM\s+(\d{4})/i);
+    if (!termMatch) {
+      console.warn(`  No "OCTOBER TERM YYYY" header found in ${pdfUrl} (got ${text.length} chars) -- skipping`);
+      continue;
+    }
+    const termStartYear = Number(termMatch[1]);
+
+    // Real calendar content ends at the "Court convenes..." footer;
+    // dropping it keeps it out of the last date heading's case title.
+    const body = text.split(/Court\s+Convenes/i)[0];
+
+    const sections = body.split(dateHeadingPattern);
+    // sections: [pre, fullHeading, monthName, day, content, fullHeading, monthName, day, content, ...]
+    for (let i = 1; i < sections.length; i += 4) {
+      const month = MONTH_MAP[(sections[i + 1] ?? "").toUpperCase()];
+      const day = Number(sections[i + 2]);
+      const content = sections[i + 3] ?? "";
+      if (!month || !day) continue;
+
+      // OT is named for the year it STARTS in -- Oct/Nov/Dec dates fall
+      // in that calendar year, everything else (Jan-Sep) in the next one.
+      const calendarYear = month >= 10 ? termStartYear : termStartYear + 1;
+      const parsed = new Date(calendarYear, month - 1, day);
+      if (parsed < today) continue; // only future arguments (also skips "LEGAL HOLIDAY" content, which has no case numbers anyway)
+
+      const argDateISO = `${calendarYear}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const termYear = String(termStartYear);
+
+      const matches = [...content.matchAll(caseNumPattern)];
+      for (let j = 0; j < matches.length; j++) {
+        const caseNumber = matches[j][1];
+        const start = matches[j].index! + matches[j][0].length;
+        const end = j + 1 < matches.length ? matches[j + 1].index! : content.length;
+        // Consolidated cases print as "25-238) TITLE ... 25-566) TITLE
+        // ... (Consolidated - 1 hr. for argument)" -- strip the stray
+        // ")" left by the case-number regex, the shared trailing
+        // annotation, and the next entry's "(N)" index marker.
+        const title = content
+          .slice(start, end)
+          .replace(/\(Consolidated[^)]*\)?/gi, "")
+          .replace(/\(\d+\)\s*$/, "")
+          .replace(/^\)\s*/, "")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        results.push({ caseNumber, title: title || caseNumber, argumentDate: argDateISO, termYear });
+      }
+    }
+    console.log(`  ${pdfUrl.split("/").pop()}: ${results.length - beforeCount} upcoming case(s)`);
   }
 
   // Deduplicate by caseNumber
@@ -744,13 +791,25 @@ async function updateCalendar(termYear: string): Promise<void> {
     }
 
     const calendarPath = path.join(DATA_DIR, "calendar.json");
-    const calendarData = {
-      term: termYear,
+    // Merge/upsert this term's dates into the file rather than
+    // overwriting it -- a prior run's flat single-term shape would have
+    // been replaced by this term's alone, silently losing every other
+    // tracked term's conference dates (confirmed: this is exactly what
+    // happened to OT2025's dates on the first OT2026 pipeline run before
+    // this fix).
+    let calendarData: { terms: Record<string, { generated: string; conferences: string[] }> } = { terms: {} };
+    try {
+      const parsed = JSON.parse(fs.readFileSync(calendarPath, "utf-8"));
+      if (parsed.terms) calendarData = parsed;
+    } catch {
+      // No existing file (or old pre-migration shape) -- start fresh.
+    }
+    calendarData.terms[termYear] = {
       generated: new Date().toISOString().split("T")[0],
       conferences: [...conferences].sort(),
     };
     fs.writeFileSync(calendarPath, JSON.stringify(calendarData, null, 2));
-    console.log(`  ✓ calendar.json updated: ${conferences.size} conference dates`);
+    console.log(`  ✓ calendar.json updated: ${conferences.size} conference dates for term ${termYear}`);
   } catch (err) {
     console.warn(`  Could not update calendar: ${err}`);
     // Non-fatal — existing calendar.json continues to work

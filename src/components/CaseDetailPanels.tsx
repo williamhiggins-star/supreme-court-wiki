@@ -949,7 +949,8 @@ export function CaseDetailPanels({
   articlesByCaseSlug: Record<string, Article[]>;
 }) {
   const split = circuitSplitsBySlug[caseData.slug];
-  const caseArticles = caseData.termYear === "2025" ? articlesByCaseSlug[caseData.slug] ?? [] : [];
+  // Bump this by hand each October when a new term starts.
+  const caseArticles = ["2025", "2026"].includes(caseData.termYear) ? articlesByCaseSlug[caseData.slug] ?? [] : [];
   const menuItems = getCaseMenuItems({
     caseData,
     hasCircuitSplit: Boolean(split),

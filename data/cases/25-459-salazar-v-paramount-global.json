@@ -1,0 +1,93 @@
+{
+  "slug": "25-459-salazar-v-paramount-global",
+  "caseNumber": "25-459",
+  "title": "Salazar v. Paramount Global",
+  "termYear": "2026",
+  "argumentDate": "2026-10-14",
+  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-459.html",
+  "docketStatus": "upcoming",
+  "backgroundAndFacts": "Michael Salazar subscribed to 247Sports, a sports news and video website owned by Paramount Global. Like many websites, 247Sports installed a small piece of tracking code on its site called a 'Meta Pixel' — a tool created by Facebook's parent company, Meta, that automatically sends data about a user's activity to Meta when they visit a page. Salazar claims that when he watched videos on 247Sports, the pixel transmitted his Facebook ID and information about which videos he watched directly to Meta, all without his knowledge or consent.\n\nSalazar filed a class action lawsuit under the Video Privacy Protection Act (VPPA), a federal law passed in 1988 after a newspaper published Supreme Court nominee Robert Bork's video rental history. The VPPA makes it illegal for video tape service providers to knowingly disclose customers' personally identifiable information — including what videos they watch — to third parties without consent. Salazar argued that Paramount violated this law by allowing the Meta Pixel to send his viewing data to Facebook.\n\nThe federal district court dismissed the case, and the Sixth Circuit Court of Appeals affirmed that dismissal. The appeals court ruled that Salazar lacked 'standing' — the legal right to bring the lawsuit in federal court — because he had not shown a concrete, real-world injury. Simply having his data shared in violation of a federal statute, the Sixth Circuit held, was not enough on its own to get into court. Salazar then asked the Supreme Court to review the decision, arguing that a violation of a privacy law specifically designed to protect this kind of information is itself a sufficient injury.",
+  "legalQuestion": "Whether a website visitor has standing to sue under the Video Privacy Protection Act when their video-viewing data was allegedly shared with Facebook via a tracking pixel, without showing any concrete harm beyond the statutory violation itself.",
+  "significance": "This case will resolve a significant and long-running disagreement among federal appeals courts about when a person can sue in federal court for a privacy law violation. Some courts have held that the unauthorized disclosure of protected personal information is itself a concrete injury — especially when Congress specifically designated that information as off-limits. Other courts, like the Sixth Circuit here, require plaintiffs to show something more, such as emotional distress, financial harm, or misuse of the data. The Supreme Court's answer will determine whether tens of millions of Americans whose data may have been shared without consent can access the federal courts.\n\nThe stakes extend far beyond the VPPA. A ruling that statutory privacy violations alone are insufficient injuries could effectively gut enforcement of numerous federal privacy laws — including statutes protecting health information, financial data, and electronic communications — because individual victims rarely suffer documented financial harm from data disclosures. Conversely, a ruling in Salazar's favor could open the floodgates to class action litigation against virtually every major website that uses third-party tracking tools, which describes most of the internet. The enormous number of amicus briefs filed by media companies, retailers, tech giants, and civil liberties groups reflects how broadly this decision will be felt.",
+  "parties": [
+    {
+      "party": "Michael Salazar",
+      "role": "petitioner",
+      "coreArgument": "A violation of the VPPA is itself a concrete injury sufficient for Article III standing because Congress identified the unauthorized disclosure of video-viewing records as a specific, legally cognizable harm rooted in the long-recognized common law right to privacy. Salazar argues that the Sixth Circuit's demand for additional harm beyond the statutory violation is inconsistent with Supreme Court precedent and would render federal privacy laws unenforceable.",
+      "supportingPoints": [
+        "The VPPA was enacted to protect a specific privacy interest — the confidentiality of video-viewing habits — and Congress's judgment that its violation causes real harm deserves judicial respect.",
+        "The unauthorized disclosure of personal information to a third party has historically been recognized as a concrete injury analogous to common law invasion of privacy and breach of confidence.",
+        "The Sixth Circuit's ruling creates an unworkable circuit split: the same conduct is actionable in some federal courts but not others, depending solely on where the plaintiff lives.",
+        "Requiring victims of data disclosure to prove additional downstream harm is impossible in most privacy cases and would render statutes like the VPPA effectively unenforceable through private lawsuits."
+      ],
+      "keyExchanges": []
+    },
+    {
+      "party": "Paramount Global, dba 247Sports",
+      "role": "respondent",
+      "coreArgument": "Salazar lacks Article III standing because he has identified no concrete, real-world harm resulting from the alleged disclosure of his viewing data — he suffered no financial loss, no reputational damage, and no demonstrated misuse of his information. Paramount argues that a bare statutory violation, without more, is insufficient to confer standing under the Supreme Court's decisions in Spokeo and TransUnion.",
+      "supportingPoints": [
+        "Under TransUnion v. Ramirez, a plaintiff must show that a statutory violation bears a close relationship to a harm traditionally recognized at common law; mere technical violations do not suffice.",
+        "The common law torts most analogous to the VPPA — such as public disclosure of private facts — required actual publication to the public, not a behind-the-scenes data transmission to an advertising platform.",
+        "Permitting standing based on bare statutory violations would transform federal courts into enforcement agencies for every technical regulatory breach, flooding the docket with no-injury class actions.",
+        "Salazar presented no evidence that Meta actually used, viewed, or acted upon the data allegedly transmitted, meaning any injury is purely speculative and hypothetical."
+      ],
+      "keyExchanges": []
+    }
+  ],
+  "citedPrecedents": [
+    {
+      "caseSlug": "transunion-llc-v-ramirez",
+      "caseName": "TransUnion LLC v. Ramirez",
+      "citation": "594 U.S. 413",
+      "reasonCited": "This is the most important recent precedent; the Court held that a mere statutory violation does not automatically confer Article III standing and that plaintiffs must show a concrete harm bearing a close relationship to a traditionally recognized injury.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "spokeo-inc-v-robins",
+      "caseName": "Spokeo, Inc. v. Robins",
+      "citation": "578 U.S. 330",
+      "reasonCited": "Spokeo established that a concrete injury cannot be satisfied by a bare procedural or technical statutory violation alone, and is a foundational precedent for Paramount's argument that Salazar needs more than a VPPA breach to establish standing.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "lujan-v-defenders-of-wildlife",
+      "caseName": "Lujan v. Defenders of Wildlife",
+      "citation": "504 U.S. 555",
+      "reasonCited": "This case established the modern three-part test for Article III standing — requiring injury-in-fact, causation, and redressability — which frames the entire legal dispute over whether Salazar's alleged privacy violation counts as a sufficient injury.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "stacy-v-thermo-dynamics-corp-video-privacy-protection-act-legislative-history",
+      "caseName": "Stacy v. Thermo-Dynamics Corp. (Video Privacy Protection Act legislative history)",
+      "citation": "18 U.S.C. § 2710",
+      "reasonCited": "The VPPA itself and its legislative history — triggered by publication of Judge Bork's video rental records — are cited by Salazar to show that Congress specifically identified video-viewing data as a protected privacy interest warranting a private right of action.",
+      "citedBy": "petitioner"
+    },
+    {
+      "caseSlug": "restatement-second-of-torts-invasion-of-privacy",
+      "caseName": "Restatement (Second) of Torts — Invasion of Privacy",
+      "citation": "Restatement (Second) of Torts § 652",
+      "reasonCited": "Both parties cite common law privacy torts to argue whether the VPPA violation is sufficiently analogous to a historically recognized harm — the test established in TransUnion — with Salazar arguing it matches intrusion upon seclusion and Paramount arguing it does not match public disclosure torts.",
+      "citedBy": "multiple"
+    },
+    {
+      "caseSlug": "gadelhak-v-att-services-inc",
+      "caseName": "Gadelhak v. AT&T Services, Inc.",
+      "citation": "950 F.3d 458",
+      "reasonCited": "This Seventh Circuit decision, among others from sister circuits, is cited to illustrate the circuit split on whether bare statutory privacy violations confer standing — a split the Supreme Court granted certiorari to resolve.",
+      "citedBy": "petitioner"
+    }
+  ],
+  "legalTermsUsed": [
+    "article-iii-standing",
+    "injury-in-fact",
+    "video-privacy-protection-act-vppa",
+    "meta-pixel-tracking-pixel",
+    "statutory-damages",
+    "class-action",
+    "concrete-harm",
+    "common-law-analog"
+  ],
+  "processedAt": "2026-09-17T15:19:01.698Z"
+}

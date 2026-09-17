@@ -233,7 +233,8 @@ async function main() {
       fs.readFileSync(path.join(CASES_DIR, file), "utf-8")
     );
 
-    if (caseData.termYear !== "2025") { skipped++; continue; }
+    // Bump this by hand each October when a new term starts.
+    if (!["2025", "2026"].includes(caseData.termYear)) { skipped++; continue; }
     const url: string = caseData.transcriptUrl ?? "";
     if (!url.endsWith(".pdf")) { skipped++; continue; }
 

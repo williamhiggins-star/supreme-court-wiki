@@ -1,4 +1,4 @@
-import { getDocketStatus, buildDecidedList, type DecidedItem } from "@/lib/docket";
+import { getDocketStatus, buildDecidedList, buildAllCasesList, type DecidedItem } from "@/lib/docket";
 import { getCalendarJson, buildCalendarEvents, type CalendarEvent } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData, type CircuitSplit } from "@/lib/circuit-splits";
@@ -26,7 +26,9 @@ export interface ScotusDashboard2Data {
   upcomingCases: CaseSummary[];
   arguedCases: CaseSummary[];
   decidedItems: DecidedItem[];
+  allCasesItems: DecidedItem[];
   issueCategories: IssueCategoryRef[];
+  termOptions: { value: string; label: string }[];
   justices: JusticeStat[];
   opinionLengthStats: OpinionLengthStats;
   justiceAgreementGrid: JusticeAgreementPair[];
@@ -53,11 +55,22 @@ export interface ScotusDashboard2Data {
  * routes can't drift apart on what data the dashboard actually needs.
  */
 export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
-  // Docket data is DB-only, scoped to term 2025 -- no more JSON fallback
-  // for upcoming/argued, and no more merge/dedup logic. Companion-docket
-  // cases (e.g. Little v. Hecox, consolidated into West Virginia v.
-  // B.P.J.) are excluded by getAllCasesForTerm itself.
-  const cases: CaseSummary[] = await getAllCasesForTerm("2025");
+  // Docket data is DB-only -- no more JSON fallback for upcoming/argued,
+  // and no more merge/dedup logic beyond the term merge below.
+  // Companion-docket cases (e.g. Little v. Hecox, consolidated into West
+  // Virginia v. B.P.J.) are excluded by getAllCasesForTerm itself.
+  //
+  // The two terms this dashboard tracks -- literal, not derived from
+  // currentTermYear(), so it doesn't depend on any fallback logic about
+  // which term "has data yet." OT2025 stays on the docket alongside
+  // OT2026 starting now, ahead of OT2026's own Oct 1 cutover; bump this
+  // by hand each October when a new term starts.
+  const TRACKED_TERMS = ["2025", "2026"];
+  const casesByTerm = await Promise.all(TRACKED_TERMS.map((t) => getAllCasesForTerm(t)));
+  const cases: CaseSummary[] = casesByTerm.flat();
+  // Current term first -- the All Cases panel's Term filter defaults to
+  // termOptions[0].
+  const termOptions = TRACKED_TERMS.map((t) => ({ value: t, label: `Term ${t}` }));
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
@@ -80,6 +93,10 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
   // incidental JSON file order now that this is DB-sourced).
   arguedCases.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate));
   const decidedItems = buildDecidedList(decidedCases);
+  // All Cases panel: every tracked case regardless of Docket status, not
+  // just decided ones (decidedItems above stays decided-only -- that's
+  // still what the Docket's own Decided column shows).
+  const allCasesItems = buildAllCasesList(cases);
 
   // All Cases, "Issue" filter's dropdown options (Feldman's Stat Pack
   // classification, backfilled for OT2025 decided cases).
@@ -138,7 +155,9 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
     upcomingCases,
     arguedCases,
     decidedItems,
+    allCasesItems,
     issueCategories,
+    termOptions,
     justices,
     opinionLengthStats,
     justiceAgreementGrid,

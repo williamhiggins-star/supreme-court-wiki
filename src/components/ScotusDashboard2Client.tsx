@@ -28,7 +28,9 @@ export function ScotusDashboard2Client({
   upcomingCases,
   arguedCases,
   decidedItems,
+  allCasesItems,
   issueCategories,
+  termOptions,
   justices,
   opinionLengthStats,
   justiceAgreementGrid,
@@ -50,7 +52,9 @@ export function ScotusDashboard2Client({
   upcomingCases: CaseSummary[];
   arguedCases: CaseSummary[];
   decidedItems: DecidedItem[];
+  allCasesItems: DecidedItem[];
   issueCategories: IssueCategoryRef[];
+  termOptions: { value: string; label: string }[];
   justices: JusticeStat[];
   opinionLengthStats: OpinionLengthStats;
   justiceAgreementGrid: JusticeAgreementPair[];
@@ -79,6 +83,10 @@ export function ScotusDashboard2Client({
   const [selectedDissentingJustices, setSelectedDissentingJustices] = useState<string[]>([]);
   const [selectedDissentingJoinedBy, setSelectedDissentingJoinedBy] = useState<Record<string, string[]>>({});
   const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
+  // All Cases' Term filter, unlike the others, starts on the current term
+  // rather than null/"show all" -- termOptions[0] is always the current
+  // term (scotusdashboard2-data.ts orders it first).
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(termOptions[0]?.value ?? null);
 
   function handleSelectConcurringJoinedBy(justiceKey: string, joiners: string[]) {
     setSelectedConcurringJoinedBy((prev) => ({ ...prev, [justiceKey]: joiners }));
@@ -131,7 +139,9 @@ export function ScotusDashboard2Client({
             upcomingCases={upcomingCases}
             arguedCases={arguedCases}
             decidedItems={decidedItems}
+            allCasesItems={allCasesItems}
             issueCategories={issueCategories}
+            termOptions={termOptions}
             justices={justices}
             opinionLengthStats={opinionLengthStats}
             justiceAgreementGrid={justiceAgreementGrid}
@@ -160,6 +170,8 @@ export function ScotusDashboard2Client({
             onSelectDissentingJoinedByForJustice={handleSelectDissentingJoinedBy}
             selectedIssue={selectedIssue}
             onSelectIssue={setSelectedIssue}
+            selectedTerm={selectedTerm}
+            onSelectTerm={setSelectedTerm}
           />
         </div>
       )}
