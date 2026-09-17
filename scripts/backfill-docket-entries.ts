@@ -2,22 +2,25 @@
 /**
  * backfill-docket-entries.ts
  *
- * One-off PILOT backfill: fetches, parses, and classifies docket
- * proceedings for Suncor (25-170) ONLY, writing into public.docket_entries.
- * Deliberately not general-purpose yet -- do NOT widen PILOT_CASE_NUMBERS
- * below without explicit direction. This is step one of a two-phase
- * rollout; step two wires daily re-fetch/re-parse for every non-decided
- * case (plus one final fetch on decision) and backfills every other case.
+ * Fetches, parses, and classifies docket proceedings for every
+ * docket-relevant case (decided/argued/upcoming/petition -- NOT the
+ * historic/stub precedent-citation stubs, which have no real docket page
+ * and, confirmed against live data, are also the only rows with no
+ * docket_number at all) in the tracked terms, writing into
+ * public.docket_entries.
  *
- * Requires supabase/migrations/20260918000000_docket_entries.sql to
- * already be applied by hand in the Supabase SQL Editor -- this script
- * does not apply migrations.
+ * Originally a Suncor (25-170)-only pilot; now general-purpose per Will's
+ * direction after reviewing the pilot panel. Still not wired into the
+ * daily cron -- this is a manual backfill run, not a scheduled step.
  *
- * Idempotent: deletes this case's existing docket_entries rows before
- * inserting the freshly-parsed set, so it's safe to re-run after a
- * classifier tweak.
+ * Idempotent: deletes each case's existing docket_entries rows before
+ * inserting the freshly-parsed set, so it's safe to re-run (e.g. after a
+ * classifier tweak, or to pick up new filings on a case already backfilled).
  *
- * Run:  npx tsx scripts/backfill-docket-entries.ts
+ * Run:
+ *   npx tsx scripts/backfill-docket-entries.ts              # every tracked-term, docket-relevant case
+ *   npx tsx scripts/backfill-docket-entries.ts 25-170 25-95  # just these cases, by docket number
+ *   npx tsx scripts/backfill-docket-entries.ts --dry-run     # fetch+parse+classify only, no writes
  */
 
 import { getCredentials } from "./lib/supabase-sync/env.js";
@@ -28,60 +31,106 @@ import {
   classifyDocketEntries,
 } from "./lib/docket-proceedings.js";
 
-const PILOT_CASE_NUMBERS = ["25-170"];
+// Same rolling window as the rest of the term-rollover work (Phase 1/4/5)
+// -- bump by hand each October when a new term starts.
+const TRACKED_TERMS = ["2025", "2026"];
+// Excludes historic/stub precedent-citation stubs -- confirmed against
+// live data (2026-09-18) that all 15 term-2025/2026 rows with no
+// docket_number are stub/historic, and all 88 decided/argued/upcoming/
+// petition rows DO have one, so filtering on status here is equivalent to
+// filtering on "has a real docket page" without guessing at URLs for rows
+// that were never real SCOTUS oral-argument-calendar cases.
+const DOCKET_RELEVANT_STATUSES = ["decided", "argued", "upcoming", "petition"];
+
+const REQUEST_DELAY_MS = 300; // politeness delay between requests to supremecourt.gov
 
 interface CaseRow {
   id: string;
   slug: string;
   docket_number: string | null;
+  term: string | null;
+  status: string;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
+  const args = process.argv.slice(2);
+  const dryRun = args.includes("--dry-run");
+  const explicitCaseNumbers = args.filter((a) => !a.startsWith("--"));
+
   const creds = getCredentials();
   if (!creds) throw new Error("Missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY");
 
-  for (const caseNumber of PILOT_CASE_NUMBERS) {
-    console.log(`\n=== ${caseNumber} ===`);
-
+  let cases: CaseRow[];
+  if (explicitCaseNumbers.length) {
+    cases = await select<CaseRow>(
+      creds,
+      "cases",
+      `?docket_number=in.(${explicitCaseNumbers.map(encodeURIComponent).join(",")})&select=id,slug,docket_number,term,status`,
+    );
+  } else {
     const rows = await select<CaseRow>(
       creds,
       "cases",
-      `?docket_number=eq.${encodeURIComponent(caseNumber)}&select=id,slug,docket_number`,
+      `?term=in.(${TRACKED_TERMS.join(",")})&status=in.(${DOCKET_RELEVANT_STATUSES.join(",")})&select=id,slug,docket_number,term,status&order=term.asc,docket_number.asc`,
     );
-    const caseRow = rows[0];
-    if (!caseRow) {
-      console.error(`  No cases row found for docket_number ${caseNumber} -- skipping`);
-      continue;
+    cases = rows.filter((c) => c.docket_number);
+  }
+
+  console.log(`${cases.length} case(s) to process.${dryRun ? " (--dry-run: no writes)" : ""}\n`);
+
+  let processed = 0;
+  let totalEntries = 0;
+  const failures: { caseNumber: string; slug: string; error: string }[] = [];
+
+  for (const c of cases) {
+    // cases.docket_number sometimes carries a "(consolidated with N)"
+    // suffix (e.g. mullin-v-doe: "25-1083 (consolidated with 25-1084)")
+    // -- same normalization backfill-oral-argument-transcripts.ts already
+    // uses for the same reason: the docket PAGE only exists at the primary
+    // docket number's own URL.
+    const rawDocketNumber = c.docket_number!;
+    const caseNumber = rawDocketNumber.replace(/\s*\(consolidated.*$/i, "").trim();
+    process.stdout.write(`${c.slug} (${rawDocketNumber})... `);
+    try {
+      const html = await fetchDocketProceedingsHtml(caseNumber);
+      const parsed = parseDocketProceedingsHtml(html);
+      const types = classifyDocketEntries(parsed);
+
+      if (!dryRun) {
+        const rowsToInsert = parsed.map((e, i) => ({
+          case_id: c.id,
+          entry_date: e.date,
+          description: e.description,
+          document_type: types[i],
+          sort_order: e.sortOrder,
+          documents: e.documents,
+        }));
+        await remove(creds, "docket_entries", `case_id=eq.${c.id}`);
+        await insert(creds, "docket_entries", rowsToInsert);
+      }
+
+      console.log(`${parsed.length} entries`);
+      processed++;
+      totalEntries += parsed.length;
+    } catch (err) {
+      const message = (err as Error).message;
+      console.log(`FAILED: ${message}`);
+      failures.push({ caseNumber, slug: c.slug, error: message });
     }
+    await sleep(REQUEST_DELAY_MS);
+  }
 
-    console.log(`  Fetching docket page...`);
-    const html = await fetchDocketProceedingsHtml(caseNumber);
-    const parsed = parseDocketProceedingsHtml(html);
-    const types = classifyDocketEntries(parsed);
-    console.log(`  Parsed ${parsed.length} proceeding entries.`);
-
-    const rowsToInsert = parsed.map((e, i) => ({
-      case_id: caseRow.id,
-      entry_date: e.date,
-      description: e.description,
-      document_type: types[i],
-      sort_order: e.sortOrder,
-      documents: e.documents,
-    }));
-
-    await remove(creds, "docket_entries", `case_id=eq.${caseRow.id}`);
-    await insert(creds, "docket_entries", rowsToInsert);
-
-    const counts: Record<string, number> = {};
-    for (const t of types) counts[t] = (counts[t] ?? 0) + 1;
-
-    console.log(`  ✓ ${caseRow.slug}: ${rowsToInsert.length} entries written`);
-    console.log(`  by type: ${JSON.stringify(counts)}`);
-    console.log("  sample (first, middle, last):");
-    for (const i of [0, Math.floor(parsed.length / 2), parsed.length - 1]) {
-      if (!parsed[i]) continue;
-      console.log(`    ${parsed[i].date} [${types[i]}] ${parsed[i].description.slice(0, 80)}`);
-    }
+  console.log(`\n=== Summary ===`);
+  console.log(`  Cases processed : ${processed}/${cases.length}`);
+  console.log(`  Total entries   : ${totalEntries}`);
+  console.log(`  Failures        : ${failures.length}`);
+  if (failures.length) {
+    console.log("\nFAILURES:");
+    for (const f of failures) console.log(`  ${f.slug} (${f.caseNumber}): ${f.error}`);
   }
 }
 
