@@ -125,8 +125,17 @@ project.** A third store — Supabase project ref `enwjtgjycthjypeqdgfo`
 was built across several sessions as this repo's own read layer for term
 statistics: `cases`, `opinions`, `decisions`/`decision_ties`,
 `key_exchanges`, `oral_argument_transcripts`, `case_podcast_episodes`,
-`justice_stats`, and 23 `term_stats_*` views (full schema/derivation
-reference: `docs/term-stats-coding-rules.md`). `src/lib/db/*.ts` queries
+`justice_stats`, `term_opinion_stats`, and 23 `term_stats_*` views (full
+schema/derivation reference: `docs/term-stats-coding-rules.md`).
+`term_opinion_stats` (added 2026-09-22) is a materialized cache, not a
+live view: one row per `(term, metric_type)`, JSONB payload, populated
+nightly by `scripts/compute-opinion-term-stats.ts` from the 8 functions
+in `src/lib/db/term-stats.ts`/`justice-stats.ts` that back the Opinions
+Data panel — those functions are unchanged and still individually
+queryable, just no longer called live from `/dashboard`'s render path
+for that panel. See §4 for the pipeline step and §5 for the read path.
+
+`src/lib/db/*.ts` queries
 this project directly in `/dashboard`'s render path (case detail, opinion
 structure, transcripts, Spotify links, key exchanges, term/justice
 stats). As of 2026-08-31 this **is** the live site's render path, not a
@@ -156,13 +165,15 @@ Single GitHub Actions workflow: `.github/workflows/daily-update.yml`.
   2. `scripts/update-cases.ts` — the main daily pipeline (promote upcoming→argued, process new transcripts, fill missing key exchanges, fetch upcoming arguments, fetch slip opinions, update the conference calendar). Needs `ANTHROPIC_API_KEY`.
   3. `scripts/fetch-opinion-authors.ts` — parse authorship out of newly filed slip opinions and generate opinion summaries. Needs `ANTHROPIC_API_KEY`.
   4. `scripts/compute-justice-stats.ts` — recompute `data/justices.json`.
-  5. `scripts/compute-lawyer-stats.ts` — recompute `data/lawyers.json`.
-  6. `scripts/fetch-circuit-splits.ts` — needs `ANTHROPIC_API_KEY` + `COURTLISTENER_API_KEY`.
-  7. `scripts/fetch-appellate-impacts.ts` — needs `ANTHROPIC_API_KEY` + `COURTLISTENER_API_KEY`.
-  8. `scripts/fetch-analysis-articles.ts` — needs `ANTHROPIC_API_KEY`.
-  9. `scripts/fetch-spotify-episodes.ts` — needs `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`.
-  10. **Commit** — `git add data/`, commit as "Supreme Court Wiki Bot" with `[skip ci]`, push directly to the checked-out branch (no PR).
-  11. **Sync to Supabase** (`continue-on-error: true`) — `scripts/sync-to-supabase.ts`, needs `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`; runs *after* the commit so a sync failure can never block the data commit.
+  5. **`scripts/compute-opinion-term-stats.ts`** (`continue-on-error: true`, added 2026-09-22) — recomputes `public.term_opinion_stats` (§3) by calling the Opinions Data panel's 8 term-stat functions once per tracked term and upserting the results; depends on steps 3–4 having already run. Self-catches every error internally too, so a bug here can never block the commit (step 11) or anything after it.
+  6. `scripts/compute-lawyer-stats.ts` — recompute `data/lawyers.json`.
+  7. `scripts/fetch-circuit-splits.ts` — needs `ANTHROPIC_API_KEY` + `COURTLISTENER_API_KEY`.
+  8. `scripts/fetch-appellate-impacts.ts` — needs `ANTHROPIC_API_KEY` + `COURTLISTENER_API_KEY`.
+  9. `scripts/fetch-analysis-articles.ts` — needs `ANTHROPIC_API_KEY`.
+  10. `scripts/fetch-spotify-episodes.ts` — needs `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`.
+  11. **Dual-write parity check** (`continue-on-error: true`, runs `if: always()`) — `scripts/parity-check.ts`, compares Supabase against `data/*.json` and reports drift; never blocks anything either direction.
+  12. **Commit** — `git add data/`, commit as "Supreme Court Wiki Bot" with `[skip ci]`, push directly to the checked-out branch (no PR).
+  13. **Sync to Supabase** (`continue-on-error: true`) — `scripts/sync-to-supabase.ts`, needs `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`; runs *after* the commit so a sync failure can never block the data commit.
 - All the enrichment/manual scripts (`enrich-precedents.ts`,
   `process-transcript.ts`, `process-upcoming.ts`, `backfill-*.ts`,
   `retry-hamm.ts`) are **not** part of the cron — they're run by hand
@@ -180,7 +191,7 @@ everything else 404s.
 |---|---|
 | `/` | 307 → `/welcome`. No page component — the bare domain has to land somewhere, and `/welcome` is the intended entry point. |
 | `/welcome` (`welcome/page.tsx`, `ScotusDashboard2LandingClient`) | Entry carousel cycling four panels pulled from the real dashboard (About's image panel, two Alignment panels, one Chief Justice panel). Renders the actual `/dashboard` tree hidden underneath itself the whole time (shared `getScotusDashboard2Data()`, so the two routes can't drift on what data they need) — "Enter" slides the overlay up to reveal it already-rendered, then navigates to `/dashboard`. |
-| `/dashboard` (`dashboard/page.tsx`, `ScotusDashboard2Client` + `SectionPanels`) | The app itself. Sections (About, Docket, Court Calendar, All Cases, Opinions Data, Third Party Analysis) are client-state, not separate routes; case detail is `?case=<slug>` on this same route, opened in-place (`CaseDetailPanels`), not a separate page. |
+| `/dashboard` (`dashboard/page.tsx`, `ScotusDashboard2Client` + `SectionPanels`) | The app itself. Sections (About, Docket, Court Calendar, All Cases, Opinions Data, Third Party Analysis) are client-state, not separate routes; case detail is `?case=<slug>` on this same route, opened in-place (`CaseDetailPanels`), not a separate page. All Cases and Opinions Data each have their own term toggle (`TermFilter`, reused between them) — client-side state only, switching between already-fetched per-term data with no additional round-trip. |
 | `/cases/:slug` | 307 → `/dashboard?case=:slug`. Carries real traffic — this path was live and likely indexed/bookmarked before the cutover. |
 | `/docket/:column` | 307 → `/dashboard`. No section-deep-link exists yet to land on the right panel specifically. |
 
@@ -198,7 +209,12 @@ still gets written daily (§3) in case it's ever rebuilt into the new UI.
   they render. Mixes three sources: Supabase (`src/lib/db/*.ts`, for
   case/opinion/term-stat data), three `data/*.json` files still read
   directly (`calendar.ts`, `articles.ts`, `circuit-splits.ts`), and pure
-  computation with no I/O of its own (`docket.ts`).
+  computation with no I/O of its own (`docket.ts`). The Opinions Data
+  panel's data (`opinionStatsByTerm`, keyed by term) is a single query
+  against `public.term_opinion_stats` (§3) rather than 8 separate live
+  calls into `src/lib/db/term-stats.ts`/`justice-stats.ts` — added
+  2026-09-22, replacing what used to be 8 flat, always-current-term
+  fields on `ScotusDashboard2Data` with one term-keyed map.
 - `src/lib/docket.ts` — `formatDate`/`getDocketStatus`/`buildDecidedList`/
   `DecidedItem`. Extracted out of the old homepage's `page.tsx` during the
   cutover (that file no longer exists) since the new UI's data layer
