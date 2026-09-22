@@ -14,13 +14,7 @@ import type { IssueCategoryRef } from "@/lib/db/cases";
 import type { JusticeStat } from "@/lib/justices";
 import type { CalendarEvent } from "@/lib/calendar";
 import type { CircuitSplit } from "@/lib/circuit-splits";
-import type {
-  OpinionLengthStats,
-  JusticeAgreementPair,
-  OpinionJoinerHighlights,
-  JusticeJoinData,
-  JusticeMajorityMinorityRate,
-} from "@/lib/db/term-stats";
+import type { OpinionTermStats } from "@/lib/scotusdashboard2-data";
 
 export function ScotusDashboard2Client({
   cases,
@@ -32,13 +26,7 @@ export function ScotusDashboard2Client({
   issueCategories,
   termOptions,
   justices,
-  opinionLengthStats,
-  justiceAgreementGrid,
-  opinionJoinerHighlights,
-  concurrenceJoinMatrix,
-  dissentJoinMatrix,
-  totalWordsByJustice,
-  majorityMinorityRateByJustice,
+  opinionStatsByTerm,
   calendarEvents,
   scotusblogArticles,
   otherArticles,
@@ -56,13 +44,7 @@ export function ScotusDashboard2Client({
   issueCategories: IssueCategoryRef[];
   termOptions: { value: string; label: string }[];
   justices: JusticeStat[];
-  opinionLengthStats: OpinionLengthStats;
-  justiceAgreementGrid: JusticeAgreementPair[];
-  opinionJoinerHighlights: OpinionJoinerHighlights;
-  concurrenceJoinMatrix: JusticeJoinData;
-  dissentJoinMatrix: JusticeJoinData;
-  totalWordsByJustice: Record<string, number>;
-  majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>;
+  opinionStatsByTerm: Record<string, OpinionTermStats>;
   calendarEvents: CalendarEvent[];
   scotusblogArticles: Article[];
   otherArticles: Article[];
@@ -87,6 +69,17 @@ export function ScotusDashboard2Client({
   // rather than null/"show all" -- termOptions[0] is always the current
   // term (scotusdashboard2-data.ts orders it first).
   const [selectedTerm, setSelectedTerm] = useState<string | null>(termOptions[0]?.value ?? null);
+  // Opinions Data's own term toggle -- separate state from All Cases'
+  // above (a visitor can be looking at a different term in each panel).
+  // Unlike All Cases, there's no "all terms merged" state that makes
+  // sense here (opinion stats can't be summed across terms), so this
+  // always holds a real term -- never null -- and TermFilter is rendered
+  // with allowClear={false} for this usage so there's no dead-end "x" to
+  // clear it to a state this never actually reaches.
+  const [selectedOpinionsTerm, setSelectedOpinionsTerm] = useState<string>(termOptions[0]?.value ?? "");
+  function handleSelectOpinionsTerm(value: string | null) {
+    if (value) setSelectedOpinionsTerm(value);
+  }
 
   function handleSelectConcurringJoinedBy(justiceKey: string, joiners: string[]) {
     setSelectedConcurringJoinedBy((prev) => ({ ...prev, [justiceKey]: joiners }));
@@ -143,13 +136,9 @@ export function ScotusDashboard2Client({
             issueCategories={issueCategories}
             termOptions={termOptions}
             justices={justices}
-            opinionLengthStats={opinionLengthStats}
-            justiceAgreementGrid={justiceAgreementGrid}
-            opinionJoinerHighlights={opinionJoinerHighlights}
-            concurrenceJoinMatrix={concurrenceJoinMatrix}
-            dissentJoinMatrix={dissentJoinMatrix}
-            totalWordsByJustice={totalWordsByJustice}
-            majorityMinorityRateByJustice={majorityMinorityRateByJustice}
+            opinionStatsByTerm={opinionStatsByTerm}
+            selectedOpinionsTerm={selectedOpinionsTerm}
+            onSelectOpinionsTerm={handleSelectOpinionsTerm}
             scotusblogArticles={scotusblogArticles}
             otherArticles={otherArticles}
             onSelectCase={setActiveCaseSlug}

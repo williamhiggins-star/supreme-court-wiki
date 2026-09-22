@@ -4,19 +4,13 @@ import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData, type CircuitSplit } from "@/lib/circuit-splits";
 import { getAllCasesForTerm, getIssueCategories, type IssueCategoryRef } from "@/lib/db/cases";
 import { getJusticeStatsFromDb } from "@/lib/db/justice-stats";
-import {
-  getOpinionLengthStats,
-  getJusticeAgreementGrid,
-  getOpinionJoinerHighlights,
-  getConcurrenceJoinMatrix,
-  getDissentJoinMatrix,
-  getTotalWordsByJustice,
-  getMajorityMinorityRateByJustice,
-  type OpinionLengthStats,
-  type JusticeAgreementPair,
-  type OpinionJoinerHighlights,
-  type JusticeJoinData,
-  type JusticeMajorityMinorityRate,
+import { db } from "@/lib/db/client";
+import type {
+  OpinionLengthStats,
+  JusticeAgreementPair,
+  OpinionJoinerHighlights,
+  JusticeJoinData,
+  JusticeMajorityMinorityRate,
 } from "@/lib/db/term-stats";
 import type { CaseSummary, Article } from "@/types";
 import type { JusticeStat } from "@/lib/justices";
@@ -30,13 +24,7 @@ export interface ScotusDashboard2Data {
   issueCategories: IssueCategoryRef[];
   termOptions: { value: string; label: string }[];
   justices: JusticeStat[];
-  opinionLengthStats: OpinionLengthStats;
-  justiceAgreementGrid: JusticeAgreementPair[];
-  opinionJoinerHighlights: OpinionJoinerHighlights;
-  concurrenceJoinMatrix: JusticeJoinData;
-  dissentJoinMatrix: JusticeJoinData;
-  totalWordsByJustice: Record<string, number>;
-  majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>;
+  opinionStatsByTerm: Record<string, OpinionTermStats>;
   calendarEvents: CalendarEvent[];
   scotusblogArticles: Article[];
   otherArticles: Article[];
@@ -44,6 +32,121 @@ export interface ScotusDashboard2Data {
   articlesByCaseSlug: Record<string, Article[]>;
   today: string;
   tomorrow: string;
+}
+
+// Opinions Data panel's 8 term-stat metrics, bundled for one term. Sourced
+// from public.term_opinion_stats (materialized nightly by
+// scripts/compute-opinion-term-stats.ts from term-stats.ts/justice-stats.ts
+// -- those 8 functions are unchanged and still individually queryable, just
+// no longer called live from this read path) instead of computed per
+// render. See the "materializing Opinions Data term stats" investigation
+// (2026-09-22).
+export interface OpinionTermStats {
+  opinionLength: OpinionLengthStats;
+  agreementGrid: JusticeAgreementPair[];
+  joinerHighlights: OpinionJoinerHighlights;
+  concurrenceJoinMatrix: JusticeJoinData;
+  dissentJoinMatrix: JusticeJoinData;
+  totalWordsByJustice: Record<string, number>;
+  majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>;
+  // This term's justice_stats payload -- the SAME JusticeStat[] shape as
+  // the top-level `justices` field above, but scoped to whichever term the
+  // Opinions Data panel's own toggle has selected. Deliberately NOT the
+  // same value as `justices` (which stays live-current-term-only, for the
+  // separate "Justices" nav section -- SectionPanels.tsx's
+  // JusticesSpeakingPanel/JusticesOpinionsPanel -- untouched by the
+  // Opinions Data term toggle).
+  justiceStats: JusticeStat[];
+  // True once this term has at least one word-counted opinion --
+  // averageWordCount is null iff there are none, the same signal
+  // getOpinionLengthStats itself produces live for a term with no data.
+  // Lets the panel show "No Opinions for Term {term}" instead of a blank
+  // or broken-looking view. A genuine fetch error is NOT folded into
+  // this -- getOpinionStatsByTerm throws on one, same as every other
+  // src/lib/db/* accessor, so a real failure never gets silently
+  // displayed as "no opinions yet."
+  hasOpinions: boolean;
+}
+
+function emptyOpinionLengthStats(): OpinionLengthStats {
+  return {
+    averageWordCount: null,
+    longestOverall: null,
+    longestMajority: null,
+    longestConcurrence: null,
+    longestDissent: null,
+    shortestOverall: null,
+    shortestMajority: null,
+    shortestConcurrence: null,
+    longestByJustice: [],
+    shortestByJustice: [],
+  };
+}
+
+function emptyJoinerHighlights(): OpinionJoinerHighlights {
+  return {
+    mostSoloConcurrences: null,
+    mostJoinedConcurrence: null,
+    mostSoloDissents: null,
+    mostJoinedDissent: null,
+    casesByJusticeAndCategory: { total: {}, majority: {}, concurrence: {}, dissent: {} },
+    mostJoinedConcurrences: [],
+    mostJoinedDissents: [],
+  };
+}
+
+function emptyJoinData(): JusticeJoinData {
+  return { pairs: [], authoredCountBySlug: {} };
+}
+
+interface TermOpinionStatsRow {
+  term: string;
+  metric_type: string;
+  payload: unknown;
+}
+
+/**
+ * Opinions Data panel read path: one query for every tracked term instead
+ * of the 8 term-stats.ts/justice-stats.ts functions called live. The
+ * panel's own term toggle (SectionPanels.tsx) then just switches which
+ * already-fetched slice of the returned map renders -- no further
+ * round-trips.
+ *
+ * A missing row (a brand-new term before the nightly population job has
+ * run for it even once) and a row present with an empty/zeroed payload
+ * (the job HAS run and found no opinions yet -- OT2026 today) are treated
+ * identically: both resolve to the empty defaults above, and hasOpinions
+ * comes out false either way.
+ */
+async function getOpinionStatsByTerm(terms: string[]): Promise<Record<string, OpinionTermStats>> {
+  const { data, error } = await db.from("term_opinion_stats").select("*").in("term", terms);
+  if (error) throw new Error(`getOpinionStatsByTerm: ${error.message}`);
+
+  const rowsByTerm = new Map<string, Map<string, unknown>>();
+  for (const row of (data ?? []) as TermOpinionStatsRow[]) {
+    const byMetric = rowsByTerm.get(row.term) ?? new Map<string, unknown>();
+    byMetric.set(row.metric_type, row.payload);
+    rowsByTerm.set(row.term, byMetric);
+  }
+
+  const result: Record<string, OpinionTermStats> = {};
+  for (const term of terms) {
+    const byMetric = rowsByTerm.get(term);
+    const opinionLength = (byMetric?.get("opinion_length") as OpinionLengthStats | undefined) ?? emptyOpinionLengthStats();
+    result[term] = {
+      opinionLength,
+      agreementGrid: (byMetric?.get("agreement_grid") as JusticeAgreementPair[] | undefined) ?? [],
+      joinerHighlights: (byMetric?.get("joiner_highlights") as OpinionJoinerHighlights | undefined) ?? emptyJoinerHighlights(),
+      concurrenceJoinMatrix: (byMetric?.get("concurrence_join_matrix") as JusticeJoinData | undefined) ?? emptyJoinData(),
+      dissentJoinMatrix: (byMetric?.get("dissent_join_matrix") as JusticeJoinData | undefined) ?? emptyJoinData(),
+      totalWordsByJustice: (byMetric?.get("total_words_by_justice") as Record<string, number> | undefined) ?? {},
+      majorityMinorityRateByJustice:
+        (byMetric?.get("majority_minority_rate") as Record<string, JusticeMajorityMinorityRate> | undefined) ?? {},
+      justiceStats: (byMetric?.get("justice_stats") as JusticeStat[] | undefined) ?? [],
+      hasOpinions: opinionLength.averageWordCount !== null,
+    };
+  }
+  return result;
 }
 
 /**
@@ -107,22 +210,11 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
   // JusticeStat shape, so JusticesSection needs no changes.
   const justices = await getJusticeStatsFromDb();
 
-  // Opinions section, "Length" menu item.
-  const opinionLengthStats = await getOpinionLengthStats();
-
-  // Opinions section, "Alignment" menu item.
-  const justiceAgreementGrid = await getJusticeAgreementGrid();
-
-  // Opinions section, "Volume" > "Highlights" menu item.
-  const opinionJoinerHighlights = await getOpinionJoinerHighlights();
-
-  // Opinions section, "Alignment" > "Joiners" menu item.
-  const concurrenceJoinMatrix = await getConcurrenceJoinMatrix();
-  const dissentJoinMatrix = await getDissentJoinMatrix();
-
-  // Opinions section, "Justices" menu item.
-  const totalWordsByJustice = await getTotalWordsByJustice();
-  const majorityMinorityRateByJustice = await getMajorityMinorityRateByJustice();
+  // Opinions Data panel -- all 8 term-stat metrics, one query, keyed by
+  // term so the panel's own term toggle can switch between already-
+  // fetched slices with zero further round-trips (see
+  // getOpinionStatsByTerm above).
+  const opinionStatsByTerm = await getOpinionStatsByTerm(TRACKED_TERMS);
 
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
@@ -159,13 +251,7 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
     issueCategories,
     termOptions,
     justices,
-    opinionLengthStats,
-    justiceAgreementGrid,
-    opinionJoinerHighlights,
-    concurrenceJoinMatrix,
-    dissentJoinMatrix,
-    totalWordsByJustice,
-    majorityMinorityRateByJustice,
+    opinionStatsByTerm,
     calendarEvents,
     scotusblogArticles,
     otherArticles,

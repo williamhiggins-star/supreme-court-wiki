@@ -8,7 +8,17 @@ import type { DecidedItem } from "@/lib/docket";
 import type { JusticeStat } from "@/lib/justices";
 import { JUSTICE_KEY_BY_PERSON_SLUG } from "@/lib/db/constants";
 import { ScrollableRegion } from "@/components/ScrollableRegion";
-import type { OpinionLengthStats, OpinionLengthDetail, JusticeOpinionExtreme, JusticeAgreementPair, OpinionJoinerHighlights, JusticeCaseRef, CasesByCategoryAndJustice, JusticeJoinData, JusticeMajorityMinorityRate } from "@/lib/db/term-stats";
+import type {
+  OpinionLengthDetail,
+  JusticeOpinionExtreme,
+  JusticeAgreementPair,
+  OpinionJoinerHighlights,
+  JusticeCaseRef,
+  CasesByCategoryAndJustice,
+  JusticeJoinData,
+  JusticeMajorityMinorityRate,
+} from "@/lib/db/term-stats";
+import type { OpinionTermStats } from "@/lib/scotusdashboard2-data";
 
 const DOCKET_PAGE_SIZE = 4;
 // Upcoming shows one more than Argued/Decided -- a deliberate, requested
@@ -392,15 +402,27 @@ function OpinionsMenuEntry({ label, children, selectedItem, onSelectItem }: { la
   );
 }
 
-function OpinionsMenuPanel({ selectedItem, onSelectItem }: { selectedItem: string | null; onSelectItem: (item: string) => void }) {
+function OpinionsMenuPanel({
+  selectedItem,
+  onSelectItem,
+  termOptions,
+  selectedTerm,
+  onSelectTerm,
+}: {
+  selectedItem: string | null;
+  onSelectItem: (item: string) => void;
+  termOptions: { value: string; label: string }[];
+  selectedTerm: string;
+  onSelectTerm: (value: string | null) => void;
+}) {
   const menuByLabel = Object.fromEntries(OPINIONS_MENU.map((m) => [m.label, m]));
 
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden bg-[#F2EDE3] px-6 pb-2 pt-[14px]">
       <p className="font-serif text-[20px] font-normal not-italic leading-tight text-[#1A1A1A]">Opinions Data</p>
-      <p className="mt-[0.4em] text-[13px] font-normal italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.5 }}>
-        2025-6 Term
-      </p>
+      <div className="mt-[0.4em]">
+        <TermFilter options={termOptions} value={selectedTerm} onChange={onSelectTerm} allowClear={false} />
+      </div>
       <p className="mb-[0.5em] mt-[16px] text-left font-serif text-[14px] font-bold text-[#1A1A1A]">Menu</p>
       {/* Row 1: Length + Alignment side by side. Row 2: Volume alone. Row 3: Justices alone (its own children in two columns, handled by OpinionsMenuEntry). */}
       <div className="flex gap-x-6">
@@ -409,6 +431,23 @@ function OpinionsMenuPanel({ selectedItem, onSelectItem }: { selectedItem: strin
       </div>
       <OpinionsMenuEntry {...menuByLabel["Volume"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
       <OpinionsMenuEntry {...menuByLabel["Justices"]} selectedItem={selectedItem} onSelectItem={onSelectItem} />
+    </div>
+  );
+}
+
+// Shown in place of every Opinions Data sub-view's content (panels 2 and
+// 3) when the selected term's row set is empty/zeroed -- OT2026 today,
+// before any opinion has been decided and materialized into
+// term_opinion_stats. Same "no content" treatment as ArticleListPanel's
+// "No articles." (centered, italic Lora, warm-gray) rather than
+// PlaceholderPanel's dashed-border dev placeholder, since this is a real,
+// expected state, not a stub.
+function OpinionsEmptyState({ term }: { term: string }) {
+  return (
+    <div className="flex h-full min-w-0 items-center justify-center px-6 pb-2 pt-[14px]">
+      <p className="text-center text-[13px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.7 }}>
+        No Opinions for Term {term}
+      </p>
     </div>
   );
 }
@@ -1623,8 +1662,22 @@ function IssueFilter({ options, value, onChange }: { options: { slug: string; la
 // Two-option sibling of IssueFilter for the All Cases panel's Term filter
 // -- same trigger design (label, selected value, "x" to clear back to
 // null), just a plain list instead of IssueFilter's scrollable grid since
-// there are only ever 2 terms in the rolling window.
-function TermFilter({ options, value, onChange }: { options: { value: string; label: string }[]; value: string | null; onChange: (value: string | null) => void }) {
+// there are only ever 2 terms in the rolling window. Also reused by the
+// Opinions Data panel's own term toggle, with allowClear={false} -- unlike
+// All Cases, there's no "all terms merged" state that makes sense there
+// (opinion stats can't be summed across terms), so that usage hides the
+// "x" rather than offering a clear target it can never actually reach.
+function TermFilter({
+  options,
+  value,
+  onChange,
+  allowClear = true,
+}: {
+  options: { value: string; label: string }[];
+  value: string | null;
+  onChange: (value: string | null) => void;
+  allowClear?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const selected = value ? options.find((o) => o.value === value) : undefined;
@@ -1654,7 +1707,7 @@ function TermFilter({ options, value, onChange }: { options: { value: string; la
             {selected.label}
           </span>
         )}
-        {selected && (
+        {selected && allowClear && (
           <button
             type="button"
             onClick={() => onChange(null)}
@@ -2558,14 +2611,90 @@ export function AboutRightPanel() {
   );
 }
 
-export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems, allCasesItems, issueCategories, termOptions, justices, opinionLengthStats, justiceAgreementGrid, opinionJoinerHighlights, concurrenceJoinMatrix, dissentJoinMatrix, totalWordsByJustice, majorityMinorityRateByJustice, scotusblogArticles, otherArticles, onSelectCase, onNavigateSection, today, tomorrow, selectedMajorityAuthor, onSelectMajorityAuthor, selectedMajorityJustices, onSelectMajorityJustices, selectedConcurringJustices, onSelectConcurringJustices, selectedConcurringJoinedBy, onSelectConcurringJoinedByForJustice, selectedDissentingJustices, onSelectDissentingJustices, selectedDissentingJoinedBy, onSelectDissentingJoinedByForJustice, selectedIssue, onSelectIssue, selectedTerm, onSelectTerm }: { active: SectionKey; upcomingCases: CaseSummary[]; arguedCases: CaseSummary[]; decidedItems: DecidedItem[]; allCasesItems: DecidedItem[]; issueCategories: { slug: string; label: string }[]; termOptions: { value: string; label: string }[]; justices: JusticeStat[]; opinionLengthStats: OpinionLengthStats; justiceAgreementGrid: JusticeAgreementPair[]; opinionJoinerHighlights: OpinionJoinerHighlights; concurrenceJoinMatrix: JusticeJoinData; dissentJoinMatrix: JusticeJoinData; totalWordsByJustice: Record<string, number>; majorityMinorityRateByJustice: Record<string, JusticeMajorityMinorityRate>; scotusblogArticles: Article[]; otherArticles: Article[]; onSelectCase: (slug: string) => void; onNavigateSection: (key: SectionKey) => void; today: string; tomorrow: string; selectedMajorityAuthor: string | null; onSelectMajorityAuthor: (key: string | null) => void; selectedMajorityJustices: string[]; onSelectMajorityJustices: (keys: string[]) => void; selectedConcurringJustices: string[]; onSelectConcurringJustices: (keys: string[]) => void; selectedConcurringJoinedBy: Record<string, string[]>; onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedDissentingJustices: string[]; onSelectDissentingJustices: (keys: string[]) => void; selectedDissentingJoinedBy: Record<string, string[]>; onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void; selectedIssue: string | null; onSelectIssue: (slug: string | null) => void; selectedTerm: string | null; onSelectTerm: (value: string | null) => void }) {
+export function SectionPanels({
+  active,
+  upcomingCases,
+  arguedCases,
+  decidedItems,
+  allCasesItems,
+  issueCategories,
+  termOptions,
+  justices,
+  opinionStatsByTerm,
+  selectedOpinionsTerm,
+  onSelectOpinionsTerm,
+  scotusblogArticles,
+  otherArticles,
+  onSelectCase,
+  onNavigateSection,
+  today,
+  tomorrow,
+  selectedMajorityAuthor,
+  onSelectMajorityAuthor,
+  selectedMajorityJustices,
+  onSelectMajorityJustices,
+  selectedConcurringJustices,
+  onSelectConcurringJustices,
+  selectedConcurringJoinedBy,
+  onSelectConcurringJoinedByForJustice,
+  selectedDissentingJustices,
+  onSelectDissentingJustices,
+  selectedDissentingJoinedBy,
+  onSelectDissentingJoinedByForJustice,
+  selectedIssue,
+  onSelectIssue,
+  selectedTerm,
+  onSelectTerm,
+}: {
+  active: SectionKey;
+  upcomingCases: CaseSummary[];
+  arguedCases: CaseSummary[];
+  decidedItems: DecidedItem[];
+  allCasesItems: DecidedItem[];
+  issueCategories: { slug: string; label: string }[];
+  termOptions: { value: string; label: string }[];
+  justices: JusticeStat[];
+  opinionStatsByTerm: Record<string, OpinionTermStats>;
+  selectedOpinionsTerm: string;
+  onSelectOpinionsTerm: (value: string | null) => void;
+  scotusblogArticles: Article[];
+  otherArticles: Article[];
+  onSelectCase: (slug: string) => void;
+  onNavigateSection: (key: SectionKey) => void;
+  today: string;
+  tomorrow: string;
+  selectedMajorityAuthor: string | null;
+  onSelectMajorityAuthor: (key: string | null) => void;
+  selectedMajorityJustices: string[];
+  onSelectMajorityJustices: (keys: string[]) => void;
+  selectedConcurringJustices: string[];
+  onSelectConcurringJustices: (keys: string[]) => void;
+  selectedConcurringJoinedBy: Record<string, string[]>;
+  onSelectConcurringJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+  selectedDissentingJustices: string[];
+  onSelectDissentingJustices: (keys: string[]) => void;
+  selectedDissentingJoinedBy: Record<string, string[]>;
+  onSelectDissentingJoinedByForJustice: (justiceKey: string, joiners: string[]) => void;
+  selectedIssue: string | null;
+  onSelectIssue: (slug: string | null) => void;
+  selectedTerm: string | null;
+  onSelectTerm: (value: string | null) => void;
+}) {
   const [selectedOpinionsItem, setSelectedOpinionsItem] = useState<string | null>(DEFAULT_OPINIONS_ITEM);
   // "Justices" submenu items are each justice's own displayName (see
   // OPINIONS_MENU) -- resolve the selected one back to a justice/slug so
   // panels 2 and 3 below can be generic across all nine justices.
   const selectedJustice = ALL_JUSTICES.find((j) => j.displayName === selectedOpinionsItem) ?? null;
   const selectedJusticeSlug = selectedJustice ? PERSON_SLUG_BY_JUSTICE_KEY[selectedJustice.key] : null;
-  const maxTotalOpinions = Math.max(1, ...justices.map((j) => j.majorityOpinions + j.concurrences + j.dissents));
+  // The Opinions Data panel's own already-fetched, per-term slice --
+  // switching selectedOpinionsTerm (the panel's TermFilter) just picks a
+  // different key here, no additional round-trip. Scoped to this panel
+  // only: the separate "Justices" nav section below still reads the
+  // top-level `justices` prop (live, current-term-only), untouched.
+  const opinionsStats: OpinionTermStats | undefined = opinionStatsByTerm[selectedOpinionsTerm];
+  const opinionsJustices = opinionsStats?.justiceStats ?? [];
+  const opinionsHasData = opinionsStats?.hasOpinions ?? false;
+  const maxTotalOpinions = Math.max(1, ...opinionsJustices.map((j) => j.majorityOpinions + j.concurrences + j.dissents));
   const allCasesFilteredItems = filterAllCasesItems(
     allCasesItems,
     selectedMajorityAuthor,
@@ -2578,9 +2707,89 @@ export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems
     selectedTerm,
   );
 
+  // Opinions Data panel, panel 2 (middle column) and panel 3 (right
+  // column) content -- extracted out of the giant active==="opinions"
+  // ternary below so the term-empty check (opinionsStats missing, or
+  // present but hasOpinions false) is written once per column instead of
+  // threaded into every selectedOpinionsItem branch individually. Applies
+  // uniformly to every sub-view, the static Volume/Alignment/Joiners
+  // preview images (panel 3) included -- those are the same illustrative
+  // crop regardless of term, so leaving them up for a term with zero
+  // opinions would be more misleading than replacing them with the same
+  // "No Opinions" message the rest of the panel shows.
+  const opinionsPanel2 = !opinionsStats ? (
+    <PlaceholderPanel active={active} index={2} />
+  ) : !opinionsHasData ? (
+    <OpinionsEmptyState term={selectedOpinionsTerm} />
+  ) : selectedOpinionsItem === "Longest" ? (
+    <OpinionExtremeOverviewPanel
+      title="Longest"
+      averageWordCount={opinionsStats.opinionLength.averageWordCount}
+      overall={opinionsStats.opinionLength.longestOverall}
+      majority={opinionsStats.opinionLength.longestMajority}
+      concurrence={opinionsStats.opinionLength.longestConcurrence}
+      onSelectCase={onSelectCase}
+    />
+  ) : selectedOpinionsItem === "Shortest" ? (
+    <OpinionExtremeOverviewPanel
+      title="Shortest"
+      averageWordCount={opinionsStats.opinionLength.averageWordCount}
+      overall={opinionsStats.opinionLength.shortestOverall}
+      majority={opinionsStats.opinionLength.shortestMajority}
+      concurrence={opinionsStats.opinionLength.shortestConcurrence}
+      onSelectCase={onSelectCase}
+    />
+  ) : selectedOpinionsItem === "All" ? (
+    <VolumeByJusticePanel justices={opinionsJustices} highlights={opinionsStats.joinerHighlights} onSelectCase={onSelectCase} />
+  ) : selectedOpinionsItem === "Concurrences and Dissents" ? (
+    <VolumeHighlightsPanel justices={opinionsJustices} highlights={opinionsStats.joinerHighlights} />
+  ) : selectedOpinionsItem === "All Votes" ? (
+    <JusticeAgreementPanel pairs={opinionsStats.agreementGrid} />
+  ) : selectedOpinionsItem === "Joiners" ? (
+    <ConcurrenceJoinPanel concurrenceData={opinionsStats.concurrenceJoinMatrix} dissentData={opinionsStats.dissentJoinMatrix} />
+  ) : selectedJusticeSlug ? (
+    <JusticeTotalWordsPanel
+      totalWords={opinionsStats.totalWordsByJustice[selectedJusticeSlug] ?? 0}
+      longest={opinionsStats.opinionLength.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null}
+      shortest={opinionsStats.opinionLength.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null}
+      justiceSlug={selectedJusticeSlug}
+      justice={opinionsJustices.find((j) => j.key === selectedJustice?.key) ?? null}
+      maxTotal={maxTotalOpinions}
+      onSelectCase={onSelectCase}
+    />
+  ) : (
+    <PlaceholderPanel active={active} index={2} />
+  );
+
+  const opinionsPanel3 = !opinionsStats ? (
+    <PlaceholderPanel active={active} index={3} />
+  ) : !opinionsHasData ? (
+    <OpinionsEmptyState term={selectedOpinionsTerm} />
+  ) : selectedOpinionsItem === "Longest" ? (
+    <OpinionExtremeByJusticePanel title="Longest" data={opinionsStats.opinionLength.longestByJustice} onSelectCase={onSelectCase} />
+  ) : selectedOpinionsItem === "Shortest" ? (
+    <OpinionExtremeByJusticePanel title="Shortest" data={opinionsStats.opinionLength.shortestByJustice} onSelectCase={onSelectCase} />
+  ) : selectedOpinionsItem === "All" ? (
+    <OpinionsVolumeImagePanel />
+  ) : selectedOpinionsItem === "Concurrences and Dissents" ? (
+    <OpinionsVolumeHighlightsImagePanel />
+  ) : selectedOpinionsItem === "All Votes" ? (
+    <OpinionsAlignmentImagePanel />
+  ) : selectedOpinionsItem === "Joiners" ? (
+    <JoinersImagePanel />
+  ) : selectedJusticeSlug ? (
+    <MajorityMinorityBarChart
+      rate={opinionsStats.majorityMinorityRateByJustice[selectedJusticeSlug] ?? null}
+      agreementPairs={opinionsStats.agreementGrid}
+      justiceSlug={selectedJusticeSlug}
+    />
+  ) : (
+    <PlaceholderPanel active={active} index={3} />
+  );
+
   return (
     <>
-      {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesMenuPanel
+      {active === "about" ? <AboutMiddlePanel /> : active === "docket" ? <DocketUpcomingPanel cases={upcomingCases} today={today} tomorrow={tomorrow} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesSpeakingPanel justices={justices} /> : active === "opinions" ? <OpinionsMenuPanel selectedItem={selectedOpinionsItem} onSelectItem={setSelectedOpinionsItem} termOptions={termOptions} selectedTerm={selectedOpinionsTerm} onSelectTerm={onSelectOpinionsTerm} /> : active === "analysis" ? <ArticleListPanel title="Legal Journalism" articles={scotusblogArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesMenuPanel
                 selectedMajorityAuthor={selectedMajorityAuthor}
                 onSelectMajorityAuthor={onSelectMajorityAuthor}
                 selectedMajorityJustices={selectedMajorityJustices}
@@ -2601,8 +2810,8 @@ export function SectionPanels({ active, upcomingCases, arguedCases, decidedItems
                 onSelectTerm={onSelectTerm}
                 caseCount={allCasesFilteredItems.length}
               /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeOverviewPanel title="Longest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.longestOverall} majority={opinionLengthStats.longestMajority} concurrence={opinionLengthStats.longestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeOverviewPanel title="Shortest" averageWordCount={opinionLengthStats.averageWordCount} overall={opinionLengthStats.shortestOverall} majority={opinionLengthStats.shortestMajority} concurrence={opinionLengthStats.shortestConcurrence} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <VolumeByJusticePanel justices={justices} highlights={opinionJoinerHighlights} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Concurrences and Dissents" ? <VolumeHighlightsPanel justices={justices} highlights={opinionJoinerHighlights} /> : selectedOpinionsItem === "All Votes" ? <JusticeAgreementPanel pairs={justiceAgreementGrid} /> : selectedOpinionsItem === "Joiners" ? <ConcurrenceJoinPanel concurrenceData={concurrenceJoinMatrix} dissentData={dissentJoinMatrix} /> : selectedJusticeSlug ? <JusticeTotalWordsPanel totalWords={totalWordsByJustice[selectedJusticeSlug] ?? 0} longest={opinionLengthStats.longestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} shortest={opinionLengthStats.shortestByJustice.find((r) => r.justiceSlug === selectedJusticeSlug) ?? null} justiceSlug={selectedJusticeSlug} justice={justices.find((j) => j.key === selectedJustice?.key) ?? null} maxTotal={maxTotalOpinions} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} /> : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} />}
-      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? selectedOpinionsItem === "Longest" ? <OpinionExtremeByJusticePanel title="Longest" data={opinionLengthStats.longestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "Shortest" ? <OpinionExtremeByJusticePanel title="Shortest" data={opinionLengthStats.shortestByJustice} onSelectCase={onSelectCase} /> : selectedOpinionsItem === "All" ? <OpinionsVolumeImagePanel /> : selectedOpinionsItem === "Concurrences and Dissents" ? <OpinionsVolumeHighlightsImagePanel /> : selectedOpinionsItem === "All Votes" ? <OpinionsAlignmentImagePanel /> : selectedOpinionsItem === "Joiners" ? <JoinersImagePanel /> : selectedJusticeSlug ? <MajorityMinorityBarChart rate={majorityMinorityRateByJustice[selectedJusticeSlug] ?? null} agreementPairs={justiceAgreementGrid} justiceSlug={selectedJusticeSlug} /> : <PlaceholderPanel active={active} index={3} /> : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : <PlaceholderPanel active={active} index={3} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? opinionsPanel3 : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : <PlaceholderPanel active={active} index={3} />}
     </>
   );
 }
