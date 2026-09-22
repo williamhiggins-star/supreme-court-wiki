@@ -56,6 +56,13 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx tsx scripts/compute-justice-stats.ts
 
+      - name: Materialize Opinions Data term stats (non-fatal)
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/compute-opinion-term-stats.ts
+
       - name: Recompute counsel speaking stats
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
