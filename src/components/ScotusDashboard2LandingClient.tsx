@@ -26,6 +26,16 @@ export function ScotusDashboard2LandingClient({ data }: { data: ScotusDashboard2
   const [isExiting, setIsExiting] = useState(false);
   const router = useRouter();
 
+  // This carousel is a static marketing preview, not the interactive
+  // Opinions Data panel -- no term toggle of its own, so it always shows
+  // the current tracked term (termOptions[0], same "current term first"
+  // ordering scotusdashboard2-data.ts uses everywhere else, and already
+  // assumed non-empty elsewhere in this file's own ScotusDashboard2Client
+  // sibling), matching its behavior before opinionStatsByTerm replaced
+  // the old flat, implicitly-current-term-only fields.
+  const landingTerm = data.termOptions[0]?.value ?? "";
+  const landingOpinionStats = data.opinionStatsByTerm[landingTerm];
+
   // Still worth prefetching -- once the URL actually swaps to
   // /dashboard, this makes that swap (which by then is invisible
   // either way, since identical content is already on screen) resolve
@@ -62,9 +72,9 @@ export function ScotusDashboard2LandingClient({ data }: { data: ScotusDashboard2
           <div className="h-full min-w-0 md:col-start-2">
             <LandingCarousel
               justices={data.justices}
-              opinionLengthStats={data.opinionLengthStats}
-              justiceAgreementGrid={data.justiceAgreementGrid}
-              totalWordsByJustice={data.totalWordsByJustice}
+              opinionLengthStats={landingOpinionStats.opinionLength}
+              justiceAgreementGrid={landingOpinionStats.agreementGrid}
+              totalWordsByJustice={landingOpinionStats.totalWordsByJustice}
             />
           </div>
         </div>

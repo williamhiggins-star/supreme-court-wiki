@@ -2837,6 +2837,27 @@ export type Database = {
         }
         Relationships: []
       }
+      term_opinion_stats: {
+        Row: {
+          computed_at: string
+          metric_type: string
+          payload: Json
+          term: string
+        }
+        Insert: {
+          computed_at?: string
+          metric_type: string
+          payload: Json
+          term: string
+        }
+        Update: {
+          computed_at?: string
+          metric_type?: string
+          payload?: Json
+          term?: string
+        }
+        Relationships: []
+      }
       votes: {
         Row: {
           case_id: string
