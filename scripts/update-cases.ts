@@ -24,6 +24,7 @@ import {
   withRetry,
   getExistingCaseSlugs,
   existingSlugForCaseNumber,
+  resolveCaseSlug,
   toSlug,
   CASES_DIR,
   DATA_DIR,
@@ -224,6 +225,10 @@ async function processNewTranscripts(
     console.log(`  URL: ${transcriptUrl}`);
 
     try {
+      // An upcoming case keeps its slug, so the transcript result overwrites
+      // the same file and DB row instead of creating a second one.
+      const caseSlug = await resolveCaseSlug(caseNumber, existingSlugs);
+
       const pdfBuffer = await downloadPdf(transcriptUrl);
       console.log(`  Downloaded ${(pdfBuffer.length / 1024).toFixed(1)} KB`);
 
@@ -234,21 +239,9 @@ async function processNewTranscripts(
         generateSummary(client, text, caseNumber, termYear, console.log)
       );
 
-      const result = buildResult(raw, caseNumber, termYear, transcriptUrl, "petition");
+      const result = buildResult(raw, caseNumber, caseSlug, termYear, transcriptUrl, "petition");
       saveResult(result, console.log);
       await dualWriteResult(result);
-
-      // If this case was previously "upcoming", remove the old stub file
-      // (slug may differ if the title was slightly different in the docket page)
-      const oldSlug = existingSlugForCaseNumber(caseNumber, existingSlugs);
-      if (oldSlug && oldSlug !== result.case.slug) {
-        const oldFile = path.join(CASES_DIR, `${oldSlug}.json`);
-        if (fs.existsSync(oldFile)) {
-          fs.unlinkSync(oldFile);
-          console.log(`  Removed old upcoming stub: ${oldSlug}.json`);
-        }
-        existingSlugs.delete(oldSlug);
-      }
 
       // Add to known slugs so we don't process it again in this run
       existingSlugs.add(result.case.slug);
@@ -495,13 +488,20 @@ async function processUpcomingCases(
 ): Promise<number> {
   let added = 0;
 
-  for (const { caseNumber, argumentDate, termYear } of upcoming) {
+  for (const { caseNumber, title, argumentDate, termYear } of upcoming) {
     const existing = existingSlugForCaseNumber(caseNumber, existingSlugs);
     if (existing) continue; // already in data
 
     console.log(`\nProcessing new upcoming case: ${caseNumber} (${argumentDate})`);
 
     try {
+      // The argument calendar's caption is the Court's own; fall back to
+      // the docket page when the calendar parse produced none.
+      const caseSlug = await resolveCaseSlug(
+        caseNumber,
+        existingSlugs,
+        title && title !== caseNumber ? title : undefined
+      );
       const docketText = await fetchDocketPage(caseNumber);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -528,7 +528,7 @@ async function processUpcomingCases(
 
       const raw = JSON.parse(jsonMatch[0]);
       const docketUrl = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
-      const result = buildResult(raw, caseNumber, termYear, docketUrl, "upcoming");
+      const result = buildResult(raw, caseNumber, caseSlug, termYear, docketUrl, "upcoming");
       saveResult(result, console.log);
       await dualWriteResult(result);
 

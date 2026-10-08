@@ -23,6 +23,8 @@ import {
   saveResult,
   ensureDataDirs,
   withRetry,
+  getExistingCaseSlugs,
+  resolveCaseSlug,
 } from "./pipeline.js";
 
 async function main() {
@@ -60,7 +62,8 @@ async function main() {
       generateSummary(client, transcriptText, caseNumber, termYear)
     );
 
-    const result = buildResult(rawOutput, caseNumber, termYear, transcriptUrl);
+    const caseSlug = await resolveCaseSlug(caseNumber, getExistingCaseSlugs());
+    const result = buildResult(rawOutput, caseNumber, caseSlug, termYear, transcriptUrl);
     console.log(`\nCase: ${result.case.title}`);
     console.log(`Terms identified: ${result.newTerms.length}`);
     console.log(`Precedents cited: ${result.newPrecedents.length}`);

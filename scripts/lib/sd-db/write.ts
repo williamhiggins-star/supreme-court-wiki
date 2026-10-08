@@ -142,9 +142,27 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     argued_date = null;
   }
 
+  // Look the case up by exact docket number first: a docket keeps the slug
+  // its row was created with, so a different slug here (e.g. a DB-only row,
+  // or an older JSON file) updates that row instead of adding a second one.
+  // cases_court_docket_number_key enforces this in the DB as well.
+  const scotusId = cache.courtIdBySlug.get("scotus");
+  let slug = c.slug;
+  if (c.caseNumber) {
+    const [byDocket] = await select<{ slug: string }>(
+      creds,
+      "cases",
+      `?select=slug&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
+    );
+    if (byDocket && byDocket.slug !== c.slug) {
+      warnings.push(`docket ${c.caseNumber} is already stored as "${byDocket.slug}" — updating that row, not creating "${c.slug}".`);
+      slug = byDocket.slug;
+    }
+  }
+
   const [caseRow] = await upsert<{ id: string; slug: string }>(creds, "cases", [{
-    slug: c.slug,
-    court_id: cache.courtIdBySlug.get("scotus"),
+    slug,
+    court_id: scotusId,
     docket_number: c.caseNumber,
     caption: c.title,
     term: c.termYear,
@@ -160,6 +178,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   }], "slug");
   const caseId = caseRow.id;
   cache.caseIdBySlug.set(c.slug, caseId);
+  cache.caseIdBySlug.set(slug, caseId);
 
   // ---- opinions + votes + opinion_joins (same extraction as backfill-db.ts) ----
   interface OpinionRow { kind: string; author_person_slug: string | null; summary: string | null }
