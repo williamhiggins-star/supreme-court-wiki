@@ -113,3 +113,16 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx tsx scripts/parity-check.ts
+
+      # Last step, after the commit: steps keep going when an SD database
+      # write fails (scripts/lib/sd-db/failures.ts), but the run must not
+      # show as a success.
+      - name: Fail the run if any SD database write failed
+        if: always()
+        run: |
+          if [ -s "$RUNNER_TEMP/sd-write-failures.log" ]; then
+            echo "::error::SD database write failures in this run:"
+            cat "$RUNNER_TEMP/sd-write-failures.log"
+            exit 1
+          fi
+          echo "No SD database write failures."

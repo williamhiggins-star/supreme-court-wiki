@@ -32,6 +32,7 @@ import {
 import type { CaseSummary, ProcessingResult } from "../src/types/index.js";
 import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { loadIdCache, syncCase, syncNewTerm, syncNewPrecedent, type IdCache } from "./lib/sd-db/write.js";
+import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 import { currentTermYear } from "./lib/sd-db/constants.js";
 import { parseTranscriptList, transcriptListUrl, type TranscriptEntry } from "./lib/argument-transcripts.js";
 
@@ -64,7 +65,7 @@ async function dualWriteCase(c: CaseSummary): Promise<void> {
     const { warnings } = await syncCase(ctx.creds, ctx.cache, c);
     warnings.forEach((w) => console.warn(`[sd-db] ${c.slug}: ${w}`));
   } catch (err) {
-    console.warn(`[sd-db] non-fatal (${c.slug}): ${err instanceof Error ? err.message : err}`);
+    reportSdWriteFailure(c.slug, err);
   }
 }
 
@@ -78,7 +79,7 @@ async function dualWriteResult(result: ProcessingResult): Promise<void> {
     for (const t of result.newTerms) await syncNewTerm(ctx.creds, t);
     for (const p of result.newPrecedents) await syncNewPrecedent(ctx.creds, ctx.cache, p);
   } catch (err) {
-    console.warn(`[sd-db] non-fatal (${result.case.slug} new terms/precedents): ${err instanceof Error ? err.message : err}`);
+    reportSdWriteFailure(`${result.case.slug} new terms/precedents`, err);
   }
   await dualWriteCase(result.case);
 }
