@@ -216,8 +216,18 @@ async function processNewTranscripts(
       console.log(`  Skipping ${caseNumber} (already processed as ${existing})`);
       continue;
     }
+    // Carry the upcoming stub's scraped argumentTime forward -- buildResult
+    // below fully regenerates the case from the transcript, with no memory
+    // of the stub it's replacing, so it would otherwise be lost here even
+    // though promoteArguedCases() (the other upcoming->argued path, which
+    // edits the stub in place) never loses it.
+    let previousArgumentTime: string | undefined;
     if (existing) {
       console.log(`\nTranscript now available for upcoming case: ${caseNumber} — upgrading to argued`);
+      try {
+        const prev = JSON.parse(fs.readFileSync(path.join(CASES_DIR, `${existing}.json`), "utf-8")) as CaseSummary;
+        previousArgumentTime = prev.argumentTime;
+      } catch { /* no stub file to carry forward from */ }
     }
 
     console.log(`\nProcessing new transcript: ${caseNumber}`);
@@ -235,6 +245,7 @@ async function processNewTranscripts(
       );
 
       const result = buildResult(raw, caseNumber, termYear, transcriptUrl, "petition");
+      if (previousArgumentTime) result.case.argumentTime = previousArgumentTime;
       saveResult(result, console.log);
       await dualWriteResult(result);
 
@@ -270,7 +281,24 @@ interface UpcomingCase {
   caseNumber: string;
   title: string;
   argumentDate: string; // YYYY-MM-DD
+  argumentTime: string | null; // e.g. "10:00 AM ET"
   termYear: string;
+}
+
+// Each monthly calendar PDF states one convene time for every argument day
+// in it, e.g. "Court Convenes at 10 a.m." -- there's no per-case AM/PM
+// session split in the current calendar format (confirmed against the
+// live OT2026 PDFs, where even two-case days carry only one convene
+// time). Always Eastern time, since that's SCOTUS's own time zone.
+const CONVENE_TIME_PATTERN = /Court\s+Convenes?\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(a\.m\.|p\.m\.)/i;
+
+function parseConveneTime(text: string): string | null {
+  const m = text.match(CONVENE_TIME_PATTERN);
+  if (!m) return null;
+  const hour = m[1];
+  const minute = m[2] ?? "00";
+  const meridiem = m[3].replace(/\./g, "").toUpperCase();
+  return `${hour}:${minute} ${meridiem} ET`;
 }
 
 async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
@@ -346,6 +374,9 @@ async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
     }
     const termStartYear = Number(termMatch[1]);
 
+    // Parsed from the full text before the footer is stripped below.
+    const argumentTime = parseConveneTime(text);
+
     // Real calendar content ends at the "Court convenes..." footer;
     // dropping it keeps it out of the last date heading's case title.
     const body = text.split(/Court\s+Convenes/i)[0];
@@ -384,7 +415,7 @@ async function fetchUpcomingArguments(): Promise<UpcomingCase[]> {
           .replace(/\s+/g, " ")
           .trim();
 
-        results.push({ caseNumber, title: title || caseNumber, argumentDate: argDateISO, termYear });
+        results.push({ caseNumber, title: title || caseNumber, argumentDate: argDateISO, argumentTime, termYear });
       }
     }
     console.log(`  ${pdfUrl.split("/").pop()}: ${results.length - beforeCount} upcoming case(s)`);
@@ -433,7 +464,8 @@ function buildUpcomingPrompt(
   caseNumber: string,
   argumentDate: string,
   termYear: string,
-  docketText: string
+  docketText: string,
+  argumentTime: string | null
 ): string {
   return `Analyze this upcoming Supreme Court case and return a JSON object with EXACTLY this structure.
 Leave keyExchanges as an empty array for all parties.
@@ -481,7 +513,7 @@ Rules:
 - Return only the JSON object, no other text
 
 Case number: ${caseNumber}
-Scheduled argument: ${argumentDate} at 10:00 a.m. ET
+Scheduled argument: ${argumentDate}${argumentTime ? ` at ${argumentTime}` : ""}
 Term year: ${termYear}
 
 DOCKET INFORMATION:
@@ -495,7 +527,7 @@ async function processUpcomingCases(
 ): Promise<number> {
   let added = 0;
 
-  for (const { caseNumber, argumentDate, termYear } of upcoming) {
+  for (const { caseNumber, argumentDate, argumentTime, termYear } of upcoming) {
     const existing = existingSlugForCaseNumber(caseNumber, existingSlugs);
     if (existing) continue; // already in data
 
@@ -513,7 +545,7 @@ async function processUpcomingCases(
           messages: [
             {
               role: "user",
-              content: buildUpcomingPrompt(caseNumber, argumentDate, termYear, docketText),
+              content: buildUpcomingPrompt(caseNumber, argumentDate, termYear, docketText, argumentTime),
             },
           ],
         })
@@ -529,6 +561,10 @@ async function processUpcomingCases(
       const raw = JSON.parse(jsonMatch[0]);
       const docketUrl = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
       const result = buildResult(raw, caseNumber, termYear, docketUrl, "upcoming");
+      // Sourced directly from the scraped calendar PDF, not the LLM's JSON
+      // output -- buildResult has no argumentTime param since every other
+      // caller lacks this data; set it directly on the built case instead.
+      if (argumentTime) result.case.argumentTime = argumentTime;
       saveResult(result, console.log);
       await dualWriteResult(result);
 

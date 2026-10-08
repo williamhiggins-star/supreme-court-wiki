@@ -720,6 +720,7 @@ export type Database = {
       cases: {
         Row: {
           argued_date: string | null
+          argued_time: string | null
           background: string | null
           caption: string
           court_id: string
@@ -748,6 +749,7 @@ export type Database = {
         }
         Insert: {
           argued_date?: string | null
+          argued_time?: string | null
           background?: string | null
           caption: string
           court_id: string
@@ -776,6 +778,7 @@ export type Database = {
         }
         Update: {
           argued_date?: string | null
+          argued_time?: string | null
           background?: string | null
           caption?: string
           court_id?: string

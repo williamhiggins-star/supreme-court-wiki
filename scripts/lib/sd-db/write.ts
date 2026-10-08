@@ -153,6 +153,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     background: c.backgroundAndFacts,
     significance: c.significance,
     argued_date,
+    argued_time: c.argumentTime ?? null,
     decided_date: c.decisionDate ?? null,
     vote_line: null,
     source_urls: [c.transcriptUrl].filter(Boolean),

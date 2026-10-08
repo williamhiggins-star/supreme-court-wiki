@@ -89,7 +89,7 @@ interface OpinionSummaryEntry {
 const CASE_DETAIL_SELECT = `
   id, slug, caption, docket_number, term, status,
   question_presented, background, significance,
-  argued_date, decided_date, vote_line, disposition, updated_at,
+  argued_date, argued_time, decided_date, vote_line, disposition, updated_at,
   petitioner_name, petitioner_argument, petitioner_supporting_points,
   respondent_name, respondent_argument, respondent_supporting_points,
   case_lower_courts ( docket_number, courts ( name, level, circuit_ordinal, state ) ),
@@ -274,6 +274,7 @@ function buildCaseDetail(caseRow: CaseDetailRow, ties: DecisionTieRow[], decisio
     title: caseRow.caption,
     termYear: caseRow.term ?? currentTermYear(),
     argumentDate: caseRow.argued_date ?? "",
+    argumentTime: caseRow.argued_time ?? undefined,
     transcriptUrl: transcript?.source_url ?? "",
     docketStatus: DOCKET_STATUS_BY_DB_STATUS[caseRow.status],
     backgroundAndFacts: caseRow.background ?? "",

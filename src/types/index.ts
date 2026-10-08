@@ -78,6 +78,7 @@ export interface CaseSummary {
   title: string;
   termYear: string;
   argumentDate: string;
+  argumentTime?: string; // e.g. "10:00 AM ET" -- scraped from the monthly calendar PDF's "Court Convenes at..." footer
   transcriptUrl: string;
   docketStatus?: "upcoming" | "petition" | "emergency" | "decided";
 

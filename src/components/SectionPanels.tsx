@@ -2169,6 +2169,7 @@ function DocketUpcomingPanel({ cases, today, tomorrow, onSelectCase, onNavigateS
                     }}
                   >
                     {formatDate(c.argumentDate)}
+                    {c.argumentTime ? ` · ${c.argumentTime}` : ""}
                     {isToday ? " · Today" : isTomorrow ? " · Tomorrow" : ""}
                   </p>
                   <p
@@ -2216,7 +2217,7 @@ function DocketArguedPanel({ cases, onSelectCase, onNavigateSection }: { cases: 
                     lineHeight: 1.5,
                   }}
                 >
-                  Argued {formatDate(c.argumentDate)}
+                  Argued {formatDate(c.argumentDate)}{c.argumentTime ? ` · ${c.argumentTime}` : ""}
                 </p>
                 <p
                   className="text-[11px] font-normal not-italic text-[#6B6560]"
@@ -2406,12 +2407,13 @@ function AllCasesListPanel({ items, today, onSelectCase }: { items: DecidedItem[
             // "Decided" with no date.
             const isToday =
               item.docketStatus === "decided" ? item.decisionDate === today : item.argumentDate === today;
+            const timeSuffix = item.argumentTime ? ` · ${item.argumentTime}` : "";
             const statusLine =
               item.docketStatus === "decided"
                 ? `${item.decisionDate ? `Decided ${formatDate(item.decisionDate)}` : "Decided"}${isToday ? " · Decided Today" : ""}`
                 : item.docketStatus === "argued"
-                  ? `Argued ${formatDate(item.argumentDate)}${isToday ? " · Argued Today" : ""}`
-                  : `Argument ${formatDate(item.argumentDate)}${isToday ? " · Today" : ""}`;
+                  ? `Argued ${formatDate(item.argumentDate)}${timeSuffix}${isToday ? " · Argued Today" : ""}`
+                  : `Argument ${formatDate(item.argumentDate)}${timeSuffix}${isToday ? " · Today" : ""}`;
             return (
               <div key={item.slug} className="contents">
                 <div>

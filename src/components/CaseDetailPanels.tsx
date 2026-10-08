@@ -863,6 +863,7 @@ function CaseOverviewPanel({
   const status = getCaseDocketStatus(caseData);
   const statusLabel = status === "upcoming" ? "Scheduled" : status === "argued" ? "Argued" : "Decided";
   const statusDate = status === "decided" ? caseData.decisionDate : caseData.argumentDate;
+  const statusTime = status === "decided" ? undefined : caseData.argumentTime;
 
   return (
     <ScrollableRegion outerClassName="h-full min-w-0" innerClassName="flex flex-col px-6 pb-2 pt-[14px]">
@@ -887,6 +888,7 @@ function CaseOverviewPanel({
       >
         {statusLabel}
         {statusDate ? ` ${formatDate(statusDate)}` : ""}
+        {statusTime ? ` · ${statusTime}` : ""}
       </p>
       {caseData.podcastEpisodeUrl && (
         <a

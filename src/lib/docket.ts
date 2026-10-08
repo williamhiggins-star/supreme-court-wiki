@@ -34,6 +34,7 @@ export type DecidedItem = {
   // cases carry none of that (nothing to show yet), only argumentDate.
   docketStatus: "upcoming" | "argued" | "decided";
   argumentDate: string;
+  argumentTime?: string;
   decisionDate?: string;
   voteSplit?: string;
   podcastEpisodeUrl?: string;
@@ -83,6 +84,7 @@ function buildItem(c: CaseSummary & { voteLine?: string | null }): DecidedItem {
     href: `/cases/${c.slug}`,
     docketStatus: getDocketStatus(c),
     argumentDate: c.argumentDate,
+    argumentTime: c.argumentTime,
     decisionDate: c.decisionDate,
     voteSplit,
     podcastEpisodeUrl: c.podcastEpisodeUrl,
