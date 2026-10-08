@@ -29,6 +29,7 @@
 import { select, upsert, insert, remove, update } from "../supabase-sync/client.js";
 import type { SupabaseCredentials } from "../supabase-sync/env.js";
 import { toSlug } from "../../pipeline.js";
+import { courtCaptionParties, fetchCourtDocketTitle, type CaptionParties } from "../court-caption.js";
 import type {
   CaseSummary,
   PrecedentCase,
@@ -187,30 +188,55 @@ export function planKeyExchangeWrites(
 }
 
 // ---------------------------------------------------------------------------
-// Party names: fill blanks only, OT2026 on
+// Petitioner/Respondent sections: fill blanks only, OT2026 on
 // ---------------------------------------------------------------------------
 //
 // The site builds a case's Petitioner/Respondent sections (and attaches
-// key exchanges to them) only when petitioner_name/respondent_name are set.
-// Filled from the case's own parties; a stored non-empty name is never
-// overwritten, and earlier terms are left as they are.
+// key exchanges to them) only when petitioner_name/respondent_name are set,
+// and shows each side's argument and supporting points under the name.
+// Names come from the Court's own caption (court-caption.ts, the same
+// docket-page source as slugs), never from LLM-written text; argument and
+// points come from the case's own parties. A stored non-empty value is
+// never overwritten, and earlier terms are left as they are.
 
-export interface StoredPartyNames {
+export interface StoredPartyFields {
   petitioner_name: string | null;
   respondent_name: string | null;
+  petitioner_argument: string | null;
+  respondent_argument: string | null;
+  petitioner_supporting_points: unknown;
+  respondent_supporting_points: unknown;
 }
 
-export function partyNameFill(
-  stored: StoredPartyNames | null,
+export const PARTY_FIELD_COLUMNS =
+  "petitioner_name,respondent_name,petitioner_argument,respondent_argument,petitioner_supporting_points,respondent_supporting_points";
+
+const isBlankText = (v: string | null | undefined) => !v || !v.trim();
+const isBlankList = (v: unknown) => !Array.isArray(v) || v.length === 0;
+
+/** True when an OT2026-on case still needs a party name from the Court. */
+export function needsCaptionParties(stored: Partial<StoredPartyFields> | null, termYear: string): boolean {
+  return Number(termYear) >= FIRST_ATTRIBUTED_TERM &&
+    (isBlankText(stored?.petitioner_name) || isBlankText(stored?.respondent_name));
+}
+
+export function partyFieldsFill(
+  stored: Partial<StoredPartyFields> | null,
+  captionParties: CaptionParties | null,
   parties: CaseSummary["parties"],
   termYear: string,
-): Partial<StoredPartyNames> {
+): Partial<StoredPartyFields> {
   if (Number(termYear) < FIRST_ATTRIBUTED_TERM) return {};
-  const patch: Partial<StoredPartyNames> = {};
-  const petitioner = parties.find((p) => p.role === "petitioner")?.party?.trim();
-  const respondent = parties.find((p) => p.role === "respondent")?.party?.trim();
-  if (petitioner && !stored?.petitioner_name) patch.petitioner_name = petitioner;
-  if (respondent && !stored?.respondent_name) patch.respondent_name = respondent;
+  const patch: Partial<StoredPartyFields> = {};
+  for (const role of ["petitioner", "respondent"] as const) {
+    const name = captionParties?.[role]?.trim();
+    if (name && isBlankText(stored?.[`${role}_name`])) patch[`${role}_name`] = name;
+    const p = parties.find((x) => x.role === role);
+    const argument = p?.coreArgument?.trim();
+    if (argument && isBlankText(stored?.[`${role}_argument`])) patch[`${role}_argument`] = argument;
+    const points = (p?.supportingPoints ?? []).map((pt) => pt.trim()).filter(Boolean);
+    if (points.length > 0 && isBlankList(stored?.[`${role}_supporting_points`])) patch[`${role}_supporting_points`] = points;
+  }
   return patch;
 }
 
@@ -234,16 +260,29 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   // cases_court_docket_number_key enforces this in the DB as well.
   const scotusId = cache.courtIdBySlug.get("scotus");
   let slug = c.slug;
-  let byDocket: ({ slug: string } & StoredPartyNames) | undefined;
+  let byDocket: ({ slug: string } & StoredPartyFields) | undefined;
   if (c.caseNumber) {
-    [byDocket] = await select<{ slug: string } & StoredPartyNames>(
+    [byDocket] = await select<{ slug: string } & StoredPartyFields>(
       creds,
       "cases",
-      `?select=slug,petitioner_name,respondent_name&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
+      `?select=slug,${PARTY_FIELD_COLUMNS}&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
     );
     if (byDocket && byDocket.slug !== c.slug) {
       warnings.push(`docket ${c.caseNumber} is already stored as "${byDocket.slug}" — updating that row, not creating "${c.slug}".`);
       slug = byDocket.slug;
+    }
+  }
+
+  // Party names come from the Court's docket page, fetched only while a
+  // name is still blank. A failed fetch leaves the names blank (retried on
+  // the case's next sync) and does not hold up the rest of the case.
+  let captionParties: CaptionParties | null = null;
+  if (c.caseNumber && needsCaptionParties(byDocket ?? null, c.termYear)) {
+    try {
+      captionParties = courtCaptionParties(await fetchCourtDocketTitle(c.caseNumber));
+      if (!captionParties) warnings.push(`docket ${c.caseNumber}: Court caption has no "Petitioner v. Respondent" shape — party names left blank.`);
+    } catch (err) {
+      warnings.push(`docket ${c.caseNumber}: could not read the Court's caption (${err instanceof Error ? err.message : err}) — party names left blank, retried next sync.`);
     }
   }
 
@@ -262,7 +301,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     vote_line: null,
     source_urls: [c.transcriptUrl].filter(Boolean),
     is_stub: false,
-    ...partyNameFill(byDocket ?? null, c.parties, c.termYear),
+    ...partyFieldsFill(byDocket ?? null, captionParties, c.parties ?? [], c.termYear),
   }], "slug");
   const caseId = caseRow.id;
   cache.caseIdBySlug.set(c.slug, caseId);
