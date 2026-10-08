@@ -107,8 +107,70 @@ export function existingSlugForCaseNumber(
   caseNumber: string,
   slugs: Set<string>
 ): string | undefined {
+  // Exact docket match. Slugs are "<docket>-<caption>", so the docket ends
+  // at a hyphen: "25-5" must find "25-5-noem-v-al-otro-lado", never
+  // "25-5146-ahmad-abouammo-v-united-states".
   const prefix = caseNumberToSlugPrefix(caseNumber);
-  return [...slugs].find((s) => s.startsWith(prefix));
+  return [...slugs].find((s) => s === prefix || s.startsWith(`${prefix}-`));
+}
+
+// ---------------------------------------------------------------------------
+// Case slugs: docket number + the Court's own caption, set once
+// ---------------------------------------------------------------------------
+//
+// A case's slug is built in code when the case is first created and never
+// regenerated: an existing docket always keeps its slug. The caption comes
+// from the Court (argument calendar or docket page), never from the LLM's
+// summary title, which can drift between runs.
+
+export function caseSlugFromCaption(caseNumber: string, courtCaption: string): string {
+  return toSlug(`${caseNumber}-${courtCaption}`);
+}
+
+/** "Suncor Energy (U.S.A.) Inc., et al., Petitioners v. County
+ *  Commissioners of Boulder County, et al." → "Suncor Energy (U.S.A.) Inc.
+ *  v. County Commissioners of Boulder County". Titles without a
+ *  "Petitioner(s) v." shape (e.g. "In re …") are returned whole. */
+export function shortCourtCaption(docketTitle: string): string {
+  const m = docketTitle.match(
+    /^(.*?),?\s+(?:Petitioners?|Applicants?|Appellants?|Plaintiffs?)\s+v\.\s+(.*)$/i
+  );
+  if (!m) return docketTitle;
+  const firstParty = (s: string) => s.split(",")[0].trim();
+  return `${firstParty(m[1])} v. ${firstParty(m[2])}`;
+}
+
+/** The Court's caption for a docket, from the "Title:" field of its docket page. */
+export async function fetchCourtCaption(caseNumber: string): Promise<string> {
+  const url = `https://www.supremecourt.gov/docket/docketfiles/html/public/${caseNumber}.html`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0; +https://github.com/supreme-court-wiki)" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
+  const html = await res.text();
+  const m = html.match(/Title:[\s\S]*?<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i);
+  if (!m) throw new Error(`No "Title:" field on docket page ${caseNumber}`);
+  const title = m[1]
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;|&rsquo;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+  return shortCourtCaption(title);
+}
+
+/** The slug to save a case under: its existing slug if the docket is
+ *  already in data/, otherwise docket number + Court caption (fetched from
+ *  the docket page when the caller doesn't already have one). */
+export async function resolveCaseSlug(
+  caseNumber: string,
+  slugs: Set<string>,
+  courtCaption?: string
+): Promise<string> {
+  const existing = existingSlugForCaseNumber(caseNumber, slugs);
+  if (existing) return existing;
+  return caseSlugFromCaption(caseNumber, courtCaption ?? (await fetchCourtCaption(caseNumber)));
 }
 
 // ---------------------------------------------------------------------------
@@ -290,12 +352,11 @@ export async function generateSummary(
 export function buildResult(
   raw: RawAIOutput,
   caseNumber: string,
+  caseSlug: string, // from resolveCaseSlug(), never derived from raw.title
   termYear: string,
   transcriptUrl: string,
   docketStatus: CaseSummary["docketStatus"] = "petition"
 ): ProcessingResult {
-  const caseSlug = toSlug(`${caseNumber}-${raw.title}`);
-
   const newTerms: LegalTerm[] = raw.legalTerms.map((t) => ({
     slug: toSlug(t.term),
     term: t.term,

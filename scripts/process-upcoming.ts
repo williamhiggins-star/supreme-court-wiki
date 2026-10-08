@@ -21,6 +21,7 @@ import {
   ensureDataDirs,
   existingSlugForCaseNumber,
   getExistingCaseSlugs,
+  resolveCaseSlug,
   CASES_DIR,
 } from "./pipeline.js";
 import type { RawAIOutput } from "./pipeline.js";
@@ -204,7 +205,8 @@ async function main() {
 
   // Use docket page URL as transcriptUrl placeholder for upcoming cases
   const docketUrl = `${SCOTUS_DOCKET_BASE}/${caseNumber}.html`;
-  const result = buildResult(raw, caseNumber, termYear, docketUrl, "upcoming");
+  const caseSlug = await resolveCaseSlug(caseNumber, getExistingCaseSlugs());
+  const result = buildResult(raw, caseNumber, caseSlug, termYear, docketUrl, "upcoming");
 
   saveResult(result);
   console.log(`\nSaved: ${result.case.title} → ${result.case.slug}.json`);

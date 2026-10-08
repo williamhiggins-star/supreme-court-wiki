@@ -9,6 +9,8 @@ import {
   buildResult,
   saveResult,
   ensureDataDirs,
+  getExistingCaseSlugs,
+  resolveCaseSlug,
   CASES_DIR,
 } from "./pipeline.js";
 import * as fs from "fs";
@@ -125,7 +127,8 @@ ${text}`;
     throw new Error("No JSON in response: " + textBlock.text.slice(0, 200));
 
   const raw = JSON.parse(jsonMatch[0]);
-  const result = buildResult(raw, caseNumber, termYear, url, "petition");
+  const caseSlug = await resolveCaseSlug(caseNumber, getExistingCaseSlugs());
+  const result = buildResult(raw, caseNumber, caseSlug, termYear, url, "petition");
   saveResult(result);
   console.log("Saved:", result.case.title);
 }
