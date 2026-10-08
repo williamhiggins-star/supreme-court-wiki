@@ -98,6 +98,15 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
         run: npx tsx scripts/fetch-spotify-episodes.ts
 
+      - name: Sync Spotify episode matches to Supabase (non-fatal)
+        continue-on-error: true
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/backfill-spotify-episodes.ts
+
       - name: Dual-write parity check (Supabase vs. data/*.json, non-fatal)
         if: always()
         continue-on-error: true

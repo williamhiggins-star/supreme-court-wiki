@@ -1,16 +1,27 @@
 /**
  * backfill-spotify-episodes.ts
  *
- * Matches every argued OT2025 case to its SCOTUS oral-arguments Spotify
- * podcast episode and writes the match to public.case_podcast_episodes.
- * Same matching approach as scripts/fetch-spotify-episodes.ts (which
- * writes podcastEpisodeUrl/spotifyMatchStatus to data/cases/*.json): match
- * by docket number parsed out of the episode description first (exact,
- * match_confidence 1.0), falling back to word-overlap title similarity for
- * episodes with no parseable docket (match_confidence = the computed
- * score, only accepted at >=0.5).
+ * Matches every case whose oral argument has already happened -- argued
+ * but not yet decided, or decided -- across TRACKED_TERMS to its SCOTUS
+ * oral-arguments Spotify podcast episode, and writes the match to
+ * public.case_podcast_episodes (the table src/lib/db/cases.ts joins on for
+ * the live site's Spotify link). Matches by docket number parsed out of
+ * the episode description first (exact, match_confidence 1.0), falling
+ * back to word-overlap title similarity for episodes with no parseable
+ * docket (match_confidence = the computed score, only accepted at >=0.5).
  *
- * Run:  npx tsx scripts/backfill-spotify-episodes.ts [--dry-run]
+ * Deliberately does not filter on cases.status: the daily pipeline
+ * (scripts/update-cases.ts) never actually transitions a case's status to
+ * the schema-allowed 'argued' value -- a case stays 'petition'/'upcoming'
+ * in the DB until it's decided, with "argued" only ever derived at read
+ * time from argued_date (see the DOCKET_STATUS_BY_DB_STATUS comment in
+ * src/lib/db/cases.ts). Filtering on argued_date instead of status is
+ * what makes this correctly cover argued-but-undecided cases.
+ *
+ * Upserts on case_id, so safe to run nightly -- rerunning on an
+ * already-matched case just rewrites the same row.
+ *
+ * Run:  npx tsx scripts/backfill-spotify-episodes.ts [--dry-run] [--term 2025]
  */
 
 import { getCredentials, loadEnvLocal } from "./lib/supabase-sync/env.js";
@@ -126,10 +137,18 @@ interface CaseRow {
   caption: string;
   docket_number: string | null;
   sitting: string | null;
+  argued_date: string | null;
 }
+
+// Same two tracked terms as scotusdashboard2-data.ts's TRACKED_TERMS --
+// bump by hand each October when a new term starts.
+const TRACKED_TERMS = ["2025", "2026"];
 
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
+  const termIdx = process.argv.indexOf("--term");
+  const terms = termIdx !== -1 && process.argv[termIdx + 1] ? [process.argv[termIdx + 1]] : TRACKED_TERMS;
+
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
   if (!clientId || !clientSecret) throw new Error("Missing SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET");
@@ -147,13 +166,18 @@ async function main() {
   const { byDocket, undocketed } = indexEpisodesByDocket(episodes);
   console.log(`${byDocket.size} episodes carry a parseable docket number, ${undocketed.length} do not.\n`);
 
+  const today = new Date().toISOString().split("T")[0];
   const cases = await select<CaseRow>(
     creds,
     "cases",
-    "?term=eq.2025&status=eq.decided&select=id,slug,caption,docket_number,sitting",
+    `?term=in.(${terms.join(",")})&argued_date=not.is.null&argued_date=lt.${today}` +
+      "&select=id,slug,caption,docket_number,sitting,argued_date",
   );
   const argued = cases.filter((c) => c.sitting !== "no_argument");
-  console.log(`${cases.length} decided OT2025 cases: ${cases.length - argued.length} no_argument (skipped), ${argued.length} argued.\n`);
+  console.log(
+    `${cases.length} already-argued case(s) across term(s) ${terms.join(", ")}: ` +
+      `${cases.length - argued.length} no_argument (skipped), ${argued.length} to match.\n`,
+  );
 
   let matchedByDocket = 0;
   let matchedByTitle = 0;
