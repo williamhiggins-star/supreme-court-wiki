@@ -15,8 +15,8 @@
  * not a new sync path. Run once: npx tsx scripts/backfill-ot25-missing-cases.ts
  */
 
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { select, upsert, insert } from "./lib/supabase-sync/client.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { select, upsert, insert } from "./lib/sd-db/client.js";
 
 const PERSON: Record<string, string> = {
   roberts: "5efc28ce-8c1f-4597-9329-fcc5592e5abc",

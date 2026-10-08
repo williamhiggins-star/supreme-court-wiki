@@ -41,11 +41,8 @@ GitHub Actions cron (22:00 UTC daily)
         │
         ▼
 scripts/update-cases.ts + fetch-*.ts  ──►  data/*.json  ──►  git commit + push
-        │  (scrape SCOTUS/CourtListener/RSS/Spotify, call Claude to structure it)
-        │
-        ▼ (final, non-fatal step)
-scripts/sync-to-supabase.ts  ──►  DYSTL Supabase (scotus_* / raw_articles tables)
-                                    (outbound mirror only — this site never reads it)
+           (scrape SCOTUS/CourtListener/RSS/Spotify, call Claude to structure it;
+            each step also writes the "SCOTUS Dashboard" Supabase project)
 
 Next.js app (src/app, src/components, src/lib)
         /welcome, /dashboard  ──►  read some data/*.json directly
@@ -68,7 +65,6 @@ manually (`npx tsx scripts/<name>.ts`) or by the daily GitHub Actions job.
 | **CourtListener API** (`courtlistener.com/api/rest/v4`) | Full-text search of published federal circuit opinions (by business-impact keyword queries and by circuit-split acknowledgment phrases), opinion cluster/full-text lookups | `scripts/fetch-circuit-splits.ts`, `scripts/fetch-appellate-impacts.ts` — requires `COURTLISTENER_API_KEY` |
 | **RSS feeds** (SCOTUSblog, The Atlantic, The New Yorker, NY Mag Intelligencer, NYT Politics, NYT Opinion, Washington Post, The Dispatch, Financial Times) | Recent article metadata (title/link/date/author/description), filtered for SCOTUS relevance | `scripts/fetch-analysis-articles.ts` |
 | **Spotify Web API** | Episode list for the SCOTUS oral-arguments podcast show, matched to case titles by keyword overlap | `scripts/fetch-spotify-episodes.ts` — requires `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` (client-credentials flow) |
-| **DYSTL Supabase** (outbound only) | Not a read source for this repo — see §2/§3 for the mirror write | `scripts/sync-to-supabase.ts`, `scripts/backfill-supabase.ts`, `scripts/lib/supabase-sync/*` |
 
 ## 2. Every Claude/Anthropic API call
 
@@ -142,16 +138,12 @@ stats). As of 2026-08-31 this **is** the live site's render path, not a
 side exception on an unused route — see `CLAUDE.md`'s "Root cutover"
 note.
 
-**Secondary store (outbound mirror only): DYSTL Supabase.** After the daily
-JSON commit, `scripts/sync-to-supabase.ts` (wrapped so any failure is
-non-fatal and never blocks the commit) upserts the same data into Supabase
-tables `scotus_cases`, `scotus_circuit_splits`, `raw_articles`, plus derived
-`scotus_case_events` / `scotus_split_events` rows (content-hash-checked
-upserts + dedup'd event inserts, implemented in `scripts/lib/supabase-sync/`).
-This mirror feeds a separate downstream product (DYSTL); this repo never
-reads it back. `scripts/backfill-supabase.ts` is the equivalent one-time,
-manually-run, fail-loud version of the same sync logic for seeding that
-mirror initially.
+**DYSTL Supabase: no longer written.** The old outbound mirror step
+(`scripts/sync-to-supabase.ts`, `scripts/lib/supabase-sync/`) was removed
+in October 2026: its credentials pointed at the "SCOTUS Dashboard" project,
+not DYSTL's, so it never succeeded. The shared PostgREST client and
+credential loader every SD write uses now live in `scripts/lib/sd-db/`
+(`client.ts`, `env.ts`).
 
 ## 4. Cron / scheduled job setup
 
@@ -173,7 +165,6 @@ Single GitHub Actions workflow: `.github/workflows/daily-update.yml`.
   10. `scripts/fetch-spotify-episodes.ts` — needs `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`.
   11. **Dual-write parity check** (`continue-on-error: true`, runs `if: always()`) — `scripts/parity-check.ts`, compares Supabase against `data/*.json` and reports drift; never blocks anything either direction.
   12. **Commit** — `git add data/`, commit as "Supreme Court Wiki Bot" with `[skip ci]`, push directly to the checked-out branch (no PR).
-  13. **Sync to Supabase** (`continue-on-error: true`) — `scripts/sync-to-supabase.ts`, needs `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`; runs *after* the commit so a sync failure can never block the data commit.
 - All the enrichment/manual scripts (`enrich-precedents.ts`,
   `process-transcript.ts`, `process-upcoming.ts`, `backfill-*.ts`,
   `retry-hamm.ts`) are **not** part of the cron — they're run by hand

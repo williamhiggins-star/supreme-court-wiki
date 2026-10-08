@@ -5,7 +5,7 @@
  * Compares live-database term stats (OT2025 / cases.term = '2025') against
  * published numbers from Feldman's Stat Pack, per
  * docs/term-stats-coding-rules.md. Read-only: every call below is a GET
- * against PostgREST (`select()` from lib/supabase-sync/client.ts) — this
+ * against PostgREST (`select()` from lib/sd-db/client.ts) — this
  * script never upserts, inserts, or deletes anything, and must not.
  *
  * As of Session 5 Phase 3, 20260830100000_term_stats_schema.sql (case_
@@ -33,8 +33,8 @@
  * Run: npx tsx scripts/term-stats-feldman-check.ts
  */
 
-import { select } from "./lib/supabase-sync/client.js";
-import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { select } from "./lib/sd-db/client.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { JUSTICE_KEY_TO_SLUG } from "./lib/sd-db/constants.js";
 
 const TERM = "2025";

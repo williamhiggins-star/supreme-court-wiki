@@ -15,8 +15,8 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { select, update } from "./lib/supabase-sync/client.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { select, update } from "./lib/sd-db/client.js";
 import {
   partyFieldsFill,
   needsCaptionParties,

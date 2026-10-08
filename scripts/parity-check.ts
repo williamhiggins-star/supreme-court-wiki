@@ -16,8 +16,8 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { select } from "./lib/supabase-sync/client.js";
-import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { select } from "./lib/sd-db/client.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { toSlug } from "./pipeline.js";
 import {
   JUSTICE_KEY_TO_SLUG,

@@ -24,8 +24,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { downloadPdf, extractText } from "./pipeline.js";
 import { fetchSlipOpinions } from "./fetch-opinion-authors.js";
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { select, update } from "./lib/supabase-sync/client.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { select, update } from "./lib/sd-db/client.js";
 
 const CACHE_DIR = path.join(process.cwd(), ".cache", "opinion-pdf-text");
 

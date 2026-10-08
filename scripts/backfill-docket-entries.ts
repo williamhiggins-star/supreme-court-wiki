@@ -23,8 +23,8 @@
  *   npx tsx scripts/backfill-docket-entries.ts --dry-run     # fetch+parse+classify only, no writes
  */
 
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { select, remove, insert } from "./lib/supabase-sync/client.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { select, remove, insert } from "./lib/sd-db/client.js";
 import {
   fetchDocketProceedingsHtml,
   parseDocketProceedingsHtml,

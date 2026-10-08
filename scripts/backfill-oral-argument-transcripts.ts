@@ -16,8 +16,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { downloadPdf, extractText } from "./pipeline.js";
 import { fetchTranscriptList } from "./backfill-key-exchanges.js";
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { select, upsert } from "./lib/supabase-sync/client.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { select, upsert } from "./lib/sd-db/client.js";
 
 const CACHE_DIR = path.join(process.cwd(), ".cache", "oral-argument-transcripts");
 

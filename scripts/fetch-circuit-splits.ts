@@ -17,7 +17,7 @@ import type {
   CircuitSplit,
   CircuitSplitsData,
 } from "../src/types/index.js";
-import { getCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials } from "./lib/sd-db/env.js";
 import { loadIdCache, syncCircuitSplits } from "./lib/sd-db/write.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────
