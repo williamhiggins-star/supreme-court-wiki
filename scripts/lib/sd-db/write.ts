@@ -186,6 +186,34 @@ export function planKeyExchangeWrites(
   return { inserts, fills };
 }
 
+// ---------------------------------------------------------------------------
+// Party names: fill blanks only, OT2026 on
+// ---------------------------------------------------------------------------
+//
+// The site builds a case's Petitioner/Respondent sections (and attaches
+// key exchanges to them) only when petitioner_name/respondent_name are set.
+// Filled from the case's own parties; a stored non-empty name is never
+// overwritten, and earlier terms are left as they are.
+
+export interface StoredPartyNames {
+  petitioner_name: string | null;
+  respondent_name: string | null;
+}
+
+export function partyNameFill(
+  stored: StoredPartyNames | null,
+  parties: CaseSummary["parties"],
+  termYear: string,
+): Partial<StoredPartyNames> {
+  if (Number(termYear) < FIRST_ATTRIBUTED_TERM) return {};
+  const patch: Partial<StoredPartyNames> = {};
+  const petitioner = parties.find((p) => p.role === "petitioner")?.party?.trim();
+  const respondent = parties.find((p) => p.role === "respondent")?.party?.trim();
+  if (petitioner && !stored?.petitioner_name) patch.petitioner_name = petitioner;
+  if (respondent && !stored?.respondent_name) patch.respondent_name = respondent;
+  return patch;
+}
+
 export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: CaseSummary): Promise<SyncCaseResult> {
   const warnings: string[] = [];
 
@@ -206,11 +234,12 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   // cases_court_docket_number_key enforces this in the DB as well.
   const scotusId = cache.courtIdBySlug.get("scotus");
   let slug = c.slug;
+  let byDocket: ({ slug: string } & StoredPartyNames) | undefined;
   if (c.caseNumber) {
-    const [byDocket] = await select<{ slug: string }>(
+    [byDocket] = await select<{ slug: string } & StoredPartyNames>(
       creds,
       "cases",
-      `?select=slug&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
+      `?select=slug,petitioner_name,respondent_name&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
     );
     if (byDocket && byDocket.slug !== c.slug) {
       warnings.push(`docket ${c.caseNumber} is already stored as "${byDocket.slug}" — updating that row, not creating "${c.slug}".`);
@@ -233,6 +262,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     vote_line: null,
     source_urls: [c.transcriptUrl].filter(Boolean),
     is_stub: false,
+    ...partyNameFill(byDocket ?? null, c.parties, c.termYear),
   }], "slug");
   const caseId = caseRow.id;
   cache.caseIdBySlug.set(c.slug, caseId);
