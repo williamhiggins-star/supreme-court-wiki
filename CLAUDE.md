@@ -4,29 +4,22 @@
 
 This is **scotusdashboard.com**: the public SCOTUS case dashboard and the **intake system** for all SCOTUS case and circuit-split data. It is the **source of truth for case lifecycle** — cert, argument, decision, split status. It runs a daily automated pipeline (GitHub Actions) that fetches and commits case data to this repo, and the site renders from that committed data.
 
-DYSTL is a **separate system in a separate repo**. DYSTL consumes a mirror of this dashboard's data and layers *analysis* on top of it (the six-block doctrine model, the DYSTL-voice briefings, the standing assessments). **Analysis never lives here. Intake never moves to DYSTL.**
+DYSTL is a **separate system in a separate repo**. It was designed to consume a mirror of this dashboard's data and layer *analysis* on top of it (the six-block doctrine model, the DYSTL-voice briefings, the standing assessments). **Analysis never lives here. Intake never moves to DYSTL.**
 
-Data flows out of this repo and never back into it. The daily pipeline both writes to and reads from DYSTL Supabase; the public site does neither.
+Data flows out of this repo and never back into it. **No DYSTL mirror is live today:** the daily pipeline's "Sync published data to DYSTL Supabase" step was removed in October 2026. It never succeeded, because its only secrets pointed at the SCOTUS Dashboard project, not DYSTL's, so it wrote nothing. Neither the pipeline nor the public site reads or writes DYSTL Supabase now. Rebuilding a DYSTL feed would be a new, gated change.
 
 ```
 scotusdashboard (intake, source of truth)
         │
-        ├─ daily pipeline ──► DYSTL Supabase (scotus_* tables)
-        │                       ▲          │
-        │                       └──────────┘
-        │                   pipeline reads doctrines to classify
-        │                   events and write signals/assessments
-        │                   — all results stay in DYSTL
-        │
-        └─ commits data/*.json ──► pipeline-only for most of it now (see
-                                    below) ──► the live site (/welcome,
-                                    /dashboard) reads case/opinion/term-stat
-                                    data live from its own "SCOTUS Dashboard"
-                                    Supabase project instead
-                                            │
-                                            ▼
-                                   DYSTL analysis + briefings
-                                   consume the mirrored data
+        └─ daily pipeline ──► "SCOTUS Dashboard" Supabase project ──► the live
+                │              (written by scripts/lib/sd-db/)         site (/welcome,
+                │                                                      /dashboard) reads
+                │                                                      it live
+                └─ commits data/*.json ──► pipeline-only for most of it now;
+                                           calendar/articles/circuit-splits are
+                                           still rendered from JSON
+
+(No DYSTL Supabase mirror: the outbound step was retired in October 2026.)
 ```
 
 Nothing flows back from DYSTL into **this repo**. The intelligence layer's outputs — doctrine signals, standing assessments, assessment versions — are written to DYSTL's Supabase, never committed here. This repo does not import DYSTL analysis and does not change how it renders because of DYSTL.
@@ -34,7 +27,7 @@ Nothing flows back from DYSTL into **this repo**. The intelligence layer's outpu
 **Render and pipeline are separate surfaces, and the Supabase boundary applies to them differently:**
 
 - **(a) The public site never touches DYSTL Supabase.** That boundary is unchanged and absolute. It does, however, now touch a *different* Supabase project in its render path — see "Root cutover" below; that's a deliberate, separate exception to the older "no DB in the render path" rule, not a DYSTL boundary violation. New Phase D surfaces render from a pipeline-written `data/doctrines.json`, not from a live query.
-- **(b) The daily pipeline may read and write DYSTL Supabase** as part of the intelligence layer — the outbound mirror (A2), the analysis-feed sync (S1), event classification against doctrine indicators (B1), the assessment engine (B2), and embeddings (B4). These are pipeline steps, not render paths, and their reads exist to produce writes that land in DYSTL.
+- **(b) The daily pipeline does not touch DYSTL Supabase today.** The intelligence-layer plan allowed pipeline-only DYSTL reads and writes (the outbound mirror (A2), the analysis-feed sync (S1), event classification (B1), the assessment engine (B2), embeddings (B4)). The A2 mirror step was retired in October 2026 without ever having worked, and none of the others runs from this repo. Any of them would be a new, gated change, and pipeline-only, never in the render path.
 
 The distinction that still matters: **a DYSTL Supabase read is allowed in the pipeline and forbidden in the render path.** If a change would put a *DYSTL* Supabase call anywhere the site's request path can reach it, that is out of scope and must be raised at a gate. (The "SCOTUS Dashboard" Supabase project, below, is a separate exception already granted for the live site's own render path — see "Root cutover.")
 
@@ -74,14 +67,14 @@ The distinction that still matters: **a DYSTL Supabase read is allowed in the pi
 
 The exact paths are confirmed at recon and corrected here in the same PR if this list drifts. As of the A0 recon, the protected surface is:
 
-- **The daily pipeline / GitHub Actions workflow** that fetches case data and commits the daily JSON. The SCOTUS 2.0 outbound sync (A2) *adds to* this workflow; it must not change what the workflow already fetches, or the path/format of the daily JSON commit.
+- **The daily pipeline / GitHub Actions workflow** that fetches case data and commits the daily JSON. Any addition to this workflow (the retired A2 outbound sync was one) must not change what the workflow already fetches, or the path/format of the daily JSON commit.
 - **The committed daily data files** the public site renders from (the JSON the pipeline writes). Read them; don't restructure them.
 - **The public rendering/routing** of the existing dashboard — as of 2026-08-31 that's `/welcome` and `/dashboard` (see "Root cutover" above), not the pre-cutover page tree. SCOTUS 2.0 adds no public pages to this repo in Phase A/B; Phase D adds *new* doctrine/split surfaces as additive routes without altering existing ones.
 - **`main`**, always.
 
-## The A2 rule (outbound sync into the live cron)
+## The A2 rule (outbound sync into the live cron) — retired, kept for any rebuild
 
-A2 is the one place SCOTUS 2.0 touches the beating heart of this repo, so it has its own guardrails, all from the master plan:
+The A2 step (`scripts/sync-to-supabase.ts`) was removed from `daily-update.yml` in October 2026. If an outbound DYSTL sync is ever rebuilt, these guardrails from the master plan apply:
 
 - The Supabase emit is **additive and non-fatal**: if the DYSTL Supabase write fails, the daily JSON fetch-and-commit path must complete **unaffected**. A sync failure can never break intake. Verify this explicitly.
 - Ship behind the standard dry-run gate: the orchestrator runs the manual `workflow_dispatch` dry-run and presents results; **Will confirms before any merge to `main`.**
