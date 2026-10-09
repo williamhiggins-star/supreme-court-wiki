@@ -107,6 +107,18 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npx tsx scripts/backfill-spotify-episodes.ts
 
+      # Writes court_actions only (not shown on the site). Kill switch: set
+      # the repository variable COURT_ORDERS_OFF to 1.
+      - name: Read the Court's order lists into court_actions (non-fatal)
+        continue-on-error: true
+        env:
+          COURT_ORDERS_OFF: ${{ vars.COURT_ORDERS_OFF }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          command -v pdftotext >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; }
+          npx tsx scripts/read-order-lists.ts
+
       - name: Dual-write parity check (Supabase vs. data/*.json, non-fatal)
         if: always()
         continue-on-error: true
