@@ -14,7 +14,7 @@ import * as path from "path";
 import Anthropic from "@anthropic-ai/sdk";
 import { downloadPdf, extractText, CASES_DIR } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
-import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { loadIdCache, syncCase, type IdCache } from "./lib/sd-db/write.js";
 import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 

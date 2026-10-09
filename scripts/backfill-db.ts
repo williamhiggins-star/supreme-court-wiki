@@ -35,8 +35,8 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
-import { select, upsert, insert } from "./lib/supabase-sync/client.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
+import { select, upsert, insert } from "./lib/sd-db/client.js";
 import { toSlug } from "./pipeline.js";
 import { computeDecisionTiesAndPositions } from "./lib/sd-db/decisions.js";
 import { derivePrecedentStatus } from "./lib/sd-db/constants.js";

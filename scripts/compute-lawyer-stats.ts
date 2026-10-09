@@ -11,7 +11,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { downloadPdf, extractText, CASES_DIR, DATA_DIR } from "./pipeline.js";
-import { getCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials } from "./lib/sd-db/env.js";
 import { loadIdCache, syncLawyerStats } from "./lib/sd-db/write.js";
 import type { CaseSummary } from "../src/types/index.js";
 

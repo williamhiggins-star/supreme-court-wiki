@@ -129,13 +129,6 @@ jobs:
             echo "Pushed ${CHANGED} updated file(s)."
           fi
 
-      - name: Sync published data to DYSTL Supabase (outbound, non-fatal)
-        continue-on-error: true
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: npx tsx scripts/sync-to-supabase.ts
-
       # Last step, after the commit: steps keep going when an SD database
       # write fails (scripts/lib/sd-db/failures.ts), but the run must not
       # show as a success.

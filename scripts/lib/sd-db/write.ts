@@ -26,8 +26,8 @@
  * data/*.json path).
  */
 
-import { select, upsert, insert, remove, update } from "../supabase-sync/client.js";
-import type { SupabaseCredentials } from "../supabase-sync/env.js";
+import { select, upsert, insert, remove, update } from "./client.js";
+import type { SupabaseCredentials } from "./env.js";
 import { toSlug } from "../../pipeline.js";
 import { courtCaptionParties, fetchCourtDocketTitle, type CaptionParties } from "../court-caption.js";
 import type {

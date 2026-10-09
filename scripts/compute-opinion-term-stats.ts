@@ -35,9 +35,9 @@
  *     -- prints what would be written; writes nothing
  */
 
-import { getCredentials } from "./lib/supabase-sync/env.js";
-import { upsert } from "./lib/supabase-sync/client.js";
-import type { SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials } from "./lib/sd-db/env.js";
+import { upsert } from "./lib/sd-db/client.js";
+import type { SupabaseCredentials } from "./lib/sd-db/env.js";
 
 // Same two tracked terms as scotusdashboard2-data.ts's TRACKED_TERMS --
 // kept as its own copy per this codebase's scripts/-vs-src/ convention

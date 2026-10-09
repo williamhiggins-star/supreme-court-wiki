@@ -12,7 +12,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Anthropic from "@anthropic-ai/sdk";
-import { getCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials } from "./lib/sd-db/env.js";
 import { loadIdCache, syncAppellateImpacts } from "./lib/sd-db/write.js";
 
 // ── Load .env.local for local dev ─────────────────────────────────────────────

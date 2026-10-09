@@ -30,7 +30,7 @@ import {
   DATA_DIR,
 } from "./pipeline.js";
 import type { CaseSummary, ProcessingResult } from "../src/types/index.js";
-import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
+import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { loadIdCache, syncCase, syncNewTerm, syncNewPrecedent, type IdCache } from "./lib/sd-db/write.js";
 import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 import { currentTermYear } from "./lib/sd-db/constants.js";

@@ -24,8 +24,8 @@
  * Run:  npx tsx scripts/backfill-spotify-episodes.ts [--dry-run] [--term 2025]
  */
 
-import { getCredentials, loadEnvLocal } from "./lib/supabase-sync/env.js";
-import { select, upsert } from "./lib/supabase-sync/client.js";
+import { getCredentials, loadEnvLocal } from "./lib/sd-db/env.js";
+import { select, upsert } from "./lib/sd-db/client.js";
 
 loadEnvLocal();
 
