@@ -16,6 +16,7 @@ import { downloadPdf, extractText, CASES_DIR } from "./pipeline.js";
 import type { CaseSummary } from "../src/types/index.js";
 import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { loadIdCache, syncCase, type IdCache } from "./lib/sd-db/write.js";
+import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 
 // ---------------------------------------------------------------------------
 // Dual-write (Phase 3, SUPABASE_PLAN.md) — data/cases/*.json stays the
@@ -45,7 +46,7 @@ async function dualWriteCase(c: CaseSummary): Promise<void> {
     const { warnings } = await syncCase(ctx.creds, ctx.cache, c);
     warnings.forEach((w) => console.warn(`[sd-db] ${c.slug}: ${w}`));
   } catch (err) {
-    console.warn(`[sd-db] non-fatal (${c.slug}): ${err instanceof Error ? err.message : err}`);
+    reportSdWriteFailure(c.slug, err);
   }
 }
 

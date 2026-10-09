@@ -32,7 +32,9 @@ import {
 import type { CaseSummary, ProcessingResult } from "../src/types/index.js";
 import { getCredentials, type SupabaseCredentials } from "./lib/supabase-sync/env.js";
 import { loadIdCache, syncCase, syncNewTerm, syncNewPrecedent, type IdCache } from "./lib/sd-db/write.js";
+import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 import { currentTermYear } from "./lib/sd-db/constants.js";
+import { parseTranscriptList, transcriptListUrl, type TranscriptEntry } from "./lib/argument-transcripts.js";
 
 // ---------------------------------------------------------------------------
 // Dual-write (Phase 3, SUPABASE_PLAN.md) — data/*.json stays the source of
@@ -63,7 +65,7 @@ async function dualWriteCase(c: CaseSummary): Promise<void> {
     const { warnings } = await syncCase(ctx.creds, ctx.cache, c);
     warnings.forEach((w) => console.warn(`[sd-db] ${c.slug}: ${w}`));
   } catch (err) {
-    console.warn(`[sd-db] non-fatal (${c.slug}): ${err instanceof Error ? err.message : err}`);
+    reportSdWriteFailure(c.slug, err);
   }
 }
 
@@ -77,7 +79,7 @@ async function dualWriteResult(result: ProcessingResult): Promise<void> {
     for (const t of result.newTerms) await syncNewTerm(ctx.creds, t);
     for (const p of result.newPrecedents) await syncNewPrecedent(ctx.creds, ctx.cache, p);
   } catch (err) {
-    console.warn(`[sd-db] non-fatal (${result.case.slug} new terms/precedents): ${err instanceof Error ? err.message : err}`);
+    reportSdWriteFailure(`${result.case.slug} new terms/precedents`, err);
   }
   await dualWriteCase(result.case);
 }
@@ -108,13 +110,8 @@ async function fetchHtml(url: string): Promise<string> {
 // Step 1 — Fetch transcript list
 // ---------------------------------------------------------------------------
 
-interface TranscriptEntry {
-  caseNumber: string;
-  transcriptUrl: string;
-}
-
 async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]> {
-  const url = `${SCOTUS_BASE}/oral_arguments/argument_transcripts/${termYear}`;
+  const url = transcriptListUrl(termYear);
   console.log(`\nFetching transcript list: ${url}`);
 
   let html: string;
@@ -125,25 +122,7 @@ async function fetchTranscriptList(termYear: string): Promise<TranscriptEntry[]>
     return [];
   }
 
-  // Match links to PDF transcripts, e.g.:
-  // href="/oral_arguments/argument_transcripts/2024/23-411_6j37.pdf"
-  const pattern =
-    /href="(\/oral_arguments\/argument_transcripts\/\d{4}\/([^"_/]+)[^"]*\.pdf)"/gi;
-  const seen = new Set<string>();
-  const results: TranscriptEntry[] = [];
-
-  let match: RegExpExecArray | null;
-  while ((match = pattern.exec(html)) !== null) {
-    const relPath = match[1];
-    const caseNumber = match[2]; // e.g. "23-411"
-    if (seen.has(caseNumber)) continue;
-    seen.add(caseNumber);
-    results.push({
-      caseNumber,
-      transcriptUrl: `${SCOTUS_BASE}${relPath}`,
-    });
-  }
-
+  const results = parseTranscriptList(html, url);
   console.log(`  Found ${results.length} transcripts for ${termYear} term`);
   return results;
 }

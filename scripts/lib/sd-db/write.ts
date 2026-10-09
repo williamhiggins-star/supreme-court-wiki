@@ -12,10 +12,11 @@
  * can touch the same case/split/article more than once over time. Tables
  * with a real unique key (cases.slug, statutes.slug, circuit_splits.slug,
  * publications.url, legal_terms.slug) use upsert. Tables with no natural
- * key (opinions, votes' dependents like opinion_joins, key_exchanges,
- * citations, case_terms, split_positions) use delete-then-insert scoped
- * to the one case/split just synced, so reruns never accumulate
- * duplicates.
+ * key (opinions, votes' dependents like opinion_joins, citations,
+ * case_terms, split_positions) use delete-then-insert scoped to the one
+ * case/split just synced, so reruns never accumulate duplicates.
+ * key_exchanges is the exception: fill blanks, never delete (see
+ * planKeyExchangeWrites).
  *
  * Every function is non-fatal-safe from the CALLER's perspective (they
  * throw on real errors — callers decide whether a sync failure should
@@ -25,9 +26,10 @@
  * data/*.json path).
  */
 
-import { select, upsert, insert, remove } from "../supabase-sync/client.js";
+import { select, upsert, insert, remove, update } from "../supabase-sync/client.js";
 import type { SupabaseCredentials } from "../supabase-sync/env.js";
 import { toSlug } from "../../pipeline.js";
+import { courtCaptionParties, fetchCourtDocketTitle, type CaptionParties } from "../court-caption.js";
 import type {
   CaseSummary,
   PrecedentCase,
@@ -128,6 +130,116 @@ export interface SyncCaseResult {
   warnings: string[];
 }
 
+// ---------------------------------------------------------------------------
+// key_exchanges: fill blanks, never delete
+// ---------------------------------------------------------------------------
+//
+// Rows already in the DB are kept exactly as they are, including the
+// one-off OT2025 role/context backfill (backfill-key-exchange-attribution.ts)
+// that a delete-then-insert re-sync used to wipe. A JSON exchange whose text
+// isn't stored yet is inserted. From OT2026 on, role (the site only shows
+// petitioner/respondent exchanges) and context are written for new rows and
+// filled into stored rows where they are empty; earlier terms are left as
+// they are.
+
+export const FIRST_ATTRIBUTED_TERM = 2026;
+
+export interface StoredKeyExchange {
+  id: string;
+  exchange: string;
+  role: string | null;
+  context: string | null;
+}
+
+export interface WantedKeyExchange {
+  justice_person_slug: string | null;
+  exchange: string;
+  significance: string | null;
+  role: string;
+  context: string | null;
+}
+
+export function planKeyExchangeWrites(
+  stored: StoredKeyExchange[],
+  wanted: WantedKeyExchange[],
+  termYear: string,
+): { inserts: WantedKeyExchange[]; fills: { id: string; patch: { role?: string; context?: string } }[] } {
+  const attribute = Number(termYear) >= FIRST_ATTRIBUTED_TERM;
+  const storedByText = new Map(stored.map((s) => [s.exchange, s]));
+  const inserts: WantedKeyExchange[] = [];
+  const fills: { id: string; patch: { role?: string; context?: string } }[] = [];
+  const seen = new Set<string>();
+
+  for (const w of wanted) {
+    if (seen.has(w.exchange)) continue;
+    seen.add(w.exchange);
+    const s = storedByText.get(w.exchange);
+    if (!s) {
+      inserts.push(attribute ? w : { ...w, role: "", context: null });
+      continue;
+    }
+    if (!attribute) continue;
+    const patch: { role?: string; context?: string } = {};
+    if (!s.role && w.role) patch.role = w.role;
+    if (!s.context && w.context) patch.context = w.context;
+    if (Object.keys(patch).length > 0) fills.push({ id: s.id, patch });
+  }
+  return { inserts, fills };
+}
+
+// ---------------------------------------------------------------------------
+// Petitioner/Respondent sections: fill blanks only, OT2026 on
+// ---------------------------------------------------------------------------
+//
+// The site builds a case's Petitioner/Respondent sections (and attaches
+// key exchanges to them) only when petitioner_name/respondent_name are set,
+// and shows each side's argument and supporting points under the name.
+// Names come from the Court's own caption (court-caption.ts, the same
+// docket-page source as slugs), never from LLM-written text; argument and
+// points come from the case's own parties. A stored non-empty value is
+// never overwritten, and earlier terms are left as they are.
+
+export interface StoredPartyFields {
+  petitioner_name: string | null;
+  respondent_name: string | null;
+  petitioner_argument: string | null;
+  respondent_argument: string | null;
+  petitioner_supporting_points: unknown;
+  respondent_supporting_points: unknown;
+}
+
+export const PARTY_FIELD_COLUMNS =
+  "petitioner_name,respondent_name,petitioner_argument,respondent_argument,petitioner_supporting_points,respondent_supporting_points";
+
+const isBlankText = (v: string | null | undefined) => !v || !v.trim();
+const isBlankList = (v: unknown) => !Array.isArray(v) || v.length === 0;
+
+/** True when an OT2026-on case still needs a party name from the Court. */
+export function needsCaptionParties(stored: Partial<StoredPartyFields> | null, termYear: string): boolean {
+  return Number(termYear) >= FIRST_ATTRIBUTED_TERM &&
+    (isBlankText(stored?.petitioner_name) || isBlankText(stored?.respondent_name));
+}
+
+export function partyFieldsFill(
+  stored: Partial<StoredPartyFields> | null,
+  captionParties: CaptionParties | null,
+  parties: CaseSummary["parties"],
+  termYear: string,
+): Partial<StoredPartyFields> {
+  if (Number(termYear) < FIRST_ATTRIBUTED_TERM) return {};
+  const patch: Partial<StoredPartyFields> = {};
+  for (const role of ["petitioner", "respondent"] as const) {
+    const name = captionParties?.[role]?.trim();
+    if (name && isBlankText(stored?.[`${role}_name`])) patch[`${role}_name`] = name;
+    const p = parties.find((x) => x.role === role);
+    const argument = p?.coreArgument?.trim();
+    if (argument && isBlankText(stored?.[`${role}_argument`])) patch[`${role}_argument`] = argument;
+    const points = (p?.supportingPoints ?? []).map((pt) => pt.trim()).filter(Boolean);
+    if (points.length > 0 && isBlankList(stored?.[`${role}_supporting_points`])) patch[`${role}_supporting_points`] = points;
+  }
+  return patch;
+}
+
 export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: CaseSummary): Promise<SyncCaseResult> {
   const warnings: string[] = [];
 
@@ -148,15 +260,29 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   // cases_court_docket_number_key enforces this in the DB as well.
   const scotusId = cache.courtIdBySlug.get("scotus");
   let slug = c.slug;
+  let byDocket: ({ slug: string } & StoredPartyFields) | undefined;
   if (c.caseNumber) {
-    const [byDocket] = await select<{ slug: string }>(
+    [byDocket] = await select<{ slug: string } & StoredPartyFields>(
       creds,
       "cases",
-      `?select=slug&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
+      `?select=slug,${PARTY_FIELD_COLUMNS}&court_id=eq.${scotusId}&docket_number=eq.${encodeURIComponent(c.caseNumber)}&status=not.in.(stub,historic)&limit=1`,
     );
     if (byDocket && byDocket.slug !== c.slug) {
       warnings.push(`docket ${c.caseNumber} is already stored as "${byDocket.slug}" — updating that row, not creating "${c.slug}".`);
       slug = byDocket.slug;
+    }
+  }
+
+  // Party names come from the Court's docket page, fetched only while a
+  // name is still blank. A failed fetch leaves the names blank (retried on
+  // the case's next sync) and does not hold up the rest of the case.
+  let captionParties: CaptionParties | null = null;
+  if (c.caseNumber && needsCaptionParties(byDocket ?? null, c.termYear)) {
+    try {
+      captionParties = courtCaptionParties(await fetchCourtDocketTitle(c.caseNumber));
+      if (!captionParties) warnings.push(`docket ${c.caseNumber}: Court caption has no "Petitioner v. Respondent" shape — party names left blank.`);
+    } catch (err) {
+      warnings.push(`docket ${c.caseNumber}: could not read the Court's caption (${err instanceof Error ? err.message : err}) — party names left blank, retried next sync.`);
     }
   }
 
@@ -175,6 +301,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
     vote_line: null,
     source_urls: [c.transcriptUrl].filter(Boolean),
     is_stub: false,
+    ...partyFieldsFill(byDocket ?? null, captionParties, c.parties ?? [], c.termYear),
   }], "slug");
   const caseId = caseRow.id;
   cache.caseIdBySlug.set(c.slug, caseId);
@@ -306,8 +433,7 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   });
 
   // ---- key_exchanges ----
-  interface KeyExchangeRow { justice_person_slug: string | null; exchange: string; significance: string | null }
-  const keyExchanges: KeyExchangeRow[] = [];
+  const keyExchanges: WantedKeyExchange[] = [];
   for (const p of c.parties) {
     for (const ex of p.keyExchanges ?? []) {
       const justiceKey = resolveJusticeLabel(ex.justice);
@@ -315,6 +441,8 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
         justice_person_slug: justiceKey ? JUSTICE_KEY_TO_SLUG[justiceKey] : null,
         exchange: ex.question,
         significance: [ex.context, ex.significance].filter(Boolean).join(" "),
+        role: p.role,
+        context: ex.context || null,
       });
       if (!justiceKey) warnings.push(`could not resolve key_exchanges justice label "${ex.justice}".`);
     }
@@ -339,7 +467,6 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   await Promise.all([
     remove(creds, "opinions", `case_id=eq.${caseId}`), // cascades opinion_joins, decision_ties
     remove(creds, "votes", `case_id=eq.${caseId}`),
-    remove(creds, "key_exchanges", `case_id=eq.${caseId}`),
     remove(creds, "citations", `citing_case_id=eq.${caseId}`),
     remove(creds, "statute_citations", `citing_case_id=eq.${caseId}`),
     remove(creds, "case_terms", `case_id=eq.${caseId}`),
@@ -423,13 +550,22 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   }
 
   if (keyExchanges.length > 0) {
-    await insert(creds, "key_exchanges", keyExchanges.map((k) => ({
-      case_id: caseId,
-      justice_id: k.justice_person_slug ? cache.personIdBySlug.get(k.justice_person_slug) : null,
-      advocate_id: null,
-      exchange: k.exchange,
-      significance: k.significance,
-    })));
+    // Errors here are not warnings: they propagate, and the caller reports
+    // them as SD write failures (see update-cases.ts's dualWriteCase).
+    const stored = await select<StoredKeyExchange>(creds, "key_exchanges", `?case_id=eq.${caseId}&select=id,exchange,role,context`);
+    const { inserts, fills } = planKeyExchangeWrites(stored, keyExchanges, c.termYear);
+    if (inserts.length > 0) {
+      await insert(creds, "key_exchanges", inserts.map((k) => ({
+        case_id: caseId,
+        justice_id: k.justice_person_slug ? cache.personIdBySlug.get(k.justice_person_slug) : null,
+        advocate_id: null,
+        exchange: k.exchange,
+        significance: k.significance,
+        role: k.role || null,
+        context: k.context,
+      })));
+    }
+    for (const f of fills) await update(creds, "key_exchanges", `id=eq.${f.id}`, f.patch);
   }
 
   if (citations.length > 0) {

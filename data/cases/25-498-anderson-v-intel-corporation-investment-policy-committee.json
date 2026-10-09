@@ -4,7 +4,7 @@
   "title": "Anderson v. Intel Corporation Investment Policy Committee",
   "termYear": "2026",
   "argumentDate": "2026-10-06",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-498.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-498_febh.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "Winston R. Anderson and other current and former Intel employees participated in Intel's 401(k) retirement plan, which is governed by a federal law called ERISA (the Employee Retirement Income Security Act of 1974). They sued Intel's Investment Policy Committee, the group responsible for managing the plan's investments, alleging that the committee violated its fiduciary duty by offering poorly performing and excessively expensive investment options—including certain hedge funds and private equity funds—that cost plan participants millions of dollars in retirement savings.\n\nThe federal district court dismissed the lawsuit at an early stage, ruling that the plaintiffs had not adequately pleaded their claims. The Ninth Circuit Court of Appeals affirmed the dismissal, holding that ERISA plaintiffs must not only allege that fiduciaries breached their duties but must also plausibly allege that the breach actually caused a loss to the plan. Because the plaintiffs had not sufficiently connected Intel's investment choices to concrete financial harm, the appeals court said the case could not proceed.\n\nThe plaintiffs petitioned the Supreme Court, arguing that the Ninth Circuit's requirement improperly shifts the burden onto employees who are suing to protect their retirement savings. They contend that under ERISA, once a plaintiff shows a fiduciary breach, the burden falls on the fiduciary—not the employee—to prove that the breach did not cause any loss. The case raises fundamental questions about how hard it is for retirement plan participants to get their day in court when they believe their plan managers have mishandled their money.",
   "legalQuestion": "Whether ERISA plaintiffs must plausibly allege in their complaint that a fiduciary breach actually caused financial losses to the plan, or whether causation is an affirmative defense that fiduciaries must raise and prove.",
@@ -20,7 +20,26 @@
         "The Ninth Circuit's heightened pleading standard conflicts with how other circuits handle ERISA fiduciary duty claims, creating an uneven playing field for retirement savers depending on where they live.",
         "Intel's selection of high-cost, underperforming alternative investments like hedge funds and private equity funds was itself sufficient evidence of a plausible breach that should survive a motion to dismiss."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Isn't the question presented simply whether, for claims predicated on fund underperformance, a meaningful benchmark is required — and aren't you shifting ground by arguing about strategy?",
+          "context": "Petitioners' counsel was spending significant time arguing about non-performance allegations and strategy rather than addressing the narrow question presented in their own cert petition.",
+          "significance": "Revealed Justice Gorsuch's inclination to answer the question presented narrowly — affirming the meaningful benchmark requirement for underperformance claims while leaving other bases for imprudence claims untouched."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "If the non-performance allegations don't get you over the Iqbal line themselves, you need something in addition — and doesn't that additional comparator need to be 'kind of an apple'?",
+          "context": "This challenged Petitioners' argument that the Ninth Circuit imposed an improperly rigid standard, suggesting the requirement of a meaningful comparator is simply common sense.",
+          "significance": "Indicated Justice Kagan viewed the Ninth Circuit's approach as reasonable and saw Petitioners as presenting a caricature of the opinion rather than engaging with what it actually required."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "Why does underperformance become relevant at all when you could have an imprudent strategy that nonetheless works or a good strategy that loses due to market conditions?",
+          "context": "This questioned the fundamental premise of using performance data to infer imprudence, echoing Judge Murphy's dissent in the Sixth Circuit.",
+          "significance": "Suggested Justice Kavanaugh was skeptical that underperformance allegations add meaningful value to an imprudence claim, viewing the real issue as whether using hedge funds for risk mitigation was reasonable."
+        }
+      ]
     },
     {
       "party": "Intel Corporation Investment Policy Committee, et al. (Respondents)",
@@ -32,7 +51,26 @@
         "Allowing ERISA suits to proceed without a plausible causation allegation would expose plan fiduciaries to costly discovery and settlement pressure even when investment decisions were prudent and well-reasoned.",
         "Sophisticated investment options like hedge funds and private equity are legitimate, diversifying choices for large retirement plans, and courts should not second-guess prudent fiduciary decisions without a concrete showing of harm."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Why wouldn't we want to say something about what a meaningful comparator is, given that some lower courts have required essentially identical asset allocations, which goes too far?",
+          "context": "Justice Kagan was probing whether the Court should provide substantive guidance beyond simply saying 'yes, a meaningful benchmark is required' to correct overbroad applications in lower courts.",
+          "significance": "Revealed Justice Kagan's interest in writing an opinion that provides real guidance — endorsing the meaningful benchmark concept while clarifying it doesn't require identical funds, aligned with the SG's brief."
+        },
+        {
+          "justice": "Justice Barrett",
+          "question": "Would you be satisfied if the Court simply answered the question presented 'yes, a meaningful benchmark is required, period' — or do we need to say more about what 'meaningful' means?",
+          "context": "This tested whether the Court could issue a narrow ruling affirming the principle without getting into definitional details that might cause further confusion.",
+          "significance": "Showed Justice Barrett was looking for a clean, manageable rule and was receptive to affirming the Ninth Circuit while potentially leaving flexibility in how 'meaningful' is defined."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Should we bracket the question of whether underperformance can ever be enough to show imprudence, and simply answer whether a meaningful benchmark is required when relying on underperformance?",
+          "context": "Justice Gorsuch was defining the boundaries of the Court's holding to avoid deciding broader questions about the role of performance evidence in ERISA claims.",
+          "significance": "Confirmed Justice Gorsuch's desire for a narrow holding that affirms the meaningful benchmark requirement without opining on whether underperformance alone could ever establish imprudence."
+        }
+      ]
     }
   ],
   "citedPrecedents": [

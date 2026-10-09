@@ -4,7 +4,7 @@
   "title": "Department of the Air Force v. Prutehi Guahan",
   "termYear": "2026",
   "argumentDate": "2026-10-07",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-579.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-579_g31h.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "The United States military undertook a massive buildup on the island of Guam, relocating thousands of Marines from Okinawa, Japan, and constructing new training ranges and facilities. This buildup required federal environmental review under the National Environmental Policy Act (NEPA), a law that requires federal agencies to study and disclose the environmental effects of major projects before they proceed. Prutehi Guahan (formerly known as Prutehi Litekyan), an environmental advocacy group based in Guam, sued the Department of the Air Force and other federal agencies, arguing that the environmental review was inadequate—that it failed to properly analyze the significant impacts the buildup would have on Guam's land, water, coral reefs, and Indigenous Chamorro communities.\n\nThe Ninth Circuit Court of Appeals sided with Prutehi Guahan, finding that the environmental review was deficient and ordering the agencies to take a harder look at the project's impacts. The federal government appealed to the Supreme Court, raising questions about the scope of NEPA's requirements as applied to U.S. territories, which are governed by a complex patchwork of constitutional doctrines known as the Insular Cases. Guam is an unincorporated U.S. territory, meaning its residents are American nationals but not all constitutional rights automatically apply there in the same way they do in the fifty states.\n\nThe case has attracted significant attention from a wide range of interests. Business groups and several Republican-led states argue that the Ninth Circuit's ruling imposes excessive procedural burdens on federal agencies, threatening military readiness and large infrastructure projects. Environmental groups, Democratic-led states, community organizations from U.S. territories, and some Members of Congress have sided with Prutehi Guahan, arguing that people in territories deserve the same environmental protections as those on the mainland.",
   "legalQuestion": "Whether the National Environmental Policy Act (NEPA) requires federal agencies to analyze environmental impacts on U.S. territories—specifically Guam—using the same standards applied to the continental United States, and whether a Guamanian environmental group has standing to challenge a military buildup's environmental review.",
@@ -20,7 +20,26 @@
         "Imposing heightened NEPA obligations on military construction in territories undermines national security and Pacific deterrence strategy.",
         "The Ninth Circuit's standard would require agencies to conduct virtually endless analysis, making large federal projects practically infeasible."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Does that mean any agency action subject to regulatory approvals is non-final? How would you draw the line between a single regulatory approval (where you say there's no challengeable decision) and multiple approvals (where you concede the overall project might be challengeable)?",
+          "context": "This question exposed a potential logical inconsistency in the government's finality argument.",
+          "significance": "Justice Kagan appeared skeptical that the contingency of external approval should categorically defeat finality, suggesting she views the Air Force's decision as substantively complete regardless of the pending permit."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "How are RCRA and NEPA irreconcilably conflicting? NEPA starts before a decision is made; RCRA occurs during the decision. If you do NEPA first, you've already got the answers when you enter RCRA.",
+          "context": "This challenged the government's central displacement argument by questioning whether the two statutes truly conflict.",
+          "significance": "Justice Sotomayor signaled strong skepticism toward the functional equivalence doctrine and the idea that RCRA implicitly displaces NEPA, pressing for textual basis rather than judge-made canons."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "What sense would it make to resolve only the finality question without the NEPA question, since that could lead to two back-to-back processes — the RCRA permitting process followed by a NEPA process?",
+          "context": "This challenged the government's suggestion that the Court could decide finality alone and leave the NEPA displacement question for another day.",
+          "significance": "Justice Kavanaugh indicated he wanted the Court to reach the merits of whether NEPA applies to RCRA permitting, fearing that resolving only finality would create worse practical uncertainty."
+        }
+      ]
     },
     {
       "party": "Prutehi Guahan",
@@ -32,7 +51,26 @@
         "Residents of U.S. territories are entitled to meaningful NEPA protections because the federal government owes the same environmental review obligations regardless of where in U.S. jurisdiction a project occurs.",
         "The Ninth Circuit applied standard, well-established arbitrary-and-capricious review and found clear deficiencies in the agency's analysis that courts are obligated to correct."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Thomas",
+          "question": "Do you have another example where the regulated body's decision to apply to a regulatory body is considered final agency action for APA purposes?",
+          "context": "This highlighted the unusual posture of the case where the government acts as a regulated entity rather than a regulator.",
+          "significance": "Justice Thomas appeared troubled by treating a permit application — typically a private party's action — as final agency action, suggesting he may view this as categorically different from standard APA review."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Isn't the problem that in this scheme the Air Force is making a proposal subject to being totally rewritten by the regulator, so we don't even know the final terms — what would the Air Force even be evaluating at this point?",
+          "context": "This pressed on whether finality can exist when the permitting agency could substantially alter the application's terms.",
+          "significance": "Justice Jackson appeared sympathetic to the finality problem, suggesting that the back-and-forth nature of the permitting process undermines the claim that the application represents a final decision."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Are you saying you would never be able to sue the Navy for a NEPA violation if you lose on the first question presented? Have you considered agency action unlawfully withheld as an avenue?",
+          "context": "This explored whether alternative legal avenues exist for the respondent to enforce NEPA obligations against the Air Force.",
+          "significance": "Justice Gorsuch seemed to be probing for a way to rule against the respondent on finality while signaling that other avenues might remain open, suggesting he was looking for a narrower resolution."
+        }
+      ]
     }
   ],
   "citedPrecedents": [

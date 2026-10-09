@@ -11,6 +11,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import * as fs from "fs";
 import * as path from "path";
 import { PDFParse } from "pdf-parse";
+import { fetchCourtDocketTitle, shortCourtCaption } from "./lib/court-caption.js";
 import type {
   CaseSummary,
   LegalTerm,
@@ -127,37 +128,9 @@ export function caseSlugFromCaption(caseNumber: string, courtCaption: string): s
   return toSlug(`${caseNumber}-${courtCaption}`);
 }
 
-/** "Suncor Energy (U.S.A.) Inc., et al., Petitioners v. County
- *  Commissioners of Boulder County, et al." → "Suncor Energy (U.S.A.) Inc.
- *  v. County Commissioners of Boulder County". Titles without a
- *  "Petitioner(s) v." shape (e.g. "In re …") are returned whole. */
-export function shortCourtCaption(docketTitle: string): string {
-  const m = docketTitle.match(
-    /^(.*?),?\s+(?:Petitioners?|Applicants?|Appellants?|Plaintiffs?)\s+v\.\s+(.*)$/i
-  );
-  if (!m) return docketTitle;
-  const firstParty = (s: string) => s.split(",")[0].trim();
-  return `${firstParty(m[1])} v. ${firstParty(m[2])}`;
-}
-
-/** The Court's caption for a docket, from the "Title:" field of its docket page. */
+/** The Court's short caption for a docket, from its docket page. */
 export async function fetchCourtCaption(caseNumber: string): Promise<string> {
-  const url = `https://www.supremecourt.gov/docket/docketfiles/html/public/${caseNumber}.html`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; SupremeCourtWiki/1.0; +https://github.com/supreme-court-wiki)" },
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
-  const html = await res.text();
-  const m = html.match(/Title:[\s\S]*?<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>/i);
-  if (!m) throw new Error(`No "Title:" field on docket page ${caseNumber}`);
-  const title = m[1]
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#39;|&rsquo;/g, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-  return shortCourtCaption(title);
+  return shortCourtCaption(await fetchCourtDocketTitle(caseNumber));
 }
 
 /** The slug to save a case under: its existing slug if the docket is
