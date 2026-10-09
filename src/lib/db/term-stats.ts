@@ -347,6 +347,12 @@ export interface JusticeAgreementPair {
  * PostgREST (the same class of issue getOpinionLengthStats hit) -- resolved
  * here with a plain people(id, slug) lookup instead of an embed, rather
  * than fighting a second FK-hint disambiguation.
+ *
+ * Tie rule: pairs come back sorted by first justice slug, then second
+ * justice slug (plain code-point order). The Alignment callouts take the
+ * first pair at the max/min, so when two pairs share the same agreement
+ * figure the callout is always the one earlier in this order, not whatever
+ * order the database happened to return.
  */
 export async function getJusticeAgreementGrid(term: string = currentTermYear()): Promise<JusticeAgreementPair[]> {
   const [{ data: rows, error: rowsError }, { data: people, error: peopleError }] = await Promise.all([
@@ -365,7 +371,12 @@ export async function getJusticeAgreementGrid(term: string = currentTermYear()):
       if (!slug1 || !slug2 || r.agreement_pct == null) return null;
       return { justiceSlug1: slug1, justiceSlug2: slug2, agreementPct: r.agreement_pct };
     })
-    .filter((r): r is JusticeAgreementPair => r !== null);
+    .filter((r): r is JusticeAgreementPair => r !== null)
+    .sort((a, b) => compareSlugs(a.justiceSlug1, b.justiceSlug1) || compareSlugs(a.justiceSlug2, b.justiceSlug2));
+}
+
+function compareSlugs(a: string, b: string): number {
+  return a < b ? -1 : a > b ? 1 : 0;
 }
 
 export interface JusticeSoloCount {
