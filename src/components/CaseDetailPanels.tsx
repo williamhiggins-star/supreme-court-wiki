@@ -241,7 +241,7 @@ function PartyArgumentPanel({ party }: { party: PartyArgument }) {
   );
 }
 
-function PartyExchangesPanel({ party }: { party: PartyArgument }) {
+function PartyExchangesPanel({ party, notYetArgued }: { party: PartyArgument; notYetArgued: boolean }) {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.5em] text-left font-serif text-[14px] font-bold text-[#6B6560]">
@@ -253,7 +253,9 @@ function PartyExchangesPanel({ party }: { party: PartyArgument }) {
             className="text-[13px] font-normal italic text-[#6B6560]"
             style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.6 }}
           >
-            No key exchanges recorded.
+            {notYetArgued
+              ? "Key exchanges are added after the argument transcript is published."
+              : "No key exchanges recorded."}
           </p>
         ) : (
           <div className="flex flex-col gap-[1em]">
@@ -1141,7 +1143,10 @@ export function CaseDetailPanels({
       ) : selectedParty ? (
         <>
           <PartyArgumentPanel party={selectedParty} />
-          <PartyExchangesPanel party={selectedParty} />
+          <PartyExchangesPanel
+            party={selectedParty}
+            notYetArgued={getCaseDocketStatus(caseData) === "upcoming"}
+          />
         </>
       ) : selectedItem === "Precedent Cases Cited" ? (
         <>
