@@ -62,6 +62,11 @@ The distinction that still matters: **a DYSTL Supabase read is allowed in the pi
 - **Notion is the planning source of truth.** The orchestrator reads the master plan ("SCOTUS 2.0 — Strategy & Build Plan (CONSOLIDATED MASTER)") at the start of every run and resolves recorded checkpoints itself, logging each resolution and any deviation to the Run Log.
 - **Model allocation:** Sonnet 5 by default. Opus reserved for the three highest-blast-radius tasks: **A2** (the bridge into the live daily cron), **B2** (the assessment engine), **C3** (the briefing prompt). B2/C3 are DYSTL-side; from this repo, A2 is the Opus task.
 - **Manual acts stay with Will:** applying Supabase migrations, adding GitHub Secrets, and rotating the PAT. The orchestrator prepares these and stops at the relevant gate. (`--prod` deploys are Will's call too, but Claude Code may execute the command itself under the explicit-command exception in "Branch is deploy" above — see that section for exactly what does and doesn't count as authorization.)
+- **Migration exception (from 2026-10-09).** Claude Code may apply a migration to the SD database (ref `enwjtgjycthjypeqdgfo`) itself, but only when Will has authorized it *in words, in that session* — like `--prod`, the authorization does not carry over to a new session — and only with these safeguards:
+  1. Before: confirm with `supabase db push --linked --dry-run` that it is the only pending migration; query the live definitions of everything it alters and confirm they match what the migration assumes; save a snapshot of the live site's data (dashboard payload, term stats, status counts) twice and confirm the two are identical.
+  2. Apply with `supabase db push --linked`.
+  3. After: snapshot twice again and compare with the pre-migration snapshot. If anything differs, or the migration fails, stop at once and report. Don't patch live.
+  4. Report each migration with its before/after snapshot comparison and its rollback SQL.
 
 ## Protected paths — do not modify without a gate
 
