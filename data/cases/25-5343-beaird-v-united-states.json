@@ -4,7 +4,7 @@
   "title": "Beaird v. United States",
   "termYear": "2026",
   "argumentDate": "2026-10-13",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-5343.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-5343_m6io.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "Kendrick Jarrell Beaird was sentenced in federal court under the U.S. Sentencing Guidelines, which are a set of rules that federal judges use to determine how long a person should go to prison. These guidelines are written by the U.S. Sentencing Commission, a government agency, and they come with official explanatory commentary that helps judges understand and apply the rules. The dispute in Beaird's case involves whether the commentary to the guidelines should be treated as nearly as binding as the guidelines themselves, or whether courts should exercise more independent judgment when the commentary conflicts with or goes beyond the text of the guidelines.\n\nIn 1993, the Supreme Court decided Stinson v. United States, which held that courts must follow the Sentencing Commission's commentary unless it violates the Constitution, a federal law, or is plainly inconsistent with the guideline it interprets. This gave the commentary a very high level of authority—almost like a regulation itself. However, the legal landscape has shifted significantly since then. In 2019, the Supreme Court overruled a doctrine called Auer deference (which required courts to defer to federal agencies' interpretations of their own ambiguous regulations), and in 2024, it overruled Chevron deference (which required courts to defer to agencies' interpretations of ambiguous statutes). These decisions reflect the Court's growing skepticism toward judicial deference to administrative agencies.\n\nBeaird's case was decided by the Fifth Circuit Court of Appeals, which applied Stinson deference to uphold his sentence. He petitioned the Supreme Court to reconsider whether the Stinson rule survives in light of the Court's recent decisions cutting back on administrative deference. The Supreme Court agreed to hear the case specifically on that question, and notably, even the United States government now supports vacating the sentence, suggesting the federal government itself believes Stinson may need to be revisited.",
   "legalQuestion": "Whether Stinson v. United States (1993) still correctly states the rule requiring courts to defer to the official commentary accompanying the U.S. Sentencing Guidelines when interpreting those guidelines.",
@@ -20,7 +20,26 @@
         "Requiring deference to commentary enables the Sentencing Commission to effectively increase sentences beyond what the written guidelines authorize, without going through the proper rulemaking process.",
         "The Court's overruling of Chevron deference in Loper Bright (2024) further confirms that courts should not abdicate their interpretive role to administrative bodies, including in the criminal sentencing context."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "How can the guidelines system work if judges can separately interpret each factor without the commentary, and doesn't this inject judicial discretion into a system designed to cabin it?",
+          "context": "This challenges the core premise of Petitioner's argument that courts should interpret guidelines independently without deference to commentary.",
+          "significance": "Justice Jackson revealed deep skepticism that removing deference would undermine the entire purpose of the Sentencing Reform Act — reducing unwarranted sentencing disparities through consistent baselines."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Without the application note, wouldn't interpreting 'capable of accepting a large capacity magazine' literally lead to a more punitive result, and isn't your no-deference rule less workable than Stinson?",
+          "context": "This tested whether eliminating commentary deference would actually help defendants or create confusion and harsher outcomes.",
+          "significance": "Justice Sotomayor indicated that commentary often constrains rather than expands guideline reach, suggesting Petitioner's position could backfire and create unworkable chaos for district courts."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Doesn't Stinson rely on silence as delegation and ambiguity as a trigger — both of which were rejected by Loper Bright — and does any criminal actually rely on commentary when deciding to commit a crime?",
+          "context": "This line of questioning built the strongest doctrinal case for Petitioner's position by connecting recent precedent undermining deference frameworks.",
+          "significance": "Justice Gorsuch signaled strong support for overruling Stinson, viewing its foundations as incompatible with the Court's recent rejection of implied delegations and ambiguity-based deference in Loper Bright."
+        }
+      ]
     },
     {
       "party": "United States of America",
@@ -32,7 +51,26 @@
         "Sentencing courts retain the authority to interpret guideline text independently, and commentary should be treated as persuasive guidance rather than an authoritative command.",
         "Vacating Beaird's sentence and remanding for resentencing without mandatory Stinson deference is the appropriate remedy given the changed legal landscape."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Sotomayor",
+          "question": "What is the actual difference between Kisor and Stinson, and aren't you asking us to create chaos for a tiny sliver of cases by introducing a new semantic deference standard?",
+          "context": "This pressed the government on whether its Kisor-based middle position was worth the disruption it would cause to the sentencing system.",
+          "significance": "Justice Sotomayor revealed strong resistance to any change from Stinson, viewing the government's Kisor modification as creating unnecessary process changes and litigation for minimal substantive benefit."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "Where does the presumption of deference come from if not express statutory text — is it a substantive canon, and what is it grounded in?",
+          "context": "This challenged the government to identify a constitutional or statutory foundation for deference beyond simply citing prior precedent.",
+          "significance": "Justice Gorsuch exposed that the government could not identify a textual or constitutional grounding for deference beyond stare decisis, weakening the doctrinal basis for the government's middle-ground position."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "If you're looking for stability and not changing the system, isn't the amicus's approach of maintaining full Stinson deference better than your Kisor modification?",
+          "context": "This questioned whether the government's compromise position served any practical purpose compared to simply retaining Stinson.",
+          "significance": "Justice Kavanaugh suggested the government's position was caught between two stronger alternatives — full deference or no deference — and that stability concerns actually favored the amicus rather than the government."
+        }
+      ]
     }
   ],
   "citedPrecedents": [
@@ -90,5 +128,6 @@
     "in-forma-pauperis"
   ],
   "processedAt": "2026-09-17T15:16:41.367Z",
-  "spotifyMatchStatus": "not_searched"
+  "spotifyMatchStatus": "matched",
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/3SriOMx5i0b9OHME1qoFIh"
 }
