@@ -4,7 +4,7 @@
   "title": "Salazar v. Paramount Global",
   "termYear": "2026",
   "argumentDate": "2026-10-14",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-459.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-459_1a7d.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "Michael Salazar subscribed to 247Sports, a sports news and video website owned by Paramount Global. Like many websites, 247Sports installed a small piece of tracking code on its site called a 'Meta Pixel' — a tool created by Facebook's parent company, Meta, that automatically sends data about a user's activity to Meta when they visit a page. Salazar claims that when he watched videos on 247Sports, the pixel transmitted his Facebook ID and information about which videos he watched directly to Meta, all without his knowledge or consent.\n\nSalazar filed a class action lawsuit under the Video Privacy Protection Act (VPPA), a federal law passed in 1988 after a newspaper published Supreme Court nominee Robert Bork's video rental history. The VPPA makes it illegal for video tape service providers to knowingly disclose customers' personally identifiable information — including what videos they watch — to third parties without consent. Salazar argued that Paramount violated this law by allowing the Meta Pixel to send his viewing data to Facebook.\n\nThe federal district court dismissed the case, and the Sixth Circuit Court of Appeals affirmed that dismissal. The appeals court ruled that Salazar lacked 'standing' — the legal right to bring the lawsuit in federal court — because he had not shown a concrete, real-world injury. Simply having his data shared in violation of a federal statute, the Sixth Circuit held, was not enough on its own to get into court. Salazar then asked the Supreme Court to review the decision, arguing that a violation of a privacy law specifically designed to protect this kind of information is itself a sufficient injury.",
   "legalQuestion": "Whether a website visitor has standing to sue under the Video Privacy Protection Act when their video-viewing data was allegedly shared with Facebook via a tracking pixel, without showing any concrete harm beyond the statutory violation itself.",
@@ -20,7 +20,26 @@
         "The Sixth Circuit's ruling creates an unworkable circuit split: the same conduct is actionable in some federal courts but not others, depending solely on where the plaintiff lives.",
         "Requiring victims of data disclosure to prove additional downstream harm is impossible in most privacy cases and would render statutes like the VPPA effectively unenforceable through private lawsuits."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Asked whether Hammack was hypothesizing a prescient Congress, as opposed to one that mistakenly stumbled into broader language than it meant to use.",
+          "context": "This challenges the core premise that Congress intentionally chose different scopes for each statutory definition.",
+          "significance": "Revealed Justice Kagan's skepticism about whether Congress deliberately crafted broader language for 'consumer' versus the video-specific definitions, though she later pressed Clement equally hard."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "Asked about the concern of repurposing a statute about public disclosure of viewing history into one regulating data sharing for targeted advertising on the Internet.",
+          "context": "This frames the big-picture policy question of whether the statute should be read to cover modern digital advertising practices Congress never contemplated.",
+          "significance": "Revealed Justice Kavanaugh's concern about stretching a 1988 statute beyond its original purpose, though he later acknowledged the other side had strong textual arguments on 'consumer.'"
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Asked Hammack to explain why the negative consequences of a broad 'consumer' definition should not concern the Court, given that consent is an easy cure.",
+          "context": "This invited Petitioner to defuse the sky-is-falling policy arguments by pointing to practical solutions available to businesses.",
+          "significance": "Revealed Justice Jackson's receptiveness to Petitioner's position, viewing the consent mechanism as a simple fix that neutralizes concerns about overbroad liability."
+        }
+      ]
     },
     {
       "party": "Paramount Global, dba 247Sports",
@@ -32,7 +51,26 @@
         "Permitting standing based on bare statutory violations would transform federal courts into enforcement agencies for every technical regulatory breach, flooding the docket with no-injury class actions.",
         "Salazar presented no evidence that Meta actually used, viewed, or acted upon the data allegedly transmitted, meaning any injury is purely speculative and hypothetical."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Pointed out that 'goods and services' in the consumer definition lacks the audiovisual modifier found in other definitions, and that 'from' merely identifies the source, not the scope of goods and services.",
+          "context": "This directly challenged Clement's core textual argument that 'from a video tape service provider' narrows what goods or services qualify.",
+          "significance": "Revealed Justice Kagan's strong inclination toward Petitioner's textual reading, suggesting the most natural reading of the statute supports the broader definition of consumer."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Posed a hypothetical about Justice Breyer entering a video store, buying only a book about films, then watching videos whose history is later disclosed — asking why it should matter that he only purchased a book.",
+          "context": "This tested whether Clement's video-only consumer theory produces irrational results when the statute's core concern is protecting video-watching privacy.",
+          "significance": "Revealed Justice Jackson's view that tying consumer status to what specific product was purchased creates an arbitrary distinction that undermines the statute's privacy-protection purpose."
+        },
+        {
+          "justice": "Justice Kavanaugh",
+          "question": "Asked why the Court shouldn't just follow 'consumer' as written and worry about video tape service provider and PII issues in future cases where the other side is prevailing in lower courts.",
+          "context": "This suggested that the policy concerns raised by Respondent could be addressed through other statutory limitations not before the Court.",
+          "significance": "Revealed Justice Kavanaugh was wrestling with whether the textual arguments favor Petitioner on the 'consumer' question specifically, even if broader concerns might be resolved elsewhere."
+        }
+      ]
     }
   ],
   "citedPrecedents": [
@@ -90,5 +128,6 @@
     "common-law-analog"
   ],
   "processedAt": "2026-09-17T15:19:01.698Z",
-  "spotifyMatchStatus": "not_searched"
+  "spotifyMatchStatus": "matched",
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/6KSCWfVtuPnNppIlYGl4QR"
 }
