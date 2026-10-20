@@ -2007,12 +2007,6 @@ function AllCasesMenuPanel({
   );
 }
 
-/** An empty panel: the same footprint as every other section's panels
- *  (it fills its grid cell), with nothing in it yet. */
-function BlankPanel() {
-  return <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]" />;
-}
-
 function ShadowDocketIntroPanel() {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-6 pt-[19px]">
@@ -2042,6 +2036,13 @@ function ShadowDocketIntroPanel() {
       </div>
     </div>
   );
+}
+
+/** Shadow Docket's second panel: spans the second and third columns (and
+ *  the gap between them) on desktop. Dotted border to show its edges while
+ *  it's empty. */
+function ShadowDocketWidePanel() {
+  return <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dotted border-[#C4A882] px-6 pb-2 pt-[14px] md:col-span-2" />;
 }
 
 function PlaceholderPanel({ active, index }: { active: SectionKey; index: number }) {
@@ -2847,8 +2848,8 @@ export function SectionPanels({
                 onSelectTerm={onSelectTerm}
                 caseCount={allCasesFilteredItems.length}
               /> : active === "shadow-docket" ? <ShadowDocketIntroPanel /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : active === "shadow-docket" ? <BlankPanel /> : <PlaceholderPanel active={active} index={2} />}
-      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? opinionsPanel3 : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : active === "shadow-docket" ? <BlankPanel /> : <PlaceholderPanel active={active} index={3} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : active === "shadow-docket" ? <ShadowDocketWidePanel /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? opinionsPanel3 : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : active === "shadow-docket" ? null : <PlaceholderPanel active={active} index={3} />}
     </>
   );
 }
