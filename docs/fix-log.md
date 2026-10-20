@@ -24,18 +24,37 @@ corrected 25 decided OT2025 cases, not just Slaughter.
 
 Files changed: `src/lib/docket.ts`, `src/components/SectionPanels.tsx`.
 
-**Still not right (known, not caused by this fix).** Four cases still draw
-too few dissenters, because the dissent isn't recorded as an opinion we can
-read from:
+**Still not right (known, not caused by this fix).** Four cases still show
+too few dissenters in the portrait row. Their vote count ("6–3" etc.) is
+correct, because it comes from a hand-entered vote line. The four cases have
+three different problems:
 
-- Klein v. Martin (8–1), McCarthy v. Hernandez (6–3) and District of
-  Columbia v. R.W. (7–2): unsigned (per curiam) decisions with dissents
-  that don't appear in the opinion data (no written opinion recorded for
-  them).
-- West Virginia v. B.P.J. (6–3): Sotomayor and Jackson agreed in part and
-  dissented in part. The two-row display has no place for that, so they
-  appear under Majority.
+| Case | How decided | Shows | Should be | Problem |
+|---|---|---|---|---|
+| Klein v. Martin | Per curiam | 9–0 | 8–1 | Jackson dissented without a written opinion |
+| McCarthy v. Hernandez | Per curiam | 9–0 | 6–3 | Sotomayor, Kagan and Jackson dissented without a written opinion |
+| District of Columbia v. R.W. | Per curiam | 8–1 | 7–2 | Sotomayor has no vote recorded at all |
+| West Virginia v. B.P.J. | Signed (Kavanaugh) | 9–0 | 6–3 | Sotomayor, Kagan and Jackson concurred in part and dissented in part |
 
-The database's `decisions` table does have the correct side for every
-justice in all four. Reading the portraits from there would fix them. Not
-done yet.
+1. **Dissent with no written opinion** (Klein, McCarthy). These are summary
+   reversals: the Court decided without full briefing or argument. A justice
+   can dissent with just a one-line note, and no opinion is written. The
+   site only finds dissenters through written opinions and who joined them,
+   so these dissenters are missed. The per-justice vote table (`decisions`)
+   records them correctly.
+2. **Part agree, part dissent** (B.P.J.). Sotomayor's opinion, joined by
+   Kagan and Jackson, and Jackson's own opinion are recorded as "concurring
+   in part and dissenting in part". The portrait row only has Majority and
+   Dissent, so they land under Majority. The `decisions` table records all
+   three as dissenting.
+3. **Missing data** (R.W.). The `decisions` table has only 8 rows for this
+   case: Jackson dissenting, seven in the majority, and nothing for
+   Sotomayor. The only written dissent is Jackson's, with no one joining.
+   If the 7–2 is right, Sotomayor was probably the second dissenter, but
+   nothing in the database confirms it. It's also possible she didn't take
+   part and the 7–2 is wrong. Someone needs to check the opinion itself.
+
+**Possible fixes (not done yet).** Building the portrait row from the
+`decisions` table instead of the opinions would fix Klein, McCarthy and
+B.P.J. R.W. needs a data fix first: confirm what Sotomayor did, then add
+her vote row (or correct the 7–2).
