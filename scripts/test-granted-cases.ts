@@ -57,8 +57,8 @@ async function main() {
 
   console.log("getAllCasesForTerm never returns a granted case");
   const rows = [
-    { id: "a", slug: "26-1-set-for-argument", status: "upcoming", term: "2026" },
-    { id: "b", slug: "26-2-argued", status: "petition", term: "2026" },
+    { id: "a", slug: "26-1-set-for-argument", status: "set_for_argument", term: "2026" },
+    { id: "b", slug: "26-2-argued", status: "argued", term: "2026" },
     // Not how the seed writes it (term stays null until an argument date
     // exists); term 2026 here so only the status filter can drop it.
     { id: "c", slug: "26-3-granted", status: "granted", term: "2026" },

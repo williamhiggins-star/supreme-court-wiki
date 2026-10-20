@@ -138,6 +138,37 @@ stats). As of 2026-08-31 this **is** the live site's render path, not a
 side exception on an unused route — see `CLAUDE.md`'s "Root cutover"
 note.
 
+**Case status vocabulary (`cases.status`, since 2026-10-20).** The Court's
+names for where a case stands:
+
+| Status | Meaning | Shown on the site |
+|---|---|---|
+| `granted` | Cert granted (or probable jurisdiction noted); no argument date yet. Row has the docket number and a Court-caption slug only (no term, sitting or argument date). | No: the anon read policy excludes it, and the site never asks for it. |
+| `set_for_argument` | Has an argument date still ahead. The database requires the date (`cases_set_for_argument_has_date`). | Yes: The Docket's Upcoming column. |
+| `argued` | Argued, not yet decided. | Yes: Argued column. |
+| `decided` | Decided (including summary reversals, as in OT2025). | Yes: Decided column, term stats. |
+
+`stub`/`historic` are precedent-citation rows, not docket cases. How a case
+moves between them:
+- **Order-list reader** (`scripts/read-order-lists.ts`, nightly): records
+  each grant, denial, GVR and summary disposition in `court_actions` (not
+  public). Each grant finds its `cases` row by exact docket number: an
+  existing row is only linked; otherwise a `granted` row is created
+  (`scripts/lib/court-orders/granted-cases.ts`). OT2026's earlier grants
+  were seeded once from the Granted & Noted List
+  (`scripts/seed-granted-cases.ts`). Summary dispositions go to
+  `summary_reversals_without_argument` only for now.
+- **Calendar step** (`scripts/update-cases.ts` → `syncCase` in
+  `scripts/lib/sd-db/write.ts`): when a case appears on the argument
+  calendar it updates the same row, found by exact docket number (its
+  slug never changes), to `set_for_argument` with its argument date and
+  term; once the argument has passed, to `argued`; with its decision, to
+  `decided`. `deriveStatus` maps the case files' own vocabulary
+  (`docketStatus` "upcoming"/"petition", unchanged) to these names.
+- The Docket's columns are derived from the argument date
+  (`src/lib/docket.ts`); cases on the same date are ordered by docket
+  number until the Court's argument order is available.
+
 **DYSTL Supabase: no longer written.** The old outbound mirror step
 (`scripts/sync-to-supabase.ts`, `scripts/lib/supabase-sync/`) was removed
 in October 2026: its credentials pointed at the "SCOTUS Dashboard" project,

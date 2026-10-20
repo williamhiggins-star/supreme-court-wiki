@@ -57,19 +57,16 @@ export const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
 const MAJORITY_SIDE_POSITIONS = new Set(["majority", "plurality", "concurrence"]);
 
 // cases.status -> CaseSummary.docketStatus (the JSON files' vocabulary,
-// unchanged). The Court's names `argued` and `set_for_argument` replace the
-// old stored names `petition` and `upcoming`; both are read here during
-// the rename. Where the Docket column comes from, getDocketStatus()
-// (src/lib/docket.ts) derives argued/upcoming from argumentDate unless
-// docketStatus is "decided". 'historic'/'stub' rows are precedent-citation
+// unchanged: "petition" = argued, "upcoming" = set for argument). The
+// Docket column itself comes from getDocketStatus() (src/lib/docket.ts),
+// which derives argued/upcoming from argumentDate unless docketStatus is
+// "decided". 'historic'/'stub' rows are precedent-citation
 // stubs and 'granted' rows aren't set for argument yet -- none reach this
 // function (filtered out by getAllCasesForTerm below).
 const DOCKET_STATUS_BY_DB_STATUS: Record<string, CaseSummary["docketStatus"]> = {
   decided: "decided",
   argued: "petition",
   set_for_argument: "upcoming",
-  petition: "petition",
-  upcoming: "upcoming",
 };
 
 function justiceKey(personSlug: string | null): string | null {
@@ -373,7 +370,7 @@ export async function getAllCasesForTerm(term: string = currentTermYear()): Prom
     .from("cases")
     .select(CASE_DETAIL_SELECT)
     .eq("term", term)
-    .in("status", ["set_for_argument", "argued", "decided", "petition", "upcoming"]);
+    .in("status", ["set_for_argument", "argued", "decided"]);
   if (caseError) throw new Error(`getAllCasesForTerm: ${caseError.message}`);
   const rows = (caseRows ?? []).filter((c) => !companionIds.has(c.id));
   if (!rows.length) return [];
