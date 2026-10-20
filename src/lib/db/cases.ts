@@ -56,15 +56,18 @@ export const DISSENT_KINDS = new Set(["dissent", "dissent_in_part"]);
 // comment on the same class of bug for vote-split display).
 const MAJORITY_SIDE_POSITIONS = new Set(["majority", "plurality", "concurrence"]);
 
-// cases.status -> CaseSummary.docketStatus. 'argued' is deliberately
-// omitted -- CaseSummary.docketStatus has no "argued" literal; getDocketStatus()
-// (src/app/page.tsx) already derives "argued" from argumentDate being in
-// the past whenever docketStatus isn't set to something more specific,
-// the same way it's always worked for JSON-sourced cases. 'historic'/
-// 'stub' rows are precedent-citation stubs, not real docket entries --
-// never reach this function (filtered out by getAllCasesForTerm below).
+// cases.status -> CaseSummary.docketStatus (the JSON files' vocabulary,
+// unchanged). The Court's names `argued` and `set_for_argument` replace the
+// old stored names `petition` and `upcoming`; both are read here during
+// the rename. Where the Docket column comes from, getDocketStatus()
+// (src/lib/docket.ts) derives argued/upcoming from argumentDate unless
+// docketStatus is "decided". 'historic'/'stub' rows are precedent-citation
+// stubs and 'granted' rows aren't set for argument yet -- none reach this
+// function (filtered out by getAllCasesForTerm below).
 const DOCKET_STATUS_BY_DB_STATUS: Record<string, CaseSummary["docketStatus"]> = {
   decided: "decided",
+  argued: "petition",
+  set_for_argument: "upcoming",
   petition: "petition",
   upcoming: "upcoming",
 };
@@ -370,7 +373,7 @@ export async function getAllCasesForTerm(term: string = currentTermYear()): Prom
     .from("cases")
     .select(CASE_DETAIL_SELECT)
     .eq("term", term)
-    .in("status", ["petition", "upcoming", "argued", "decided"]);
+    .in("status", ["set_for_argument", "argued", "decided", "petition", "upcoming"]);
   if (caseError) throw new Error(`getAllCasesForTerm: ${caseError.message}`);
   const rows = (caseRows ?? []).filter((c) => !companionIds.has(c.id));
   if (!rows.length) return [];
