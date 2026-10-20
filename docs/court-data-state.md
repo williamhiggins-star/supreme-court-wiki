@@ -14,7 +14,9 @@ project (ref `enwjtgjycthjypeqdgfo`). Scope: OT2026 on; no history backfill.
 | `court_vocabulary` | The approved glossary: 109 codes, each with the Court's phrase, source, `provenance` (`court_term` or `derived`) and `evidence` (`verified_fixture` or `unverified_recall`). | Public read. |
 | `court_vocabulary_aliases` | Press and legacy labels mapped to codes: GVR, DIG, summary reversal, relist, cert granted, cert denied, upcoming → `set_for_argument`, petition → `argued`. "Emergency docket" and "shadow docket" are deliberately mapped to nothing. | Public read. |
 | `summary_reversals_without_argument` | One row per summary disposition (per curiam) found in an order list: `docket_number`, `term`, `decided_date`, `court_action_id`, `case_id` (still null). **Empty so far**: none in OT2026 yet. | Pipeline only. |
-| `ingest_runs` | One row per run of the order reader (`stats.job = "order_lists"`), plus the one-time seed (`stats.job = "granted_noted_seed"`). See §3. | Pipeline only. |
+| `ingest_runs` | One row per run of the order reader (`stats.job = "order_lists"`), the application reader (`"applications"`) and each emergency/shadow docket rebuild (`"emergency_shadow_docket"`, with the unclassified list), plus the one-time seed (`"granted_noted_seed"`). See §3. | Pipeline only. |
+| `application_details` (migration `20261021000000_applications.sql`) | One row per application (`26A…`, plus 25A named in this term's orders), in the Court's terms: caption, verbatim filing entry, type and outcome codes, Justice, filing date, lower court, docket entries, docket link, `pending`. The Court's actions on it are `court_actions` rows with the same docket number (source = the docket page). | Pipeline only. |
+| `emergency_shadow_docket` | Not a Court term. The applications seeking interim relief, by rule `esd-rule-1`, rebuilt in full from `application_details` on every run. See `docs/emergency-shadow-docket.md`. | Pipeline only. |
 
 Live counts today: 32 `court_actions` rows (the seeded grants, all linked to cases), 0 summary reversals, 1 `ingest_runs` row (the seed).
 
@@ -62,6 +64,14 @@ the stored status. Cases on the same date are ordered by docket number
   - Database write failures are written to `$RUNNER_TEMP/sd-write-failures.log`, and the last step, "Fail the run if any SD database write failed", turns the run red.
 - `scripts/parity-check.ts` treats granted rows as expected (they have no JSON file yet).
 
+- `scripts/read-applications.ts` reads applications. Each run:
+  - reads application numbers from order PDFs on the orders listing it hasn't read yet, and from the in-chambers page (both If-Modified-Since);
+  - fetches those dockets, re-fetches pending ones (If-Modified-Since), retries numbers missed below the frontier for a week, then probes the frontier (from where it last stopped, until 3 numbers in a row are 404);
+  - classifies with fixed patterns (`scripts/lib/applications/parse.ts`), writes `application_details` and `court_actions`, then rebuilds `emergency_shadow_docket` (`scripts/lib/applications/membership.ts`).
+
+  `--reclassify` re-applies the patterns to stored records with no requests. `--backfill` raises the caps for a first fill. **Not in the daily workflow yet:** wiring it in is a separate PR, held for review.
+- `scripts/rebuild-emergency-shadow-docket.ts`: rebuilds the grouping on its own. No requests.
+
 ### Fixtures and tests
 - **Saved Court pages:** `scripts/fixtures/orders/`.
   - The OT2026 Orders of the Court listing.
@@ -85,12 +95,14 @@ the stored status. Cases on the same date are ordered by docket number
   - at most 1,500 requests a day (2,500 during a backfill).
 
   The code enforces all of this in `scripts/lib/court-orders/fetch.ts`, with a cap of 40 requests per nightly run and 80 for the seed.
+- **Daily cap across jobs** (`scripts/lib/court-orders/daily-cap.ts`): the application reader sums `stats.requests` of today's `ingest_runs` and stops at 1,500 (2,500 with `--backfill`). Its per-run cap is 80 (900 with `--backfill`).
 - **Typical use:**
   - a quiet night: 1 request (listing 304, not modified);
   - an order day: the listing, plus each new PDF, plus one docket page per new grant;
   - the seed took 11 requests.
 - **Each order PDF is fetched once.** A PDF counts as done once it's listed in an earlier run's `stats.documents`.
-- **Kill switch:** set the GitHub repository variable `COURT_ORDERS_OFF` to `1` (Settings → Secrets and variables → Actions → Variables). The step then exits before making any request. Delete the variable, or set any other value, to turn the reader back on.
+- **Application reader, typical night:** about 15–40 requests: the listing and the in-chambers page (usually 304), any new order PDF, about 5 new dockets plus 3 misses at the frontier, and the pending applications (usually 304). The first fill on 2026-10-20 took 574 requests in two runs (537 applications).
+- **Kill switch:** set the GitHub repository variable `COURT_ORDERS_OFF` to `1` (it stops the application reader too) (Settings → Secrets and variables → Actions → Variables). The step then exits before making any request. Delete the variable, or set any other value, to turn the reader back on.
 
 ## 3. Did the nightly run behave? (check procedure)
 The first live nightly run with the reader is the run starting around 22:00 UTC on 2026-10-20 (#16 and #17 were merged that morning).
@@ -174,7 +186,8 @@ Claude Code may apply an SD migration only with Will's authorization in words in
 - **GitHub reports no status checks** on this repo, so "mergeable" was checked by hand: typecheck, lint baseline, tests.
 
 ## 6. Not done yet
-- **Emergency/Shadow Docket:** applications (`25A…`) and their orders. This is the next session's work. The glossary already has the application codes, and "emergency/shadow docket" are aliases mapped to nothing.
+- **Applications in the daily run:** the workflow step is a separate PR held for review. Until it merges, `read-applications.ts` runs only by hand.
+- **25A applications** are found only when an OT2026 order or the in-chambers page names them. A 25A application still pending with no order this term isn't found.
 - **Pending cert petitions:** a `dockets` table plus a frontier probe for newly docketed petitions. Dispositions would come from the order lists already read.
 - **Summary reversals into `cases`:** add them as `decided` with a per curiam opinion, as OT2025 and Feldman do, once vote detail can be captured and checked. Until then they are in `summary_reversals_without_argument` only.
 - **More frequent order-list runs:** it runs once a day today. Add more only if same-day latency matters.
