@@ -52,11 +52,14 @@ function check(label: string, fn: () => void) {
 
 console.log(`Membership rule ${RULE_VERSION}`);
 
-check("interim relief in, extensions out, bail unclassified", () => {
+check("interim relief in with public_view yes; bail in with public_view no; extensions out", () => {
   const built = buildEmergencyShadowDocket(records);
-  assert.deepEqual(built.rows.map((r) => r.docket_number), ["25A312", "25A354", "25A571", "26A400", "26A456", "26A459", "26A476"]);
-  assert.equal(built.excluded, 1); // 26A1, an extension of time
-  assert.deepEqual(built.unclassified.map((u) => u.docket_number), ["25A171"]);
+  assert.deepEqual(
+    built.rows.map((r) => `${r.docket_number}:${r.defaultPublicView ? "yes" : "no"}`),
+    ["25A171:no", "25A312:yes", "25A354:yes", "25A571:yes", "26A400:yes", "26A456:yes", "26A459:yes", "26A476:yes"],
+  );
+  assert.equal(built.excluded, 1); // 26A1, an extension of time to file
+  assert.deepEqual(built.review, []);
 });
 
 check("each row carries the rule version and the Court's own terms", () => {
@@ -69,27 +72,38 @@ check("each row carries the rule version and the Court's own terms", () => {
   assert.equal(row.docket_url, "https://www.supremecourt.gov/docket/docketfiles/html/public/26a476.html");
 });
 
-check("vacate: in only when it vacates a stay or injunction", () => {
-  const v = (text: string) => membership({ application_type: "vacate", application_text: text }).verdict;
-  assert.equal(v("Application (26A9) to vacate the stay entered by the United States Court of Appeals, submitted to Justice Kagan."), "in");
-  assert.equal(v("Application (26A9) to vacate the administrative stay, submitted to Justice Kagan."), "in");
-  assert.equal(v("Application (26A9) to vacate injunction, submitted to Justice Kagan."), "in");
-  assert.equal(v("Application (26A9) to vacate the judgment, submitted to Justice Kagan."), "unclassified");
+const m = (type: string | null, text: string) => {
+  const r = membership({ application_type: type, application_text: text });
+  return `${r.verdict}:${r.publicView ? "yes" : "no"}`;
+};
+
+check("public_view no: the Court's wording of the matters held for review under esd-rule-1", () => {
+  assert.equal(m(null, "Application (26A516) for an extension of time within which to comply with the order of October 5, 2026, submitted to Justice Kavanaugh."), "in:no");
+  assert.equal(m(null, "Application (26A527) to file consolidated brief in opposition in excess of word limits, submitted to Justice Sotomayor."), "in:no");
+  assert.equal(m(null, "Application (25A1382) to file a petition for an extraordinary writ of habeas corpus in excess of page limits, submitted to Justice Alito."), "in:no");
+  assert.equal(m(null, "Application (25A1399) for a certificate of appealability, submitted to Justice Kagan."), "in:no");
+  assert.equal(m("bail", "Application (26A51) for bail, submitted to Justice Alito."), "in:no");
 });
 
-check("an unrecognised type is never guessed", () => {
-  assert.equal(membership({ application_type: null, application_text: "Application (26A9) for leave, submitted to Justice Kagan." }).verdict, "unclassified");
+check("vacate: public_view yes only when it vacates a stay or injunction; otherwise for review", () => {
+  assert.equal(m("vacate", "Application (26A499) to vacate stay, submitted to Justice Sotomayor."), "in:yes");
+  assert.equal(m("vacate", "Application (26A428) to vacate stay of execution of sentence of death, submitted to Justice Kavanaugh."), "in:yes");
+  assert.equal(m("vacate", "Application (26A9) to vacate injunction, submitted to Justice Kagan."), "in:yes");
+  assert.equal(m("vacate", "Application (26A9) to vacate the judgment, submitted to Justice Kagan."), "review:no");
 });
 
-console.log("Rebuild");
-
-check("rebuilding from the same base records gives the same table, whatever the input order", () => {
-  const a = buildEmergencyShadowDocket(records);
-  const b = buildEmergencyShadowDocket([...records].reverse());
-  assert.deepEqual(a, b);
+check("routine extensions of time to file stay out; unrecognised wording goes for review, never guessed", () => {
+  assert.equal(m("extension_cert_petition", "Application (26A1) to extend the time to file a petition for a writ of certiorari …"), "out:no");
+  assert.equal(m(null, "Application (26A9) for leave to file under seal, submitted to Justice Kagan."), "review:no");
 });
 
-check("rebuilding after a base record changes follows the change", () => {
+console.log("Rebuild from base records");
+
+check("same base records, same table, whatever the input order", () => {
+  assert.deepEqual(buildEmergencyShadowDocket(records), buildEmergencyShadowDocket([...records].reverse()));
+});
+
+check("a changed base record changes its row", () => {
   const changed = records.map((r) => (r.docket_number === "26A400" ? { ...r, application_type: "extension_cert_petition" } : r));
   const built = buildEmergencyShadowDocket(changed);
   assert.ok(!built.rows.some((r) => r.docket_number === "26A400"));
@@ -97,7 +111,7 @@ check("rebuilding after a base record changes follows the change", () => {
 });
 
 check("an empty base gives an empty table", () => {
-  assert.deepEqual(buildEmergencyShadowDocket([]), { rows: [], excluded: 0, unclassified: [] });
+  assert.deepEqual(buildEmergencyShadowDocket([]), { rows: [], excluded: 0, review: [] });
 });
 
 console.log(`\n${passed} check(s) passed${process.exitCode ? ", some FAILED" : ""}.`);
