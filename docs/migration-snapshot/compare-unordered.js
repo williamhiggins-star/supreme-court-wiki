@@ -1,4 +1,5 @@
 // Compare two snapshots ignoring array order (every array sorted canonically).
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- plain Node script, run with `node`
 const fs = require("fs");
 const ds = (v) => Array.isArray(v) ? v.map(ds).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
   : v && typeof v === "object" ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, ds(v[k])])) : v;
