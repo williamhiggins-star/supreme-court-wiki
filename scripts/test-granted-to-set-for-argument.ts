@@ -1,5 +1,5 @@
 /**
- * test-granted-to-upcoming.ts
+ * test-granted-to-set-for-argument.ts
  *
  * Integration test, granted → set for argument, against a DISPOSABLE
  * database (a local Postgres + PostgREST built from supabase/migrations),
@@ -10,15 +10,15 @@
  *      anon role can't read the row.
  *   2. The calendar step's write (syncCase, with a real OT2026 case file
  *      from data/cases) finds that same row by exact docket number and
- *      updates it to `upcoming` (today's stored name for set for argument)
+ *      updates it to `set_for_argument`
  *      with its argument date and term: same id, same slug, no second row.
- *      A second sync changes nothing.
+ *      A second sync changes nothing; after the argument it moves to `argued`.
  *
  * The Court's docket page is stubbed; no request leaves the machine.
  *
  * Run:  TEST_SUPABASE_URL=http://127.0.0.1:54331 \
  *       TEST_SUPABASE_SERVICE_ROLE_KEY=<service JWT> TEST_SUPABASE_ANON_KEY=<anon JWT> \
- *       npx tsx scripts/test-granted-to-upcoming.ts
+ *       npx tsx scripts/test-granted-to-set-for-argument.ts
  */
 
 import assert from "node:assert/strict";
@@ -110,26 +110,33 @@ async function main() {
 
   console.log("Calendar step finds the docket → set for argument");
   const result = await syncCase(creds, await loadIdCache(creds), summary);
-  await check("same row updated to upcoming with its argument date and term; same id and slug; no new row", async () => {
+  await check("same row updated to set_for_argument with its argument date and term; same id and slug; no new row", async () => {
     const rows = await rowsForDocket();
     assert.equal(rows.length, 1);
     const r = rows[0];
     assert.equal(r.id, granted.id);
     assert.equal(r.slug, granted.slug);
-    assert.deepEqual([r.status, r.argued_date, r.term], ["upcoming", "2026-11-04", "2026"]);
+    assert.deepEqual([r.status, r.argued_date, r.term], ["set_for_argument", "2026-11-04", "2026"]);
     assert.equal((await select(creds, "cases", `?select=id&slug=eq.${summary.slug}`)).length, 0, "no row under the JSON file's slug");
     assert.ok(result.warnings.some((w) => w.includes(`already stored as "${granted.slug}"`)), "syncCase reports the kept slug");
   });
   await check("the grant stays linked; a second sync changes nothing", async () => {
     await syncCase(creds, await loadIdCache(creds), summary);
     const rows = await rowsForDocket();
-    assert.deepEqual(rows.map((r) => [r.id, r.slug, r.status]), [[granted.id, granted.slug, "upcoming"]]);
+    assert.deepEqual(rows.map((r) => [r.id, r.slug, r.status]), [[granted.id, granted.slug, "set_for_argument"]]);
     const [a] = await select<{ case_id: string }>(creds, "court_actions", `?select=case_id&id=eq.${grant.id}`);
     assert.equal(a.case_id, granted.id);
   });
   await check("once set for argument, anon can read it", async () => {
     const res = await realFetch(`${url}/rest/v1/cases?select=id&docket_number=eq.${DOCKET}`, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
     assert.deepEqual(await res.json(), [{ id: granted.id }]);
+  });
+
+  console.log("After the argument (the case file says argued) → argued");
+  await check("same row moves to argued; no new row", async () => {
+    await syncCase(creds, await loadIdCache(creds), { ...summary, docketStatus: "petition" });
+    const rows = await rowsForDocket();
+    assert.deepEqual(rows.map((r) => [r.id, r.slug, r.status, r.argued_date]), [[granted.id, granted.slug, "argued", "2026-11-04"]]);
   });
 
   console.log(`\n${passed} passed${process.exitCode ? ", some failed" : ""}`);

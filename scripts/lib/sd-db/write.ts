@@ -243,7 +243,7 @@ export function partyFieldsFill(
 export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: CaseSummary): Promise<SyncCaseResult> {
   const warnings: string[] = [];
 
-  // Same status derivation as backfill-db.ts's deriveStatus.
+  // The Court's status names (deriveStatus below; also used by backfill-db.ts).
   const status = deriveStatus(c);
 
   // Same date-sanity fix as backfill-db.ts (found via a real constraint
@@ -596,20 +596,27 @@ export async function syncCase(creds: SupabaseCredentials, cache: IdCache, c: Ca
   return { caseId, warnings };
 }
 
-/** Same status derivation as the frontend (src/app/page.tsx's
- *  getDocketStatus) and backfill-db.ts's deriveStatus. */
-function deriveStatus(c: CaseSummary): string {
-  if (c.docketStatus === "decided") return "decided";
-  if (c.docketStatus === "petition") return "petition";
-  if (c.docketStatus === "upcoming") return "upcoming";
-  if (c.outcome) return "decided";
-  if (!c.argumentDate) return "upcoming";
+/**
+ * The stored status, in the Court's terms, from a case file. The files keep
+ * their own vocabulary ("petition" = argued, "upcoming" = set for
+ * argument); it is mapped here, where the pipeline writes the database:
+ *   decided, or an outcome          → decided
+ *   "petition", or argument passed  → argued
+ *   "upcoming", or argument ahead   → set_for_argument
+ *   no argument date                → granted (not shown on the site; the
+ *     database requires set_for_argument to have an argument date)
+ * Also used by backfill-db.ts.
+ */
+export function deriveStatus(c: CaseSummary): string {
+  if (c.docketStatus === "decided" || c.outcome) return "decided";
+  if (c.docketStatus === "petition") return "argued";
+  if (!c.argumentDate) return "granted";
+  if (c.docketStatus === "upcoming") return "set_for_argument";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const [y, m, d] = c.argumentDate.split("-").map(Number);
   const argDate = new Date(y, m - 1, d);
-  if (argDate > today) return "upcoming";
-  return "argued";
+  return argDate > today ? "set_for_argument" : "argued";
 }
 
 // ---------------------------------------------------------------------------
