@@ -33,6 +33,13 @@
  *       npx tsx scripts/read-applications.ts --backfill    (first fill: higher caps)
  *       npx tsx scripts/read-applications.ts --reclassify  (no requests: re-apply the
  *                                                           rules to stored records)
+ *       npx tsx scripts/read-applications.ts --look-back=25:100
+ *           One-time pass over the previous series after a term rollover:
+ *           probe upward from its highest recorded number until 3 numbers in
+ *           a row are not found, then fetch the 100 numbers below the highest
+ *           one found, once each. Afterwards they follow the normal rule
+ *           (re-fetched only while pending, or when named in a new order).
+ *           Leaves 120 requests of the daily cap for the nightly jobs.
  */
 
 import { createHash } from "crypto";
@@ -58,6 +65,8 @@ const MAX_REQUESTS_PER_RUN = 80;
 const MAX_REQUESTS_BACKFILL = 900;
 const FRONTIER_MISSES = 3;
 const RETRY_MISSING_DAYS = 7;
+/** Requests a look-back leaves under today's cap for the nightly jobs. */
+const LOOK_BACK_RESERVE = 120;
 const IN_CHAMBERS_URL = "https://www.supremecourt.gov/opinions/in-chambers.aspx";
 
 interface RunStats {
@@ -197,6 +206,9 @@ async function main() {
     return;
   }
   const backfill = process.argv.includes("--backfill");
+  const lookBackArg = process.argv.find((a) => a.startsWith("--look-back="))?.slice("--look-back=".length);
+  const lookBack = lookBackArg?.match(/^(\d{2}):(\d+)$/);
+  if (lookBackArg && !lookBack) throw new Error("--look-back=<series>:<count>, e.g. --look-back=25:100");
 
   const term = currentTermYear();
   const yy = term.slice(2);
@@ -214,11 +226,16 @@ async function main() {
   const last = previous[0]?.stats;
 
   const used = await requestsToday(creds);
-  const cap = Math.min(backfill ? MAX_REQUESTS_BACKFILL : MAX_REQUESTS_PER_RUN, (backfill ? DAILY_CAP_BACKFILL : DAILY_CAP) - used);
+  const cap = lookBack
+    ? Math.min(MAX_REQUESTS_BACKFILL, DAILY_CAP - LOOK_BACK_RESERVE - used)
+    : Math.min(backfill ? MAX_REQUESTS_BACKFILL : MAX_REQUESTS_PER_RUN, (backfill ? DAILY_CAP_BACKFILL : DAILY_CAP) - used);
 
   const stats: RunStats = { job: "applications", term, documents: [], missing: {}, added: [], changed: [], frontier: {} };
   // Carried forward, so a run that halts early loses neither.
   Object.assign(stats.missing, last?.missing);
+  // A look-back reads neither page; keep their dates for the next nightly run.
+  stats.listingLastModified = last?.listingLastModified;
+  stats.inChambersLastModified = last?.inChambersLastModified;
   for (const series of frontierSeries) {
     stats.frontier[series] = Math.max(0, ...previous.map((r) => r.stats.frontier?.[series] ?? 0));
   }
@@ -257,48 +274,67 @@ async function main() {
   try {
     if (cap <= 0) throw new CourtFetchHalt(`daily cap reached (${used} request(s) already today)`);
 
-    // 1. Application numbers in order PDFs this job hasn't read.
-    const listing = await fetcher.get(`https://www.supremecourt.gov/orders/ordersofthecourt/${yy}`, last?.listingLastModified);
-    stats.listingLastModified = listing.status === 304 ? last?.listingLastModified : listing.lastModified;
-    if (listing.status === 200) {
-      for (const order of parseOrdersListing(listing.body.toString("utf8")).reverse()) {
-        if (scannedDocs.has(order.url)) continue;
-        const pdf = await fetcher.get(order.url);
-        for (const no of applicationNumbersIn(pdfToText(pdf.body), [yy, prevYy])) named.add(no);
-        stats.documents.push(order.url);
+    if (lookBack) {
+      // One-time look-back over an earlier series (see the header).
+      const [, series, count] = lookBack;
+      const recorded = [...known.keys()].filter((no) => no.startsWith(`${series}A`)).map((no) => Number(no.slice(3)));
+      let highest = Math.max(0, ...recorded);
+      let n = highest + 1;
+      for (let misses = 0; misses < FRONTIER_MISSES; n++) {
+        if (await visit(`${series}A${n}`)) {
+          highest = n;
+          misses = 0;
+        } else misses++;
       }
-    }
-    // 2. … and on the in-chambers page.
-    const chambers = await fetcher.get(IN_CHAMBERS_URL, last?.inChambersLastModified);
-    stats.inChambersLastModified = chambers.status === 304 ? last?.inChambersLastModified : chambers.lastModified;
-    if (chambers.status === 200) for (const no of applicationNumbersIn(chambers.body.toString("utf8"), [yy, prevYy])) named.add(no);
-
-    // 3. Named in a new order: fetch if new, re-fetch if recorded (it may have changed).
-    for (const no of named) await visit(no);
-
-    // 4. Still pending: re-fetch, conditionally.
-    for (const r of knownRows) if (r.pending && !done.has(r.docket_number)) await visit(r.docket_number);
-
-    // 5. Carried over from earlier runs: retry for a week.
-    for (const [no, since] of Object.entries(stats.missing)) {
-      if (done.has(no) || (await visit(no)) || Date.parse(today()) - Date.parse(since) >= RETRY_MISSING_DAYS * 864e5) {
-        delete stats.missing[no];
+      stats.frontier[series] = highest;
+      for (let m = Math.max(1, highest - Number(count)); m < highest; m++) {
+        const no = `${series}A${m}`;
+        if (!known.has(no) && !done.has(no)) await visit(no);
       }
-    }
+    } else {
+      // 1. Application numbers in order PDFs this job hasn't read.
+      const listing = await fetcher.get(`https://www.supremecourt.gov/orders/ordersofthecourt/${yy}`, last?.listingLastModified);
+      stats.listingLastModified = listing.status === 304 ? last?.listingLastModified : listing.lastModified;
+      if (listing.status === 200) {
+        for (const order of parseOrdersListing(listing.body.toString("utf8")).reverse()) {
+          if (scannedDocs.has(order.url)) continue;
+          const pdf = await fetcher.get(order.url);
+          for (const no of applicationNumbersIn(pdfToText(pdf.body), [yy, prevYy])) named.add(no);
+          stats.documents.push(order.url);
+        }
+      }
+      // 2. … and on the in-chambers page.
+      const chambers = await fetcher.get(IN_CHAMBERS_URL, last?.inChambersLastModified);
+      stats.inChambersLastModified = chambers.status === 304 ? last?.inChambersLastModified : chambers.lastModified;
+      if (chambers.status === 200) for (const no of applicationNumbersIn(chambers.body.toString("utf8"), [yy, prevYy])) named.add(no);
 
-    // 6. The frontier: from the last number this probe found (1 for a new
-    //    series), stepping over numbers already recorded without a request.
-    for (const series of frontierSeries) {
-      let n = stats.frontier[series] + 1;
-      const misses: string[] = [];
-      while (misses.length < FRONTIER_MISSES) {
-        const no = `${series}A${n++}`;
-        const found = known.has(no) || done.has(no) ? known.has(no) || stats.added.includes(no) : await visit(no);
-        if (found) {
-          for (const m of misses) stats.missing[m] = today(); // gaps below a found number
-          misses.length = 0;
-          stats.frontier[series] = n - 1;
-        } else misses.push(no);
+      // 3. Named in a new order: fetch if new, re-fetch if recorded (it may have changed).
+      for (const no of named) await visit(no);
+
+      // 4. Still pending: re-fetch, conditionally.
+      for (const r of knownRows) if (r.pending && !done.has(r.docket_number)) await visit(r.docket_number);
+
+      // 5. Carried over from earlier runs: retry for a week.
+      for (const [no, since] of Object.entries(stats.missing)) {
+        if (done.has(no) || (await visit(no)) || Date.parse(today()) - Date.parse(since) >= RETRY_MISSING_DAYS * 864e5) {
+          delete stats.missing[no];
+        }
+      }
+
+      // 6. The frontier: from the last number this probe found (1 for a new
+      //    series), stepping over numbers already recorded without a request.
+      for (const series of frontierSeries) {
+        let n = stats.frontier[series] + 1;
+        const misses: string[] = [];
+        while (misses.length < FRONTIER_MISSES) {
+          const no = `${series}A${n++}`;
+          const found = known.has(no) || done.has(no) ? known.has(no) || stats.added.includes(no) : await visit(no);
+          if (found) {
+            for (const m of misses) stats.missing[m] = today(); // gaps below a found number
+            misses.length = 0;
+            stats.frontier[series] = n - 1;
+          } else misses.push(no);
+        }
       }
     }
   } catch (err) {
