@@ -150,12 +150,14 @@ names for where a case stands:
 
 `stub`/`historic` are precedent-citation rows, not docket cases. How a case
 moves between them:
-- **Application reader** (`scripts/read-applications.ts`, manual until its
-  workflow step is approved): records each application (26A…) in
+- **Application reader** (`scripts/read-applications.ts`, nightly, right
+  after the order-list reader): records each application (26A…) in
   `application_details` and the Court's actions on it in `court_actions`,
   then updates the pipeline-only `emergency_shadow_docket` table incrementally (its
   `public_view` column is the editorial choice of what will be shown)
-  (`docs/emergency-shadow-docket.md`). Nothing on the site reads these.
+  (`docs/emergency-shadow-docket.md`). The site reads only the public view
+  `emergency_shadow_docket_public` (Shadow Docket section); the tables
+  themselves stay closed to visitors.
 - **Order-list reader** (`scripts/read-order-lists.ts`, nightly): records
   each grant, denial, GVR and summary disposition in `court_actions` (not
   public). Each grant finds its `cases` row by exact docket number: an
@@ -200,6 +202,8 @@ Single GitHub Actions workflow: `.github/workflows/daily-update.yml`.
   8. `scripts/fetch-appellate-impacts.ts` — needs `ANTHROPIC_API_KEY` + `COURTLISTENER_API_KEY`.
   9. `scripts/fetch-analysis-articles.ts` — needs `ANTHROPIC_API_KEY`.
   10. `scripts/fetch-spotify-episodes.ts` — needs `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET`.
+  10a. **`scripts/read-order-lists.ts`** (`continue-on-error: true`) — the Court's order lists into `court_actions`; links or creates granted cases. Kill switch: repository variable `COURT_ORDERS_OFF=1`.
+  10b. **`scripts/read-applications.ts`** (`continue-on-error: true`, from 2026-10-20) — applications into `application_details` and `court_actions`, then the incremental `emergency_shadow_docket` update and a `::warning` for any new application the rule can't place. Same kill switch. See `docs/court-data-state.md`.
   11. **Dual-write parity check** (`continue-on-error: true`, runs `if: always()`) — `scripts/parity-check.ts`, compares Supabase against `data/*.json` and reports drift; never blocks anything either direction.
   12. **Commit** — `git add data/`, commit as "Supreme Court Wiki Bot" with `[skip ci]`, push directly to the checked-out branch (no PR).
 - All the enrichment/manual scripts (`enrich-precedents.ts`,

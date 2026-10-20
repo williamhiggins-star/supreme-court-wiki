@@ -16,7 +16,7 @@ project (ref `enwjtgjycthjypeqdgfo`). Scope: OT2026 on; no history backfill.
 | `summary_reversals_without_argument` | One row per summary disposition (per curiam) found in an order list: `docket_number`, `term`, `decided_date`, `court_action_id`, `case_id` (still null). **Empty so far**: none in OT2026 yet. | Pipeline only. |
 | `ingest_runs` | One row per run of the order reader (`stats.job = "order_lists"`), the application reader (`"applications"`) and each emergency/shadow docket update or rebuild (`"emergency_shadow_docket"`, with the review list), plus the one-time seed (`"granted_noted_seed"`). See §3. | Pipeline only. |
 | `application_details` (migration `20261021000000_applications.sql`) | One row per application (`26A…`, plus 25A named in this term's orders), in the Court's terms: caption, verbatim filing entry, type and outcome codes, Justice, filing date, lower court, docket entries, docket link, `pending`. The Court's actions on it are `court_actions` rows with the same docket number (source = the docket page). | Pipeline only. |
-| `emergency_shadow_docket` (+ migration `20261022000000_esd_public_view.sql`) | Not a Court term. Applications the press may mean by it, plus related matters, by rule `esd-rule-2`. `public_view` (yes/no) is the editorial choice of what will be shown. It is set by the rule for new and reclassified rows; any hand write marks the row (`public_view_set_by_hand`, by trigger, migration `20261023000000`) and the pipeline never overwrites it. Updated incrementally each night; full rebuild is manual. See `docs/emergency-shadow-docket.md`. | Pipeline only. |
+| `emergency_shadow_docket` (+ migration `20261022000000_esd_public_view.sql`) | Not a Court term. Applications the press may mean by it, plus related matters, by rule `esd-rule-2`. `public_view` (yes/no) is the editorial choice of what will be shown. It is set by the rule for new and reclassified rows; any hand write marks the row (`public_view_set_by_hand`, by trigger, migration `20261023000000`) and the pipeline never overwrites it. Updated incrementally each night; full rebuild is manual. See `docs/emergency-shadow-docket.md`. | Pipeline only. Visitors read only the view `emergency_shadow_docket_public` (`public_view` rows, listed columns; migration `20261024000000`), shown in the dashboard's Shadow Docket section. |
 
 Live counts today: 32 `court_actions` rows (the seeded grants, all linked to cases), 0 summary reversals, 1 `ingest_runs` row (the seed).
 
@@ -69,7 +69,7 @@ the stored status. Cases on the same date are ordered by docket number
   - fetches those dockets, re-fetches pending ones (If-Modified-Since), retries numbers missed below the frontier for a week, then probes the frontier (from where it last stopped, until 3 numbers in a row are 404);
   - classifies with fixed patterns (`scripts/lib/applications/parse.ts`), writes `application_details` and `court_actions`, then updates `emergency_shadow_docket` incrementally (`scripts/lib/applications/rebuild.ts`) and warns about any new application the rule can't place.
 
-  `--reclassify` re-applies the patterns to stored records with no requests. `--backfill` raises the caps for a first fill. **Not in the daily workflow yet:** wiring it in is a separate PR, held for review.
+  `--reclassify` re-applies the patterns to stored records with no requests. `--backfill` raises the caps for a first fill. `--look-back=<series>:<n>` is the one-time pass over the previous series after a rollover. **Nightly** since PR #26 (2026-10-20): the workflow step "Read the Court's applications into application_details (non-fatal)" runs right after the order reader, same kill switch.
 - `scripts/rebuild-emergency-shadow-docket.ts`: the manual full rebuild, for a new rule version. Keeps hand-set `public_view`. No requests.
 - **How each nightly table is written** (kept consistent): incremental (only new or changed rows) for `court_actions`, `application_details`, `emergency_shadow_docket`, `cases`, `case_podcast_episodes`, and `ingest_runs` (append-only); per case it touches, `syncCase` deletes and reinserts that case's `opinions`, `votes`, `citations`, `case_terms` and `decisions`; rewritten whole per term every night: the derived stats `justice_stats`, `lawyer_stats`, `term_opinion_stats`.
 
@@ -138,6 +138,19 @@ The first live nightly run with the reader is the run starting around 22:00 UTC 
 5. **Statuses written under the new names:** `select status, count(*) from cases where status not in ('stub','historic') group by 1;` Only `granted`, `set_for_argument`, `argued` and `decided` should appear, and the run should have no write failures from the `syncCase` steps.
 6. **Kill switch off:** `gh variable list` shows no `COURT_ORDERS_OFF=1`.
 
+### Application reader: first nightly run (from 2026-10-20, ~22:00 UTC)
+1. In the run's log, the step "Read the Court's applications…" prints `[applications] succeeded: N new, M changed, R request(s).` (about 15–40 requests), then `[emergency/shadow docket] nightly (esd-rule-2): …`. No `::error`. A `::warning title=Application needs review` names a new application the rule can't place: decide it, or extend the rule.
+2. ```sql
+   select started_at, stats->>'requests' requests, jsonb_array_length(stats->'added') added,
+          jsonb_array_length(stats->'changed') changed, stats->'frontier' frontier, stats->>'halted' halted
+   from ingest_runs where stats->>'job' = 'applications' order by started_at desc limit 1;
+   ```
+3. New rows in the grouping, with the rule's `public_view`:
+   ```sql
+   select docket_number, application_type, public_view, public_view_set_by_hand
+   from emergency_shadow_docket order by built_at desc limit 10;
+   ```
+
 ## 4. Migration safeguards (CLAUDE.md "Migration exception")
 Claude Code may apply an SD migration only with Will's authorization in words in that session. The steps:
 1. **Before:**
@@ -173,7 +186,7 @@ Claude Code may apply an SD migration only with Will's authorization in words in
 - **"Probable jurisdiction noted"** is tested only with an invented example; no saved order list has the wording yet. Check the first real one.
 - **Per curiams published only on the opinions page,** not attached to an order list, aren't picked up. The reader reads only the orders listing.
 - **Two old OT2025 transcript 404s:** 24-699 and 24-983, in the nightly key-exchange fill step. They pre-date this work.
-- **Lint has one old error** (`src/components/ScrollableRegion.tsx:43`, setState inside an effect) and 16 warnings. That's the baseline every PR here was held to.
+- **Lint baseline: 2 errors, 16 warnings.** The old one (`src/components/ScrollableRegion.tsx:43`, setState inside an effect) and `docs/migration-snapshot/compare-unordered.js` (a `require()` import, on main since PR #21; PR #22, open, fixes it). Every PR here was held to this baseline.
 - **Tie-order placeholders:**
   - Same-date cases are ordered by docket number until the Court's argument order or time of day is available.
   - Tied agreement figures are ordered by Justice slug (`getJusticeAgreementGrid`).
@@ -187,9 +200,36 @@ Claude Code may apply an SD migration only with Will's authorization in words in
 - **GitHub reports no status checks** on this repo, so "mergeable" was checked by hand: typecheck, lint baseline, tests.
 
 ## 6. Not done yet
-- **Applications in the daily run:** the workflow step is a separate PR held for review. Until it merges, `read-applications.ts` runs only by hand.
 - **25A applications:** a one-time look-back (`--look-back=25:100`, 2026-10-20, 103 requests) found the series ends at 25A1468 and recorded 25A1368–25A1468; none was still pending. Older 25A applications are found only when an OT2026 order or the in-chambers page names them. Next October, run `--look-back=26:100` once after the rollover.
 - **Pending cert petitions:** a `dockets` table plus a frontier probe for newly docketed petitions. Dispositions would come from the order lists already read.
 - **Summary reversals into `cases`:** add them as `decided` with a per curiam opinion, as OT2025 and Feldman do, once vote detail can be captured and checked. Until then they are in `summary_reversals_without_argument` only.
 - **More frequent order-list runs:** it runs once a day today. Add more only if same-day latency matters.
 - **Retiring the committed JSON:** `data/cases/*.json` and the other pipeline-only files. The case files' `docketStatus` vocabulary goes with them.
+
+## 7. Session log: Emergency / Shadow Docket (2026-10-20)
+
+Built in one session, current term only (26A, plus 25A1368–25A1468). All
+merged to `main`; deployed to production once, at the end.
+
+| PR | What |
+|---|---|
+| #23 | Migration `20261021000000_applications.sql`: `application_details`, `emergency_shadow_docket` (pipeline-only). |
+| #24 | `scripts/read-applications.ts` + `scripts/lib/applications/parse.ts`: the reader, deterministic rules, fixtures (9 docket pages, Attorneys panel removed), daily cap across jobs (`daily-cap.ts`). First fill: 574 requests, 537 applications. |
+| #25 | Rule `esd-rule-1` and rebuild (`membership.ts`, `rebuild.ts`). |
+| #27 | `--look-back=25:100`: 103 requests, 100 records, none pending. |
+| #28 | Migration `20261022000000`: `public_view` + hand-set marker and trigger. Rule `esd-rule-2` (over-include; `public_view` is the editorial choice). Nightly update incremental; full rebuild manual. |
+| #26 | Workflow: the reader runs nightly (authorized in words). |
+| #29 | Migration `20261023000000`: any hand write of `public_view` locks it. Reclassified rows follow the rule unless hand-set. |
+| #30 | Migration `20261024000000`: public view `emergency_shadow_docket_public`. The dashboard's Shadow Docket section (menu entry, description panel, searchable/filterable/sortable table); bottom menu centered as a whole. |
+| #31 | "The Chief Justice" shown as "Justice Roberts (Chief)" in the table. |
+
+- **State at the end:** 637 applications; 156 rows in `emergency_shadow_docket` (141 `public_view` yes, 15 no; none hand-set); review list empty.
+- **Every migration** was applied under the safeguards (dry run, two visitor snapshots and privileged hashes before and after, all identical). Rollback SQL is in each migration's header.
+- **Deployed:** `vercel --prod` of `main` at 349c58a → `supreme-court-wiki-mdz2vii92-williamhiggins-stars-projects.vercel.app` (www.scotusdashboard.com). The live site was checked against the previous code: the other five sections are identical; the only change outside Shadow Docket is its menu entry, with the menu row now centered as a whole. As an anonymous visitor, the public view returns the 141 rows and both underlying tables are refused.
+- **Rollback for that deploy:** `vercel promote https://supreme-court-wiki-jybi1rlla-williamhiggins-stars-projects.vercel.app`
+- **Open, for Will:**
+  - nothing on the review list today;
+  - "Justice Roberts (Chief)" is a fixed label (`justiceLabel` in `SectionPanels.tsx`); change it if the Chief Justice changes;
+  - the in-chambers page check adds little (it lists in-chambers opinions; newest 23A843) but was kept by decision;
+  - PR #22 (lint fix) is open, not from this session;
+  - one transient database statement timeout in the existing `getAllCasesForTerm` was seen during local testing.
