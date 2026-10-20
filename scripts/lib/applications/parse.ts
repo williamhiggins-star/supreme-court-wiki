@@ -139,7 +139,7 @@ const TYPE_RULES: [RegExp, string][] = [
   [/^for (?:a |an )?stays? of execution\b/i, "stay_of_execution"],
   [/^for (?:a )?partial stay\b/i, "partial_stay"],
   [/^for (?:a |an )?stay\b/i, "stay"],
-  [/^for (?:a |an )?(?:writ of )?injunction\b/i, "injunction"],
+  [/^for (?:a |an )?(?:writ of )?injunction\b|^for injunctive relief\b/i, "injunction"],
   [/^for (?:bail|release)\b/i, "bail"],
 ];
 
@@ -197,17 +197,31 @@ export function actionOf(docketNumber: string, text: string): string | null {
   if (new RegExp(`^${app} referred to the Court\\.?$`, "i").test(text)) return "referred_to_the_court";
   if (new RegExp(`^${app} refiled and submitted to\\b`, "i").test(text)) return "renewed_application";
   if (new RegExp(`^Response to application \\(${esc(docketNumber)}\\) requested by\\b`, "i").test(text)) return "application_response_requested";
-  // A Justice's interim order: "… is hereby stayed pending further order of
-  // the undersigned or of the Court." (press: "administrative stay").
-  if (/^Order entered by\b/i.test(text)) return /\bstayed pending further order\b/i.test(text) ? "administrative_stay" : null;
+  if (/^Order entered by\b/i.test(text)) return chambersOrderAction(text);
   const disposes = new RegExp(`^(?:${app}|The application\\b|The applications\\b)`, "i").test(text);
   if (!disposes || new RegExp(`^${app}[^.]*,\\s*submitted to\\b`, "i").test(text)) return null;
   return dispositionOf(text);
 }
 
+/** "Order entered by Justice …: …" — a single Justice's order on the
+ *  application. Only these wordings get a code. */
+function chambersOrderAction(text: string): string | null {
+  // "… is hereby stayed pending further order of the undersigned or of the
+  // Court" / "… are hereby administratively stayed until …" (press:
+  // "administrative stay").
+  if (/\bstayed pending further order\b|\badministratively stayed\b/i.test(text)) return "administrative_stay";
+  // "it is ordered that the application for stay is denied without prejudice …"
+  const ruling = text.match(/\bordered that the application\b[^.]*/i);
+  const disposition = ruling ? dispositionOf(ruling[0]) : null;
+  if (disposition) return disposition;
+  // "It is hereby ordered that any response to the new application (26A305) be filed by …"
+  if (/\bordered that (?:any |a )?response to the (?:new )?application\b/i.test(text)) return "application_response_requested";
+  return null;
+}
+
 export function classifyApplication(page: ApplicationPage): ApplicationClassification {
   const no = esc(page.docketNumber);
-  const filingRe = new RegExp(`^Application \\(${no}\\)\\s+(.*?)(?:,\\s*submitted to (.+?))?\\.?$`, "i");
+  const filingRe = new RegExp(`^Application \\(${no}\\)\\s+(.*?)(?:,\\s*submitted to ([^.]+?)(?:\\.\\s.*)?)?\\.?$`, "i");
   const filing = page.entries.find((e) => filingRe.test(e.text) && actionOf(page.docketNumber, e.text) === null);
   const m = filing?.text.match(filingRe);
 

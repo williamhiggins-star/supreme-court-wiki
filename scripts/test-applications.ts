@@ -164,6 +164,57 @@ check("wording the rules don't recognise gives no type, never a guess", () => {
   assert.equal(c.pending, true);
 });
 
+console.log("Wording found in the first fill (OT2026)");
+
+const withEntries = (texts: [string, string][]) => classifyApplication({ ...page("26a400"), docketNumber: "26A9", entries: texts.map(([date, text]) => ({ date, text })) });
+
+check("26A499: the Justice stops at the sentence end; the recusal note stays in the verbatim text", () => {
+  const c = withEntries([["2026-10-10", "Application (26A9) to vacate stay, submitted to Justice Sotomayor. (Justice Alito is recused)."]]);
+  assert.equal(c.directedTo, "Justice Sotomayor");
+  assert.equal(c.applicationType, "vacate");
+  assert.match(c.applicationText, /Alito is recused/);
+});
+
+check("26A256: 'for injunctive relief' is an injunction", () => {
+  assert.equal(applicationTypeOf("for injunctive relief"), "injunction");
+});
+
+check("26A194: 'administratively stayed until …' is an administrative stay", () => {
+  const c = withEntries([
+    ["2026-08-10", "Application (26A9) for a stay, submitted to Justice Kagan."],
+    ["2026-08-11", "Order entered by Justice Kagan: Upon consideration of the application of counsel for the applicant, it is ordered that further proceedings in the United States District Court for the Northern District of California, case No. 4:20-cv-5640, are hereby administratively stayed until 5 p.m. (EDT) on Thursday, August 13, 2026."],
+  ]);
+  assert.deepEqual(c.actions.map((a) => a.action), ["administrative_stay"]);
+  assert.equal(c.pending, true);
+});
+
+check("26A382: a Justice's order denying the application decides it", () => {
+  const c = withEntries([
+    ["2026-09-20", "Application (26A9) for a stay, submitted to Justice Sotomayor."],
+    ["2026-09-25", "Order entered by Justice Sotomayor: Upon consideration of the application of counsel for the applicants and the response filed thereto, it is ordered that the application for stay is denied without prejudice to applicants again seeking relief, if necessary, once state court remedies are exhausted."],
+  ]);
+  assert.equal(c.outcome, "application_denied");
+  assert.equal(c.pending, false);
+});
+
+check("26A305: an order calling for a response is not a withdrawal, though it mentions one", () => {
+  const c = withEntries([
+    ["2026-09-05", "Application (26A9) for a stay, submitted to Justice Jackson."],
+    ["2026-09-05", "Order entered by Justice Jackson: The Solicitor General has withdrawn the stay application filed on September 3, 2026 (26A297) and now seeks a stay of the preliminary injunction entered by the United States District Court for the District of Massachusetts on September 4, 2026. It is hereby ordered that any response to the new application (26A9) be filed by 4 p.m. (EDT) on September 9, 2026."],
+  ]);
+  assert.deepEqual(c.actions.map((a) => a.action), ["application_response_requested"]);
+  assert.equal(c.pending, true);
+});
+
+check("26A273: 'Application (…) withdrawn.' ends it", () => {
+  const c = withEntries([
+    ["2026-08-20", "Application (26A9) for a stay, submitted to Justice Kagan."],
+    ["2026-08-22", "Application (26A9) withdrawn."],
+  ]);
+  assert.equal(c.outcome, "application_withdrawn");
+  assert.equal(c.pending, false);
+});
+
 console.log("Contact details and application numbers");
 
 check("emails and phone numbers removed; docket and case numbers kept", () => {
