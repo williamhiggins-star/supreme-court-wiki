@@ -6,9 +6,10 @@
  * term's orders. No history backfill.
  *
  * Finding applications (each docket page is fetched once when new):
- *   - the frontier: sequential numbers above the highest one recorded,
- *     until 3 numbers in a row are not found (404). Numbers missed below
- *     the frontier are retried for 7 days;
+ *   - the frontier: sequential numbers from where the probe last stopped
+ *     (1 for a new series), until 3 numbers in a row are not found (404);
+ *     numbers already recorded are stepped over without a request.
+ *     Numbers missed below the frontier are retried for 7 days;
  *   - application numbers in order PDFs on the Orders of the Court listing
  *     (each PDF read once by this job) and on the in-chambers page.
  * Re-fetching (conditional, If-Modified-Since): only applications still
@@ -41,7 +42,6 @@ import { parseOrdersListing } from "./lib/court-orders/parse.js";
 import { pdfToText } from "./lib/court-orders/pdf-text.js";
 import { DAILY_CAP, DAILY_CAP_BACKFILL, requestsToday } from "./lib/court-orders/daily-cap.js";
 import {
-  APPLICATION_NUMBER,
   applicationNumbersIn,
   classifyApplication,
   docketUrl,
@@ -69,6 +69,8 @@ interface RunStats {
   missing: Record<string, string>;
   added: string[];
   changed: string[];
+  /** Per series ("26"): the highest number the frontier probe has reached. */
+  frontier: Record<string, number>;
   halted?: string;
 }
 
@@ -89,7 +91,6 @@ interface StoredRow extends KnownRow {
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
-const numberOf = (docket: string) => Number(docket.match(APPLICATION_NUMBER)?.[2] ?? 0);
 
 /** Write one application's record and its court_actions. Returns false
  *  when the stored content was already identical. */
@@ -207,7 +208,12 @@ async function main() {
   const used = await requestsToday(creds);
   const cap = Math.min(backfill ? MAX_REQUESTS_BACKFILL : MAX_REQUESTS_PER_RUN, (backfill ? DAILY_CAP_BACKFILL : DAILY_CAP) - used);
 
-  const stats: RunStats = { job: "applications", term, documents: [], missing: {}, added: [], changed: [] };
+  const stats: RunStats = { job: "applications", term, documents: [], missing: {}, added: [], changed: [], frontier: {} };
+  // Carried forward, so a run that halts early loses neither.
+  Object.assign(stats.missing, last?.missing);
+  for (const series of frontierSeries) {
+    stats.frontier[series] = Math.max(0, ...previous.map((r) => r.stats.frontier?.[series] ?? 0));
+  }
   const [run] = await insert<{ id: string }>(creds, "ingest_runs", [{ status: "running", stats }]);
   const fetcher = new CourtFetcher(Math.max(cap, 0));
   let status: "succeeded" | "failed" = "succeeded";
@@ -266,29 +272,31 @@ async function main() {
     for (const r of knownRows) if (r.pending && !done.has(r.docket_number)) await visit(r.docket_number);
 
     // 5. Carried over from earlier runs: retry for a week.
-    for (const [no, since] of Object.entries(last?.missing ?? {})) {
-      if (done.has(no)) continue;
-      if (!(await visit(no)) && Date.parse(today()) - Date.parse(since) < RETRY_MISSING_DAYS * 864e5) stats.missing[no] = since;
+    for (const [no, since] of Object.entries(stats.missing)) {
+      if (done.has(no) || (await visit(no)) || Date.parse(today()) - Date.parse(since) >= RETRY_MISSING_DAYS * 864e5) {
+        delete stats.missing[no];
+      }
     }
 
-    // 6. The frontier.
+    // 6. The frontier: from the last number this probe found (1 for a new
+    //    series), stepping over numbers already recorded without a request.
     for (const series of frontierSeries) {
-      const recorded = [...known.keys(), ...stats.added].filter((n) => n.startsWith(`${series}A`));
-      let n = Math.max(0, ...recorded.map(numberOf)) + 1;
+      let n = stats.frontier[series] + 1;
       const misses: string[] = [];
       while (misses.length < FRONTIER_MISSES) {
         const no = `${series}A${n++}`;
-        if (done.has(no)) continue;
-        if (await visit(no)) {
+        const found = known.has(no) || done.has(no) ? known.has(no) || stats.added.includes(no) : await visit(no);
+        if (found) {
           for (const m of misses) stats.missing[m] = today(); // gaps below a found number
           misses.length = 0;
+          stats.frontier[series] = n - 1;
         } else misses.push(no);
       }
     }
   } catch (err) {
     status = "failed";
     stats.halted = (err as Error).message;
-    for (const no of named) if (!done.has(no)) stats.missing[no] = today();
+    for (const no of named) if (!done.has(no)) stats.missing[no] ??= today();
     // A halt (rate limit, 403, a cap) is the budget working: a warning.
     if (err instanceof CourtFetchHalt) console.log(`::warning title=Application reader halted::${stats.halted}`);
     else reportSdWriteFailure("read-applications", err);
