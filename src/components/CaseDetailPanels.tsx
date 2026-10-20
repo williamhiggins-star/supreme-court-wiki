@@ -863,7 +863,7 @@ function CaseOverviewPanel({
   onSelectItem: (item: string) => void;
 }) {
   const status = getCaseDocketStatus(caseData);
-  const statusLabel = status === "upcoming" ? "Scheduled" : status === "argued" ? "Argued" : "Decided";
+  const statusLabel = status === "upcoming" ? "Set for argument" : status === "argued" ? "Argued" : "Decided";
   const statusDate = status === "decided" ? caseData.decisionDate : caseData.argumentDate;
 
   return (
