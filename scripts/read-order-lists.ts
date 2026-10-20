@@ -6,6 +6,11 @@
  * summary dispositions by per curiam (also recorded in
  * summary_reversals_without_argument, not in cases). OT2026 on only.
  *
+ * Each grant then gets its cases row: found by exact docket number and
+ * linked, or created with status `granted` (never shown on the site);
+ * see scripts/lib/court-orders/granted-cases.ts. Grants not yet linked
+ * (new, or a failed earlier attempt) are picked up on every run.
+ *
  * Writes the database only; nothing here is shown on the site.
  *
  * Each run reads the listing (If-Modified-Since the last complete run),
@@ -21,16 +26,14 @@
  */
 
 import { createHash } from "crypto";
-import { execFileSync } from "child_process";
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
 import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { insert, select, update, upsert } from "./lib/sd-db/client.js";
 import { currentTermYear } from "./lib/sd-db/constants.js";
 import { reportSdWriteFailure } from "./lib/sd-db/failures.js";
 import { CourtFetcher, CourtFetchHalt } from "./lib/court-orders/fetch.js";
 import { parseOrderText, parseOrdersListing, type ParsedAction } from "./lib/court-orders/parse.js";
+import { pdfToText } from "./lib/court-orders/pdf-text.js";
+import { GRANT_ACTIONS, ensureGrantedCase } from "./lib/court-orders/granted-cases.js";
 
 const FIRST_TERM = 2026; // no history before OT2026
 const MAX_REQUESTS_PER_RUN = 40;
@@ -49,19 +52,11 @@ interface RunStats {
   /** True once every PDF on the listing has been recorded. */
   complete?: boolean;
   documents: RecordedDocument[];
+  /** Slugs of cases created as `granted` / existing cases linked to a grant. */
+  grantedCasesCreated?: string[];
+  grantedCasesLinked?: string[];
   requests?: number;
   halted?: string;
-}
-
-function pdfToText(pdf: Buffer): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "order-"));
-  try {
-    const file = path.join(dir, "order.pdf");
-    fs.writeFileSync(file, pdf);
-    return execFileSync("pdftotext", ["-layout", file, "-"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-  } finally {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
 }
 
 async function writeActions(
@@ -100,6 +95,30 @@ async function writeActions(
     );
     for (const r of reversals) {
       console.log(`::notice title=Summary disposition recorded::${r.docket_number}, decided ${r.action_date} (OT${term})`);
+    }
+  }
+}
+
+/** Every grant this term not yet linked to a cases row gets one. A failure
+ *  is loud and leaves the grant unlinked, so the next run retries it. */
+async function linkGrants(creds: SupabaseCredentials, fetcher: CourtFetcher, term: string, stats: RunStats): Promise<void> {
+  const unlinked = await select<{ docket_number: string }>(
+    creds,
+    "court_actions",
+    `?select=docket_number&term=eq.${term}&action=in.(${GRANT_ACTIONS.join(",")})&case_id=is.null&order=action_date`,
+  );
+  if (unlinked.length === 0) return;
+  const [scotus] = await select<{ id: string }>(creds, "courts", "?select=id&slug=eq.scotus");
+  stats.grantedCasesCreated = [];
+  stats.grantedCasesLinked = [];
+  for (const docket of new Set(unlinked.map((r) => r.docket_number))) {
+    try {
+      const c = await ensureGrantedCase(creds, fetcher, scotus.id, docket);
+      (c.created ? stats.grantedCasesCreated : stats.grantedCasesLinked).push(c.slug);
+      console.log(`  grant ${docket}: ${c.created ? "created granted case" : "linked existing case"} ${c.slug}`);
+    } catch (err) {
+      if (err instanceof CourtFetchHalt) throw err;
+      reportSdWriteFailure(`granted case for ${docket}`, err);
     }
   }
 }
@@ -171,6 +190,7 @@ async function main() {
         stats.complete = true;
       }
     }
+    await linkGrants(creds, fetcher, term, stats);
   } catch (err) {
     status = "failed";
     stats.halted = (err as Error).message;

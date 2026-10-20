@@ -260,7 +260,9 @@ async function main() {
     // flag extras that look like they SHOULD have a JSON file (i.e.,
     // aren't marked as stubs) as real mismatches; report the rest as an
     // informational note, not a mismatch.
-    const unexplainedExtra = extra.filter((slug) => dbCaseBySlug.get(slug)?.is_stub === false);
+    // `granted` rows come from the Court's orders (read-order-lists.ts),
+    // not from JSON: a granted case has no file until it's set for argument.
+    const unexplainedExtra = extra.filter((slug) => dbCaseBySlug.get(slug)?.is_stub === false && dbCaseBySlug.get(slug)?.status !== "granted");
     reports.push({
       table: "cases (data/cases + non-statute data/precedents)",
       jsonExpected: jsonCaseSlugs.size,
@@ -270,7 +272,7 @@ async function main() {
       fieldMismatches: [],
     });
     if (extra.length > unexplainedExtra.length) {
-      console.log(`(note: cases table also has ${extra.length - unexplainedExtra.length} stub rows with no JSON counterpart — circuit-opinion stubs and dangling-citation stubs, expected.)`);
+      console.log(`(note: cases table also has ${extra.length - unexplainedExtra.length} stub or granted rows with no JSON counterpart — circuit-opinion stubs, dangling-citation stubs and cert grants not yet set for argument, expected.)`);
     }
   }
 
