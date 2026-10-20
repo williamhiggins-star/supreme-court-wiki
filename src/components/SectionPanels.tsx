@@ -2013,6 +2013,37 @@ function BlankPanel() {
   return <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]" />;
 }
 
+function ShadowDocketIntroPanel() {
+  return (
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-6 pt-[19px]">
+      <p className="mb-[1.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Emergency / Shadow Docket</p>
+      <div className="flex flex-col gap-[1.5em] text-[13px] font-normal not-italic text-[#1A1A1A]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.7 }}>
+        <div>
+          <p>
+            This page tracks applications for interim relief filed during the current term, with the Justice the application was directed to, the lower-court case it comes from, the Court’s actions on it, and the outcome. The data presented here includes applications for/to:
+          </p>
+          <ul className="list-disc pl-5">
+            <li>A stay, or a partial stay, of a lower-court ruling</li>
+            <li>a stay of execution</li>
+            <li>an injunction</li>
+            <li>vacate a stay entered by a lower court</li>
+            <li>recall and stay a lower court’s mandate</li>
+          </ul>
+        </div>
+        <div>
+          <p>Excluded from this public dataset are:</p>
+          <ul className="list-disc pl-5">
+            <li>Bail applications</li>
+            <li>Extensions of time, whether to file a document or to comply with a court order</li>
+            <li>Requests to exceed word or page limits</li>
+            <li>Applications for a certificate of appealability</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PlaceholderPanel({ active, index }: { active: SectionKey; index: number }) {
   return (
     <div className="flex h-full min-w-0 items-center justify-center border border-dashed border-[#C4A882]">
@@ -2815,7 +2846,7 @@ export function SectionPanels({
                 selectedTerm={selectedTerm}
                 onSelectTerm={onSelectTerm}
                 caseCount={allCasesFilteredItems.length}
-              /> : active === "shadow-docket" ? <BlankPanel /> : <PlaceholderPanel active={active} index={1} />}
+              /> : active === "shadow-docket" ? <ShadowDocketIntroPanel /> : <PlaceholderPanel active={active} index={1} />}
       {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : active === "shadow-docket" ? <BlankPanel /> : <PlaceholderPanel active={active} index={2} />}
       {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? opinionsPanel3 : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : active === "shadow-docket" ? <BlankPanel /> : <PlaceholderPanel active={active} index={3} />}
     </>
