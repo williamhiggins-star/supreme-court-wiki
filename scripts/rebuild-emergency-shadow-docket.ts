@@ -1,9 +1,10 @@
 /**
- * rebuild-emergency-shadow-docket.ts — rebuilds the stored
- * emergency_shadow_docket table from application_details under the
- * current rule (scripts/lib/applications/membership.ts), and prints the
- * applications the rule couldn't classify. No requests to the Court.
- * The application reader also runs this at the end of every run.
+ * rebuild-emergency-shadow-docket.ts — the MANUAL full rebuild of
+ * emergency_shadow_docket from application_details under the current rule
+ * (scripts/lib/applications/membership.ts). Run it on purpose, e.g. after
+ * the rule version changes; the nightly run only updates incrementally.
+ * Rows whose public_view a person set by hand keep it. Prints the review
+ * list. No requests to the Court.
  *
  * Run:  npx tsx scripts/rebuild-emergency-shadow-docket.ts
  */
@@ -14,7 +15,11 @@ import { rebuildEmergencyShadowDocket } from "./lib/applications/rebuild.js";
 
 const creds = getCredentials();
 if (!creds) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set");
-rebuildEmergencyShadowDocket(creds).catch((err) => {
+rebuildEmergencyShadowDocket(creds)
+  .then((r) => {
+    for (const u of r.review) console.log(`  review ${u.docket_number} (${u.reason}): ${u.application_text}`);
+  })
+  .catch((err) => {
   reportSdWriteFailure("rebuild-emergency-shadow-docket", err);
   process.exitCode = 1;
 });

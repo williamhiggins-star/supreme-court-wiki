@@ -153,7 +153,8 @@ moves between them:
 - **Application reader** (`scripts/read-applications.ts`, manual until its
   workflow step is approved): records each application (26A…) in
   `application_details` and the Court's actions on it in `court_actions`,
-  then rebuilds the pipeline-only `emergency_shadow_docket` grouping
+  then updates the pipeline-only `emergency_shadow_docket` table incrementally (its
+  `public_view` column is the editorial choice of what will be shown)
   (`docs/emergency-shadow-docket.md`). Nothing on the site reads these.
 - **Order-list reader** (`scripts/read-order-lists.ts`, nightly): records
   each grant, denial, GVR and summary disposition in `court_actions` (not

@@ -24,8 +24,11 @@
  * with any email address or phone number removed. The Attorneys panel is
  * never read.
  *
- * Each run ends by rebuilding emergency_shadow_docket from the records
- * (scripts/lib/applications/membership.ts).
+ * Each run ends with the nightly (incremental) update of
+ * emergency_shadow_docket (scripts/lib/applications/rebuild.ts), and a
+ * ::warning for every application added or changed this run that the rule
+ * can't place, so none sits unseen. The full rebuild is manual only
+ * (scripts/rebuild-emergency-shadow-docket.ts).
  *
  * Writes the database only; nothing here is shown on the site.
  *
@@ -51,7 +54,7 @@ import { CourtFetcher, CourtFetchHalt } from "./lib/court-orders/fetch.js";
 import { parseOrdersListing } from "./lib/court-orders/parse.js";
 import { pdfToText } from "./lib/court-orders/pdf-text.js";
 import { DAILY_CAP, DAILY_CAP_BACKFILL, requestsToday } from "./lib/court-orders/daily-cap.js";
-import { rebuildEmergencyShadowDocket } from "./lib/applications/rebuild.js";
+import { updateEmergencyShadowDocket, type EsdResult } from "./lib/applications/rebuild.js";
 import {
   applicationNumbersIn,
   classifyApplication,
@@ -192,13 +195,28 @@ async function reclassify(creds: SupabaseCredentials): Promise<void> {
   console.log(`[applications] reclassified ${rows.length} record(s); ${changed} changed.`);
 }
 
+/** After each run: every application added or changed this run that the
+ *  rule can't place becomes a warning on the run; the whole list is
+ *  printed (and logged in ingest_runs by the update). */
+function reportForReview(result: EsdResult, touched: string[]): void {
+  const touchedSet = new Set(touched);
+  for (const r of result.review) {
+    if (touchedSet.has(r.docket_number)) {
+      console.log(`::warning title=Application needs review::${r.docket_number} (${r.reason}): ${r.application_text}`);
+    }
+  }
+  if (result.review.length) {
+    console.log(`[applications] review list (${result.review.length}): ${result.review.map((r) => r.docket_number).join(", ")}`);
+  }
+}
+
 async function main() {
   const found = getCredentials();
   if (!found) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set");
   const creds: SupabaseCredentials = found;
   if (process.argv.includes("--reclassify")) {
     await reclassify(creds);
-    await rebuildEmergencyShadowDocket(creds);
+    await updateEmergencyShadowDocket(creds);
     return;
   }
   if (process.env.COURT_ORDERS_OFF === "1") {
@@ -356,9 +374,9 @@ async function main() {
     );
   }
   try {
-    await rebuildEmergencyShadowDocket(creds);
+    reportForReview(await updateEmergencyShadowDocket(creds), [...stats.added, ...stats.changed]);
   } catch (err) {
-    reportSdWriteFailure("emergency_shadow_docket rebuild", err);
+    reportSdWriteFailure("emergency_shadow_docket update", err);
   }
 }
 

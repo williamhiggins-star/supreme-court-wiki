@@ -14,9 +14,9 @@ project (ref `enwjtgjycthjypeqdgfo`). Scope: OT2026 on; no history backfill.
 | `court_vocabulary` | The approved glossary: 109 codes, each with the Court's phrase, source, `provenance` (`court_term` or `derived`) and `evidence` (`verified_fixture` or `unverified_recall`). | Public read. |
 | `court_vocabulary_aliases` | Press and legacy labels mapped to codes: GVR, DIG, summary reversal, relist, cert granted, cert denied, upcoming → `set_for_argument`, petition → `argued`. "Emergency docket" and "shadow docket" are deliberately mapped to nothing. | Public read. |
 | `summary_reversals_without_argument` | One row per summary disposition (per curiam) found in an order list: `docket_number`, `term`, `decided_date`, `court_action_id`, `case_id` (still null). **Empty so far**: none in OT2026 yet. | Pipeline only. |
-| `ingest_runs` | One row per run of the order reader (`stats.job = "order_lists"`), the application reader (`"applications"`) and each emergency/shadow docket rebuild (`"emergency_shadow_docket"`, with the unclassified list), plus the one-time seed (`"granted_noted_seed"`). See §3. | Pipeline only. |
+| `ingest_runs` | One row per run of the order reader (`stats.job = "order_lists"`), the application reader (`"applications"`) and each emergency/shadow docket update or rebuild (`"emergency_shadow_docket"`, with the review list), plus the one-time seed (`"granted_noted_seed"`). See §3. | Pipeline only. |
 | `application_details` (migration `20261021000000_applications.sql`) | One row per application (`26A…`, plus 25A named in this term's orders), in the Court's terms: caption, verbatim filing entry, type and outcome codes, Justice, filing date, lower court, docket entries, docket link, `pending`. The Court's actions on it are `court_actions` rows with the same docket number (source = the docket page). | Pipeline only. |
-| `emergency_shadow_docket` | Not a Court term. The applications seeking interim relief, by rule `esd-rule-1`, rebuilt in full from `application_details` on every run. See `docs/emergency-shadow-docket.md`. | Pipeline only. |
+| `emergency_shadow_docket` (+ migration `20261022000000_esd_public_view.sql`) | Not a Court term. Applications the press may mean by it, plus related matters, by rule `esd-rule-2`. `public_view` (yes/no) is the editorial choice of what will be shown; a trigger marks hand edits (`public_view_set_by_hand`) so the pipeline never overwrites them. Updated incrementally each night; full rebuild is manual. See `docs/emergency-shadow-docket.md`. | Pipeline only. |
 
 Live counts today: 32 `court_actions` rows (the seeded grants, all linked to cases), 0 summary reversals, 1 `ingest_runs` row (the seed).
 
@@ -67,10 +67,11 @@ the stored status. Cases on the same date are ordered by docket number
 - `scripts/read-applications.ts` reads applications. Each run:
   - reads application numbers from order PDFs on the orders listing it hasn't read yet, and from the in-chambers page (both If-Modified-Since);
   - fetches those dockets, re-fetches pending ones (If-Modified-Since), retries numbers missed below the frontier for a week, then probes the frontier (from where it last stopped, until 3 numbers in a row are 404);
-  - classifies with fixed patterns (`scripts/lib/applications/parse.ts`), writes `application_details` and `court_actions`, then rebuilds `emergency_shadow_docket` (`scripts/lib/applications/membership.ts`).
+  - classifies with fixed patterns (`scripts/lib/applications/parse.ts`), writes `application_details` and `court_actions`, then updates `emergency_shadow_docket` incrementally (`scripts/lib/applications/rebuild.ts`) and warns about any new application the rule can't place.
 
   `--reclassify` re-applies the patterns to stored records with no requests. `--backfill` raises the caps for a first fill. **Not in the daily workflow yet:** wiring it in is a separate PR, held for review.
-- `scripts/rebuild-emergency-shadow-docket.ts`: rebuilds the grouping on its own. No requests.
+- `scripts/rebuild-emergency-shadow-docket.ts`: the manual full rebuild, for a new rule version. Keeps hand-set `public_view`. No requests.
+- **How each nightly table is written** (kept consistent): incremental (only new or changed rows) for `court_actions`, `application_details`, `emergency_shadow_docket`, `cases`, `case_podcast_episodes`, and `ingest_runs` (append-only); per case it touches, `syncCase` deletes and reinserts that case's `opinions`, `votes`, `citations`, `case_terms` and `decisions`; rewritten whole per term every night: the derived stats `justice_stats`, `lawyer_stats`, `term_opinion_stats`.
 
 ### Fixtures and tests
 - **Saved Court pages:** `scripts/fixtures/orders/`.
