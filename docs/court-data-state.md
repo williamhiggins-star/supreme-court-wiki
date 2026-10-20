@@ -101,7 +101,7 @@ the stored status. Cases on the same date are ordered by docket number
   - an order day: the listing, plus each new PDF, plus one docket page per new grant;
   - the seed took 11 requests.
 - **Each order PDF is fetched once.** A PDF counts as done once it's listed in an earlier run's `stats.documents`.
-- **Application reader, typical night:** about 15–40 requests: the listing and the in-chambers page (usually 304), any new order PDF, about 5 new dockets plus 3 misses at the frontier, and the pending applications (usually 304). The first fill on 2026-10-20 took 574 requests in two runs (537 applications).
+- **Application reader, typical night:** about 15–40 requests: the listing and the in-chambers page (usually 304), any new order PDF, about 5 new dockets plus 3 misses at the frontier, and the pending applications (usually 304). The first fill on 2026-10-20 took 574 requests in two runs (537 applications), plus 103 for the 25A look-back.
 - **Kill switch:** set the GitHub repository variable `COURT_ORDERS_OFF` to `1` (it stops the application reader too) (Settings → Secrets and variables → Actions → Variables). The step then exits before making any request. Delete the variable, or set any other value, to turn the reader back on.
 
 ## 3. Did the nightly run behave? (check procedure)
@@ -187,7 +187,7 @@ Claude Code may apply an SD migration only with Will's authorization in words in
 
 ## 6. Not done yet
 - **Applications in the daily run:** the workflow step is a separate PR held for review. Until it merges, `read-applications.ts` runs only by hand.
-- **25A applications** are found only when an OT2026 order or the in-chambers page names them. A 25A application still pending with no order this term isn't found.
+- **25A applications:** a one-time look-back (`--look-back=25:100`, 2026-10-20, 103 requests) found the series ends at 25A1468 and recorded 25A1368–25A1468; none was still pending. Older 25A applications are found only when an OT2026 order or the in-chambers page names them. Next October, run `--look-back=26:100` once after the rollover.
 - **Pending cert petitions:** a `dockets` table plus a frontier probe for newly docketed petitions. Dispositions would come from the order lists already read.
 - **Summary reversals into `cases`:** add them as `decided` with a per curiam opinion, as OT2025 and Feldman do, once vote detail can be captured and checked. Until then they are in `summary_reversals_without_argument` only.
 - **More frequent order-list runs:** it runs once a day today. Add more only if same-day latency matters.
