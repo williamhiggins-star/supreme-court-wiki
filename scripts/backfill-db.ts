@@ -37,6 +37,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { getCredentials, type SupabaseCredentials } from "./lib/sd-db/env.js";
 import { select, upsert, insert } from "./lib/sd-db/client.js";
+import { deriveStatus } from "./lib/sd-db/write.js";
 import { toSlug } from "./pipeline.js";
 import { computeDecisionTiesAndPositions } from "./lib/sd-db/decisions.js";
 import { derivePrecedentStatus } from "./lib/sd-db/constants.js";
@@ -441,21 +442,6 @@ function newModel(): Model {
   };
 }
 
-/** Same status derivation the frontend uses (src/app/page.tsx's
- *  getDocketStatus) — applied only to the 4 case files missing docketStatus. */
-function deriveStatus(c: CaseSummary): string {
-  if (c.docketStatus === "decided") return "decided";
-  if (c.docketStatus === "petition") return "petition";
-  if (c.docketStatus === "upcoming") return "upcoming";
-  if (c.outcome) return "decided";
-  if (!c.argumentDate) return "upcoming";
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const [y, m, d] = c.argumentDate.split("-").map(Number);
-  const argDate = new Date(y, m - 1, d);
-  if (argDate > today) return "upcoming";
-  return "argued";
-}
 
 /** Ensures a "thin" circuit-court case stub exists (for circuit_splits'
  *  backing decisions and appellate_impacts' underlying opinions) and returns
@@ -498,7 +484,7 @@ function ensureCircuitCaseStub(
 function buildFromCases(model: Model, report: Report, cases: CaseSummary[], authorRegistry: HistoricAuthorRegistry) {
   for (const c of cases) {
     const status = deriveStatus(c);
-    if (!["petition", "upcoming", "argued", "decided", "historic", "stub"].includes(status)) {
+    if (!["granted", "set_for_argument", "argued", "decided", "historic", "stub"].includes(status)) {
       report.flags.push(`Case ${c.slug}: derived status "${status}" not in schema's status enum — needs manual handling.`);
     }
     // cases_decided_after_argued requires decided_date >= argued_date when

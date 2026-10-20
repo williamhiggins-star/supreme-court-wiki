@@ -36,11 +36,11 @@ import {
 const TRACKED_TERMS = ["2025", "2026"];
 // Excludes historic/stub precedent-citation stubs -- confirmed against
 // live data (2026-09-18) that all 15 term-2025/2026 rows with no
-// docket_number are stub/historic, and all 88 decided/argued/upcoming/
-// petition rows DO have one, so filtering on status here is equivalent to
+// docket_number are stub/historic, and all 88 decided/argued/set-for-
+// argument rows DO have one, so filtering on status here is equivalent to
 // filtering on "has a real docket page" without guessing at URLs for rows
 // that were never real SCOTUS oral-argument-calendar cases.
-const DOCKET_RELEVANT_STATUSES = ["decided", "argued", "upcoming", "petition"];
+const DOCKET_RELEVANT_STATUSES = ["decided", "argued", "set_for_argument"];
 
 const REQUEST_DELAY_MS = 300; // politeness delay between requests to supremecourt.gov
 
