@@ -8,6 +8,7 @@ import { SectionPanels } from "@/components/SectionPanels";
 import { CourtCalendar } from "@/components/CourtCalendar";
 import { CaseDetailPanels } from "@/components/CaseDetailPanels";
 import { CaseTitleBar } from "@/components/CaseTitleBar";
+import { MobileDashboard } from "@/components/MobileDashboard";
 import { DEFAULT_SECTION, type SectionKey } from "@/lib/dashboard2-sections";
 import type { CaseSummary, Article } from "@/types";
 import type { DecidedItem } from "@/lib/docket";
@@ -100,7 +101,52 @@ export function ScotusDashboard2Client({
   const activeCase = activeCaseSlug ? cases.find((c) => c.slug === activeCaseSlug) ?? null : null;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-white">
+    <>
+    <MobileDashboard
+      active={active}
+      onSelectSection={handleSelectSection}
+      activeCase={activeCase}
+      onSelectCase={setActiveCaseSlug}
+      onBack={() => setActiveCaseSlug(null)}
+      upcomingCases={upcomingCases}
+      arguedCases={arguedCases}
+      decidedItems={decidedItems}
+      allCasesItems={allCasesItems}
+      issueCategories={issueCategories}
+      termOptions={termOptions}
+      opinionStatsByTerm={opinionStatsByTerm}
+      selectedOpinionsTerm={selectedOpinionsTerm}
+      onSelectOpinionsTerm={handleSelectOpinionsTerm}
+      calendarEvents={calendarEvents}
+      scotusblogArticles={scotusblogArticles}
+      otherArticles={otherArticles}
+      circuitSplitsBySlug={circuitSplitsBySlug}
+      articlesByCaseSlug={articlesByCaseSlug}
+      shadowDocketRows={shadowDocketRows}
+      today={today}
+      tomorrow={tomorrow}
+      filters={{
+        majorityAuthor: selectedMajorityAuthor,
+        setMajorityAuthor: setSelectedMajorityAuthor,
+        majorityJustices: selectedMajorityJustices,
+        setMajorityJustices: setSelectedMajorityJustices,
+        concurringJustices: selectedConcurringJustices,
+        setConcurringJustices: setSelectedConcurringJustices,
+        concurringJoinedBy: selectedConcurringJoinedBy,
+        setConcurringJoinedByForJustice: handleSelectConcurringJoinedBy,
+        dissentingJustices: selectedDissentingJustices,
+        setDissentingJustices: setSelectedDissentingJustices,
+        dissentingJoinedBy: selectedDissentingJoinedBy,
+        setDissentingJoinedByForJustice: handleSelectDissentingJoinedBy,
+        issue: selectedIssue,
+        setIssue: setSelectedIssue,
+        term: selectedTerm,
+        setTerm: setSelectedTerm,
+      }}
+    />
+    {/* Desktop layout, unchanged. Hidden below md -- phones get
+        MobileDashboard above instead. */}
+    <div className="hidden h-screen flex-col overflow-hidden bg-white md:flex">
       {/* Mobile-only, always visible regardless of section/case -- desktop
           gets the same text via DashboardTitleBar in the footer instead,
           unchanged. */}
@@ -177,5 +223,6 @@ export function ScotusDashboard2Client({
         <BottomTabBar active={active} onSelect={handleSelectSection} />
       </div>
     </div>
+    </>
   );
 }
