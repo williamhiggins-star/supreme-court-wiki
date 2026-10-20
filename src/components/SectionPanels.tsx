@@ -29,7 +29,7 @@ const ARTICLE_PAGE_SIZE = 6;
 
 // Every case title opens the in-place case-panel view (see CaseDetailPanels)
 // instead of navigating to /cases/[slug].
-function CaseTitleLink({ slug, title, onSelectCase, className = "text-[13px] font-normal not-italic text-[#1A1A1A]", lineHeight = 1.4 }: { slug: string; title: string; onSelectCase: (slug: string) => void; className?: string; lineHeight?: number }) {
+export function CaseTitleLink({ slug, title, onSelectCase, className = "text-[13px] font-normal not-italic text-[#1A1A1A]", lineHeight = 1.4 }: { slug: string; title: string; onSelectCase: (slug: string) => void; className?: string; lineHeight?: number }) {
   return (
     <button type="button" onClick={() => onSelectCase(slug)} className={`block border-0 bg-transparent p-0 text-left transition-colors hover:text-[#C43030] ${className}`} style={{ fontFamily: "'Lora', Georgia, serif", lineHeight }}>
       {title}
@@ -39,7 +39,7 @@ function CaseTitleLink({ slug, title, onSelectCase, className = "text-[13px] fon
 
 // Duplicated from src/app/page.tsx (a server component that can't be
 // imported into this client component — it pulls in fs-based data helpers).
-function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
     month: "short",
@@ -49,7 +49,7 @@ function formatDate(dateStr: string): string {
 }
 
 // The nine sitting justices — matches data/justices.json's key/photo pairing.
-const ALL_JUSTICES = [
+export const ALL_JUSTICES = [
   {
     key: "roberts",
     displayName: "Chief Justice Roberts",
@@ -109,9 +109,9 @@ function resolveJustice(slug: string | null | undefined) {
 // app-level key back to the DB person.slug a term_stats_* accessor's data is
 // keyed by (e.g. looking up a specific justice's case list once a "most X"
 // winner has already been picked from the justices prop).
-const PERSON_SLUG_BY_JUSTICE_KEY: Record<string, string> = Object.fromEntries(Object.entries(JUSTICE_KEY_BY_PERSON_SLUG).map(([slug, key]) => [key, slug]));
+export const PERSON_SLUG_BY_JUSTICE_KEY: Record<string, string> = Object.fromEntries(Object.entries(JUSTICE_KEY_BY_PERSON_SLUG).map(([slug, key]) => [key, slug]));
 
-function JusticePortraitGroup({ majorityAuthor, dissentSideJustices }: { majorityAuthor?: string; dissentSideJustices: string[] }) {
+export function JusticePortraitGroup({ majorityAuthor, dissentSideJustices }: { majorityAuthor?: string; dissentSideJustices: string[] }) {
   const [hover, setHover] = useState<{
     x: number;
     y: number;
@@ -314,7 +314,7 @@ function JusticesOpinionsPanel({ justices }: { justices: JusticeStat[] }) {
 // data set panels 2 and 3 show. "Length" is a non-selectable category
 // header over its own two selectable children (Longest/Shortest); "Volume"
 // is a plain top-level selectable item with no children.
-const OPINIONS_MENU: { label: string; children?: readonly string[] }[] = [
+export const OPINIONS_MENU: { label: string; children?: readonly string[] }[] = [
   { label: "Length", children: ["Longest", "Shortest"] },
   { label: "Volume", children: ["All", "Concurrences and Dissents"] },
   { label: "Alignment", children: ["All Votes", "Joiners"] },
@@ -443,7 +443,7 @@ function OpinionsMenuPanel({
 // "No articles." (centered, italic Lora, warm-gray) rather than
 // PlaceholderPanel's dashed-border dev placeholder, since this is a real,
 // expected state, not a stub.
-function OpinionsEmptyState({ term }: { term: string }) {
+export function OpinionsEmptyState({ term }: { term: string }) {
   return (
     <div className="flex h-full min-w-0 items-center justify-center px-6 pb-2 pt-[14px]">
       <p className="text-center text-[13px] font-normal italic text-[#6B6560]" style={{ fontFamily: "'Lora', Georgia, serif", lineHeight: 1.7 }}>
@@ -560,7 +560,7 @@ function OpinionLengthCard({ detail, onSelectCase }: { detail: OpinionLengthDeta
 // term, the extreme majority opinion, and the extreme concurrence -- same
 // layout for both, just fed each one's own extreme (longest or shortest)
 // detail set.
-function OpinionExtremeOverviewPanel({ title, averageWordCount, overall, majority, concurrence, onSelectCase }: { title: "Longest" | "Shortest"; averageWordCount: number | null; overall: OpinionLengthDetail | null; majority: OpinionLengthDetail | null; concurrence: OpinionLengthDetail | null; onSelectCase: (slug: string) => void }) {
+export function OpinionExtremeOverviewPanel({ title, averageWordCount, overall, majority, concurrence, onSelectCase }: { title: "Longest" | "Shortest"; averageWordCount: number | null; overall: OpinionLengthDetail | null; majority: OpinionLengthDetail | null; concurrence: OpinionLengthDetail | null; onSelectCase: (slug: string) => void }) {
   return (
     <div className="flex h-full min-w-0 flex-col gap-[1em] overflow-hidden px-6 pb-2 pt-[14px]">
       <div>
@@ -627,7 +627,7 @@ function JusticeOpinionExtremeRow({ justice, wordCount, maxWordCount, caseSlug, 
   );
 }
 
-function OpinionExtremeByJusticePanel({ title, data, onSelectCase }: { title: "Longest" | "Shortest"; data: JusticeOpinionExtreme[]; onSelectCase: (slug: string) => void }) {
+export function OpinionExtremeByJusticePanel({ title, data, onSelectCase }: { title: "Longest" | "Shortest"; data: JusticeOpinionExtreme[]; onSelectCase: (slug: string) => void }) {
   const rows = data
     .map((entry) => {
       const justice = resolveJustice(entry.justiceSlug);
@@ -814,7 +814,7 @@ function abbreviateVolumeCaseCaption(caption: string): string {
   return caption.replace("Louisiana Department of Corrections and Public Safety", "Louisiana DCPS").replace("Securities and Exchange Commission", "SEC");
 }
 
-function VolumeByJusticePanel({ justices, highlights, onSelectCase }: { justices: JusticeStat[]; highlights: OpinionJoinerHighlights; onSelectCase: (slug: string) => void }) {
+export function VolumeByJusticePanel({ justices, highlights, onSelectCase }: { justices: JusticeStat[]; highlights: OpinionJoinerHighlights; onSelectCase: (slug: string) => void }) {
   const [metric, setMetric] = useState<VolumeMetric>("Total");
   const sorted = [...justices].sort((a, b) => volumeMetricValue(b, metric) - volumeMetricValue(a, metric));
   const maxValue = Math.max(1, ...sorted.map((j) => volumeMetricValue(j, metric)));
@@ -1112,7 +1112,7 @@ type JoinPanelView = (typeof JOIN_PANEL_VIEWS)[number];
 const JOIN_PANEL_MODES = ["Absolute", "Percentage"] as const;
 type JoinPanelMode = (typeof JOIN_PANEL_MODES)[number];
 
-function ConcurrenceJoinPanel({
+export function ConcurrenceJoinPanel({
   concurrenceData,
   dissentData,
 }: {
@@ -1428,7 +1428,7 @@ function VotesComparisonRow({ title, pct, self, other, arrowsPointInward }: { ti
   );
 }
 
-function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate: JusticeMajorityMinorityRate | null; agreementPairs: JusticeAgreementPair[]; justiceSlug: string }) {
+export function MajorityMinorityBarChart({ rate, agreementPairs, justiceSlug }: { rate: JusticeMajorityMinorityRate | null; agreementPairs: JusticeAgreementPair[]; justiceSlug: string }) {
   const selfJustice = resolveJustice(justiceSlug) ?? null;
   const relevantPairs = agreementPairs.filter((p) => p.justiceSlug1 === justiceSlug || p.justiceSlug2 === justiceSlug);
   const mostAlignedPair = relevantPairs.reduce<JusticeAgreementPair | null>((best, p) => (!best || p.agreementPct > best.agreementPct ? p : best), null);
@@ -2024,7 +2024,7 @@ function AllCasesMenuPanel({
   );
 }
 
-function ShadowDocketIntroPanel() {
+export function ShadowDocketIntroPanel() {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-6 pt-[19px]">
       <p className="mb-[1.5em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Emergency / Shadow Docket</p>
@@ -2120,7 +2120,7 @@ const SHADOW_DOCKET_COLUMNS: { key: ShadowDocketSortKey; label: string }[] = [
 
 const LORA = { fontFamily: "'Lora', Georgia, serif" };
 
-function ShadowDocketTablePanel({ rows }: { rows: ShadowDocketRow[] }) {
+export function ShadowDocketTablePanel({ rows }: { rows: ShadowDocketRow[] }) {
   const [search, setSearch] = useState("");
   const [justice, setJustice] = useState<string | null>(null);
   const [term, setTerm] = useState<string | null>(null);
@@ -2274,7 +2274,7 @@ function PlaceholderPanel({ active, index }: { active: SectionKey; index: number
   );
 }
 
-function ArticleListPanel({ title, articles, onNavigateSection }: { title: string; articles: Article[]; onNavigateSection: (key: SectionKey) => void }) {
+export function ArticleListPanel({ title, articles, onNavigateSection }: { title: string; articles: Article[]; onNavigateSection: (key: SectionKey) => void }) {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px]">
       <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">{title}</p>
@@ -2346,7 +2346,7 @@ const SOURCES = [
   { label: "The New York Times", href: "https://www.nytimes.com" },
 ];
 
-function AboutLeftPanel() {
+export function AboutLeftPanel() {
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-6 pt-[19px]">
       <p className="mb-[0.75em] text-center font-serif text-[14px] font-normal text-[#6B6560]">Founder - Admin</p>
@@ -2620,7 +2620,7 @@ function matchesOpinionSide(
   });
 }
 
-function filterAllCasesItems(
+export function filterAllCasesItems(
   items: DecidedItem[],
   selectedMajorityAuthor: string | null,
   selectedMajorityJustices: string[],
@@ -2806,7 +2806,7 @@ function topByCount<T>(items: T[], value: (item: T) => number): T | null {
   return items.reduce<T | null>((best, item) => (!best || value(item) > value(best) ? item : best), null);
 }
 
-function VolumeHighlightsPanel({ justices, highlights }: { justices: JusticeStat[]; highlights: OpinionJoinerHighlights }) {
+export function VolumeHighlightsPanel({ justices, highlights }: { justices: JusticeStat[]; highlights: OpinionJoinerHighlights }) {
   const mostDissents = topByCount(justices, (j) => j.dissents);
   const mostConcurrences = topByCount(justices, (j) => j.concurrences);
   const soloConcurrenceJustice = resolveJustice(highlights.mostSoloConcurrences?.justiceSlug) ?? null;
