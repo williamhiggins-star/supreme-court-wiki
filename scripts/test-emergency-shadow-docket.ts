@@ -13,6 +13,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { classifyApplication, docketUrl, parseApplicationPage, termOf } from "./lib/applications/parse.js";
 import { RULE_VERSION, buildEmergencyShadowDocket, membership, type ApplicationRecord } from "./lib/applications/membership.js";
+import { planNightlyUpdate, type StoredRow } from "./lib/applications/rebuild.js";
 
 const DIR = path.join(process.cwd(), "scripts/fixtures/applications");
 
@@ -112,6 +113,96 @@ check("a changed base record changes its row", () => {
 
 check("an empty base gives an empty table", () => {
   assert.deepEqual(buildEmergencyShadowDocket([]), { rows: [], excluded: 0, review: [] });
+});
+
+console.log("Nightly update: public_view for new and changed matters");
+
+const fixture = (no: string) => records.find((r) => r.docket_number === no)!;
+/** A test record built from a fixture's facts with the Court's wording for another type. */
+const testRecord = (no: string, type: string | null, text: string): ApplicationRecord => ({
+  ...fixture("26A400"),
+  docket_number: no,
+  application_type: type,
+  application_text: text,
+  docket_url: docketUrl(no),
+});
+const newMatters = [
+  fixture("26A476"), // stay (saved page)
+  fixture("25A354"), // partial stay (saved page)
+  fixture("26A456"), // stay of execution (saved page)
+  fixture("25A571"), // injunction (saved page)
+  testRecord("26A901", "vacate", "Application (26A901) to vacate stay, submitted to Justice Sotomayor."),
+  testRecord("26A902", "recall_and_stay_mandate", "Application (26A902) to recall and stay the mandate, submitted to Justice Kagan."),
+  fixture("25A171"), // bail (saved page)
+  testRecord("26A903", null, "Application (26A903) for an extension of time within which to comply with the order of October 5, 2026, submitted to Justice Kavanaugh."),
+];
+/** The stored table as it would be after a nightly insert. */
+const storedFrom = (recs: ApplicationRecord[], byHand: Record<string, boolean> = {}) =>
+  new Map<string, StoredRow>(
+    buildEmergencyShadowDocket(recs).rows.map(({ defaultPublicView, ...r }) => [
+      r.docket_number,
+      { ...r, public_view: byHand[r.docket_number] ?? defaultPublicView, public_view_set_by_hand: r.docket_number in byHand },
+    ]),
+  );
+const pv = (rows: { docket_number: string; public_view: boolean }[]) => rows.map((r) => `${r.docket_number}:${r.public_view ? "yes" : "no"}`);
+
+check("2a: each new core matter enters with public_view yes; bail and extension-to-comply with no", () => {
+  const plan = planNightlyUpdate(buildEmergencyShadowDocket(newMatters), new Map());
+  assert.deepEqual(pv(plan.insert), [
+    "25A171:no", // bail
+    "25A354:yes", // partial stay
+    "25A571:yes", // injunction
+    "26A456:yes", // stay of execution
+    "26A476:yes", // stay
+    "26A901:yes", // vacate a stay
+    "26A902:yes", // recall and stay mandate
+    "26A903:no", // extension of time to comply
+  ]);
+  assert.deepEqual([plan.replace, plan.updateFacts, plan.remove], [[], [], []]);
+});
+
+check("a night with no changes plans no writes", () => {
+  const plan = planNightlyUpdate(buildEmergencyShadowDocket(newMatters), storedFrom(newMatters));
+  assert.deepEqual(plan, { insert: [], replace: [], updateFacts: [], remove: [] });
+});
+
+const reclassified = (no: string, type: string | null, text: string) =>
+  newMatters.map((r) => (r.docket_number === no ? { ...r, application_type: type, application_text: text } : r));
+
+check("2b: a row that becomes core follows the rule to yes; a row that stops being core follows to no", () => {
+  const toCore = planNightlyUpdate(
+    buildEmergencyShadowDocket(reclassified("25A171", "stay", "Application (25A171) for a stay, submitted to Justice Jackson.")),
+    storedFrom(newMatters),
+  );
+  assert.deepEqual(pv(toCore.replace), ["25A171:yes"]);
+  const fromCore = planNightlyUpdate(
+    buildEmergencyShadowDocket(reclassified("26A476", "bail", "Application (26A476) for bail, submitted to The Chief Justice.")),
+    storedFrom(newMatters),
+  );
+  assert.deepEqual(pv(fromCore.replace), ["26A476:no"]);
+  assert.deepEqual([fromCore.insert, fromCore.updateFacts, fromCore.remove], [[], [], []]);
+});
+
+check("2c: a hand-set value survives a reclassification either way (facts refreshed, public_view untouched)", () => {
+  const toCore = planNightlyUpdate(
+    buildEmergencyShadowDocket(reclassified("25A171", "stay", "Application (25A171) for a stay, submitted to Justice Jackson.")),
+    storedFrom(newMatters, { "25A171": false }),
+  );
+  assert.deepEqual(toCore.replace, []);
+  assert.deepEqual(toCore.updateFacts.map((r) => `${r.docket_number}:${r.application_type}`), ["25A171:stay"]);
+  assert.ok(!("public_view" in toCore.updateFacts[0]));
+  const fromCore = planNightlyUpdate(
+    buildEmergencyShadowDocket(reclassified("26A476", "bail", "Application (26A476) for bail, submitted to The Chief Justice.")),
+    storedFrom(newMatters, { "26A476": true }),
+  );
+  assert.deepEqual(fromCore.replace, []);
+  assert.deepEqual(fromCore.updateFacts.map((r) => r.docket_number), ["26A476"]);
+});
+
+check("2c: a hand-set row that no longer qualifies is kept; an unmarked one is removed", () => {
+  const out = reclassified("26A902", "extension_cert_petition", "Application (26A902) to extend the time to file a petition for a writ of certiorari, submitted to Justice Kagan.");
+  assert.deepEqual(planNightlyUpdate(buildEmergencyShadowDocket(out), storedFrom(newMatters)).remove, ["26A902"]);
+  assert.deepEqual(planNightlyUpdate(buildEmergencyShadowDocket(out), storedFrom(newMatters, { "26A902": true })).remove, []);
 });
 
 console.log(`\n${passed} check(s) passed${process.exitCode ? ", some FAILED" : ""}.`);
