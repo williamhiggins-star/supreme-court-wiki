@@ -38,7 +38,12 @@ export type DecidedItem = {
   voteSplit?: string;
   podcastEpisodeUrl?: string;
   majorityAuthor?: string;
-  dissentAuthors: string[];
+  // Every justice on the losing side, from computeDecisionSides() -- dissent
+  // authors AND justices who only joined someone else's dissent. Drives the
+  // list's Majority/Dissent portrait rows, so they agree with voteSplit and
+  // the case page (Trump v. Slaughter: Sotomayor wrote, Kagan and Jackson
+  // joined -- authors alone drew it as 8–1 instead of 6–3).
+  dissentSideJustices: string[];
   majoritySideJustices: string[];
   // Author + joiners per separately-written concurring/dissenting opinion.
   // "Concurring Opinion"/"Dissenting" match on `author` (did this justice
@@ -64,7 +69,8 @@ function buildItem(c: CaseSummary & { voteLine?: string | null }): DecidedItem {
   // upcoming/argued case too -- computeDecisionSides() and every field
   // below tolerate missing decision data, and voteSplit stays undefined
   // (not a bogus "Unanimous") whenever majorityAuthor itself is absent.
-  const dissents = computeDecisionSides(c).losingSide.length;
+  const losingSide = computeDecisionSides(c).losingSide.map((j) => j.key);
+  const dissents = losingSide.length;
   // A per curiam 9-0 is "Per Curiam," never "Unanimous" -- collapsing
   // the two loses the (author-less) per curiam signal entirely. Only
   // matters when the case is actually unanimous; a non-unanimous split
@@ -87,7 +93,7 @@ function buildItem(c: CaseSummary & { voteLine?: string | null }): DecidedItem {
     voteSplit,
     podcastEpisodeUrl: c.podcastEpisodeUrl,
     majorityAuthor: c.majorityAuthor,
-    dissentAuthors: c.dissentAuthors ?? [],
+    dissentSideJustices: losingSide,
     majoritySideJustices: c.majoritySideJustices ?? [],
     concurringSummaries: (c.concurringSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
     dissentSummaries: (c.dissentSummaries ?? []).map((s) => ({ author: s.author, joinedBy: s.joinedBy ?? [] })),
