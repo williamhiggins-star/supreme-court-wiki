@@ -2080,6 +2080,11 @@ const SHADOW_DOCKET_OUTCOME_LABEL: Record<string, string> = {
   application_treated_as_petition: "Treated as a petition",
   dismissed: "Dismissed",
 };
+/** How the table names the Justice. The Court's docket says "The Chief
+ *  Justice"; the table says "Justice Roberts (Chief)", like the others. */
+const justiceLabel = (directedTo: string | null) =>
+  directedTo === "The Chief Justice" ? "Justice Roberts (Chief)" : directedTo ?? "";
+
 const codeLabel = (labels: Record<string, string>, code: string | null) =>
   code ? labels[code] ?? code.replace(/_/g, " ") : "";
 
@@ -2096,7 +2101,7 @@ function shadowDocketSortValue(r: ShadowDocketRow, key: ShadowDocketSortKey): st
     }
     case "title": return r.title.toLowerCase();
     case "application": return r.applicationWording.toLowerCase();
-    case "justice": return (r.directedTo ?? "").toLowerCase();
+    case "justice": return justiceLabel(r.directedTo).toLowerCase();
     case "filed": return r.filedDate ?? "";
     case "status": return r.pending ? 0 : 1;
     case "outcome": return codeLabel(SHADOW_DOCKET_OUTCOME_LABEL, r.outcome).toLowerCase();
@@ -2128,7 +2133,7 @@ function ShadowDocketTablePanel({ rows }: { rows: ShadowDocketRow[] }) {
   const distinct = (values: (string | null)[]) => [...new Set(values.filter((v): v is string => !!v))];
   const justiceOptions = distinct(rows.map((r) => r.directedTo))
     .sort((a, b) => (a === "The Chief Justice" ? -1 : b === "The Chief Justice" ? 1 : a.localeCompare(b)))
-    .map((j) => ({ slug: j, label: j }));
+    .map((j) => ({ slug: j, label: justiceLabel(j) }));
   const termOptions = distinct(rows.map((r) => r.docketNumber.slice(0, 3)))
     .sort((a, b) => b.localeCompare(a))
     .map((t) => ({ slug: t, label: t }));
@@ -2245,7 +2250,7 @@ function ShadowDocketTablePanel({ rows }: { rows: ShadowDocketRow[] }) {
                   </td>
                   <td className={cell} style={{ ...LORA, lineHeight: 1.4 }}>{r.title}</td>
                   <td className={cell} style={{ ...LORA, lineHeight: 1.4 }}>{r.applicationWording}</td>
-                  <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.directedTo ?? "—"}</td>
+                  <td className={`${cell} whitespace-nowrap`} style={LORA}>{justiceLabel(r.directedTo) || "—"}</td>
                   <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.filedDate ? formatDate(r.filedDate) : "—"}</td>
                   <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.pending ? "Pending" : "Closed"}</td>
                   <td className={cell} style={LORA}>{codeLabel(SHADOW_DOCKET_OUTCOME_LABEL, r.outcome) || "—"}</td>
