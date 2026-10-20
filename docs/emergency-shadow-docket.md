@@ -10,7 +10,23 @@ The Court's term is **application** (Rules 22–23; docket numbers like
 | `court_actions` (rows with an `A` docket number) | The Court's actions on each application: referral, response requested, administrative stay, grant, denial, deferral and so on, in the Court's words. | The same docket pages. |
 | `emergency_shadow_docket` | The applications the press and public may mean by that phrase, plus related matters, with the Court's own terms alongside. Deliberately broad. | `application_details`, by the rule below. |
 
-All three are pipeline-only: there is no anon access, and nothing on the site reads them yet.
+All three are pipeline-only: visitors have no access to them.
+
+**On the site:** the dashboard's Shadow Docket section reads the view
+`emergency_shadow_docket_public` (migration `20261024000000`). That view is
+the only public way in. It returns only rows with `public_view = yes` and
+only these columns:
+- docket number and the Court's docket link;
+- caption;
+- type code and the Court's wording of what was asked for;
+- the Justice it was directed to;
+- filing date;
+- pending;
+- outcome code;
+- lower court and case numbers, used for search only.
+
+Never exposed: `rule_version`, `built_at`, `public_view`, the hand-set
+marker, docket entries, outcome text, and anything about attorneys.
 
 ## public_view
 

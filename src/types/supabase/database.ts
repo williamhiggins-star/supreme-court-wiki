@@ -2956,6 +2956,44 @@ export type Database = {
       }
     }
     Views: {
+      emergency_shadow_docket_public: {
+        Row: {
+          application_type: string | null
+          application_wording: string | null
+          directed_to: string | null
+          docket_number: string | null
+          docket_url: string | null
+          filed_date: string | null
+          lower_court: string | null
+          lower_court_case_numbers: string | null
+          outcome: string | null
+          pending: boolean | null
+          title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_shadow_docket_application_type_fkey"
+            columns: ["application_type"]
+            isOneToOne: false
+            referencedRelation: "court_vocabulary"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "emergency_shadow_docket_docket_number_fkey"
+            columns: ["docket_number"]
+            isOneToOne: true
+            referencedRelation: "application_details"
+            referencedColumns: ["docket_number"]
+          },
+          {
+            foreignKeyName: "emergency_shadow_docket_outcome_fkey"
+            columns: ["outcome"]
+            isOneToOne: false
+            referencedRelation: "court_vocabulary"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       term_stats_agreement: {
         Row: {
           agreement_pct: number | null

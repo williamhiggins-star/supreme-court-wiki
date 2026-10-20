@@ -1,5 +1,6 @@
 "use client";
 
+import type { ShadowDocketRow } from "@/lib/db/shadow-docket";
 import { useState } from "react";
 import { BottomTabBar } from "@/components/BottomTabBar";
 import { DashboardTitleBar } from "@/components/DashboardTitleBar";
@@ -32,6 +33,7 @@ export function ScotusDashboard2Client({
   otherArticles,
   circuitSplitsBySlug,
   articlesByCaseSlug,
+  shadowDocketRows,
   today,
   tomorrow,
 }: {
@@ -50,6 +52,7 @@ export function ScotusDashboard2Client({
   otherArticles: Article[];
   circuitSplitsBySlug: Record<string, CircuitSplit>;
   articlesByCaseSlug: Record<string, Article[]>;
+  shadowDocketRows: ShadowDocketRow[];
   today: string;
   tomorrow: string;
 }) {
@@ -143,6 +146,7 @@ export function ScotusDashboard2Client({
             otherArticles={otherArticles}
             onSelectCase={setActiveCaseSlug}
             onNavigateSection={handleSelectSection}
+            shadowDocketRows={shadowDocketRows}
             today={today}
             tomorrow={tomorrow}
             selectedMajorityAuthor={selectedMajorityAuthor}

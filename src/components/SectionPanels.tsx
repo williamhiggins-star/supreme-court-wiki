@@ -19,6 +19,7 @@ import type {
   JusticeMajorityMinorityRate,
 } from "@/lib/db/term-stats";
 import type { OpinionTermStats } from "@/lib/scotusdashboard2-data";
+import type { ShadowDocketRow } from "@/lib/db/shadow-docket";
 
 const DOCKET_PAGE_SIZE = 4;
 // Upcoming shows one more than Argued/Decided -- a deliberate, requested
@@ -1574,7 +1575,23 @@ function MajorityAuthorFilter({ value, onChange }: { value: string | null; onCha
 // Pack issue categories vs. 9 justices) -- a single column at this width
 // runs to 38 rows, likely taller than the (overflow-hidden, unscrolled)
 // filters panel can show without clipping past the bottom edge.
-function IssueFilter({ options, value, onChange }: { options: { slug: string; label: string }[]; value: string | null; onChange: (slug: string | null) => void }) {
+// Also used by the Shadow Docket table's filters, with its own label,
+// "all" wording and width; the defaults are the All Cases Issue filter.
+function IssueFilter({
+  options,
+  value,
+  onChange,
+  label = "Issue",
+  allLabel = "All Issues",
+  className = "w-1/2",
+}: {
+  options: { slug: string; label: string }[];
+  value: string | null;
+  onChange: (slug: string | null) => void;
+  label?: string;
+  allLabel?: string;
+  className?: string;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const selected = value ? options.find((o) => o.slug === value) : undefined;
@@ -1589,14 +1606,14 @@ function IssueFilter({ options, value, onChange }: { options: { slug: string; la
   }, [open]);
 
   return (
-    <div ref={ref} className="relative w-1/2">
+    <div ref={ref} className={`relative ${className}`}>
       <div className="inline-flex w-max max-w-none items-center gap-[6px] whitespace-nowrap">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
           className="inline-flex items-center gap-[6px] border-0 bg-transparent p-0 text-left transition-colors hover:text-[#C43030]"
         >
-          <span className="font-serif text-[13px] font-normal not-italic text-[#6B6560]">Issue</span>
+          <span className="font-serif text-[13px] font-normal not-italic text-[#6B6560]">{label}</span>
           <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
         </button>
         {selected && (
@@ -1626,7 +1643,7 @@ function IssueFilter({ options, value, onChange }: { options: { slug: string; la
             className="block w-full px-2 py-[6px] text-left text-[13px] not-italic text-[#1A1A1A] transition-colors hover:text-[#C43030]"
             style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: value === null ? 700 : 400 }}
           >
-            All Issues
+            {allLabel}
           </button>
           {/* Capped height + scroll -- 38 options in 2 columns runs to 19
               rows, taller than the filters panel (overflow-hidden, no
@@ -2038,11 +2055,208 @@ function ShadowDocketIntroPanel() {
   );
 }
 
-/** Shadow Docket's second panel: spans the second and third columns (and
- *  the gap between them) on desktop. Dotted border to show its edges while
- *  it's empty. */
-function ShadowDocketWidePanel() {
-  return <div className="flex h-full min-w-0 flex-col overflow-hidden border border-dotted border-[#C4A882] px-6 pb-2 pt-[14px] md:col-span-2" />;
+// ---------------------------------------------------------------------------
+// Shadow Docket table: the public Emergency / Shadow Docket rows
+// (src/lib/db/shadow-docket.ts), searched, filtered and sorted in the
+// browser. Spans the second and third columns on desktop.
+
+/** Plain labels for the Court's application-type and outcome codes. */
+const SHADOW_DOCKET_TYPE_LABEL: Record<string, string> = {
+  stay: "Stay",
+  partial_stay: "Partial stay",
+  stay_of_execution: "Stay of execution",
+  injunction: "Injunction",
+  vacate: "Vacate",
+  recall_and_stay_mandate: "Recall and stay mandate",
+};
+const SHADOW_DOCKET_OUTCOME_LABEL: Record<string, string> = {
+  application_granted: "Granted",
+  application_granted_in_part: "Granted in part",
+  application_denied: "Denied",
+  application_denied_as_moot: "Denied as moot",
+  referred_to_the_court: "Referred to the Court",
+  application_deferred: "Deferred",
+  application_withdrawn: "Withdrawn",
+  application_treated_as_petition: "Treated as a petition",
+  dismissed: "Dismissed",
+};
+const codeLabel = (labels: Record<string, string>, code: string | null) =>
+  code ? labels[code] ?? code.replace(/_/g, " ") : "";
+
+type ShadowDocketSortKey = "docket" | "title" | "application" | "justice" | "filed" | "status" | "outcome";
+
+/** "26A476" → [26, 476], so dockets sort by series then number. */
+const docketParts = (no: string) => no.split("A").map(Number);
+
+function shadowDocketSortValue(r: ShadowDocketRow, key: ShadowDocketSortKey): string | number {
+  switch (key) {
+    case "docket": {
+      const [series, n] = docketParts(r.docketNumber);
+      return series * 100000 + n;
+    }
+    case "title": return r.title.toLowerCase();
+    case "application": return r.applicationWording.toLowerCase();
+    case "justice": return (r.directedTo ?? "").toLowerCase();
+    case "filed": return r.filedDate ?? "";
+    case "status": return r.pending ? 0 : 1;
+    case "outcome": return codeLabel(SHADOW_DOCKET_OUTCOME_LABEL, r.outcome).toLowerCase();
+  }
+}
+
+const SHADOW_DOCKET_COLUMNS: { key: ShadowDocketSortKey; label: string }[] = [
+  { key: "docket", label: "Docket" },
+  { key: "title", label: "Case" },
+  { key: "application", label: "Application" },
+  { key: "justice", label: "Directed to" },
+  { key: "filed", label: "Filed" },
+  { key: "status", label: "Status" },
+  { key: "outcome", label: "Outcome" },
+];
+
+const LORA = { fontFamily: "'Lora', Georgia, serif" };
+
+function ShadowDocketTablePanel({ rows }: { rows: ShadowDocketRow[] }) {
+  const [search, setSearch] = useState("");
+  const [justice, setJustice] = useState<string | null>(null);
+  const [term, setTerm] = useState<string | null>(null);
+  const [type, setType] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<string | null>(null);
+  const [sort, setSort] = useState<{ key: ShadowDocketSortKey; desc: boolean }>({ key: "filed", desc: true });
+
+  // Filter options come from the rows themselves.
+  const distinct = (values: (string | null)[]) => [...new Set(values.filter((v): v is string => !!v))];
+  const justiceOptions = distinct(rows.map((r) => r.directedTo))
+    .sort((a, b) => (a === "The Chief Justice" ? -1 : b === "The Chief Justice" ? 1 : a.localeCompare(b)))
+    .map((j) => ({ slug: j, label: j }));
+  const termOptions = distinct(rows.map((r) => r.docketNumber.slice(0, 3)))
+    .sort((a, b) => b.localeCompare(a))
+    .map((t) => ({ slug: t, label: t }));
+  const typeOptions = distinct(rows.map((r) => r.applicationType)).map((t) => ({ slug: t, label: codeLabel(SHADOW_DOCKET_TYPE_LABEL, t) }));
+  const statusOptions = [
+    { slug: "pending", label: "Pending" },
+    { slug: "closed", label: "Closed" },
+  ];
+  const outcomeOptions = distinct(rows.map((r) => r.outcome)).map((o) => ({ slug: o, label: codeLabel(SHADOW_DOCKET_OUTCOME_LABEL, o) }));
+
+  const q = search.trim().toLowerCase();
+  const shown = rows
+    .filter(
+      (r) =>
+        (!q ||
+          [r.docketNumber, r.title, r.lowerCourt, r.lowerCourtCaseNumbers].some((v) => v?.toLowerCase().includes(q))) &&
+        (!justice || r.directedTo === justice) &&
+        (!term || r.docketNumber.startsWith(term)) &&
+        (!type || r.applicationType === type) &&
+        (!status || (status === "pending") === r.pending) &&
+        (!outcome || r.outcome === outcome),
+    )
+    .sort((a, b) => {
+      const x = shadowDocketSortValue(a, sort.key);
+      const y = shadowDocketSortValue(b, sort.key);
+      const c = x < y ? -1 : x > y ? 1 : 0;
+      // Ties: newest docket first.
+      const newestDocketFirst = (shadowDocketSortValue(b, "docket") as number) - (shadowDocketSortValue(a, "docket") as number);
+      return (sort.desc ? -c : c) || newestDocketFirst;
+    });
+
+  const anyFilter = !!(q || justice || term || type || status || outcome);
+  function clearFilters() {
+    setSearch("");
+    setJustice(null);
+    setTerm(null);
+    setType(null);
+    setStatus(null);
+    setOutcome(null);
+  }
+  function onSort(key: ShadowDocketSortKey) {
+    setSort((s) => (s.key === key ? { key, desc: !s.desc } : { key, desc: key === "filed" }));
+  }
+
+  const cell = "px-2 py-[6px] align-top text-[12px] font-normal not-italic text-[#1A1A1A]";
+  return (
+    <div className="flex h-full min-w-0 flex-col overflow-hidden px-6 pb-2 pt-[14px] md:col-span-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-x-6 gap-y-2">
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search docket number, case, or lower court"
+          aria-label="Search applications"
+          className="min-w-[220px] flex-1 border-0 border-b border-[#C4A882] bg-transparent px-0 py-[4px] text-[13px] text-[#1A1A1A] outline-none placeholder:text-[#6B6560] focus:border-[#C43030]"
+          style={LORA}
+        />
+        <span className="text-[12px] text-[#6B6560]" style={LORA} aria-live="polite">
+          Showing {shown.length} of {rows.length}
+        </span>
+        <button
+          type="button"
+          onClick={clearFilters}
+          disabled={!anyFilter}
+          className="font-serif text-[13px] text-[#6B6560] transition-colors enabled:hover:text-[#C43030] disabled:opacity-40"
+        >
+          Clear filters
+        </button>
+      </div>
+      <div className="mt-[0.8em] flex shrink-0 flex-wrap items-center gap-x-6 gap-y-2">
+        <IssueFilter label="Justice" allLabel="All Justices" options={justiceOptions} value={justice} onChange={setJustice} className="w-auto" />
+        <IssueFilter label="Term" allLabel="All terms" options={termOptions} value={term} onChange={setTerm} className="w-auto" />
+        <IssueFilter label="Application type" allLabel="All types" options={typeOptions} value={type} onChange={setType} className="w-auto" />
+        <IssueFilter label="Status" allLabel="All" options={statusOptions} value={status} onChange={setStatus} className="w-auto" />
+        <IssueFilter label="Outcome" allLabel="All outcomes" options={outcomeOptions} value={outcome} onChange={setOutcome} className="w-auto" />
+      </div>
+      <ScrollableRegion outerClassName="mt-[0.8em] min-h-0 flex-1" innerClassName="overflow-x-auto">
+        <table className="w-full min-w-[760px] border-collapse text-left">
+          <thead className="sticky top-0 z-[1] bg-white">
+            <tr className="border-b border-[#C4A882]">
+              {SHADOW_DOCKET_COLUMNS.map((c) => (
+                <th key={c.key} scope="col" className="px-2 py-[6px] font-normal" aria-sort={sort.key === c.key ? (sort.desc ? "descending" : "ascending") : "none"}>
+                  <button
+                    type="button"
+                    onClick={() => onSort(c.key)}
+                    className="inline-flex items-center gap-[4px] whitespace-nowrap font-serif text-[13px] text-[#6B6560] transition-colors hover:text-[#C43030]"
+                  >
+                    {c.label}
+                    <span className="text-[9px]">{sort.key === c.key ? (sort.desc ? "▼" : "▲") : ""}</span>
+                  </button>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {shown.length === 0 ? (
+              <tr>
+                <td colSpan={SHADOW_DOCKET_COLUMNS.length} className="px-2 py-[2em] text-center text-[13px] italic text-[#6B6560]" style={LORA}>
+                  No applications match.{" "}
+                  {anyFilter && (
+                    <button type="button" onClick={clearFilters} className="not-italic underline transition-colors hover:text-[#C43030]">
+                      Clear filters
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ) : (
+              shown.map((r) => (
+                <tr key={r.docketNumber} className="border-b border-[#C4A882]/40">
+                  <td className={`${cell} whitespace-nowrap`} style={LORA}>
+                    <a href={r.docketUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[#C43030]">
+                      {r.docketNumber}
+                    </a>
+                  </td>
+                  <td className={cell} style={{ ...LORA, lineHeight: 1.4 }}>{r.title}</td>
+                  <td className={cell} style={{ ...LORA, lineHeight: 1.4 }}>{r.applicationWording}</td>
+                  <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.directedTo ?? "—"}</td>
+                  <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.filedDate ? formatDate(r.filedDate) : "—"}</td>
+                  <td className={`${cell} whitespace-nowrap`} style={LORA}>{r.pending ? "Pending" : "Closed"}</td>
+                  <td className={cell} style={LORA}>{codeLabel(SHADOW_DOCKET_OUTCOME_LABEL, r.outcome) || "—"}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </ScrollableRegion>
+    </div>
+  );
 }
 
 function PlaceholderPanel({ active, index }: { active: SectionKey; index: number }) {
@@ -2667,6 +2881,7 @@ export function SectionPanels({
   onNavigateSection,
   today,
   tomorrow,
+  shadowDocketRows,
   selectedMajorityAuthor,
   onSelectMajorityAuthor,
   selectedMajorityJustices,
@@ -2701,6 +2916,7 @@ export function SectionPanels({
   onNavigateSection: (key: SectionKey) => void;
   today: string;
   tomorrow: string;
+  shadowDocketRows: ShadowDocketRow[];
   selectedMajorityAuthor: string | null;
   onSelectMajorityAuthor: (key: string | null) => void;
   selectedMajorityJustices: string[];
@@ -2848,7 +3064,7 @@ export function SectionPanels({
                 onSelectTerm={onSelectTerm}
                 caseCount={allCasesFilteredItems.length}
               /> : active === "shadow-docket" ? <ShadowDocketIntroPanel /> : <PlaceholderPanel active={active} index={1} />}
-      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : active === "shadow-docket" ? <ShadowDocketWidePanel /> : <PlaceholderPanel active={active} index={2} />}
+      {active === "about" ? <AboutRightPanel /> : active === "docket" ? <DocketArguedPanel cases={arguedCases} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <OralArgumentsImagePanel /> : active === "opinions" ? opinionsPanel2 : active === "analysis" ? <ThirdPartySourcesImagePanel /> : active === "all-cases" ? <AllCasesListPanel items={allCasesFilteredItems} today={today} onSelectCase={onSelectCase} /> : active === "shadow-docket" ? <ShadowDocketTablePanel rows={shadowDocketRows} /> : <PlaceholderPanel active={active} index={2} />}
       {active === "about" ? <AboutLeftPanel /> : active === "docket" ? <DocketDecidedPanel items={decidedItems} today={today} onSelectCase={onSelectCase} onNavigateSection={onNavigateSection} /> : active === "justices" ? <JusticesOpinionsPanel justices={justices} /> : active === "opinions" ? opinionsPanel3 : active === "analysis" ? <ArticleListPanel title="General Journalism" articles={otherArticles} onNavigateSection={onNavigateSection} /> : active === "all-cases" ? <AllCasesImagePanel /> : active === "shadow-docket" ? null : <PlaceholderPanel active={active} index={3} />}
     </>
   );
