@@ -111,7 +111,7 @@ function resolveJustice(slug: string | null | undefined) {
 // winner has already been picked from the justices prop).
 const PERSON_SLUG_BY_JUSTICE_KEY: Record<string, string> = Object.fromEntries(Object.entries(JUSTICE_KEY_BY_PERSON_SLUG).map(([slug, key]) => [key, slug]));
 
-function JusticePortraitGroup({ majorityAuthor, dissentAuthors }: { majorityAuthor?: string; dissentAuthors: string[] }) {
+function JusticePortraitGroup({ majorityAuthor, dissentSideJustices }: { majorityAuthor?: string; dissentSideJustices: string[] }) {
   const [hover, setHover] = useState<{
     x: number;
     y: number;
@@ -130,7 +130,7 @@ function JusticePortraitGroup({ majorityAuthor, dissentAuthors }: { majorityAuth
       </p>
     );
   }
-  const dissentSet = new Set(dissentAuthors);
+  const dissentSet = new Set(dissentSideJustices);
   const majority = ALL_JUSTICES.filter((j) => !dissentSet.has(j.key));
   const dissent = ALL_JUSTICES.filter((j) => dissentSet.has(j.key));
 
@@ -2565,7 +2565,7 @@ function DocketDecidedPanel({ items, today, onSelectCase, onNavigateSection }: {
                     )}
                   </div>
                   <div>
-                    <JusticePortraitGroup majorityAuthor={item.majorityAuthor} dissentAuthors={item.dissentAuthors} />
+                    <JusticePortraitGroup majorityAuthor={item.majorityAuthor} dissentSideJustices={item.dissentSideJustices} />
                   </div>
                 </div>
               );
@@ -2707,7 +2707,7 @@ function AllCasesListPanel({ items, today, onSelectCase }: { items: DecidedItem[
                   )}
                 </div>
                 <div>
-                  <JusticePortraitGroup majorityAuthor={item.majorityAuthor} dissentAuthors={item.dissentAuthors} />
+                  <JusticePortraitGroup majorityAuthor={item.majorityAuthor} dissentSideJustices={item.dissentSideJustices} />
                 </div>
               </div>
             );
