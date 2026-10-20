@@ -1,4 +1,4 @@
-import { getDocketStatus, buildDecidedList, buildAllCasesList, type DecidedItem } from "@/lib/docket";
+import { getDocketStatus, buildDecidedList, buildAllCasesList, compareDocketNumbers, type DecidedItem } from "@/lib/docket";
 import { getCalendarJson, buildCalendarEvents, type CalendarEvent } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
 import { getCircuitSplitsData, type CircuitSplit } from "@/lib/circuit-splits";
@@ -191,10 +191,10 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
     else decidedCases.push(c);
   }
   // Soonest first, same as the homepage.
-  upcomingCases.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate));
+  upcomingCases.sort((a, b) => a.argumentDate.localeCompare(b.argumentDate) || compareDocketNumbers(a, b));
   // Most recently argued first (no longer relying on getAllCases()'s
   // incidental JSON file order now that this is DB-sourced).
-  arguedCases.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate));
+  arguedCases.sort((a, b) => b.argumentDate.localeCompare(a.argumentDate) || compareDocketNumbers(a, b));
   const decidedItems = buildDecidedList(decidedCases);
   // All Cases panel: every tracked case regardless of Docket status, not
   // just decided ones (decidedItems above stays decided-only -- that's

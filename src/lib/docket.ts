@@ -95,12 +95,26 @@ function buildItem(c: CaseSummary & { voteLine?: string | null }): DecidedItem {
   };
 }
 
+// Tie-break for cases on the same date: docket number, ascending
+// ("25-965" before "26-426"; applications like "25A312" after a term's
+// numbered petitions; slugs start with the docket number). A placeholder
+// until the Court's argument order or time of day is available; without
+// it, ties came out in database order.
+export function compareDocketNumbers(a: { slug: string }, b: { slug: string }): number {
+  const key = (slug: string) => {
+    const m = slug.match(/^(\d+)(-|a)(\d+)/i);
+    return m ? [Number(m[1]), m[2] === "-" ? 0 : 1, Number(m[3])] : [0, 0, 0];
+  };
+  const [ka, kb] = [key(a.slug), key(b.slug)];
+  return ka[0] - kb[0] || ka[1] - kb[1] || ka[2] - kb[2];
+}
+
 export function buildDecidedList(decidedCases: (CaseSummary & { voteLine?: string | null })[]): DecidedItem[] {
   const items = decidedCases.map(buildItem);
   items.sort((a, b) => {
     const dateA = a.decisionDate ?? a.sub.split(" ")[0];
     const dateB = b.decisionDate ?? b.sub.split(" ")[0];
-    return dateB.localeCompare(dateA);
+    return dateB.localeCompare(dateA) || compareDocketNumbers(a, b);
   });
   return items;
 }
@@ -118,10 +132,10 @@ export function buildAllCasesList(cases: (CaseSummary & { voteLine?: string | nu
   const rank = { decided: 0, argued: 1, upcoming: 2 };
   items.sort((a, b) => {
     if (rank[a.docketStatus] !== rank[b.docketStatus]) return rank[a.docketStatus] - rank[b.docketStatus];
-    if (a.docketStatus === "upcoming") return a.argumentDate.localeCompare(b.argumentDate);
+    if (a.docketStatus === "upcoming") return a.argumentDate.localeCompare(b.argumentDate) || compareDocketNumbers(a, b);
     const dateA = a.decisionDate ?? a.argumentDate;
     const dateB = b.decisionDate ?? b.argumentDate;
-    return dateB.localeCompare(dateA);
+    return dateB.localeCompare(dateA) || compareDocketNumbers(a, b);
   });
   return items;
 }
