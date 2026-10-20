@@ -23,7 +23,8 @@ export class CourtFetchHalt extends Error {
 }
 
 export interface CourtResponse {
-  status: 200 | 304;
+  /** 404 only when the caller passed { notFoundOk: true }. */
+  status: 200 | 304 | 404;
   body: Buffer;
   lastModified: string | null;
 }
@@ -37,7 +38,9 @@ export class CourtFetcher {
 
   constructor(private readonly maxRequests: number) {}
 
-  async get(url: string, ifModifiedSince?: string | null): Promise<CourtResponse> {
+  /** `notFoundOk`: a 404 is an answer (a docket number not yet in use),
+   *  returned as status 404 instead of thrown. */
+  async get(url: string, ifModifiedSince?: string | null, opts: { notFoundOk?: boolean } = {}): Promise<CourtResponse> {
     for (;;) {
       if (this.requests >= this.maxRequests) throw new CourtFetchHalt(`request cap of ${this.maxRequests} reached`);
       const wait = this.lastAt + MIN_SPACING_MS - Date.now();
@@ -59,6 +62,7 @@ export class CourtFetcher {
       if (res.status === 200) {
         return { status: 200, body: Buffer.from(await res.arrayBuffer()), lastModified: res.headers.get("last-modified") };
       }
+      if (res.status === 404 && opts.notFoundOk) return { status: 404, body: Buffer.alloc(0), lastModified: null };
       if (res.status === 403) throw new CourtFetchHalt(`403 from ${url}; halting`);
       if (res.status === 429 || res.status >= 500) {
         await this.backOff(`${res.status} from ${url}`);
