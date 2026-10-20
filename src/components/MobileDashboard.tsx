@@ -227,14 +227,19 @@ function MobileHeader({ active, onSelectSection }: { active: SectionKey; onSelec
   const [open, setOpen] = useState(false);
   return (
     <div className="px-6 pt-3">
-      <div className="flex items-center justify-between gap-3">
+      {/* The title is centred on the full width; the menu button sits on
+          top of the row's left edge so it never pushes the title off-centre. */}
+      <div className="relative flex min-h-[36px] items-center justify-center">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
-          className="border border-[#C4A882] bg-[#FAFAF7] px-3 py-[5px] font-serif text-[13px] uppercase tracking-[0.04em] text-[#1A1A1A]"
+          aria-label="Menu"
+          className={`absolute left-0 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full border text-[#1A1A1A] transition-colors hover:text-[#C43030] ${
+            open ? "border-[#1A1A1A] bg-[#F2EDE3]" : "border-[#C4A882] bg-[#FAFAF7]"
+          }`}
         >
-          Menu <span className="text-[9px] text-[#6B6560]">{open ? "▲" : "▼"}</span>
+          <GavelIcon />
         </button>
         <span className="font-serif text-[20px] font-normal italic text-[#1A1A1A]">SCOTUS Dashboard</span>
       </div>
@@ -258,6 +263,21 @@ function MobileHeader({ active, onSelectSection }: { active: SectionKey; onSelec
         </nav>
       )}
     </div>
+  );
+}
+
+// Gavel head tilted up-left, handle down-right, sound block underneath.
+function GavelIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <g transform="translate(2 0.5)">
+        <g transform="rotate(-45 12 11)">
+          <rect x="6" y="3" width="12" height="6" rx="1.5" />
+          <rect x="11" y="8.5" width="2" height="10.5" rx="1" />
+        </g>
+        <rect x="3" y="19" width="10" height="2.5" rx="1" />
+      </g>
+    </svg>
   );
 }
 
