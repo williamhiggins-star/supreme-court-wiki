@@ -26,17 +26,10 @@ export function BottomTabBar({
   sections?: { key: SectionKey; label: string }[];
   hideMobileSelect?: boolean;
 }) {
-  // Splitting on "all-cases" and laying the row out as 1fr / auto / 1fr
-  // puts it at true page-center (lined up under About) regardless of how
-  // much text flanks it on either side -- a plain centered flex row would
-  // only land the middle ITEM there if both sides happened to add up to
-  // the same width, which "The Docket"/"Court Calendar" vs. "Opinions
-  // Data"/"Third Party Analysis" don't.
+  // The whole row is centered on the page. (It used to pin "All Cases" to
+  // the exact center, which only balanced with the same number of sections
+  // on each side.)
   const shown = sections.filter(({ key }) => key !== "about");
-  const centerIdx = shown.findIndex(({ key }) => key === "all-cases");
-  const before = centerIdx === -1 ? shown : shown.slice(0, centerIdx);
-  const center = centerIdx === -1 ? null : shown[centerIdx];
-  const after = centerIdx === -1 ? [] : shown.slice(centerIdx + 1);
 
   function renderButton({ key, label }: { key: SectionKey; label: string }) {
     return (
@@ -55,10 +48,8 @@ export function BottomTabBar({
 
   return (
     <>
-      <nav className="hidden grid-cols-[1fr_auto_1fr] items-center gap-x-8 px-6 py-5 md:grid">
-        <div className="flex flex-wrap items-center justify-end gap-x-8 gap-y-3">{before.map(renderButton)}</div>
-        <div className="flex items-center justify-center">{center && renderButton(center)}</div>
-        <div className="flex flex-wrap items-center justify-start gap-x-8 gap-y-3">{after.map(renderButton)}</div>
+      <nav className="hidden flex-wrap items-center justify-center gap-x-8 gap-y-3 px-6 py-5 md:flex">
+        {shown.map(renderButton)}
       </nav>
       {!hideMobileSelect && (
         <select
