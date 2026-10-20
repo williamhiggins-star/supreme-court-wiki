@@ -22,13 +22,19 @@ of what will be shown publicly.
 is or isn't "shadow docket". The table is meant to over-include, and
 `public_view` is where the choice of what to show is made.
 
-- **New rows:** the rule sets the starting value (below).
-- **Hand edits:** anyone can change it on a row. A database trigger then marks
-  that row `public_view_set_by_hand = true`, automatically.
-- **Hand edits are never overwritten:**
-  - the pipeline never changes `public_view` on an existing row;
-  - the nightly update leaves it alone;
-  - the full rebuild keeps it on every row marked as set by hand.
+- **Set automatically:** for every new row, and again whenever a row's
+  application is reclassified (e.g. it enters as bail and later becomes a
+  stay). No manual step is needed.
+- **Hand edits:** anyone can write `public_view` on a row, even writing the
+  same value to confirm it. A database trigger then marks that row
+  `public_view_set_by_hand = true`, automatically.
+- **Hand edits are never overwritten.** For a marked row:
+  - the nightly update and the full rebuild refresh the facts only;
+  - the row stays even if it would no longer qualify.
+
+  The pipeline never writes `public_view` in an update. New and
+  reclassified rows are inserted, so the rule's value is never mistaken
+  for a hand edit.
 - **Handing a row back to the rule:** set `public_view_set_by_hand = false`
   on it. The next full rebuild then applies the rule's value.
 
@@ -69,12 +75,13 @@ as unclassified and kept out.
 **Nightly update (automatic).** At the end of every application-reader run:
 - adds a row for each new qualifying application, with `public_view` from
   the rule;
-- updates the facts (status, outcome, the Court's text) of rows whose
-  application changed;
+- when an application changed (status, outcome, the Court's text,
+  classification), replaces its row, so `public_view` follows the rule
+  again;
+- rows set by hand only get their facts refreshed;
 - removes rows that no longer qualify, unless a person set them by hand.
 
-It never writes `public_view` on an existing row. A night with no new or
-changed applications writes nothing.
+A night with no new or changed applications writes nothing.
 
 **Full rebuild (manual only).** Run `npx tsx
 scripts/rebuild-emergency-shadow-docket.ts` on purpose, typically after a

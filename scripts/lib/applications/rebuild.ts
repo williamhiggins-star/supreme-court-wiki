@@ -2,10 +2,11 @@
  * Writing emergency_shadow_docket from application_details. Two ways:
  *
  *   updateEmergencyShadowDocket  nightly, incremental: adds rows for new
- *     qualifying applications (public_view from the rule), updates the
- *     facts of rows whose application changed, removes rows that no longer
- *     qualify. Never writes public_view on an existing row. A day with no
- *     new or changed applications writes nothing.
+ *     qualifying applications (public_view from the rule); when an
+ *     application changes, replaces its row so public_view follows the
+ *     rule again, unless a person set it by hand (then only the facts are
+ *     refreshed); removes rows that no longer qualify. A day with no new or
+ *     changed applications writes nothing.
  *
  *   rebuildEmergencyShadowDocket  manual, on purpose (e.g. a new rule
  *     version): regenerates every row from the base records, public_view
@@ -13,8 +14,8 @@
  *     public_view and only get their facts refreshed.
  *
  * public_view_set_by_hand is set by a database trigger whenever public_view
- * changes on an existing row; since this code never does that, any such
- * change is a person's.
+ * is changed by an UPDATE. This code never updates public_view (it deletes
+ * and inserts instead), so any such change is a person's.
  */
 
 import type { SupabaseCredentials } from "../sd-db/env.js";
@@ -36,7 +37,7 @@ const FACTS = [
   "docket_url",
 ] as const;
 
-type StoredRow = EmergencyShadowDocketRow & { public_view: boolean; public_view_set_by_hand: boolean };
+export type StoredRow = EmergencyShadowDocketRow & { public_view: boolean; public_view_set_by_hand: boolean };
 
 export interface EsdResult {
   job: "emergency_shadow_docket";
@@ -75,47 +76,65 @@ async function finish(creds: SupabaseCredentials, result: EsdResult): Promise<Es
   return result;
 }
 
+export interface NightlyPlan {
+  /** New rows, public_view from the rule. */
+  insert: (EmergencyShadowDocketRow & { public_view: boolean })[];
+  /** Changed rows not set by hand: replaced (delete + insert), so
+   *  public_view follows the rule. An insert doesn't fire the trigger, so
+   *  the rule's value is never mistaken for a hand edit. */
+  replace: (EmergencyShadowDocketRow & { public_view: boolean })[];
+  /** Changed rows set by hand: facts only, public_view untouched. */
+  updateFacts: EmergencyShadowDocketRow[];
+  /** No longer qualifying and not set by hand. */
+  remove: string[];
+}
+
+/** What the nightly update writes, from the rule's rows and the stored
+ *  table. Pure: same input, same plan. */
+export function planNightlyUpdate(built: ReturnType<typeof buildEmergencyShadowDocket>, stored: Map<string, StoredRow>): NightlyPlan {
+  const plan: NightlyPlan = { insert: [], replace: [], updateFacts: [], remove: [] };
+  for (const { defaultPublicView, ...row } of built.rows) {
+    const existing = stored.get(row.docket_number);
+    if (!existing) plan.insert.push({ ...row, public_view: defaultPublicView });
+    else if (sameFacts(existing, row)) continue;
+    else if (existing.public_view_set_by_hand) plan.updateFacts.push(row);
+    else plan.replace.push({ ...row, public_view: defaultPublicView });
+  }
+  const qualifying = new Set(built.rows.map((r) => r.docket_number));
+  for (const r of stored.values()) if (!qualifying.has(r.docket_number) && !r.public_view_set_by_hand) plan.remove.push(r.docket_number);
+  return plan;
+}
+
 /** Nightly: write only what changed. */
 export async function updateEmergencyShadowDocket(creds: SupabaseCredentials): Promise<EsdResult> {
   const { records, built, stored } = await load(creds);
+  const plan = planNightlyUpdate(built, stored);
   const now = new Date().toISOString();
-  const result: EsdResult = {
+
+  const gone = [...plan.remove, ...plan.replace.map((r) => r.docket_number)];
+  if (gone.length) await remove(creds, "emergency_shadow_docket", `docket_number=in.(${quoteList(gone)})`);
+  const fresh = [...plan.insert, ...plan.replace].map((r) => ({ ...r, built_at: now }));
+  if (fresh.length) await insert(creds, "emergency_shadow_docket", fresh);
+  for (const row of plan.updateFacts) {
+    await update(creds, "emergency_shadow_docket", `docket_number=eq.${row.docket_number}`, {
+      ...factsOf(row),
+      rule_version: RULE_VERSION,
+      built_at: now,
+    });
+  }
+
+  const keptByHand = [...stored.values()].filter((r) => r.public_view_set_by_hand && !built.rows.some((b) => b.docket_number === r.docket_number));
+  return finish(creds, {
     job: "emergency_shadow_docket",
     mode: "nightly",
     rule_version: RULE_VERSION,
     applications: records.length,
-    rows: built.rows.length,
-    inserted: [],
-    updated: [],
-    removed: [],
+    rows: built.rows.length + keptByHand.length,
+    inserted: plan.insert.map((r) => r.docket_number),
+    updated: [...plan.replace, ...plan.updateFacts].map((r) => r.docket_number),
+    removed: plan.remove,
     review: built.review,
-  };
-
-  const toInsert = [];
-  for (const { defaultPublicView, ...row } of built.rows) {
-    const existing = stored.get(row.docket_number);
-    if (!existing) {
-      toInsert.push({ ...row, public_view: defaultPublicView, built_at: now });
-      result.inserted.push(row.docket_number);
-    } else if (!sameFacts(existing, row)) {
-      // Facts only: public_view is never part of a nightly write.
-      await update(creds, "emergency_shadow_docket", `docket_number=eq.${row.docket_number}`, {
-        ...factsOf(row),
-        rule_version: RULE_VERSION,
-        built_at: now,
-      });
-      result.updated.push(row.docket_number);
-    }
-  }
-  if (toInsert.length) await insert(creds, "emergency_shadow_docket", toInsert);
-
-  const qualifying = new Set(built.rows.map((r) => r.docket_number));
-  result.removed = [...stored.values()]
-    .filter((r) => !qualifying.has(r.docket_number) && !r.public_view_set_by_hand)
-    .map((r) => r.docket_number);
-  if (result.removed.length) await remove(creds, "emergency_shadow_docket", `docket_number=in.(${quoteList(result.removed)})`);
-  result.rows = built.rows.length + [...stored.values()].filter((r) => !qualifying.has(r.docket_number) && r.public_view_set_by_hand).length;
-  return finish(creds, result);
+  });
 }
 
 /** Manual: regenerate every row a person hasn't set by hand. */
