@@ -24,6 +24,9 @@
  * with any email address or phone number removed. The Attorneys panel is
  * never read.
  *
+ * Each run ends by rebuilding emergency_shadow_docket from the records
+ * (scripts/lib/applications/membership.ts).
+ *
  * Writes the database only; nothing here is shown on the site.
  *
  * Run:  npx tsx scripts/read-applications.ts               (nightly)
@@ -41,6 +44,7 @@ import { CourtFetcher, CourtFetchHalt } from "./lib/court-orders/fetch.js";
 import { parseOrdersListing } from "./lib/court-orders/parse.js";
 import { pdfToText } from "./lib/court-orders/pdf-text.js";
 import { DAILY_CAP, DAILY_CAP_BACKFILL, requestsToday } from "./lib/court-orders/daily-cap.js";
+import { rebuildEmergencyShadowDocket } from "./lib/applications/rebuild.js";
 import {
   applicationNumbersIn,
   classifyApplication,
@@ -183,7 +187,11 @@ async function main() {
   const found = getCredentials();
   if (!found) throw new Error("SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not set");
   const creds: SupabaseCredentials = found;
-  if (process.argv.includes("--reclassify")) return reclassify(creds);
+  if (process.argv.includes("--reclassify")) {
+    await reclassify(creds);
+    await rebuildEmergencyShadowDocket(creds);
+    return;
+  }
   if (process.env.COURT_ORDERS_OFF === "1") {
     console.log("[applications] COURT_ORDERS_OFF=1: skipped, no requests made.");
     return;
@@ -310,6 +318,11 @@ async function main() {
     console.log(
       `[applications] ${status}: ${stats.added.length} new, ${stats.changed.length} changed, ${fetcher.requests} request(s).`,
     );
+  }
+  try {
+    await rebuildEmergencyShadowDocket(creds);
+  } catch (err) {
+    reportSdWriteFailure("emergency_shadow_docket rebuild", err);
   }
 }
 

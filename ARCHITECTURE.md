@@ -150,6 +150,11 @@ names for where a case stands:
 
 `stub`/`historic` are precedent-citation rows, not docket cases. How a case
 moves between them:
+- **Application reader** (`scripts/read-applications.ts`, manual until its
+  workflow step is approved): records each application (26A…) in
+  `application_details` and the Court's actions on it in `court_actions`,
+  then rebuilds the pipeline-only `emergency_shadow_docket` grouping
+  (`docs/emergency-shadow-docket.md`). Nothing on the site reads these.
 - **Order-list reader** (`scripts/read-order-lists.ts`, nightly): records
   each grant, denial, GVR and summary disposition in `court_actions` (not
   public). Each grant finds its `cases` row by exact docket number: an
