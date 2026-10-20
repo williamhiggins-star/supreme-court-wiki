@@ -219,7 +219,7 @@ everything else 404s.
 |---|---|
 | `/` | 307 → `/welcome`. No page component — the bare domain has to land somewhere, and `/welcome` is the intended entry point. |
 | `/welcome` (`welcome/page.tsx`, `ScotusDashboard2LandingClient`) | Entry carousel cycling four panels pulled from the real dashboard (About's image panel, two Alignment panels, one Chief Justice panel). Renders the actual `/dashboard` tree hidden underneath itself the whole time (shared `getScotusDashboard2Data()`, so the two routes can't drift on what data they need) — "Enter" slides the overlay up to reveal it already-rendered, then navigates to `/dashboard`. |
-| `/dashboard` (`dashboard/page.tsx`, `ScotusDashboard2Client` + `SectionPanels`) | The app itself. Sections (About, Docket, Court Calendar, All Cases, Opinions Data, Third Party Analysis) are client-state, not separate routes; case detail is `?case=<slug>` on this same route, opened in-place (`CaseDetailPanels`), not a separate page. All Cases and Opinions Data each have their own term toggle (`TermFilter`, reused between them) — client-side state only, switching between already-fetched per-term data with no additional round-trip. |
+| `/dashboard` (`dashboard/page.tsx`, `ScotusDashboard2Client` + `SectionPanels`) | The app itself. Sections (About, Docket, Court Calendar, All Cases, Shadow Docket, Opinions Data, Third Party Analysis) are client-state, not separate routes; case detail is `?case=<slug>` on this same route, opened in-place (`CaseDetailPanels`), not a separate page. All Cases and Opinions Data each have their own term toggle (`TermFilter`, reused between them) — client-side state only, switching between already-fetched per-term data with no additional round-trip. |
 | `/cases/:slug` | 307 → `/dashboard?case=:slug`. Carries real traffic — this path was live and likely indexed/bookmarked before the cutover. |
 | `/docket/:column` | 307 → `/dashboard`. No section-deep-link exists yet to land on the right panel specifically. |
 
@@ -250,6 +250,11 @@ still gets written daily (§3) in case it's ever rebuilt into the new UI.
   `CaseSummary[]`, no file or DB access themselves.
 - `src/lib/db/*.ts` — the Supabase accessor layer for the "SCOTUS
   Dashboard" project (§3).
+  `shadow-docket.ts` reads `emergency_shadow_docket_public`, the one public
+  view onto the Emergency / Shadow Docket data (rows with `public_view` only,
+  listed columns only; the underlying tables stay closed to visitors). The
+  Shadow Docket section searches, filters and sorts those ~150 rows in the
+  browser.
 - `src/lib/justices.ts` — still around for its `JusticeStat` type (the
   new UI imports the type, not the JSON-reading function); its
   `getJusticesData()` is dead code post-cutover, left in place rather

@@ -1,3 +1,4 @@
+import { getShadowDocketRows, type ShadowDocketRow } from "@/lib/db/shadow-docket";
 import { getDocketStatus, buildDecidedList, buildAllCasesList, compareDocketNumbers, type DecidedItem } from "@/lib/docket";
 import { getCalendarJson, buildCalendarEvents, type CalendarEvent } from "@/lib/calendar";
 import { getArticlesData } from "@/lib/articles";
@@ -30,6 +31,7 @@ export interface ScotusDashboard2Data {
   otherArticles: Article[];
   circuitSplitsBySlug: Record<string, CircuitSplit>;
   articlesByCaseSlug: Record<string, Article[]>;
+  shadowDocketRows: ShadowDocketRow[];
   today: string;
   tomorrow: string;
 }
@@ -216,6 +218,10 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
   // getOpinionStatsByTerm above).
   const opinionStatsByTerm = await getOpinionStatsByTerm(TRACKED_TERMS);
 
+  // Shadow Docket section: the public Emergency / Shadow Docket rows (a
+  // public view; about 150 rows, filtered and sorted in the browser).
+  const shadowDocketRows = await getShadowDocketRows();
+
   const calendarJson = getCalendarJson();
   const calendarEvents = buildCalendarEvents(cases, calendarJson);
 
@@ -257,6 +263,7 @@ export async function getScotusDashboard2Data(): Promise<ScotusDashboard2Data> {
     otherArticles,
     circuitSplitsBySlug,
     articlesByCaseSlug,
+    shadowDocketRows,
     today,
     tomorrow,
   };
