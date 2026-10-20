@@ -2023,7 +2023,7 @@ function ShadowDocketIntroPanel() {
             This page tracks applications for interim relief filed during the current term, with the Justice the application was directed to, the lower-court case it comes from, the Court’s actions on it, and the outcome. The data presented here includes applications for/to:
           </p>
           <ul className="list-disc pl-5">
-            <li>A stay, or a partial stay, of a lower-court ruling</li>
+            <li>a stay, or a partial stay, of a lower-court ruling</li>
             <li>a stay of execution</li>
             <li>an injunction</li>
             <li>vacate a stay entered by a lower court</li>
