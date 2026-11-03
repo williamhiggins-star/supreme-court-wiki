@@ -4,7 +4,7 @@
   "title": "Maxwell v. Dinis",
   "termYear": "2026",
   "argumentDate": "2026-11-02",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-5930.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-5930_4f14.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "William Maxwell is a federal prisoner housed at FCI Beaumont in Texas. Under the First Step Act of 2018, Congress created a system allowing federal prisoners to earn 'time credits' by completing approved rehabilitative programs and productive activities. These credits can be used to reduce the time a prisoner spends in a federal prison by accelerating their transfer to a halfway house (a supervised residential facility) or home confinement — two less restrictive forms of custody that allow prisoners to begin reintegrating into society before their sentence fully expires.\n\nMaxwell sought to use these earned time credits to secure an earlier transfer to a halfway house or home confinement. When prison officials did not apply the credits as he believed the law required, he filed a habeas corpus petition under 28 U.S.C. § 2241 in federal court in Texas. Habeas corpus is a legal mechanism that allows prisoners to challenge the legality of their confinement. The district court and later the Fifth Circuit Court of Appeals ruled against him, holding that this type of claim cannot be brought through a habeas petition.\n\nThe Supreme Court agreed to hear Maxwell's case, limiting its review to the specific question of whether § 2241 habeas petitions are the proper vehicle for First Step Act time-credit claims seeking accelerated placement in a halfway house or home confinement. Notably, both Maxwell and the government (represented by the Acting Warden, Sandra Dinis) now agree that habeas is the correct vehicle, and the Court appointed an outside attorney, Brian W. Barnes, to argue in support of the Fifth Circuit's contrary ruling.",
   "legalQuestion": "Whether a federal prisoner's claim seeking accelerated transfer to a halfway house or home confinement based on time credits earned under the First Step Act of 2018 can be brought as a habeas corpus petition under 28 U.S.C. § 2241.",
@@ -20,7 +20,26 @@
         "Denying habeas access would leave prisoners with no practical judicial remedy to enforce time credits Congress explicitly created as an incentive for rehabilitation.",
         "The text and history of § 2241 support a broad reading that encompasses claims about the manner and conditions of a prisoner's confinement, not just outright release."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Whether we really need to use this case to define every circumstance in which habeas is appropriate, or whether the inquiry here is very narrow — whether a prisoner claiming unlawful detention because he's entitled to halfway house placement can bring that claim in habeas.",
+          "context": "This question shaped the scope of the potential ruling and signaled willingness to decide narrowly.",
+          "significance": "It revealed Justice Jackson's preference for a narrow holding that resolves the specific case without creating broad new doctrine about habeas scope."
+        },
+        {
+          "justice": "Justice Barrett",
+          "question": "Why are you going bigger than the government's rule, given that your level-of-custody approach presents complications like whether transfer to a lower-security facility would also qualify?",
+          "context": "This probed the risks of Petitioner's broader rule versus the government's narrower formulation.",
+          "significance": "It showed Justice Barrett was concerned about spillover effects and preferred the government's narrower 'transfer from prison into the community' standard."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Justice Scalia used the language 'quantum change' in the level of custody — why don't we stick to what we have rather than create new language like 'materially less restrictive custody'?",
+          "context": "This tested whether existing precedential language was sufficient to resolve the case.",
+          "significance": "It revealed Justice Sotomayor's preference for adhering to established precedent and the government's clearer, simpler formulation rather than introducing new doctrinal language."
+        }
+      ]
     },
     {
       "party": "Sandra Dinis, Acting Warden",
@@ -32,7 +51,26 @@
         "Refusing habeas jurisdiction would create an anomaly where Congress grants prisoners statutory rights but provides no judicial mechanism to enforce them.",
         "The Fifth Circuit's ruling conflicts with the approach taken by other circuit courts and undermines the uniform enforcement of federal law."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Jackson",
+          "question": "Didn't we already make the decision to take this case? Why are we relitigating certiorari based on the 3621(b) argument the government failed to raise at the cert stage?",
+          "context": "The government was arguing for a DIG based on a judicial review bar it never raised when opposing certiorari.",
+          "significance": "It revealed Justice Jackson's strong skepticism of the government's DIG argument, viewing it as an improper attempt to undo a certiorari decision through belated jurisdictional objections."
+        },
+        {
+          "justice": "Justice Gorsuch",
+          "question": "What principle in law would distinguish a claim seeking transfer from prison to a halfway house from one seeking transfer from maximum to medium security?",
+          "context": "This challenged the government's ability to draw a principled line at 'release from prison into the community.'",
+          "significance": "It revealed Justice Gorsuch's concern that the government's proposed rule lacked a principled legal basis beyond labeling, potentially inviting future litigation over where the line falls."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "Your position is incoherent — you accept that release to home confinement or a halfway house is a meaningful difference, yet you say the 3621(b) bar prevents any judicial review, meaning BOP can ignore a statutory command to release altogether.",
+          "context": "This exposed the tension between the government conceding habeas cognizability while simultaneously arguing the judicial review bar eliminates all review.",
+          "significance": "It showed Justice Sotomayor viewed the government's position as internally contradictory and was deeply skeptical that Congress intended to bar all judicial review of statutory release entitlements."
+        }
+      ]
     }
   ],
   "citedPrecedents": [
@@ -90,5 +128,6 @@
     "execution-of-sentence"
   ],
   "processedAt": "2026-09-17T15:20:05.510Z",
-  "spotifyMatchStatus": "not_searched"
+  "spotifyMatchStatus": "matched",
+  "podcastEpisodeUrl": "https://open.spotify.com/episode/0m6qdJX4e19at1PnsNLqFR"
 }
