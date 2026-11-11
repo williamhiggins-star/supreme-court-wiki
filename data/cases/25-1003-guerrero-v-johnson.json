@@ -4,7 +4,7 @@
   "title": "Guerrero v. Johnson",
   "termYear": "2026",
   "argumentDate": "2026-11-04",
-  "transcriptUrl": "https://www.supremecourt.gov/docket/docketfiles/html/public/25-1003.html",
+  "transcriptUrl": "https://www.supremecourt.gov/oral_arguments/argument_transcripts/2026/25-1003_c9dh.pdf",
   "docketStatus": "petition",
   "backgroundAndFacts": "Dexter Johnson is a Texas death-row inmate who was convicted of capital murder. During his state court proceedings, Johnson raised various claims, but his intellectual disability claim — which, if successful, would bar his execution under the Supreme Court's ruling in Atkins v. Virginia — was not fully presented and adjudicated through the state court system in the manner required by federal law before bringing the claim to a federal court.\n\nAfter state court proceedings concluded, Johnson filed a federal habeas corpus petition in federal district court, seeking relief on the grounds that executing him would be unconstitutional because he is intellectually disabled. The federal district court and, on appeal, the Fifth Circuit Court of Appeals ruled in Johnson's favor, finding that federal courts could review his intellectual disability claim despite the procedural issues surrounding how it was raised in state court.\n\nTexas, represented by the Director of the Texas Department of Criminal Justice, Eric Guerrero, petitioned the Supreme Court, arguing that the lower federal courts improperly excused Johnson's failure to properly exhaust his state court remedies and that federal habeas review of his claim was therefore barred. The Supreme Court agreed to hear the case, which presents important questions about the procedural rules governing federal review of state criminal convictions in capital cases.",
   "legalQuestion": "Whether a federal court may grant habeas corpus relief to a death-row inmate based on an intellectual disability claim that was not properly exhausted in state court proceedings.",
@@ -20,7 +20,26 @@
         "Allowing federal courts to excuse procedural defaults in capital cases based on broad equitable grounds would encourage strategic litigation and disrupt the orderly administration of criminal justice.",
         "The Fifth Circuit's decision conflicts with Supreme Court precedent governing the circumstances under which procedural defaults may be excused in federal habeas proceedings."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Kagan",
+          "question": "Why isn't the DSM part of the law rather than a fact, given that Atkins made clear the legal standard would be based on evolving psychological criteria from the DSM?",
+          "context": "This challenges the petitioner's core argument that DSM changes are merely factual predicates rather than changes to the legal rule itself.",
+          "significance": "Justice Kagan appeared skeptical of the petitioner's fact/law distinction, suggesting there could be an 'Atkins I' and 'Atkins II' based on major DSM changes, which would undermine the argument that the rule was previously available."
+        },
+        {
+          "justice": "Justice Jackson",
+          "question": "Under your interpretation, Mr. Johnson will never get the opportunity to bring his claim because the criteria making him eligible came after his original habeas petition — doesn't that contradict Congress's policy of giving individuals one clear shot?",
+          "context": "This goes to the fundamental fairness concern that the petitioner's reading would permanently foreclose meritorious Atkins claims for defendants whose intellectual disability only became legally cognizable after DSM changes.",
+          "significance": "Justice Jackson revealed deep concern that the petitioner's interpretation would produce an absurd result inconsistent with AEDPA's underlying purpose of ensuring at least one meaningful opportunity to raise constitutional claims."
+        },
+        {
+          "justice": "Justice Sotomayor",
+          "question": "If we announce you can't execute someone after they turn 70, would you argue a 28-year-old sentenced to death must bring that claim immediately but can't use it when he actually turns 70?",
+          "context": "This hypothetical tested whether the petitioner's timing rule produces untenable results when a constitutional rule's applicability depends on future conditions.",
+          "significance": "Justice Sotomayor was probing the logical limits of the petitioner's position, drawing a parallel between age-based ripeness and the DSM-based availability of an Atkins claim to suggest the petitioner's framework is unworkable."
+        }
+      ]
     },
     {
       "party": "Dexter Johnson",
@@ -32,7 +51,26 @@
         "Federal habeas law and equitable principles recognize exceptions to procedural default where a fundamental constitutional violation would otherwise go unremedied, particularly when the penalty is death.",
         "The irreversible nature of execution demands that federal courts retain meaningful oversight of intellectual disability determinations to ensure constitutional compliance."
       ],
-      "keyExchanges": []
+      "keyExchanges": [
+        {
+          "justice": "Justice Barrett",
+          "question": "Why doesn't your definition of 'new' render that term irrelevant, and isn't it odd to call a rule 'new' indefinitely — like calling the telephone 'new' today?",
+          "context": "This challenged the respondent's argument that 'new' describes the character of a rule rather than its temporal relationship to a particular defendant.",
+          "significance": "Justice Barrett appeared uncomfortable with the respondent's reading of 'new' as doing essentially no independent work in the statute, suggesting it conflicts with ordinary meaning and statutory interpretation principles."
+        },
+        {
+          "justice": "Justice Kagan",
+          "question": "Doesn't the phrase 'made retroactive to cases on collateral review' actually work against you, because it suggests the rule must be new as to you — meaning it didn't exist by the end of your direct appeals process?",
+          "context": "This tested whether reading the full statutory phrase as a unit supports or undermines the respondent's claim that 'new' refers to the character of the rule rather than timing relative to the defendant.",
+          "significance": "Justice Kagan, despite seeming sympathetic on the DSM-as-law theory, pushed back on the respondent's reading of 'new rule,' suggesting the retroactivity language implies the rule must post-date the defendant's conviction."
+        },
+        {
+          "justice": "Justice Alito",
+          "question": "What if DSM-6 or 7 or 8 makes smaller changes but changes that provide a greater opportunity for success than previously — would that allow successive applications?",
+          "context": "This tested whether the respondent's framework would open the door to repeated habeas applications based on incremental DSM updates.",
+          "significance": "Justice Alito was probing the floodgates concern, testing whether the respondent's rule could be contained or would invite endless successive petitions with each minor revision to diagnostic standards."
+        }
+      ]
     }
   ],
   "citedPrecedents": [
