@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-20",
+  "generated": "2026-11-21",
   "impacts": [
     {
       "id": "teva-v-eli-lilly-enablement-rehearing",
@@ -9,12 +9,25 @@
       "courtKey": "cafc",
       "date": "2026-09-30",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the enablement requirement under 35 U.S.C. § 112 for method claims directed to administering a genus of antibodies to treat headache requires the same breadth-of-genus analysis applied in Amgen v. Sanofi to composition claims.",
-      "description": "The Federal Circuit denied en banc rehearing of a panel decision upholding Teva's broad method claims for anti-CGRP antagonist antibodies to treat headache, over a dissent arguing the panel's approach undermines Amgen v. Sanofi enablement standards for genus claims. The denial preserves the panel ruling that method claims covering a broad genus of antibodies can satisfy enablement even where identifying members of the genus is difficult, so long as any member of the genus would be effective for the claimed treatment.",
-      "positiveImplications": "Patent holders with broad method-of-treatment claims covering a genus of biological molecules benefit from a more permissive enablement standard, allowing them to maintain broader patent protection over biologic therapies.",
-      "negativeImplications": "Competitor pharmaceutical and biotech companies face stronger barriers to invalidating broad biologic method claims on enablement grounds, potentially delaying biosimilar and competing product entry.",
-      "url": "https://www.courtlistener.com/opinion/10990709/teva-pharmaceuticals-international-gmbh-v-eli-lilly-and-company/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether the enablement requirement under 35 U.S.C. § 112 permits broad method claims reciting a genus of antibodies (anti-CGRP antagonist humanized monoclonal antibodies) for treating headache, where every member of the claimed genus would be effective for the recited treatment but identifying members of the genus requires undue experimentation.",
+      "description": "The Federal Circuit denied en banc rehearing of its panel decision upholding Teva's broad method-of-treatment claims covering anti-CGRP antagonist antibodies for headache treatment. Judge Dyk dissented, arguing the panel's holding undermines Amgen v. Sanofi enablement principles by sustaining overly broad claims where the difficulty lies in identifying qualifying antibodies rather than demonstrating therapeutic efficacy. The decision preserves the panel's distinction between enablement for method claims versus composition claims.",
+      "positiveImplications": "Patent holders with broad biologic method-of-treatment claims benefit from the panel's approach, which may allow genus claims to survive enablement challenges when any member of the genus would be therapeutically effective, potentially strengthening protection for pioneering biologic therapies.",
+      "negativeImplications": "Competitor pharmaceutical and biotech companies face broader blocking patents on biologic methods of treatment, potentially increasing licensing costs and delaying biosimilar or competing biologic development. The dissent signals continued uncertainty and possible future reversal.",
+      "lastUpdated": "2026-11-21"
+    },
+    {
+      "id": "cocona-v-vf-outdoor-indefiniteness-mvtr",
+      "caseName": "Cocona, Inc. v. VF Outdoor, LLC",
+      "docketNumber": "No. 25-1458",
+      "court": "Federal Circuit",
+      "courtKey": "cafc",
+      "date": "2026-11-17",
+      "area": "Intellectual Property",
+      "legalQuestion": "Whether patent claims reciting a moisture vapor transmission rate (MVTR) range are indefinite under 35 U.S.C. § 112(b) when the specification identifies multiple testing methods that yield materially different results and specifies testing conditions inconsistent with the referenced standard protocol.",
+      "description": "The Federal Circuit affirmed that claims of the '287 patent directed to a waterproof breathable membrane were invalid as indefinite because the MVTR limitation could be measured using different methods (upright vs. inverted cup) yielding different results, and the specification's stated test conditions (40°C, 20% RH) conflicted with the referenced ASTM E96-94 standard. The court found a person of ordinary skill could not determine with reasonable certainty whether a product fell within the claimed MVTR range.",
+      "positiveImplications": "Accused infringers in materials science and textile technology can challenge patents with performance-metric claims where the specification fails to specify a single, consistent measurement methodology, reducing exposure to infringement liability for ambiguous claims.",
+      "negativeImplications": "Patent holders claiming products by functional performance ranges must ensure their specifications unambiguously identify a single test method and consistent conditions, or risk invalidation. This raises the drafting burden for patents in industries relying on standardized testing protocols.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "texasldpc-v-broadcom-exclusive-license-standing",
@@ -24,42 +37,25 @@
       "courtKey": "cafc",
       "date": "2026-09-14",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether an exclusive license agreement conveyed 'all substantial rights' in patents to the licensee such that the licensee had standing to sue for infringement without joining the patent owner, and whether the license terminated when the licensee shifted its business to patent enforcement.",
-      "description": "The Federal Circuit reversed dismissal, holding that TexasLDPC's exclusive license from Texas A&M University conveyed all substantial rights and did not terminate when the licensee shifted its operations to enforcement. The court found the licensee could sue in its own name without joining the university. This clarifies the standard for when an exclusive license is tantamount to an assignment for standing purposes.",
-      "positiveImplications": "Exclusive licensees and patent assertion entities benefit from clearer guidance that broad exclusive licenses conferring all substantial rights grant independent standing to sue, without needing to join the patent owner.",
-      "negativeImplications": "Accused infringers lose a potential defense based on challenging the standing of exclusive licensees, and face continued exposure to enforcement actions by licensing entities that may not actively practice the patent.",
-      "url": "https://www.courtlistener.com/opinion/10973146/texasldpc-inc-v-broadcom-inc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether an exclusive patent license agreement conveyed 'all substantial rights' sufficient to constitute a virtual assignment, allowing the licensee to sue for infringement without joining the patent owner, and whether the licensee's shift to an enforcement-only business model triggered an automatic termination clause.",
+      "description": "The Federal Circuit reversed dismissal, holding that TexasLDPC's exclusive license from Texas A&M University conveyed all substantial rights in the asserted patents, entitling TexasLDPC to sue in its own name without joining A&M. The court also held that TexasLDPC's shift from active commercialization to patent enforcement did not constitute a cessation of business operations triggering automatic termination of the license agreement.",
+      "positiveImplications": "Exclusive licensees and patent assertion entities benefit from clarification that enforcement-focused business models do not automatically terminate license agreements and that exclusive licenses conveying all substantial rights allow suit without joining the patent owner, reducing procedural barriers to enforcement.",
+      "negativeImplications": "Accused infringers lose a potential standing defense, and universities and other patent owners who license exclusively may find it harder to control enforcement activities or argue that licensees have abandoned their rights by shifting to enforcement-only operations.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "versata-v-ford-trade-secret-damages",
       "caseName": "Versata Software, LLC v. Ford Motor Company",
-      "docketNumber": "Nos. 24-1140, 24-1206, 24-1234",
+      "docketNumber": "No. 24-1140",
       "court": "Federal Circuit",
       "courtKey": "cafc",
       "date": "2026-09-10",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court erred in excluding plaintiff's trade secret damages expert and in overturning the jury's breach of contract damages award in a case involving misappropriation of proprietary automotive configuration software.",
-      "description": "The Federal Circuit vacated the trade secret damages judgment and remanded for a new trial, instructing the district court to reconsider two previously rejected damages models. The court also reversed the district court's post-trial reduction of the jury's breach of contract damages award, reinstating the jury verdict. The decision affirmed liability for trade secret misappropriation under the DTSA and Michigan law.",
-      "positiveImplications": "Software companies and trade secret owners benefit from expanded latitude in presenting damages theories and from protection of jury verdicts on contract damages, strengthening enforcement of proprietary technology rights.",
-      "negativeImplications": "Companies that develop internal alternatives after licensing third-party software face heightened trade secret misappropriation risk and potential for significant damages awards at retrial.",
-      "url": "https://www.courtlistener.com/opinion/10970408/versata-software-llc-v-ford-motor-company/",
-      "lastUpdated": "2026-11-20"
-    },
-    {
-      "id": "cocona-v-vf-outdoor-indefiniteness-mvtr",
-      "caseName": "Cocona, Inc. v. VF Outdoor, LLC",
-      "docketNumber": "Nos. 25-1458, 25-1462",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-11-17",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether patent claims reciting a moisture vapor transmission rate (MVTR) range are indefinite when the specification identifies multiple testing methods that yield materially different results without specifying which method defines the claimed range.",
-      "description": "The Federal Circuit affirmed that the asserted claims of the '287 patent are invalid as indefinite because the specification identified multiple MVTR testing methods (upright, inverted, and Mocon) that produce different results, and skilled artisans could not determine with reasonable certainty which method defines the claimed MVTR range. This reinforces that functional performance limitations tied to variable test conditions can render claims indefinite.",
-      "positiveImplications": "Accused infringers in materials and textile industries can challenge patents with performance-based limitations where the specification fails to identify a single definitive testing protocol.",
-      "negativeImplications": "Patent holders claiming functional performance ranges must ensure their specifications clearly specify a single testing methodology, or risk invalidation for indefiniteness.",
-      "url": "https://www.courtlistener.com/opinion/11063178/cocona-inc-v-vf-outdoor-llc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether the district court erred in excluding the trade secret plaintiff's damages expert and in overturning the jury's breach of contract damages award, and whether sufficient evidence supported the jury's finding of trade secret misappropriation liability.",
+      "description": "The Federal Circuit vacated the district court's judgment on trade secret damages and remanded for a new trial, holding the district court improperly excluded Versata's damages expert testimony and should consider two previously rejected damages models. The court reversed the district court's override of the jury's breach of contract damages award and reinstated it, while affirming the jury's finding that Ford misappropriated Versata's trade secrets in developing competing automotive configuration software.",
+      "positiveImplications": "Trade secret owners benefit from the court's instruction that district courts must give fair consideration to multiple damages methodologies and cannot lightly override jury damages findings on breach of contract claims, potentially increasing recoveries in software misappropriation cases.",
+      "negativeImplications": "Companies that develop in-house replacements for licensed software face continued trade secret misappropriation exposure. The remand for a new damages trial with expanded expert testimony could result in significantly larger damage awards against Ford and similarly situated defendants.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "constellation-designs-v-lg-electronics-eligibility",
@@ -69,12 +65,11 @@
       "courtKey": "cafc",
       "date": "2026-08-31",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether claims directed to non-uniform signal constellations for digital communications are patent-eligible under 35 U.S.C. § 101, and whether the district court's damages award and infringement finding were supported.",
-      "description": "The Federal Circuit vacated the summary judgment of patent eligibility for certain claims of the '761 and '700 patents directed to non-uniform constellations, while affirming eligibility for claims of the '509 and '922 patents. The court also affirmed the jury's infringement and damages findings. The decision provides important guidance on the Alice/Mayo framework as applied to telecommunications technology patents, distinguishing between claims that recite specific technical implementations and those that may be directed to abstract mathematical optimization.",
-      "positiveImplications": "Patent holders with claims tied to specific, technically implemented improvements in communications standards retain strong protection, and the affirmance of damages and infringement findings supports enforcement of standard-essential patents.",
-      "negativeImplications": "Companies implementing industry communication standards face continued patent infringement exposure, though the partial vacatur on eligibility creates uncertainty for broadly claimed signal processing inventions.",
-      "url": "https://www.courtlistener.com/opinion/10962877/constellation-designs-llc-v-lg-electronics-inc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether patent claims directed to non-uniform signal constellations for digital communications are patent-eligible under 35 U.S.C. § 101, and whether the district court properly denied JMOL on infringement and damages.",
+      "description": "The Federal Circuit issued a split decision on patent eligibility under § 101 for claims related to non-uniform constellation designs used in broadcast communications. The court vacated the eligibility finding for certain claims of two patents while affirming eligibility for claims of two other patents, affirmed the jury's infringement and damages findings including willfulness, and remanded for further proceedings on the vacated claims. The case involved LG televisions implementing the ATSC 3.0 broadcast standard.",
+      "positiveImplications": "Patent holders with claims tied to specific technical implementations in communications standards benefit from the court's affirmance of eligibility for some claims and the sustained jury verdict on infringement and damages, reinforcing that standard-essential patents with concrete technical improvements can survive § 101 challenges.",
+      "negativeImplications": "Technology companies implementing industry standards face ongoing patent infringement risk and substantial damages exposure. The partial vacatur on eligibility creates uncertainty about which claim formulations for signal-processing innovations will survive § 101 scrutiny.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "satius-v-samsung-enablement-invalidity",
@@ -84,42 +79,25 @@
       "courtKey": "cafc",
       "date": "2026-10-01",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether claims directed to a communications apparatus with a coupler matching impedance to 'the characteristic impedance of the air' are invalid for lack of enablement, even if the claims are not indefinite.",
-      "description": "The Federal Circuit reversed the district court's indefiniteness ruling but affirmed the final judgment of invalidity on alternative enablement grounds, finding that the patent did not enable the full scope of the claims as construed. The decision demonstrates the court's willingness to affirm invalidity on grounds not relied upon below, and reinforces that claims whose scope extends beyond what the specification enables are invalid under § 112(a).",
-      "positiveImplications": "Accused infringers benefit from the court's willingness to sustain invalidity findings on alternative grounds, providing additional avenues to challenge overly broad patent claims.",
-      "negativeImplications": "Patent holders face risk that claims surviving indefiniteness challenges may still be invalidated for lack of enablement if the specification does not support the full claimed scope.",
-      "url": "https://www.courtlistener.com/opinion/11007606/satius-holding-llc-v-samsung-electronics-co-ltd/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether claims directed to a communications apparatus using a transformer with a non-magnetic core to match transmitter impedance to the characteristic impedance of air are invalid for lack of enablement under 35 U.S.C. § 112(a), even though the district court invalidated them on indefiniteness grounds.",
+      "description": "The Federal Circuit affirmed the final judgment of invalidity but on alternative grounds, holding that while the district court erred in finding the claims indefinite, the claims were invalid for lack of enablement. The court found that the patent's specification did not enable the full scope of the claimed invention—transmitting signals over air using a transformer with a non-magnetic core to match impedance—because accomplishing impedance matching as broadly claimed would require undue experimentation.",
+      "positiveImplications": "Accused infringers benefit from the court's willingness to affirm invalidity on alternative enablement grounds even when the district court's primary indefiniteness rationale was incorrect, providing multiple defensive pathways against broad patent claims.",
+      "negativeImplications": "Patent holders face the risk that appellate courts may independently identify enablement deficiencies not raised below, and broadly drafted claims covering fundamental physical principles may be particularly vulnerable to enablement challenges.",
+      "lastUpdated": "2026-11-21"
     },
     {
-      "id": "ncs-multistage-v-nine-energy-claim-construction",
-      "caseName": "NCS Multistage Inc. v. Nine Energy Service, Inc.",
-      "docketNumber": "No. 25-1000",
-      "court": "Federal Circuit",
-      "courtKey": "cafc",
-      "date": "2026-09-14",
-      "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court correctly construed the term 'internal diameter' in patent claims directed to a float tool used in oil and gas well casing operations, and whether infringement and damages findings were supported.",
-      "description": "The Federal Circuit vacated the judgment of infringement and damages and remanded for further proceedings, finding error in the district court's claim construction of 'internal diameter' as used in the '445 patent claims directed to oil and gas wellbore tools. The case impacts the significant energy services patent litigation between NCS and Nine Energy over competing casing flotation devices.",
-      "positiveImplications": "Accused infringers in the energy services sector benefit from more precise claim construction standards, potentially narrowing the scope of asserted patent claims.",
-      "negativeImplications": "Patent holders in the oil and gas equipment space face the burden of retrial following claim construction reversals, with potential narrowing of their patent scope on remand.",
-      "url": "https://www.courtlistener.com/opinion/10973148/ncs-multistage-inc-v-nine-energy-service-inc/",
-      "lastUpdated": "2026-11-20"
-    },
-    {
-      "id": "epic-tech-v-pen-tech-section-285-fees",
+      "id": "epic-tech-v-pen-tech-rule-11-fees",
       "caseName": "Epic Tech, LLC v. Pen-Tech Associates, Inc.",
       "docketNumber": "No. 25-1624",
       "court": "Federal Circuit",
       "courtKey": "cafc",
       "date": "2026-09-30",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the district court provided sufficient reasoning in denying a motion for attorneys' fees under 35 U.S.C. § 285 and Rule 11 sanctions where the patent holder pursued infringement claims after related patent applications were rejected under § 101 post-Alice.",
-      "description": "The Federal Circuit vacated and remanded the denial of sanctions and attorneys' fees, finding the district court's order lacked sufficient detail for meaningful appellate review. The case involved a patent holder that filed suit on electronic sweepstakes system claims despite multiple § 101 rejections of related applications by the PTO and a sister court's invalidation of closely related patent claims. The decision signals heightened scrutiny of patent assertions where there are strong indicators of ineligibility.",
-      "positiveImplications": "Accused infringers who prevail on § 101 grounds have stronger prospects for recovering attorneys' fees when patent holders persist in asserting claims despite clear warning signs of ineligibility.",
-      "negativeImplications": "Patent assertion entities and their counsel face increased risk of fee-shifting and sanctions for pursuing infringement claims when related applications have been rejected on eligibility grounds.",
-      "url": "https://www.courtlistener.com/opinion/10988017/epic-tech-llc-v-pen-tech-associates-inc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether a district court must provide sufficient reasoning when denying a motion for Rule 11 sanctions and attorney fees under 35 U.S.C. § 285 where the patent holder pursued infringement claims after related patent applications were rejected under § 101 post-Alice and abandoned.",
+      "description": "The Federal Circuit vacated and remanded the district court's denial of Pen-Tech's motion for Rule 11 sanctions and § 285 attorney fees, holding that the district court's order lacked sufficient detail to permit meaningful appellate review. The court noted significant indicators that Epic Tech's infringement claims may have been objectively baseless, including PTO § 101 rejections of related applications post-Alice that Epic Tech abandoned without overcoming.",
+      "positiveImplications": "Accused infringers who prevail on § 101 grounds gain stronger tools to recover attorney fees and sanctions when patent holders press claims despite clear signals of invalidity, potentially deterring frivolous patent assertions.",
+      "negativeImplications": "Patent holders and their counsel face heightened fee-shifting risk when asserting patents whose related applications were rejected under § 101, particularly if they cannot articulate meaningful distinctions between the asserted and rejected claims.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "exelixis-v-msn-written-description-pharma",
@@ -129,27 +107,25 @@
       "courtKey": "cafc",
       "date": "2026-08-31",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether patents claiming crystalline forms, pharmaceutical formulations, and methods of treating cancer with cabozantinib (L)-malate satisfy the written description requirement of 35 U.S.C. § 112(a).",
-      "description": "The Federal Circuit affirmed the district court's finding that the asserted claims of the Malate Salt Patents have adequate written description, upholding the validity of Exelixis's patents protecting Cabometyx® (cabozantinib) against generic entry by MSN Laboratories. The decision reinforces the strength of pharmaceutical polymorph and salt-form patents when adequately supported by the specification.",
-      "positiveImplications": "Branded pharmaceutical companies benefit from strong validation of polymorph and salt-form patent claims, providing continued protection against generic competitors and supporting exclusivity periods.",
-      "negativeImplications": "Generic pharmaceutical manufacturers face continued barriers to market entry for cabozantinib products, as the validity of formulation and polymorph patents is upheld.",
-      "url": "https://www.courtlistener.com/opinion/10962857/exelixis-inc-v-msn-laboratories-private-ltd/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether patents claiming crystalline forms of cabozantinib (L)-malate salt satisfy the written description requirement of 35 U.S.C. § 112(a) when the specification discloses preparation methods and characterization data for the claimed crystalline forms.",
+      "description": "The Federal Circuit affirmed the district court's finding that Exelixis's Malate Salt Patents have adequate written description for claims covering crystalline cabozantinib (L)-malate, the active ingredient in the cancer drug Cabometyx®. The decision upholds key patent protection for Exelixis's blockbuster oncology product through 2030, rejecting MSN's challenge that the specification failed to adequately describe the claimed crystalline salt forms.",
+      "positiveImplications": "Pharmaceutical patent holders benefit from the affirmation that specifications disclosing preparation methods and characterization data for crystalline drug forms satisfy written description, strengthening protection for branded drugs against generic challengers in Hatch-Waxman litigation.",
+      "negativeImplications": "Generic pharmaceutical companies face continued barriers to market entry for cabozantinib products and similar drugs protected by crystalline form patents, potentially delaying lower-cost alternatives for cancer patients.",
+      "lastUpdated": "2026-11-21"
     },
     {
-      "id": "t-mobile-v-kaifi-appellate-jurisdiction",
-      "caseName": "T-Mobile US, Inc. v. KAIFI LLC",
-      "docketNumber": "No. 25-1006",
+      "id": "ncs-multistage-v-nine-energy-claim-construction",
+      "caseName": "NCS Multistage Inc. v. Nine Energy Service, Inc.",
+      "docketNumber": "No. 25-1000",
       "court": "Federal Circuit",
       "courtKey": "cafc",
-      "date": "2026-08-28",
+      "date": "2026-09-14",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether the Federal Circuit has appellate jurisdiction over a contract dispute regarding the interpretation of a patent settlement agreement's contingent payment clause tied to the outcome of an ex parte reexamination.",
-      "description": "The Federal Circuit held it lacked subject-matter jurisdiction over a dispute concerning whether T-Mobile owed an additional payment under a patent settlement agreement conditioned on asserted claims 'surviving' an ex parte reexamination. The court found the dispute was fundamentally one of contract interpretation under state law, not a patent law question, and transferred the case to the Fifth Circuit. This clarifies jurisdictional boundaries for settlement agreement disputes involving patent proceedings.",
-      "positiveImplications": "Parties to patent settlement agreements gain clarity that disputes over contractual payment terms tied to PTO proceedings may be litigated in regional circuits under state contract law, potentially before more favorable forums.",
-      "negativeImplications": "Parties expecting Federal Circuit review of patent-related settlement disputes may face unexpected jurisdictional transfers, adding cost and uncertainty to dispute resolution.",
-      "url": "https://www.courtlistener.com/opinion/10961022/t-mobile-us-inc-v-kaifi-llc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether the term 'internal diameter' in a patent claim for an oil and gas wellbore float tool refers only to the measured width across the pipe or can also refer to a diameter along the length of the pipe.",
+      "description": "The Federal Circuit vacated the district court's judgment of infringement and damages award in a patent case involving oil and gas wellbore casing technology, remanding for further proceedings based on claim construction of the term 'internal diameter.' The case involves NCS's patent on float tools using rupture discs for casing flotation in horizontal wells, with the construction of this key term determining whether Nine Energy's competing BreakThru product infringes.",
+      "positiveImplications": "Accused infringers in the oil and gas equipment industry benefit from the Federal Circuit's close scrutiny of claim terms, potentially narrowing the scope of asserted patent claims and providing opportunities to design around patents.",
+      "negativeImplications": "Patent holders in the energy equipment sector face uncertainty when key claim terms have multiple plausible constructions, as remand for new proceedings increases litigation costs and delays enforcement of patent rights.",
+      "lastUpdated": "2026-11-21"
     },
     {
       "id": "aml-ip-v-bath-body-works-venue-eligibility",
@@ -159,12 +135,11 @@
       "courtKey": "cafc",
       "date": "2026-08-28",
       "area": "Intellectual Property",
-      "legalQuestion": "Whether a district court may dismiss a patent infringement case on § 101 eligibility grounds after already determining that venue is improper under 28 U.S.C. § 1400(b).",
-      "description": "The Federal Circuit affirmed a district court's dismissal on both improper venue and patent eligibility grounds, holding that the court did not err in reaching the merits of a § 101 challenge even after finding venue was improper. The '979 patent, directed to e-commerce methods using a 'bridge computer,' was held ineligible. The ruling allows district courts to issue § 101 determinations alongside venue dismissals, potentially preventing re-filing in other venues.",
-      "positiveImplications": "Accused infringers benefit from the ability to obtain a binding § 101 eligibility ruling even when venue is improper, potentially precluding the patent holder from re-filing the same claims in a different district.",
-      "negativeImplications": "Patent assertion entities face the risk that a venue challenge will be coupled with a substantive eligibility dismissal, eliminating the ability to re-file in a more favorable forum.",
-      "url": "https://www.courtlistener.com/opinion/10960932/aml-ip-llc-v-bath-body-works-direct-inc/",
-      "lastUpdated": "2026-11-20"
+      "legalQuestion": "Whether a district court may dismiss a patent infringement case on both improper venue under 28 U.S.C. § 1400(b) and patent ineligibility under 35 U.S.C. § 101 in a single order, rather than dismissing solely on venue grounds and transferring the case.",
+      "description": "The Federal Circuit affirmed the district court's dismissal on both venue and § 101 eligibility grounds, holding that after finding venue improper, the court did not err by also reaching the merits of patent eligibility. The '979 patent, directed to e-commerce methods using a 'bridge computer,' was held ineligible under § 101. The court rejected AML's argument that the district court should have stopped at the venue ruling.",
+      "positiveImplications": "Accused infringers benefit from the ability to obtain merits-based dismissals (such as § 101 ineligibility) even when venue is also improper, providing a more definitive resolution that prevents the patent holder from simply re-filing in a proper venue.",
+      "negativeImplications": "Patent assertion entities and patent holders lose the ability to avoid merits rulings by arguing that improper venue should be the sole basis for dismissal, increasing the risk of adverse precedent on patent eligibility when filing in strategically chosen but improper venues.",
+      "lastUpdated": "2026-11-21"
     }
   ]
 }
